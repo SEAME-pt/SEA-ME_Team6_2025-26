@@ -28,8 +28,8 @@ List requirements impacted/satisfied.
 
 | Requirement ID | Description | Status |
 |---|---|---|
-| REQ-001 | Display speed on screen | ✅ Implemented |
-| REQ-002 | Remote control capability | ⚙️ In Progress |
+| REQ-XXX | Description of req | ✅ Implemented |
+| REQ-XXX | Description of req | ⚙️ In Progress |
 
 ## ✅ Checklist
 - [ ] Lints pass
