@@ -14,7 +14,7 @@ To be able to run the program it will be needed to have a full installation of t
 After the whole QT setup, clone the repository to a place of your choice using the following command:
 
 ```bash
-  git clone git@github.com:jpjpcs/SEA-ME_Team6.git
+  git clone git@github.com:SEAME-pt/SEA-ME_Team6_2025-26.git
 ```
 After clonning the repository you will need to enter insise the `src` folder.
 
