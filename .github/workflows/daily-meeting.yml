@@ -1,0 +1,96 @@
+name: Build Daily Doc
+
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'ceremony:daily')
+
+    steps:
+      - name: Checkout (read-only)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract issue data
+        id: info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue
+            const body = issue.body || ''
+            const url = issue.html_url
+            const author = issue.user?.login || 'unknown'
+            const number = issue.number
+
+            // Parse YYYY-MM-DD from "### Date" (emoji tolerant)
+            let date = null
+            const m = body.match(/###\s*📅?\s*Date\s*\n+([0-9]{4}-[0-9]{2}-[0-9]{2})/i)
+            if (m && m[1]) date = m[1]
+            if (!date) date = (issue.created_at || '').slice(0,10) || '1970-01-01'
+
+            core.setOutput('date', date)
+            core.setOutput('body', body)
+            core.setOutput('url', url)
+            core.setOutput('author', author)
+            core.setOutput('number', number.toString())
+
+      - name: Create single markdown file
+        env:
+          DATE: ${{ steps.info.outputs.date }}
+          BODY: ${{ steps.info.outputs.body }}
+          ISSUE_URL: ${{ steps.info.outputs.url }}
+          AUTHOR: ${{ steps.info.outputs.author }}
+        run: |
+          set -euo pipefail
+          FILE="${DATE}-daily.md"
+          {
+            echo "---"
+            echo "date: ${DATE}"
+            echo "issue: ${ISSUE_URL}"
+            echo "author: ${AUTHOR}"
+            echo "---"
+            echo
+            echo "# 🗓️ Daily Standup — ${DATE}"
+            echo
+            echo "**Source issue:** ${ISSUE_URL}  "
+            echo "**Author:** @${AUTHOR}"
+            echo
+            echo "---"
+            echo
+            printf "%s\n" "${BODY}"
+          } > "${FILE}"
+          echo "Created ${FILE}"
+
+      - name: Upload artifact (single file)
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-${{ steps.info.outputs.date }}
+          path: ${{ steps.info.outputs.date }}-daily.md
+          retention-days: 30
+
+      - name: Comment instructions on the issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = '${{ steps.info.outputs.date }}'
+            const msg = [
+              `The daily doc for **${date}** is ready ✅`,
+              ``,
+              `**How to add it to the repo:**`,
+              `1) Go to this workflow run (GitHub Actions) → **Artifacts** → download **daily-${date}**`,
+              `2) Unzip and place \`${date}-daily.md\` where you want (e.g., \`docs/meetings/dailies/\`)`,
+              `3) Commit in your branch and open a PR`,
+            ].join('\n')
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.issue.number,
+              body: msg
+            })
