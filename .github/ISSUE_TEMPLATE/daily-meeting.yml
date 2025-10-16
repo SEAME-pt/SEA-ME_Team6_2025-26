@@ -1,0 +1,95 @@
+name: "🗓️ Daily Standup"
+description: "Document the team's daily standup in a simple, structured way."
+title: "Daily Standup"
+labels: ["ceremony:daily", "scrum"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Goal
+        Keep this to ~15 minutes. Share progress, surface blockers, align on the day's plan.
+
+  - type: input
+    id: date
+    attributes:
+      label: 📅 Date
+      placeholder: "YYYY-MM-DD"
+    validations:
+      required: true
+
+  - type: input
+    id: sprint
+    attributes:
+      label: 🏁 Sprint / Day
+      placeholder: "Sprint N / Day D"
+    validations:
+      required: true
+
+  - type: input
+    id: facilitator
+    attributes:
+      label: 🧭 Facilitator
+      placeholder: "@username"
+
+  - type: textarea
+    id: participants
+    attributes:
+      label: 👥 Participants
+      placeholder: "@member1, @member2, @member3"
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 📝 Daily Summary (short)
+      description: "Description of today’s focus and outcomes."
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "## 👤 Per-member updates"
+
+  - type: textarea
+    id: members
+    attributes:
+      label: Per-member updates
+      description: "Use one block per person: Yesterday / Today / Blockers / Notes."
+      placeholder: |
+        @member1
+        - Yesterday: …
+        - Today: …
+        - Blockers: …
+        - Notes: …
+
+        @member2
+        - Yesterday: …
+        - Today: …
+        - Blockers: …
+        - Notes: …
+
+  - type: textarea
+    id: objective_of_the_day
+    attributes:
+      label: 🎯 Team objective for the day
+      description: "Top 1–3 things we must accomplish."
+      placeholder: |
+        - [ ] Objective 1
+        - [ ] Objective 2
+        - [ ] Objective 3
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: 🧱 Blockers
+      placeholder: |
+          - Blocker1 <description>
+          - Blocker2 <description>
+
+  - type: textarea
+    id: links
+    attributes:
+      label: 🔗 Links
+      placeholder: |
+        - Sprint board: <URL>
+        - PRs: #10, #11
