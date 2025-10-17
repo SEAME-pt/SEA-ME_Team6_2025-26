@@ -10,6 +10,7 @@ This document explains **how we work** in this repo: branches, commits, PRs, rev
 - [Working Flow](#working-flow)
 - [TSF Traceability (always in PR)](#tsf-traceability-always-in-pr)
 - [Commit Style (Conventional Commits)](#commit-style-conventional-commits)
+- [Issues](#issues)
 - [Pull Requests](#pull-requests)
 - [CI & Automation](#ci--automation)
 - [Sprints](#sprints)
