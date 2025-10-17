@@ -90,7 +90,7 @@ Open PRs from `feature/*` → **dev**. Later, open **dev → main** for releases
 **PR requirements**
 - Use the repo **PR Template**.
 - Clear **Summary**, **Testing steps**, **TSF table**.
-- Link Issues/Epics (`Closes #123`, `Relates to Epic: ...`).
+- Link Issues/Epics (`Relates to Epic: ...`).
 
 **Reviews**
 - 1 approval required for **main**.
