@@ -1,0 +1,1 @@
+/usr/bin/c++ "CMakeFiles/qt-basic-app.dir/qt-basic-app_autogen/mocs_compilation.cpp.o" "CMakeFiles/qt-basic-app.dir/main.cpp.o" -o qt-basic-app  /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.4.2 /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libOpenGL.so 

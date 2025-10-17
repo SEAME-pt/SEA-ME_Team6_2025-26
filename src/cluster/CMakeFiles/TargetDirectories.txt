@@ -1,0 +1,5 @@
+/home/dinoguei/Desktop/SEAME/SEA-ME_Team6/src/CMakeFiles/team6-cluster.dir
+/home/dinoguei/Desktop/SEAME/SEA-ME_Team6/src/CMakeFiles/edit_cache.dir
+/home/dinoguei/Desktop/SEAME/SEA-ME_Team6/src/CMakeFiles/rebuild_cache.dir
+/home/dinoguei/Desktop/SEAME/SEA-ME_Team6/src/CMakeFiles/team6-cluster_autogen_timestamp_deps.dir
+/home/dinoguei/Desktop/SEAME/SEA-ME_Team6/src/CMakeFiles/team6-cluster_autogen.dir
