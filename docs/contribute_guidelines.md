@@ -4,6 +4,19 @@ This document explains **how we work** in this repo: branches, commits, PRs, rev
 
 ---
 
+## 📚 Index
+
+- [Branching](#branching)
+- [Working Flow](#working-flow)
+- [TSF Traceability (always in PR)](#tsf-traceability-always-in-pr)
+- [Commit Style (Conventional Commits)](#commit-style-conventional-commits)
+- [Pull Requests](#pull-requests)
+- [CI & Automation](#ci--automation)
+- [Sprints](#sprints)
+
+---
+
+<a id="branching"></a>
 ## 🔀 Branching
 
 - **main** → protected and release-ready.
@@ -13,7 +26,7 @@ This document explains **how we work** in this repo: branches, commits, PRs, rev
     - `#12-QtApp-mockup`
 
 ---
-
+<a id="working-flow"></a>
 ## 🧭 Working Flow
 
 ```mermaid 
@@ -33,26 +46,7 @@ This document explains **how we work** in this repo: branches, commits, PRs, rev
   Rev-->>Main: Approve PR
   Deve->>Main: Merge PR into main
 ```
-
-## ✅ Definition of Ready (DoR)
-
-A task/issue is **Ready** when:
-- Goal is clear (acceptance criteria written).
-- Linked to an **Epic**.
-- Labeled (e.g., `Sprint 1`, `Type: Task`, `Daily Meeting`, `Blocked`).
-
----
-
-## 🧩 Definition of Done (DoD)
-
-A change is **Done** when:
-- Code compiles; tests pass.
-- **PR template** filled (Summary, Testing, **TSF Traceability**).
-- Evidence added (logs/screenshots).
-- Docs updated (README or `/docs`).
-- At least **1 approval** for PRs into **main**.
----
-
+<a id="tsf-traceability-always-in-pr"></a>
 ## 🧱 TSF Traceability (always in PR)
 
 ** Still working on this part (will update when me and @jpjpcs finish this part) **
@@ -65,7 +59,7 @@ Keep the TSF table updated in the PR body:
 | REQ-002 | Remote control capability | ⚙️ In Progress |
 
 ---
-
+<a id="commit-style-conventional-commits"></a>
 ## 🧠 Commit Style (Conventional Commits)
 
 We should write clear commits, nothing to long.
@@ -74,12 +68,20 @@ Keep it simple for clarity.
 - `feat(ui): add speedometer widget`
 - `fix(rt): correct timer overflow`
 - `docs(workflow): add daily meeting explainer`
-- `chore(ci): bump actions/checkout to v4`
 
 Small commits are easier to review.
 
 ---
+<a id="issues"></a>
+## 🔃 Issues
 
+->The issues are normally open in the begginning of each sprint -- planning.
+
+->Branches are created from the issue.
+
+->When the task of the issue is done -> go to the issue -> comment /taskly -> fill the comment -> close the issue ✅
+
+<a id="pull-requests"></a>
 ## 🔃 Pull Requests
 
 Open PRs from `feature/*` → **dev**. Later, open **dev → main** for releases.
@@ -97,7 +99,7 @@ Open PRs from `feature/*` → **dev**. Later, open **dev → main** for releases
 - Delete merged branches.
 
 ---
-
+<a id="ci--automation"></a>
 ## 🔧 CI & Automation
 
 **(Need to work more on this part, later I will create a document to explain GitHub actions)**
@@ -106,7 +108,7 @@ Open PRs from `feature/*` → **dev**. Later, open **dev → main** for releases
 - **Daily Standup**: Issue form creates an artifact with `YYYY-MM-DD-daily.md` and comments instructions to commit it via normal PR.
 
 ---
-
+<a id="sprints"></a>
 ## 🗺️ Sprints
 
 - Sprint lives in the **Project board** (Sprint view).  
