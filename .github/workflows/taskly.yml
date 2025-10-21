@@ -1,0 +1,145 @@
+name: Taskly (comment -> edit -> download)
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  post-template:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'created' &&
+        github.event.issue.pull_request == null &&
+        github.event.comment.user.login != 'github-actions[bot]' &&
+        contains(github.event.comment.body, '/taskly')
+    steps:
+      - name: Skip if a Taskly template already exists
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.payload.issue.number,
+              per_page: 100
+            })
+            const exists = comments.some(c =>
+              c.user?.login === 'github-actions[bot]' &&
+              (c.body || '').includes('## ✅ Closure Summary')
+            )
+            core.setOutput('exists', String(exists))
+
+      - name: Post template comment
+        if: steps.check.outputs.exists != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const lines = [
+              '## ✅ Closure Summary',
+              '',
+              '**What was done**',
+              '- ',
+              '',
+              '**How it was done (approach / steps)**',
+              '- ',
+              '',
+              '**✍️TSF**',
+              '- Linked Requirements: ',
+              '- ',
+              '**References**',
+              '- PRs: ',
+              '- Docs: ',
+              '- External links: ',
+              '',
+              '> ✍️ Edit this comment to fill the sections above, then save. It will generate a Markdown artifact automatically.'
+            ];
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.issue.number,
+              body: lines.join('\n')
+            });
+
+  build-artifact-from-edited-bot-comment:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'edited' &&
+        github.event.issue.pull_request == null &&
+        github.event.comment.user.login == 'github-actions[bot]' &&
+        github.event.sender.login != 'github-actions[bot]'
+    steps:
+      - name: Extract content
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue
+            const editedComment = context.payload.comment
+            const body = (editedComment.body || '').replace(/\r/g, '')
+            const cleaned = body.trim()
+
+            const dateMatch = cleaned.match(/\b(20\d{2}-\d{2}-\d{2})\b/)
+            const date = (dateMatch && dateMatch[1]) || new Date().toISOString().slice(0,10)
+
+            core.setOutput('content_b64', Buffer.from(cleaned, 'utf8').toString('base64'))
+            core.setOutput('date', date)
+            core.setOutput('number', String(issue.number))
+            core.setOutput('url', issue.html_url)
+            core.setOutput('author', context.payload.sender?.login || 'unknown')
+            core.setOutput('repo', `${context.repo.owner}/${context.repo.repo}`)
+
+      - name: Create markdown file
+        env:
+          DATE: ${{ steps.parse.outputs.date }}
+          NUMBER: ${{ steps.parse.outputs.number }}
+          URL: ${{ steps.parse.outputs.url }}
+          AUTHOR: ${{ steps.parse.outputs.author }}
+          CONTENT_B64: ${{ steps.parse.outputs.content_b64 }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          FILE="out/issue-${NUMBER}-closure-${DATE}.md"
+          {
+            echo "---"
+            echo "issue: ${URL}"
+            echo "issue_number: ${NUMBER}"
+            echo "author: ${AUTHOR}"
+            echo "date: ${DATE}"
+            echo "---"
+            echo
+            echo "# ✅ Closure Summary — Issue #${NUMBER}"
+            echo
+            echo "${CONTENT_B64}" | base64 -d
+            echo
+          } > "${FILE}"
+          echo "FILE=${FILE}" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-issue-${{ steps.parse.outputs.number }}-${{ steps.parse.outputs.date }}
+          path: ${{ env.FILE }}
+          retention-days: 30
+
+      - name: Confirm on the issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = '${{ steps.parse.outputs.repo }}'
+            const runUrl = `https://github.com/${repo}/actions/runs/${{ github.run_id }}`
+            const number = Number('${{ steps.parse.outputs.number }}')
+            const date = '${{ steps.parse.outputs.date }}'
+            const msg = [
+              `Artifact generated from your edited summary ✅`,
+              ``,
+              `- **Issue**: #${number} (${ '${{ steps.parse.outputs.url }}' })`,
+              `- **Run**: ${runUrl}`,
+              ``,
+              `Download artifact: **closure-issue-${number}-${date}**`
+            ].join('\n')
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: number,
+              body: msg
+            })
