@@ -1,0 +1,64 @@
+# .github/ISSUE_TEMPLATE/task.yml
+name: "🧩 Task"
+description: "Create an implementation work item linked to an Epic and TSF requirements."
+title: "[Task] <short, action-oriented title>"
+labels: ["Type: Task"]
+assignees: []
+
+body:
+  - type: input
+    id: epic_link
+    attributes:
+      label: Epic
+      description: "Link the parent Epic (issue number or URL)."
+      placeholder: "#<epic-number> or full URL"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (Critical)
+        - P1 (High)
+        - P2 (Medium)
+        - P3 (Low)
+    validations:
+      required: true
+
+  - type: input
+    id: sprint
+    attributes:
+      label: Sprint
+      placeholder: "Sprint 1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: "What will be delivered? Keep it outcome-focused."
+      placeholder: "Implement SpeedWidget in Qt and bind to vehicle speed topic."
+    validations:
+      required: true
+
+  - type: textarea
+    id: tsf_reqs
+    attributes:
+      label: TSF — Related Requirement IDs
+      description: "List the REQ IDs this task implements (and optional links)."
+      placeholder: |
+        REQ-002
+        docs/tsf/requirements/L2-Software-Requirements.md#req-002--display-current-speed-on-ui
+    validations:
+      required: true
+
+  - type: input
+    id: links
+    attributes:
+      label: Related Links (Issues/PRs/Docs)
+      placeholder: "Closes #<task>, Relates #<issue>;"
+    validations:
+      required: false
