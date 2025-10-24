@@ -110,38 +110,153 @@ Portanto, **não é preciso usar uma matriz de rastreabilidade tradicional** —
 
 ## ⚙️ 6. Exemplo simplificado de implementação
 
-Imagina que tens um projeto `XYZ` com o objetivo de provar que é **seguro e confiável**:
 
-### 🪄 Cria o repositório
+### 1️⃣ O que é um grafo (no contexto do TSF)
+
+Um grafo é basicamente um conjunto de pontos ligados entre si por linhas, onde:
+
+Cada ponto é um Statement (declaração sobre o software).
+
+Cada linha é uma ligação lógica que diz “uma coisa leva à outra” ou “uma coisa depende da outra”.
+
+No TSF, usamos um tipo especial chamado DAG – Directed Acyclic Graph:
+
+Directed → cada ligação tem direção (de A para B, ou seja, A suporta B).
+
+Acyclic → não podes dar voltas infinitas; não pode haver ciclo (A depende de B, B depende de C, C depende de A → isso não é permitido).
+
+💡 Analogia simples:
+Imagina que tens uma árvore genealógica, onde cada pessoa (Statement) está ligada aos filhos (ou pais). Não podes ter alguém sendo “pai de si próprio” — isso seria um ciclo.
+
+### 2️⃣ Tipos de Statements
+
+No TSF, cada Statement é um tipo de ponto no grafo, com papel diferente:
+
+Tipo	Descrição	Exemplo
+Expectation	O que o software deve fazer, definido pelos stakeholders	“O sistema deve responder em menos de 200ms”
+Assertion	Ligação lógica entre Expectations e Evidences	“Testes de performance são automatizados”
+Evidence (Premise)	Provas concretas que suportam um Assertion	“Resultados de testes automáticos mostram média 180ms”
+Assumption	Algo externo que supomos verdadeiro	“O sistema roda no Linux”
+
+Como se liga no grafo:
+
+Expectation → apoiada por Assertions
+
+Assertions → apoiadas por Evidence
+
+Assumptions → podem ser ligados como condições externas
+
+### 3️⃣ Como se constrói um grafo TSF na prática
+
+Decide o que queres provar sobre o software (Expectations).
+Ex: “Software XYZ é seguro”
+
+Cria Statements que expliquem o caminho para essa Expectation
+
+Assertion: “Código passou em testes de segurança automatizados”
+
+Evidence: “Logs dos testes mostram 0 falhas”
+
+Ligas os Statements (linha do grafo)
+
+Assertion liga-se à Expectation
+
+Evidence liga-se à Assertion
+
+O TruDAG ajuda a gerir isto
+
+Cada Statement e cada ligação é registada no Git
+
+Depois, o TruDAG consegue calcular um confidence score: quão confiável é essa Expectation com base nas Evidences disponíveis
+
+### 4️⃣ Representação visual simples
+
+```bash
+Expectation: Software XYZ é seguro
+        |
+     Assertion: Testes automatizados de segurança OK
+        |
+     Evidence: Logs CI/CD mostram 0 falhas
+        |
+   Assumption: Roda no Linux
+```
+
+Cada nível é uma camada do grafo
+
+Se muda algo (ex: falha nos testes), o TruDAG marca automaticamente o Statement como Suspect → sinal que precisa de revisão
+
+### 5️⃣ Implementação prática com TruDAG
+
+Vamos imaginar que temos um projeto `XYZ` com o objetivo de provar que é **seguro e confiável**:
+
+###  🪄 Passo 1: Criar o repositório
 
 ```bash
 git init XYZ
 cd XYZ
 ```
 
-### 📦 Instala o TruDAG
+### 📦 Passo 2: Instalar o TruDAG
 
 ```bash
 pipx install trustable
 ```
 
-### 🧱 Adiciona Statements
+OU
+
+```bash
+pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
+```
+
+### 🧱 Passo 3: Criar e Adicionar Statements
 ```bash
 trustable add "The software passes all critical security tests" --type Expectation
 trustable add "Security tests are executed automatically in CI" --type Assertion
 trustable add "CI results are published and reviewed weekly" --type Evidence
 ```
 
-### 🔗 Liga os Statements
+OU 
+
+```bash
+trustable add "Software XYZ é seguro" --type Expectation
+trustable add "Testes de segurança automáticos OK" --type Assertion
+trustable add "Logs CI/CD mostram 0 falhas" --type Evidence
+trustable add "Roda no Linux" --type Assumption
+```
+
+### 🔗 Passo 4: Criar Ligacoes/Ligar os Statements
 ```bash
 trustable link "Security tests are executed automatically in CI" "The software passes all critical security tests"
 trustable link "CI results are published and reviewed weekly" "Security tests are executed automatically in CI"
 ```
 
-### 🧩 Executa a avaliação
+OU
+
+```bash
+trustable link "Testes de segurança automáticos OK" "Software XYZ é seguro"
+trustable link "Logs CI/CD mostram 0 falhas" "Testes de segurança automáticos OK"
+trustable link "Roda no Linux" "Testes de segurança automáticos OK"
+```
+
+
+### 🧩 Avaliar a Confianca e Executar a avaliação
 ```bash
 trustable evaluate
 ```
+
+TruDAG percorre o grafo, verifica todas as ligações e evidencia, e calcula quanto podemos confiar na Expectation.
+
+### 🔑 6️⃣ O segredo da implementação
+
+Não é uma matriz de Excel — é um grafo de Statements dentro do Git
+
+Cada Statement é rastreável e ligado à evidência concreta
+
+O TruDAG automatiza a criação, ligação e análise do grafo
+
+Confiança é calculada automaticamente, mas a revisão humana ainda é essencial
+
+
 
 ### ➡️ Resultado: um relatório com confidence score, evidências e dependências lógicas rastreáveis.
 
