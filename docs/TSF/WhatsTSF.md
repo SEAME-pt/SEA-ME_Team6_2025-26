@@ -173,5 +173,18 @@ TruDAG Installation Guide
 
 TSF Documentation Index
 
+
+https://projects.eclipse.org/projects/technology.tsf
+https://gitlab.com/CodethinkLabs/trustable/trustable
+https://codethinklabs.gitlab.io/trustable/trustable/index.html
+
+instalar a ferramenta da eclipse para o TSF
+https://codethinklabs.gitlab.io/trustable/trustable/trudag/install.html#user
+
+metodologia e aboardagem do TSF
+https://codethinklabs.gitlab.io/trustable/trustable/methodology.html
+
+
+
 ## 💡 “Any consideration of trust must be based on evidence.”
 — Trustable Software Framework
