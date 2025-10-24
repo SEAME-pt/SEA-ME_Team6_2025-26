@@ -14,10 +14,10 @@
 ---
 
 ## 📈 Actual Progress
-- **Completed tasks**: `10 / 20` (**50%**) 
+- **Completed tasks**: `15 / 16` (**93.75%**) 
 
 _Optional detail_:
-- ✅ Done: #17, #15, #11  
+- ✅ Done: #3, #4, #5, #7, #8, #9, #11, #12, #14, #15, #17, #19, #20, #21, #27  
 - ⏳ Blocked: #2   
 
 ---
@@ -30,14 +30,14 @@ _Optional detail_:
 
 ---
 
-## ✅ Outcomes (end of sprint)
+## ✅ Outcomes
 - **Delivered**: _List key increments delivered to `dev`/`main` (links to PRs/releases)._
 - **Demos**: _What was shown; screenshots/links if any._
 - **Docs updated**: _Links to READMEs / Docs_
 
 ---
 
-## 🔎 Retrospective (high level)
+## 🔎 Retrospective
 - **Went well**: _…_
 - **To improve**: _…_
 - **What we didn't do**: _…_
