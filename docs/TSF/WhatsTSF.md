@@ -70,13 +70,13 @@ Serve para **criar, gerir e avaliar os “Trustable Graphs”** no teu repositó
 ### 🔹 Instalação
 
 ```bash
-pipx install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple«
+pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple«
 ```
 
 OU
 
 ```bash
-pip install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
+pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
 ## 🔹 Uso básico
@@ -266,15 +266,15 @@ O TSF é uma abordagem moderna e formal para avaliar confiança em software, sub
 
 ✅ Para implementar na prática:
 
-Usar o TruDAG (ferramenta oficial em Python);
+- Usar o TruDAG (ferramenta oficial em Python);
 
-Modelar o projeto como um grafo de Statements;
+- Modelar o projeto como um grafo de Statements;
 
-Ligar evidências e artefactos concretos;
+- Ligar evidências e artefactos concretos;
 
-Automatizar a análise via CI/CD;
+- Automatizar a análise via CI/CD;
 
-Dispensar folhas planeamento e ferramentas de rastreabilidade tradicionais.
+- Dispensar folhas planeamento e ferramentas de rastreabilidade tradicionais.
 
 ## 📚 Referências
 
