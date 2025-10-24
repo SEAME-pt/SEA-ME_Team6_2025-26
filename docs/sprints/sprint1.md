@@ -5,16 +5,16 @@
 ---
 
 ## 📌 Epics
-- [ ] **Epic 1** — Hardware Assembly - [Epic 1 - #2](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133634028&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C2)
-- [ ] **Epic 2** — Software Setup - [Epic 2 - #6](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133636567&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C6)
+- [x] **Epic 1** — Hardware Assembly - [Epic 1 - #2](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133634028&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C2)
+- [x] **Epic 2** — Software Setup - [Epic 2 - #6](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133636567&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C6)
 - [ ] **Epic 3** — Development of Qt App - [Epic 3 - #10](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133637985&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C10)
 - [ ] **Epic 4** — Project & GitHub setup - [Epic 4 - #13](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133639290&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C13)
-- [ ] **Epic 5** — TSF & Documentation - [Epic 5 - #18](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133640653&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C18)
+- [x] **Epic 5** — TSF & Documentation - [Epic 5 - #18](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133640653&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C18)
 
 ---
 
 ## 📈 Actual Progress
-- **Completed tasks**: `15 / 16` (**93.75%**) 
+- **Completed tasks**: `14 / 16` (**87.5%**) 
 
 _Optional detail_:
 - ✅ Done: #3, #4, #5, #7, #8, #9, #11, #12, #14, #15, #17, #19, #20, #21, #27  
@@ -31,19 +31,38 @@ _Optional detail_:
 ---
 
 ## ✅ Outcomes
-- **Delivered**: _List key increments delivered to `dev`/`main` (links to PRs/releases)._
-- **Demos**: _What was shown; screenshots/links if any._
-- **Docs updated**: _Links to READMEs / Docs_
+- **Delivered**:
+    - Qt app code in [Qt app](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+- **Demos**:
+  
+    - ![Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car1.jpeg)
+    - ![Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car2.jpeg)
+    - ![Demo video]()
+      
+- **Docs updated**:
+    - Documentation in [Docs](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs)
 
 ---
 
 ## 🔎 Retrospective
-- **Went well**: _…_
-- **To improve**: _…_
-- **What we didn't do**: _…_
+- **Went well**:
+  - We were able to do **14** of the **16** tasks of this sprint! (**87.5%**)
+  - We did research about the next steps
+  - The team communicated well and was able to solve problems together
+- **To improve**:
+  - Improved Agile task managment:
+      - Implement Priority level in tasks
+      - Add Time estimates to tasks for better planning
+- **What we didn't do**:
+  - Auto-start of Qt app on boot - maybe we we're too ambitious
+  - Complete GitHub setup (branch protection - reviewers)
+ 
+## 🧭 **Action Items for Next Sprint**
+- Implement auto-start for Qt app  
+- Improve sprint planning templates (add estimated time & priority)
+
 
 ---
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 1](https://github.com/orgs/SEAME-pt/projects/89/views/1)
-- Other links:
