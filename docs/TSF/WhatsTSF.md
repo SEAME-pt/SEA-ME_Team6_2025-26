@@ -106,6 +106,16 @@ Scalability	Limited	High, with composition across projects
 
 Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is the practical management tool.
 
+| Method                  | Traditional Form                     | TSF / TruDAG                                     |
+| ----------------------- | ------------------------------------ | ------------------------------------------------ |
+| **Traceability Matrix** | Manually in Excel or dedicated tools | Represented as a **graph (DAG)** in Git          |
+| **Evidence**            | Linked via documents                 | Linked via **verifiable artifacts and metadata** |
+| **Updates**             | Manual, error-prone                  | **Automated** via CI/CD                          |
+| **Assessment**          | Subjective                           | **Quantifiable** with “Confidence Scores”        |
+| **Scalability**         | Limited                              | **High**, with composition across projects       |
+
+
+
 ## ⚙️ 6. Simplified Implementation Example
 ### 1️⃣ What is a Graph (in TSF context)
 
