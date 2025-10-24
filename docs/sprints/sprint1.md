@@ -17,8 +17,8 @@
 - **Completed tasks**: `14 / 16` (**87.5%**) 
 
 _Optional detail_:
-- ✅ Done: #3, #4, #5, #7, #8, #9, #11, #12, #14, #15, #17, #19, #20, #21, #27  
-- ⏳ Blocked: #2   
+- ✅ Done: #3, #4, #5, #7, #8, #9, #11, #14, #15, #17, #19, #20, #21, #27  
+- ⏳ Blocked: #2, #12
 
 ---
 
@@ -37,7 +37,11 @@ _Optional detail_:
   
     - ![Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car1.jpeg)
     - ![Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car2.jpeg)
-    - ![Demo video]()
+    - ![QtApp](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/first_qt_app.jpeg)
+    - ![mockup1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup5.jpeg)
+    - ![mockup2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup3.jpeg)
+    - ![mockup3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup2.jpeg)
+    - ![mockup4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup6.jpeg)
       
 - **Docs updated**:
     - Documentation in [Docs](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs)
@@ -54,7 +58,7 @@ _Optional detail_:
       - Implement Priority level in tasks
       - Add Time estimates to tasks for better planning
 - **What we didn't do**:
-  - Auto-start of Qt app on boot - maybe we we're too ambitious
+  - Auto-start of Qt app on boot
   - Complete GitHub setup (branch protection - reviewers)
  
 ## 🧭 **Action Items for Next Sprint**
