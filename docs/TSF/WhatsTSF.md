@@ -239,7 +239,7 @@ trustable link "Roda no Linux" "Testes de segurança automáticos OK"
 ```
 
 
-### 🧩 Avaliar a Confianca e Executar a avaliação
+### 🧩 Passo 5: Avaliar a Confianca e Executar a avaliação
 ```bash
 trustable evaluate
 ```
