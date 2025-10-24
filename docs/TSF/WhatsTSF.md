@@ -1,305 +1,261 @@
-# 🧩 Trustable Software Framework (TSF) — Resumo e Implementação
+# 🧩 Trustable Software Framework (TSF) — Overview and Implementation
 
-## 1. O que é o TSF (Trustable Software Framework)
+## 1. What is TSF (Trustable Software Framework)
 
-O **Eclipse Trustable Software Framework (TSF)** é um **modelo e metodologia para avaliar o “grau de confiança” (trustability)** de um software, com base em **evidências verificáveis** sobre como ele é desenvolvido, testado e mantido.
+The **Eclipse Trustable Software Framework (TSF)** is a **model and methodology to assess the "trustability" of software**, based on **verifiable evidence** of how it is developed, tested, and maintained.
 
-Em vez de depender de documentos Word, Excel ou de ferramentas de requisitos proprietárias, o TSF integra **os metadados de confiança diretamente no repositório Git** do projeto (junto ao código, documentação e testes).  
+Instead of relying on Word documents, Excel sheets, or proprietary requirements tools, TSF integrates **trust metadata directly into the project's Git repository** (alongside code, documentation, and tests).
 
-O TSF foca-se em **sistemas críticos** — onde **segurança, performance, disponibilidade e fiabilidade** são aspetos essenciais — e permite:
-- **Rastrear expectativas e evidências** (quem garante o quê e com base em que provas);
-- **Quantificar confiança** (através de “scores”);
-- **Manter coerência** entre o que o software afirma fazer e o que realmente faz.
+TSF focuses on **critical systems**—where **security, performance, availability, and reliability** are essential—and allows you to:
+- **Track expectations and evidence** (who guarantees what and based on which proofs);
+- **Quantify trust** (via scores);
+- **Maintain consistency** between what the software claims to do and what it actually does.
 
 ---
 
-## 2. O que se sabe até hoje (estado atual do projeto)
+## 2. Current Status
 
-- O TSF está **em incubação no Eclipse Foundation**, com o **desenvolvimento ativo pela Codethink**.  
-- É **open source**, com licenças **EPL 2.0** e **CC BY-SA 4.0**.  
-- O desenvolvimento principal ocorre no GitLab da Codethink:  
+- TSF is **incubated at the Eclipse Foundation**, with **active development by Codethink**.  
+- It is **open source**, licensed under **EPL 2.0** and **CC BY-SA 4.0**.  
+- Main development occurs on Codethink's GitLab:  
   👉 [https://gitlab.com/CodethinkLabs/trustable/trustable](https://gitlab.com/CodethinkLabs/trustable/trustable)
-- O **tooling oficial** chama-se **TruDAG** (Trustable Directed Acyclic Graph tool), implementado em Python.  
-- O modelo baseia-se em **gráficos acíclicos direcionados (DAGs)** compostos por **Statements (declarações)** ligadas por relações lógicas.
+- The **official tooling** is **TruDAG** (Trustable Directed Acyclic Graph tool), implemented in Python.  
+- The model is based on **Directed Acyclic Graphs (DAGs)** composed of **Statements** linked by logical relationships.
 
-### 🔹 Estrutura conceitual
+### 🔹 Conceptual Structure
 
-Cada projeto é descrito por um **grafo de confiança**, composto por:
-- **Expectations** → requisitos ou objetivos definidos pelos stakeholders.  
-- **Assertions** → afirmações que ligam expectativas e evidências.  
-- **Premises / Evidence** → provas concretas (documentos, código, resultados de testes, auditorias, etc).  
-- **Assumptions** → condições externas ao projeto, mas necessárias (ex: dependência de um SO específico).
+Each project is described by a **trust graph**, composed of:
+- **Expectations** → requirements or goals defined by stakeholders.  
+- **Assertions** → statements connecting expectations and evidence.  
+- **Premises / Evidence** → concrete proofs (documents, code, test results, audits, etc.).  
+- **Assumptions** → external conditions necessary for the project (e.g., OS dependency).
 
-A partir destes elementos, o TSF constrói um **modelo rastreável**, permitindo:
-- Justificar cada requisito com evidências.
-- Ligar resultados de testes e análises automáticas.
-- Avaliar **Confidence Scores** (níveis de confiança) automaticamente via CI/CD.
-
----
-
-## 3. Como implementar o TSF na prática
-
-### 🧾 Etapas resumidas da metodologia
-
-1. **Definir Expectativas (Expectations)**  
-   → O que o software deve fazer (funcional e não funcional).  
-   Exemplo: “O sistema deve responder em menos de 200ms em 95% das requisições.”
-
-2. **Identificar Evidências (Evidence)**  
-   → Quais artefactos provam essas afirmações?  
-   Exemplo: testes automatizados, logs de performance, revisões de código, documentação de segurança.
-
-3. **Documentar Assumptions (Premissas externas)**  
-   → O que depende de fatores fora do teu controlo (ex: infraestrutura do cliente).
-
-4. **Registar a Lógica (Assertions)**  
-   → Criar ligações entre Expectations e Evidence, formando um **grafo acíclico (DAG)**.  
-   Cada ligação representa uma dedução lógica (“esta evidência suporta esta expectativa”).
-
-5. **Avaliar Confiança (Confidence Assessment)**  
-   → Automatizar a recolha de métricas e gerar pontuações.  
-   (Isto pode ser integrado no pipeline CI/CD.)
+From these elements, TSF builds a **traceable model**, allowing you to:
+- Justify each requirement with evidence.
+- Link test results and automated analyses.
+- Automatically evaluate **Confidence Scores** via CI/CD.
 
 ---
 
-## 4. Ferramentas para implementar: TruDAG
+## 3. How to Implement TSF in Practice
 
-O **TruDAG** (Trustable DAG Tool) é o **software oficial** para operacionalizar o TSF.  
-Serve para **criar, gerir e avaliar os “Trustable Graphs”** no teu repositório Git.
+### 🧾 Methodology Steps
 
-### 🔹 Instalação
+1. **Define Expectations**  
+   → What the software should achieve (functional and non-functional).  
+   Example: “The system must respond in under 200ms for 95% of requests.”
+
+2. **Identify Evidence**  
+   → Which artifacts prove these claims?  
+   Example: automated tests, performance logs, code reviews, security documentation.
+
+3. **Document Assumptions**  
+   → External factors the project depends on (e.g., client infrastructure).
+
+4. **Record Logic (Assertions)**  
+   → Create links between Expectations and Evidence, forming a **DAG**.  
+   Each link represents a logical deduction (“this evidence supports this expectation”).
+
+5. **Assess Confidence**  
+   → Automate metric collection and generate scores.  
+   (This can be integrated into CI/CD pipelines.)
+
+---
+
+## 4. Tools: TruDAG
+
+**TruDAG** is the **official tool** for implementing TSF.  
+It allows you to **create, manage, and evaluate Trustable Graphs** directly in your Git repository.
+
+### 🔹 Installation
 
 ```bash
-pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple«
+pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-OU
+OR 
 
 ```bash
 pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-## 🔹 Uso básico
+🔹 Basic Usage
 
-Depois de instalado, podes:
+After installation, you can:
 
-- Criar **Statements** (*Expectations*, *Assertions*, *Evidence*, *Assumptions*);
-- Definir **links** entre eles;
-- Associar **artefactos** (ficheiros, testes, outputs);
-- Gerar **Confidence Scores** e relatórios.
+Create Statements (Expectations, Assertions, Evidence, Assumptions);
 
-> 🧩 Cada Statement e as suas ligações ficam registados no próprio repositório **Git**, garantindo **rastreabilidade nativa**.
+Define links between them;
 
----
+Associate artifacts (files, tests, outputs);
 
-## 🧮 5. Relação com Traceability Matrix e outras abordagens
+Generate Confidence Scores and reports.
 
-O **TSF** substitui (ou generaliza) a tradicional **traceability matrix** (matriz de rastreabilidade de requisitos), mas de forma **automatizada e viva**, não documental.
+🧩 Each Statement and its links are recorded in the Git repository, ensuring native traceability.
 
-| Método | Forma tradicional | TSF / TruDAG |
-|--------|------------------|--------------|
-| **Traceability Matrix** | Feita manualmente em Excel ou ferramenta dedicada | Representada como um **grafo (DAG)** em Git |
-| **Evidência** | Ligada via documentos | Ligada via **artefactos e metadados verificáveis** |
-| **Atualização** | Manual, sujeita a erro | **Automatizada** via CI/CD |
-| **Avaliação** | Subjetiva | **Quantificável** com “Confidence Scores” |
-| **Escalabilidade** | Difícil | **Elevada**, com composição entre projetos |
+## 🧮 5. Relation to Traceability Matrix and Other Approaches
 
-Portanto, **não é preciso usar uma matriz de rastreabilidade tradicional** — o **grafo do TSF** já a substitui, e o **TruDAG** é a ferramenta prática para gerir isso.
+TSF replaces (or generalizes) traditional traceability matrices, but in a live and automated form rather than static documents.
 
----
+Method	Traditional Form	TSF / TruDAG
+Traceability Matrix	Manually in Excel or dedicated tools	Represented as a graph (DAG) in Git
+Evidence	Linked via documents	Linked via verifiable artifacts and metadata
+Updates	Manual, error-prone	Automated via CI/CD
+Assessment	Subjective	Quantifiable with “Confidence Scores”
+Scalability	Limited	High, with composition across projects
 
-## ⚙️ 6. Exemplo simplificado de implementação
+Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is the practical management tool.
 
+## ⚙️ 6. Simplified Implementation Example
+### 1️⃣ What is a Graph (in TSF context)
 
-### 1️⃣ O que é um grafo (no contexto do TSF)
+A graph is a set of nodes connected by edges:
 
-Um grafo é basicamente um conjunto de pontos ligados entre si por linhas, onde:
+Each node is a Statement (a claim about the software).
 
-Cada ponto é um Statement (declaração sobre o software).
+Each edge is a logical link, meaning “this leads to that” or “this depends on that”.
 
-Cada linha é uma ligação lógica que diz “uma coisa leva à outra” ou “uma coisa depende da outra”.
+TSF uses a DAG – Directed Acyclic Graph:
 
-No TSF, usamos um tipo especial chamado DAG – Directed Acyclic Graph:
+Directed → edges have direction (A supports B).
 
-Directed → cada ligação tem direção (de A para B, ou seja, A suporta B).
+Acyclic → no cycles allowed (A cannot depend on itself indirectly).
 
-Acyclic → não podes dar voltas infinitas; não pode haver ciclo (A depende de B, B depende de C, C depende de A → isso não é permitido).
+💡 Simple analogy:
+Imagine a family tree: each person (Statement) is linked to parents/children. No one can be their own ancestor → no cycles.
 
-💡 Analogia simples:
-Imagina que tens uma árvore genealógica, onde cada pessoa (Statement) está ligada aos filhos (ou pais). Não podes ter alguém sendo “pai de si próprio” — isso seria um ciclo.
+### 2️⃣ Types of Statements
+Type	Description	Example
+Expectation	What the software should achieve (defined by stakeholders)	“System responds under 200ms”
+Assertion	Logical link between Expectations and Evidence	“Performance tests are automated”
+Evidence (Premise)	Concrete proof supporting an Assertion	“Automated tests show avg 180ms”
+Assumption	External factor presumed true	“System runs on Linux”
 
-### 2️⃣ Tipos de Statements
+Links in the graph:
 
-No TSF, cada Statement é um tipo de ponto no grafo, com papel diferente:
+Expectation → supported by Assertions
 
-Tipo	Descrição	Exemplo
-Expectation	O que o software deve fazer, definido pelos stakeholders	“O sistema deve responder em menos de 200ms”
-Assertion	Ligação lógica entre Expectations e Evidences	“Testes de performance são automatizados”
-Evidence (Premise)	Provas concretas que suportam um Assertion	“Resultados de testes automáticos mostram média 180ms”
-Assumption	Algo externo que supomos verdadeiro	“O sistema roda no Linux”
+Assertions → supported by Evidence
 
-Como se liga no grafo:
+Assumptions → linked as external conditions
 
-Expectation → apoiada por Assertions
+### 3️⃣ Building a TSF Graph Practically
 
-Assertions → apoiadas por Evidence
+Define what you want to prove (Expectation).
+Example: “Software XYZ is safe”
 
-Assumptions → podem ser ligados como condições externas
+Create Statements to explain the path:
 
-### 3️⃣ Como se constrói um grafo TSF na prática
+Assertion: “Code passed automated security tests”
 
-Decide o que queres provar sobre o software (Expectations).
-Ex: “Software XYZ é seguro”
+Evidence: “Test logs show 0 failures”
 
-Cria Statements que expliquem o caminho para essa Expectation
+Link Statements in the graph:
 
-Assertion: “Código passou em testes de segurança automatizados”
+Assertion → linked to Expectation
 
-Evidence: “Logs dos testes mostram 0 falhas”
+Evidence → linked to Assertion
 
-Ligas os Statements (linha do grafo)
+TruDAG manages this process.
+Each Statement and link is recorded in Git.
+TruDAG can then calculate a confidence score: how trustworthy is this Expectation based on available Evidence.
 
-Assertion liga-se à Expectation
-
-Evidence liga-se à Assertion
-
-O TruDAG ajuda a gerir isto
-
-Cada Statement e cada ligação é registada no Git
-
-Depois, o TruDAG consegue calcular um confidence score: quão confiável é essa Expectation com base nas Evidences disponíveis
-
-### 4️⃣ Representação visual simples
-
-```bash
-Expectation: Software XYZ é seguro
+### 4️⃣ Simple Visual Representation
+Expectation: Software XYZ is safe
         |
-     Assertion: Testes automatizados de segurança OK
+     Assertion: Automated security tests passed
         |
-     Evidence: Logs CI/CD mostram 0 falhas
+     Evidence: CI/CD logs show 0 failures
         |
-   Assumption: Roda no Linux
-```
+   Assumption: Runs on Linux
 
-Cada nível é uma camada do grafo
 
-Se muda algo (ex: falha nos testes), o TruDAG marca automaticamente o Statement como Suspect → sinal que precisa de revisão
+Each level is a layer of the graph.
 
-### 5️⃣ Implementação prática com TruDAG
+If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect, signaling a review is needed.
 
-Vamos imaginar que temos um projeto `XYZ` com o objetivo de provar que é **seguro e confiável**:
+### 5️⃣ Practical Implementation with TruDAG
 
-###  🪄 Passo 1: Criar o repositório
+Assume a project XYZ aims to prove it is safe and trustworthy.
 
+### 🪄 Step 1: Initialize Repository
 ```bash
 git init XYZ
 cd XYZ
 ```
 
-### 📦 Passo 2: Instalar o TruDAG
-
+### 📦 Step 2: Install TruDAG / Trustable
 ```bash
-pipx install trudag
+pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-OU
+OR
 
 ```bash
-pipx install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
+pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-### 🧱 Passo 3: Criar e Adicionar Statements
+### 🧱 Step 3: Create Statements
 ```bash
-trudag add "The software passes all critical security tests" --type Expectation
-trudag add "Security tests are executed automatically in CI" --type Assertion
-trudag add "CI results are published and reviewed weekly" --type Evidence
+trudag manage create-item "Software XYZ is safe" ./XYZ/ --type Expectation
+trudag manage create-item "Automated security tests passed" ./XYZ/ --type Assertion
+trudag manage create-item "CI/CD logs show 0 failures" ./XYZ/ --type Evidence
+trudag manage create-item "Runs on Linux" ./XYZ/ --type Assumption
 ```
 
-OU 
-
+### 🔗 Step 4: Link Statements
 ```bash
-trudag add "Software XYZ é seguro" --type Expectation
-trudag add "Testes de segurança automáticos OK" --type Assertion
-trudag add "Logs CI/CD mostram 0 falhas" --type Evidence
-trudag add "Roda no Linux" --type Assumption
+trudag manage create-link "Automated security tests passed" "Software XYZ is safe"
+trudag manage create-link "CI/CD logs show 0 failures" "Automated security tests passed"
+trudag manage create-link "Runs on Linux" "Automated security tests passed"
 ```
 
-### 🔗 Passo 4: Criar Ligacoes/Ligar os Statements
+### 🧩 Step 5: Evaluate Confidence
 ```bash
-trudag link "Security tests are executed automatically in CI" "The software passes all critical security tests"
-trudag link "CI results are published and reviewed weekly" "Security tests are executed automatically in CI"
+trudag score
 ```
 
-OU
+TruDAG traverses the graph, checks all links and evidence, and calculates how much we can trust the Expectation.
 
-```bash
-trudag link "Testes de segurança automáticos OK" "Software XYZ é seguro"
-trudag link "Logs CI/CD mostram 0 falhas" "Testes de segurança automáticos OK"
-trudag link "Roda no Linux" "Testes de segurança automáticos OK"
-```
+### 🔑 Step 6: Key Takeaways
 
+Not a static Excel matrix — it is a graph of Statements in Git.
 
-### 🧩 Passo 5: Avaliar a Confianca e Executar a avaliação
-```bash
-trudag evaluate
-```
+Each Statement is traceable and linked to concrete evidence.
 
-TruDAG percorre o grafo, verifica todas as ligações e evidencia, e calcula quanto podemos confiar na Expectation.
+TruDAG automates creation, linking, and analysis.
 
-### 🔑 6️⃣ O segredo da implementação
+Confidence is calculated automatically, but human review remains essential.
 
-Não é uma matriz de Excel — é um grafo de Statements dentro do Git
+➡️ Outcome: a report with confidence scores, evidence, and traceable logical dependencies.
 
-Cada Statement é rastreável e ligado à evidência concreta
+## 🧭 7. Conclusion
 
-O TruDAG automatiza a criação, ligação e análise do grafo
+TSF provides a modern, formal approach to assess software trustability, replacing manual documents and matrices with a declarative, traceable structure integrated into the development workflow.
 
-Confiança é calculada automaticamente, mas a revisão humana ainda é essencial
+### ✅ Practical steps:
 
+- Use TruDAG (official Python tool)
 
+- Model the project as a graph of Statements
 
-### ➡️ Resultado: um relatório com confidence score, evidências e dependências lógicas rastreáveis.
+- Link concrete evidence and artifacts
 
-## 🧭 7. Conclusão
+- Automate analysis via CI/CD
 
-O TSF é uma abordagem moderna e formal para avaliar confiança em software, substituindo documentos e matrizes manuais por uma estrutura declarativa e rastreável, integrada no ciclo de desenvolvimento.
+- Discard traditional spreadsheets and traceability tools
 
-✅ Para implementar na prática:
+## 📚 References
 
-- Usar o TruDAG (ferramenta oficial em Python);
+- Eclipse TSF Project Page: https://projects.eclipse.org/projects/technology.tsf
 
-- Modelar o projeto como um grafo de Statements;
+- Codethink TSF GitLab: https://gitlab.com/CodethinkLabs/trustable/trustable
 
-- Ligar evidências e artefactos concretos;
+- TruDAG Methodology & Documentation: https://codethinklabs.gitlab.io/trustable/trustable/index.html
 
-- Automatizar a análise via CI/CD;
+- TruDAG Installation Guide: https://codethinklabs.gitlab.io/trustable/trustable/trudag/install.html#user
 
-- Dispensar folhas planeamento e ferramentas de rastreabilidade tradicionais.
-
-## 📚 Referências
-
-Eclipse TSF Project Page
-
-Codethink TSF GitLab
-
-trudag Methodology
-
-TruDAG Installation Guide
-
-TSF Documentation Index
-
-
-https://projects.eclipse.org/projects/technology.tsf
-
-https://gitlab.com/CodethinkLabs/trustable/trustable
-
-https://codethinklabs.gitlab.io/trustable/trustable/index.html
-
-instalar a ferramenta da eclipse para o TSF
-https://codethinklabs.gitlab.io/trustable/trustable/trudag/install.html#user
-
-metodologia e aboardagem do TSF
-https://codethinklabs.gitlab.io/trustable/trustable/methodology.html
+- TSF Methodology Overview: https://codethinklabs.gitlab.io/trustable/trustable/methodology.html
 
 
 
