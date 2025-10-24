@@ -70,13 +70,13 @@ Serve para **criar, gerir e avaliar os “Trustable Graphs”** no teu repositó
 ### 🔹 Instalação
 
 ```bash
-pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple«
+pipx install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple«
 ```
 
 OU
 
 ```bash
-pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
+pip install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
 ## 🔹 Uso básico
@@ -199,49 +199,49 @@ cd XYZ
 ### 📦 Passo 2: Instalar o TruDAG
 
 ```bash
-pipx install trustable
+pipx install trudag
 ```
 
 OU
 
 ```bash
-pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
+pipx install trudag --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
 ### 🧱 Passo 3: Criar e Adicionar Statements
 ```bash
-trustable add "The software passes all critical security tests" --type Expectation
-trustable add "Security tests are executed automatically in CI" --type Assertion
-trustable add "CI results are published and reviewed weekly" --type Evidence
+trudag add "The software passes all critical security tests" --type Expectation
+trudag add "Security tests are executed automatically in CI" --type Assertion
+trudag add "CI results are published and reviewed weekly" --type Evidence
 ```
 
 OU 
 
 ```bash
-trustable add "Software XYZ é seguro" --type Expectation
-trustable add "Testes de segurança automáticos OK" --type Assertion
-trustable add "Logs CI/CD mostram 0 falhas" --type Evidence
-trustable add "Roda no Linux" --type Assumption
+trudag add "Software XYZ é seguro" --type Expectation
+trudag add "Testes de segurança automáticos OK" --type Assertion
+trudag add "Logs CI/CD mostram 0 falhas" --type Evidence
+trudag add "Roda no Linux" --type Assumption
 ```
 
 ### 🔗 Passo 4: Criar Ligacoes/Ligar os Statements
 ```bash
-trustable link "Security tests are executed automatically in CI" "The software passes all critical security tests"
-trustable link "CI results are published and reviewed weekly" "Security tests are executed automatically in CI"
+trudag link "Security tests are executed automatically in CI" "The software passes all critical security tests"
+trudag link "CI results are published and reviewed weekly" "Security tests are executed automatically in CI"
 ```
 
 OU
 
 ```bash
-trustable link "Testes de segurança automáticos OK" "Software XYZ é seguro"
-trustable link "Logs CI/CD mostram 0 falhas" "Testes de segurança automáticos OK"
-trustable link "Roda no Linux" "Testes de segurança automáticos OK"
+trudag link "Testes de segurança automáticos OK" "Software XYZ é seguro"
+trudag link "Logs CI/CD mostram 0 falhas" "Testes de segurança automáticos OK"
+trudag link "Roda no Linux" "Testes de segurança automáticos OK"
 ```
 
 
 ### 🧩 Passo 5: Avaliar a Confianca e Executar a avaliação
 ```bash
-trustable evaluate
+trudag evaluate
 ```
 
 TruDAG percorre o grafo, verifica todas as ligações e evidencia, e calcula quanto podemos confiar na Expectation.
@@ -282,7 +282,7 @@ Eclipse TSF Project Page
 
 Codethink TSF GitLab
 
-Trustable Methodology
+trudag Methodology
 
 TruDAG Installation Guide
 
