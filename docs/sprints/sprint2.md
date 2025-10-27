@@ -5,7 +5,7 @@
 ---
 
 ## 📌 Epics
-- [ ] **Epic 6** — Implement TSF in Github - [Epic 6 - #33](https://github.com/orgs/SEAME-pt/projects/89/views/1?filterQuery=label%3A%22Type%3A+Epic%22&pane=issue&itemId=133634028&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C2](https://github.com/orgs/SEAME-pt/projects/89/views/7?pane=issue&itemId=135760724&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C33)](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/33))
+- [ ] **Epic 6** — Implement TSF in Github - [Epic 6 - #33](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/33)
 - [ ] **Epic 7** — Definition of Car Architecture - Software & Hardware - [Epic 7 - #34](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/34)
 - [ ] **Epic 8** — Study Technologies - [Epic 8 - #35](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/35)
 - [ ] **Epic 9** — Qt App - Cluster Instrument - [Epic 9 - #36](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/36)
