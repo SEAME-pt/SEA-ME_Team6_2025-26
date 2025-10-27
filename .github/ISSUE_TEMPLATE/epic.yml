@@ -1,0 +1,56 @@
+# .github/ISSUE_TEMPLATE/epic.yml
+name: "🗺️ Epic"
+description: "Plan an Epic for a sprint and track its child work items."
+title: "[Epic] <short, outcome-oriented title>"
+labels: ["Type: Epic"]
+assignees: []
+
+body:
+  - type: input
+    id: sprint
+    attributes:
+      label: Sprint
+      description: "Which sprint is this epic for? (e.g., Sprint 1)"
+      placeholder: "Sprint 1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Epic Objective
+      description: "What outcome will this Epic deliver?"
+      placeholder: "Deliver a minimal driver display (speed + status) running on RPi5."
+    validations:
+      required: true
+
+  - type: textarea
+    id: tsf_reqs
+    attributes:
+      label: TSF — Related Requirement IDs
+      description: "List the L1/L2 requirement IDs this Epic decomposes. (e.g., L2-002)"
+      placeholder: |
+        L2-002
+        docs/tsf/requirements/L2-Software-Requirements.md#L2-002--display-current-speed-on-ui
+    validations:
+      required: true
+
+  - type: textarea
+    id: breakdown
+    attributes:
+      label: Child Work Items (checklist)
+      description: "Link tasks/stories as they are created."
+      placeholder: |
+        - [ ] #123 Speed widget
+        - [ ] #124 Status binding
+        - [ ] #125 Autostart service
+    validations:
+      required: false
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Related Links (PRs/Docs)
+      placeholder: "PRs"
+    validations:
+      required: false

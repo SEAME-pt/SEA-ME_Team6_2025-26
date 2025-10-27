@@ -1,3 +1,5 @@
+https://github.com/fprezado/generative-ai-for-beginners
+
 # **GenAI Pair Programming Guidelines**
 
 ### **Purpose**
