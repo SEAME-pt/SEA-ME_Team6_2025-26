@@ -1,4 +1,4 @@
-# 🏁 Sprint 1 — (27/10/2025 → 07/11/2025)
+# 🏁 Sprint 2 — (27/10/2025 → 07/11/2025)
 
 > **Sprint Goal**: Finalize project setup - Hardware layout + Software architecture - in preparation of the implementation of automotive software 
 
