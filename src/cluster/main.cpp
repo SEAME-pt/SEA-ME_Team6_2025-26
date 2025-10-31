@@ -1,17 +1,15 @@
-#include "headers/cluster.h"
+#include <QApplication>
+#include <QLabel>
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
-    QQmlApplicationEngine engine;
+    QApplication app(argc, argv);
 
-    engine.load(QUrl("qrc:/main.qml"));
-    auto *window = qobject_cast<QQuickWindow*>(engine.rootObjects().first());
-    if (window) {
-        window->setHeight(_windowHeight_);
-        window->setWidth(_windowWidth_);
-    }
+    QLabel label("SEA:ME");
+    label.setWindowTitle("Hello Qt6");
+    label.setAlignment(Qt::AlignCenter);
+
+    label.showFullScreen();
 
     return app.exec();
 }
-
