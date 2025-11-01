@@ -1,0 +1,20 @@
+# ninja log v5
+6	44	1761997800172829541	HelloQt6Qml_autogen/timestamp	3c88547b5a54c027
+6	44	1761997800172829541	HelloQt6Qml_autogen/mocs_compilation.cpp	3c88547b5a54c027
+6	44	1761997800172829541	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/timestamp	3c88547b5a54c027
+46	65	1761997807697177121	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o	e89a7d55c6f597f7
+6	44	1761997800172829541	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/mocs_compilation.cpp	3c88547b5a54c027
+33	66	1761997642171903125	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	ef3216b65586126e
+33	66	1761997642171903125	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	ef3216b65586126e
+47	84	1761997807715177841	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	a1c93e7ad4cf6b2f
+46	2568	1761997810186277275	CMakeFiles/HelloQt6Qml.dir/main.cpp.o	7c9a3da8a35d3fd9
+2568	3000	1761997810627295125	HelloQt6Qml	6885474bc6bab561
+8	21	1761997963990924858	HelloQt6Qml_autogen/timestamp	3c88547b5a54c027
+8	21	1761997963990924858	HelloQt6Qml_autogen/mocs_compilation.cpp	3c88547b5a54c027
+8	21	1761997963990924858	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/timestamp	3c88547b5a54c027
+8	21	1761997963990924858	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/mocs_compilation.cpp	3c88547b5a54c027
+23	30	1761998028274199861	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	ef3216b65586126e
+23	30	1761998028274199861	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26V4/src/cluster/build/Desktop_Qt_6_9_3-Debug/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	ef3216b65586126e
+31	54	1761998028297628805	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	a1c93e7ad4cf6b2f
+30	2212	1761998030454637813	CMakeFiles/HelloQt6Qml.dir/main.cpp.o	7c9a3da8a35d3fd9
+2212	2598	1761998030837639531	HelloQt6Qml	6885474bc6bab561
