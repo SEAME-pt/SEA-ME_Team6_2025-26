@@ -1,6 +1,13 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>qml/main.qml</file>
+
+        <!-- <file>qml/components/a.qml</file>
+        <file>qml/themes/base.qml</file>
+
+        <file>assets/icons</file>
+        <file>assets/images</file>
+        <file>assets/fonts</file> -->
     </qresource>
 </RCC>
 

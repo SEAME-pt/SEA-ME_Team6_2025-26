@@ -270,10 +270,6 @@ RUN { \
     cmake --build .; \
 } 2>&1 | tee -a /build.log
 
-# Set up QtOpencvExample directory
-RUN mkdir /build/QtOpencvExample
-COPY cross-compiler/QtOpencvExample /build/QtOpencvExample
-
 ARG BUILD_OPENCV
 # Build the project using Qt and Opencv for Raspberry Pi
 RUN if [ "$BUILD_OPENCV" = "ON" ]; then { \
