@@ -1,17 +1,16 @@
-#include "headers/cluster.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    QQmlApplicationEngine engine;
 
-    engine.load(QUrl("qrc:/main.qml"));
-    auto *window = qobject_cast<QQuickWindow*>(engine.rootObjects().first());
-    if (window) {
-        window->setHeight(_windowHeight_);
-        window->setWidth(_windowWidth_);
-    }
+    QQmlApplicationEngine engine;
+    const QUrl url(u"qrc:/main.qml"_qs);
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, []() { QCoreApplication::exit(-1); },
+                     Qt::QueuedConnection);
+    engine.load(url);
 
     return app.exec();
 }
-

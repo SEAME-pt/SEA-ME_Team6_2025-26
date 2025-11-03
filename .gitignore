@@ -1,2 +1,14 @@
 .env
 .DS_Store
+
+# VSCode Settings
+.vscode/
+
+# Toolchain Files
+*.tar
+*.tar.gz
+*.tgz
+
+# Local testing
+cluster/cluster-qml-teste/
+HelloQt6
