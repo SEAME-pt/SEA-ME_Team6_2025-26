@@ -2,6 +2,8 @@
 
 ## 1. What is TSF (Trustable Software Framework)
 
+The Trustable Software Framework (TSF) is an open-source toolset designed to manage requirements, evidence, and verification activities for safety- and mission-critical software — especially in aerospace, defense, automotive, and medical domains, where the software must be demonstrably trustworthy.
+
 The **Eclipse Trustable Software Framework (TSF)** is a **model and methodology to assess the "trustability" of software**, based on **verifiable evidence** of how it is developed, tested, and maintained.
 
 Instead of relying on Word documents, Excel sheets, or proprietary requirements tools, TSF integrates **trust metadata directly into the project's Git repository** (alongside code, documentation, and tests).
@@ -10,6 +12,94 @@ TSF focuses on **critical systems**—where **security, performance, availabilit
 - **Track expectations and evidence** (who guarantees what and based on which proofs);
 - **Quantify trust** (via scores);
 - **Maintain consistency** between what the software claims to do and what it actually does.
+
+
+🧩 Trustable Software Framework (TSF) — Overview and Technical Context
+
+📚 Official source (GitLab Project)
+
+“Trustable Software Framework (TSF) builds on top of Doorstop to manage requirements, tests, and assurance cases in a traceable, verifiable way.”
+👉 Source: https://gitlab.com/trustable/trustable
+
+In short:
+
+TSF extends Doorstop to provide full traceability and certification evidence management.
+
+⚙️ What is Doorstop
+
+Doorstop is the foundation of TSF.
+It’s a Python-based tool that uses YAML files to represent requirements, tests, and documentation in a version-controlled and traceable way.
+
+📘 Official source (Doorstop README):
+
+“Doorstop is a requirements management tool that stores data in version control alongside source code.”
+👉 Source: https://github.com/doorstop-dev/doorstop
+
+💡 Instead of using Word or Excel, each requirement is a small .yaml file stored next to your source code in Git.
+This makes it possible to link requirements, implementation, and verification directly.
+
+🧠 What is trudag
+
+trudag is the command-line interface (CLI) included with the trustable package.
+It’s used to generate traceability diagrams and documents from TSF repositories.
+
+It converts relationships between requirements and tests into .dot files (Graphviz format), which can later be exported as PDF or PNG to visualize traceability.
+
+📗 Official source (Trustable CLI docs):
+
+“The trudag CLI builds traceability diagrams (.dot files) from TSF repositories.”
+👉 Source: https://gitlab.com/trustable/trustable/-/tree/main/frontends/cli
+
+🔷 What are .dot files
+
+.dot files use the Graphviz DOT language, which is a plain text graph description format used to represent nodes and links.
+
+📚 Official source (Graphviz):
+
+“The DOT language is a plain text graph description language.”
+👉 https://graphviz.org/doc/info/lang.html
+
+💡 In TSF, DOT files are used to visualize relationships like:
+
+[REQ-001] --> [TEST-001]
+
+
+This enables automatic generation of traceability diagrams for:
+
+Requirements
+
+Tests
+
+Verification activities
+
+Certification evidence
+
+🔗 How the Components Fit Together
+
+| Component           | Role                                                              | File Types             |
+| ------------------- | ----------------------------------------------------------------- | ---------------------- |
+| **Trustable (TSF)** | Complete framework (includes Doorstop + trudag + other utilities) | `.yaml`, `.dot`        |
+| **Doorstop**        | Requirements management foundation                                | `.yaml`                |
+| **trudag**          | Diagram and report generator for TSF                              | `.dot`, `.pdf`, `.png` |
+
+
+🪜 Why We Use This Installation Method
+
+✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages.
+✔️ Security reason: TSF is used in safety-critical domains where dependency control is essential.
+✔️ Traceability reason: All requirements and evidence are version-controlled in GitHub as YAML files, supporting certification standards like DO-178C, ISO 26262, and EN 50128.
+
+📘 Source (Trustable GitLab):
+
+“TSF supports traceability and assurance evidence in compliance with certification standards.”
+👉 https://gitlab.com/trustable/trustable
+
+| Tool                | Purpose                                          | Key Feature                                  |
+| ------------------- | ------------------------------------------------ | -------------------------------------------- |
+| **TSF (Trustable)** | End-to-end traceability and assurance management | Integrates requirements, tests, and evidence |
+| **Doorstop**        | Requirements management                          | YAML-based storage, version control ready    |
+| **trudag**          | Visualization tool                               | Generates Graphviz `.dot` diagrams           |
+
 
 ---
 
