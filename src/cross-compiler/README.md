@@ -5,6 +5,7 @@
 - [Core Ideas](#sec-core-ideas)
 - [Summary](#sec-summary)
 - [How our Cross-Compiler works](#sec-how-it-works)
+- [How to use](#sec-how-to-use)
 - [Links & tutorials](#sec-links)
 
 ---
@@ -71,19 +72,19 @@ Definition of the base image **Debian Bookworn (arm64)** and environment setup b
 
 ```dockerfile
 RUN { \
-  set -e; \
-  printf '%s\n' \
-    'deb http://deb.debian.org/debian bookworm main contrib non-free-firmware' \
-    'deb http://deb.debian.org/debian bookworm-updates main contrib non-free-firmware' \
-    'deb http://security.debian.org/debian-security bookworm-security main contrib non-free-firmware' \
-    > /etc/apt/sources.list; \
+   echo "deb http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb-src http://deb.debian.org/debian bookworm main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb-src http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list && \
 
   ...
 
-  apt-get update; \
-  apt-get -y full-upgrade; \
-  apt-get install -y --no-install-recommends \
-  build-essential ninja-build cmake git wget python3 pkg-config gfortran \
+  apt-get update && \
+    apt-get full-upgrade -y && \
+    apt-get install -y \
+    libboost-all-dev libudev-dev libinput-dev libts-dev libmtdev-dev \
+    libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev \
+    libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev \
   ...
 }
 ```
@@ -98,19 +99,17 @@ RUN tar czf rasp.tar.gz -C / lib usr/include usr/lib etc/alternatives
 
 Sets the working directory for any following commands and packages key parts of the system into a compressed archive named rasp.tar.gz.  
 
-# DESATUALIZADO
-
 `DockerFile (Cross Compiler):`  
 
 ```dockerfile
-FROM debian:trixie
+FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG BUILD_OPENCV=FALSE
 ```
 
-Definition of the base image **Debian Trixie** and environment setup by disabling **interactive prompts** during installation and declaration of a **optional build argument** that can be passed at build time to control whether OpenCV should be built.  
+Definition of the base image **Debian Bookworm** and environment setup by disabling **interactive prompts** during installation and declaration of a **optional build argument** that can be passed at build time to control whether OpenCV should be built.  
 
 ```dockerfile
 RUN { \
@@ -162,10 +161,52 @@ RUN { \
 Copies the **Qt-specific CMake toolchain file** used to cross-compile for ARM, followed by the **download and build of Qt 6.9.1**, and lastly copies the project source code into the container, builds it using the **Qt for Raspberry toolchain** using the cross-built Qt binaries for consistent target behavior.  
 
 ---
+<a id="sec-how-to-use"></a>
+## 📝 How to use
+
+1.  **Setup Docker**  
+The first step is to correctly setup the base of the cross compiler, [Docker](https://www.docker.com/)  
+2. **Create the target Docker image**  
+On the `/cross-compiler` folder run the command to create the target image
+```bash
+docker buildx build --platform linux/arm64 --load -f DockerFileRasp -t raspimage .
+```  
+3. **Extract the compressed sysroot**  
+After the image is created, extract from the image the `rasp.tar.gz`, that serves as the sysroot, which the cross-compiler will use to link against correct ARM libraries
+```bash
+docker create --name temp-arm raspimage
+docker cp temp-arm:/build/rasp.tar.gz ./rasp.tar.gz
+```  
+4. **Create Debian image and Qt compilation**  
+On the `/src` run the build of the Dockerfile
+```bash
+docker build -t qtcrossbuild -f cross-compiler/Dockerfile .
+```  
+5. **Extract the executable and binaries**
+After the image is created (will take a couple hours) copy the executable and `qt-pi-binaries.tar.qz`
+```bash
+docker create --name tmpbuild qtcrossbuild
+docker cp tmpbuild:/build/project/HelloQt6Qml ./HelloQt6Qml
+docker cp tmpbuild:/build/qt-pi-binaries.tar.qz ./qt-pi-binaries.tar.qz
+```  
+6. **Send to Raspberry**  
+After having all the necessary files send them to the raspberry via ssh  
+7. **Config and execute**  
+With the files already on the Rasp  
+```bash
+sudo mkdir /usr/local/qt6
+sudo tar -xvf qt-pi-binaries.tar.gz -C /usr/local/qt6
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/qt6/lib/
+
+./HelloQt6Qml
+```
+
+---
 
 <a id="sec-links"></a>
 
-## Links
+## 🔗 Links
 
 https://ruvi-d.medium.com/a-master-guide-to-linux-cross-compiling-b894bf909386  
 https://www.geeksforgeeks.org/compiler-design/what-is-cross-compiler/  
@@ -173,3 +214,4 @@ https://wiki.qt.io/Cross-Compile_Qt_6_for_Raspberry_Pi
 https://medium.com/@janiethedev/cross-compile-qt-6-7-2-for-raspberry-pi-4-with-ubuntu-1e951af83bb5  
 https://github.com/PhysicsX/QTonRaspberryPi  
 https://youtu.be/5XvQ_fLuBX0?si=WcI7c6L5jJSLzCvF  
+https://www.docker.com/  

@@ -37,7 +37,6 @@
 <a id="sec-design-goals"></a>
 ## 🎯 Design Goals
 
-Guiding principles that align the development of the instrumental cluster with the user needs, ensuring that it is not only functional but also appealing and intuitive.
 - **Usability:**
     - The design should be intuitive, allowing users to quickly understand how to interact with the cluster. This includes minimizing learning time and reducing errors during use.
 - **Aesthetics:**
