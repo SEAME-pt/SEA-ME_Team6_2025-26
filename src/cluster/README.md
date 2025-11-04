@@ -288,6 +288,7 @@ This project demonstrates how to build a QtQuick based vehicle instrument cluste
   - Qt6::Gui
   - Qt6::Qml
   - Qt6::Quick
+  - Qt6::QuickControls2
   - Qt6::DBus
 - CMake 3.5+
 - C++11 or later
@@ -323,17 +324,16 @@ cluster/
 **Setup & Build:**
 
 ```bash
-git clone git@github.com:SEAME-pt/SEA-ME_Team6_2025-26.git
-cd SEA-ME_Team6_2025-26/src/cluster
+$ git clone git@github.com:SEAME-pt/SEA-ME_Team6_2025-26.git
+$ cd SEA-ME_Team6_2025-26/src/cluster
 ```
 
 Via terminal:
 
 ```bash
-mkdir build && cd build
-
-cmake ..
-cmake --build .
+$ mkdir build && cd build
+$ cmake ..
+$ cmake --build .
 
 ./HelloQt6Qml
 ```
@@ -592,11 +592,15 @@ There are two main ways to fix this, depending on whether we are using Qt Creato
 <a id="sec-links"></a>
 ## 🔗 Links
 
-https://blackberry.qnx.com/en/ultimate-guides/software-defined-vehicle/instrument-cluster  
-https://tree.nathanfriend.com  
-https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html  
-https://felgo.com/doc/qt5/qtqml-cppintegration-topic/  
-https://doc.qt.io/qtforpython-6/faq/whatisqt.html  
-https://somcosoftware.com/en/blog/qml-vs-qt-widgets-detailed-comparison  
-https://extenly.com/2024/05/06/qt-widgets-vs-qt-quick-deciding-the-best-approach-for-your-project/  
-https://www.qt.io   
+ - https://blackberry.qnx.com/en/ultimate-guides/software-defined-vehicle/instrument-cluster  
+ - https://tree.nathanfriend.com  
+ - https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html  
+ - https://felgo.com/doc/qt5/qtqml-cppintegration-topic/  
+ - https://doc.qt.io/qtforpython-6/faq/whatisqt.html  
+ - https://somcosoftware.com/en/blog/qml-vs-qt-widgets-detailed-comparison  
+ - https://extenly.com/2024/05/06/qt-widgets-vs-qt-quick-deciding-the-best-approach-for-your-project/  
+ - https://www.qt.io
+ - https://cmake.org  
+ - https://packages.ubuntu.com
+ 
+
