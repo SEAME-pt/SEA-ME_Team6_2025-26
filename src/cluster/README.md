@@ -87,7 +87,7 @@ QtWidgets is the classic, object-oriented UI framework that has existed since th
 QtQuick is the newer framework, introduced with Qt 5 and fully optimized in Qt 6. It uses QML (Qt Modeling Language) for UI declaration and the Qt Scene Graph for rendering - which leverages GPU acceleration.
 
 **Characteristics:**
-  - he UI is declarative - you describe what the UI should look like, not how to draw it.
+  - The UI is declarative - you describe what the UI should look like, not how to draw it.
   - Interfaces are made of lightweight QML elements, all rendered by the GPU, enabling smooth transitions and effects.
   - Bindings and signals make the UI reactive: when data changes, the visuals update automatically.
   - C++ integration remains powerful, it can extend QML with custom C++ classes, models and performance-critical logic.
@@ -510,7 +510,7 @@ $ sudo apt install build-essential libgl1-mesa-dev libglu1-mesa-dev libgles2-mes
   - `libglu1-mesa-dev`: OpenGL utility library.
   - `libgles2-mesa-dev`: OpenGL ES support.
 
-Clen and rebuild the project:
+Clean and rebuild the project:
 ```bash
 $ rm -rf build
 $ mkdir build && cd build
@@ -566,16 +566,16 @@ There are two main ways to fix this, depending on whether we are using Qt Creato
   Run CMake with the correct prefix:
     ```bash
     $ mkdir build && cd build
-    $ cmake .. -DCMAKE_PREFIX_PATH=$HOME/Qt/6.9.3/gcc_64/lib/cmake
+    $ cmake .. -DCMAKE_PREFIX_PATH=$HOME/Qt/x.x.x/gcc_64/lib/cmake
     
-    -- Found Qt6: /home/user/Qt/6.9.3/gcc_64/lib/cmake/Qt6 (found version "6.9.3")
+    -- Found Qt6: /home/[user]/Qt/x.x.x/gcc_64/lib/cmake/Qt6 (found version "x.x.x")
     -- Configuring done
     -- Generating done
     ```  
 
     Alternatively, set the Qt6_DIR environment variable explicitly:
     ```bash
-    $ export Qt6_DIR=$HOME/Qt/6.9.3/gcc_64/lib/cmake/Qt6
+    $ export Qt6_DIR=$HOME/Qt/x.x.x/gcc_64/lib/cmake/Qt6
     ```  
 
 <!-- <a id="issue-x"></a>
