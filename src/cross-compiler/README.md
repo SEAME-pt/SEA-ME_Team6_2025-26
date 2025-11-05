@@ -96,6 +96,10 @@ That's where cross-compilation comes in.
 Cross-compilation provided the bridge between the host and target architectures by using a specialized compiled toolchain configured for the target's architecture.  
 This means the host can build binaries as if it were "pretending" to be the target system - linking against the correct ARM libraries, headers and system paths - all without ever touching the Raspberry Pi.
 
+<div align="center">
+  <img src="https://media.geeksforgeeks.org/wp-content/uploads/20220915123006/Crosscompiler-660x330.png" />
+</div>
+
 ---
 
 <a id="sec-why-docker"></a>
@@ -144,14 +148,67 @@ Our setup uses two Dockerfiles:
 <a id="sec-system-architecture"></a>
 ## 🏗️ System Architecture
 
-? 
+The cross-compilation workflow is designed around a two container Docker architecture, which separates the target simulation from the build environment.  
+This design ensures clean isolation, reproducibility and compatibility between the host and the target.  
+The following diagram summarizes the system flow:
+
+<div style="text-align: center;">
+    <img src="../../docs/demos/system-architecture-cross.png" alt="Description of the image" />
+</div>
+
+##### **Architecture Overview**
+
+- **Host Machine (x86_64):**
+The main development system where all code is written, managed, and compiled using Docker.
+It runs both containers and manages build automation via CMake.
+- **Docker Container #1 - Target Emulator:**
+Simulates the Raspberry Pi environment using the same ARM64 base.
+Installs the same system libraries as the Raspberry Pi.
+Packages them into a sysroot archive `rasp.tar.gz` used by the compiler.
+- **Docker Container #2 - Cross-Compiler:**
+Uses a standard Debian x86_64 image but integrates the ARM sysroot from container #1.
+Builds Qt and the project for the ARM architecture.
+Produces deployable binaries and a precompiled Qt bundle `qt-pi-binaries.tar.gz`.
+- **Raspberry Pi (Target):**
+Receives the compiled Qt libraries and application binaries.
+Executes them natively under ARM64, ensuring the same runtime behavior as the development environment.
+
+##### **Design Rationale**
+While the architecture may look complex, it was designed for long-term maintainability and performance.  
+This modular, container-based design provides several advantages over traditional single-environment builds:
+- **Separation of concerns:**
+By splitting the workflow into two Docker containers, we isolate environment replication from build logic. This makes each container simpler, easier to debug and more reusable.
+- **Reproducibility and CI/CD Compatibility:**
+Because the system is defined entirely through Dockerfiles and CMake, it can be easily integrated into continuous integration pipelines or re-built identically across machines.
+- **Maintainability:**
+Updating Qt versions, adding new libraries or testing different configurations can be done by modifying just one Dockerfile, without breaking other parts of the environment.
+
+In summary, to put it simply:
+- You develop on the host.
+- You compile inside Docker.
+- You run on the Raspberry Pi.
 
 ---
 
 <a id="sec-how-it-works"></a>
 ## ⚙️ How it works (Step by Step)
 
-? 
+The cross-compilation workflow used in this project builds upon the excellent work of [PhysicsX](https://github.com/PhysicsX), who originally demonstrated how to compile and deploy Qt applications to a Raspberry Pi using Docker-based toolchains.  
+We adapted and refined his approach to suit our own development pipeline - integrating it with our instrument cluster project and ensuring compatibility with our Raspberry Pi.  
+His original resources were invaluable for understanding the underlying mechanisms of Dockerized cross-compilation, including:
+- GitHub Repository: [PhysicsX/QTonRaspberryPi](https://github.com/PhysicsX/QTonRaspberryPi).
+- Youtube Tutorial: [Qt For Raspberry Pi - Qt 6.6.1 Cross Compilation with Docker isolation Easy way !](https://youtu.be/5XvQ_fLuBX0?si=WcI7c6L5jJSLzCvF).  
+
+Our implementation closely follows this structure but has been modified to better integrate with our project organization for future scalability.  
+In essence, the process allows us to build fully functional ARM64 binaries for the Raspberry Pi without needing to compile directly on the device - saving hours of build time and eliminating version conflicts.  
+The setup revolves around two Docker containers that cooperate to simulate the target environment and perform the compilation on the host machine.  
+Here's a breakdown of how the system operates internally:  
+
+##### **Step 1 - Build the Target Environment (DockerfileRasp)**
+The first container acts as a target emulator, replicating the Raspberry Pi's OS and dependencies.  
+It uses an ARM64 base image to simulate the environment where the application will eventually run.  
+This container's main goal is to generate the sysroot - a compressed archive containing the exact set of libraries and headers the Raspberry Pi uses.  
+This ensures that the cross-compiler can link against the same binaries as the target system, guaranteeing compatibility
 
 ---
 
@@ -191,23 +248,6 @@ Our setup uses two Dockerfiles:
 **- Solution:** -->
 
 ---
-
-<!-- <a id="sec-summary"></a>
-## 🧩 Summary
-
-1. **Write Source Code** → Program in a high-level language like C++.
-2. Instead of a native compiler, we use a compiler configurated for a **different target platform**.
-3. Source code is preprocessed: **macros** are expanded, **headers** are included and code is prepared for compilation.
-4. Cross-compiler translates the **preprocessed code** into **target-specific** assembly code.
-5. The object is linked with **target libraries** and **system APIs** from the sysroot to produce the final executable.
-6. It creates a program that runs on the target system.
-7. The compiled executable is copied or **deployed** to the **target** device.
-
-<div align="center">
-  <img src="https://media.geeksforgeeks.org/wp-content/uploads/20220915123006/Crosscompiler-660x330.png" />
-</div>
-
---- -->
 
 <!-- <a id="sec-how-it-works"></a>
 ## 📄 How our Cross-Compiler works
