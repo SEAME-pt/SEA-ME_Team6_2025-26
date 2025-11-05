@@ -1,17 +1,20 @@
-# 🚀 Understanding Cross Compiler
+# 🚀 Cross-Compiler
 
 ## 📚 Index
-- [Intro](#sec-intro)
-- [Core Ideas](#sec-core-ideas)
-- [Summary](#sec-summary)
-- [How our Cross-Compiler works](#sec-how-it-works)
-- [How to use](#sec-how-to-use)
-- [Links & tutorials](#sec-links)
+- [👋 Introduction](#sec-intro)
+- [🧠 Core Ideas](#sec-core-ideas)
+- [🤔 Why we use Cross-Compilation](#sec-why-cross)
+- [🏗️ System Architecture](#sec-system-architecture)
+- [⚙️ How it works (Step by Step)](#sec-how-it-works)
+- [🧰 Building with Docker](#sec-build-docker)
+- [📦 Deploying to Raspberry Pi](#sec-deploy-rasp)
+- [🚨 Issues Log](#sec-issues)
+- [🔗 Links](#sec-links)
 
 ---
 
 <a id="sec-intro"></a>
-## Intro
+## 👋 Introduction
 
 Cross compiler is a type of compiler capable of **creating executable code** for a operating system other than the on which the compiler is running.  
 A Cross compiler is useful whe the target system has **limited resources**, a **different architecture**, or a **different operating system** than the development machine.  
@@ -30,7 +33,65 @@ Cross-compilation allows developers to *build software* for **multiple platforms
 
 ---
 
-<a id="sec-summary"></a>
+<a id="sec-why-cross"></a>
+## 🤔 Why we use Cross-Compilation
+
+? 
+
+---
+
+<a id="sec-system-architecture"></a>
+## 🏗️ System Architecture
+
+? 
+
+---
+
+<a id="sec-how-it-works"></a>
+## ⚙️ How it works (Step by Step)
+
+? 
+
+---
+
+<a id="sec-build-docker"></a>
+## 🧰 Building with Docker
+
+? 
+
+---
+
+<a id="sec-deploy-rasp"></a>
+## 📦 Deploying to Raspberry Pi
+
+? 
+
+---
+
+<a id="sec-issues"></a>
+## 🚨 Issues Log
+
+<a id="issue-x"></a>
+
+### Issue #x - 
+**- Error Example:**
+
+**- Cause:** 
+
+**- Solution:**
+
+<!-- <a id="issue-x"></a>
+
+### Issue #x - 
+**- Error Example:**
+
+**- Cause:** 
+
+**- Solution:** -->
+
+---
+
+<!-- <a id="sec-summary"></a>
 ## 🧩 Summary
 
 1. **Write Source Code** → Program in a high-level language like C++.
@@ -45,9 +106,9 @@ Cross-compilation allows developers to *build software* for **multiple platforms
   <img src="https://media.geeksforgeeks.org/wp-content/uploads/20220915123006/Crosscompiler-660x330.png" />
 </div>
 
----
+--- -->
 
-<a id="sec-how-it-works"></a>
+<!-- <a id="sec-how-it-works"></a>
 ## 📄 How our Cross-Compiler works
 
 Our **host machines** are running `Ubuntu x86_64`, while the **target machine** uses `Bookworm aarch64`. To simplify working across two different operating systems, we decided to use a **cross-compiler** with Docker.  
@@ -200,18 +261,17 @@ sudo tar -xvf qt-pi-binaries.tar.gz -C /usr/local/qt6
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/qt6/lib/
 
 ./HelloQt6Qml
-```
+``` -->
 
----
 
 <a id="sec-links"></a>
 
 ## 🔗 Links
 
-https://ruvi-d.medium.com/a-master-guide-to-linux-cross-compiling-b894bf909386  
-https://www.geeksforgeeks.org/compiler-design/what-is-cross-compiler/  
-https://wiki.qt.io/Cross-Compile_Qt_6_for_Raspberry_Pi  
-https://medium.com/@janiethedev/cross-compile-qt-6-7-2-for-raspberry-pi-4-with-ubuntu-1e951af83bb5  
-https://github.com/PhysicsX/QTonRaspberryPi  
-https://youtu.be/5XvQ_fLuBX0?si=WcI7c6L5jJSLzCvF  
-https://www.docker.com/  
+  - https://ruvi-d.medium.com/a-master-guide-to-linux-cross-compiling-b894bf909386  
+  - https://www.geeksforgeeks.org/compiler-design/what-is-cross-compiler/  
+  - https://wiki.qt.io/Cross-Compile_Qt_6_for_Raspberry_Pi  
+  - https://medium.com/@janiethedev/cross-compile-qt-6-7-2-for-raspberry-pi-4-with-ubuntu-1e951af83bb5  
+  - https://github.com/PhysicsX/QTonRaspberryPi  
+  - https://youtu.be/5XvQ_fLuBX0?si=WcI7c6L5jJSLzCvF  
+  - https://www.docker.com/  
