@@ -27,7 +27,7 @@ CAN uses **two differential signal lines**:
 - **CAN_H (High)**
 - **CAN_L (Low)**
 
-![alt text](<Captura de ecrã 2025-11-03, às 11.30.45.png>)
+![alt text](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/images/CANsignal.png)
 
 Both lines carry complementary voltages that represent logical bits:
 
@@ -44,7 +44,7 @@ Both lines carry complementary voltages that represent logical bits:
 
 CAN is implemented as a **multi-drop bus** — all nodes share the same two wires (CAN_H, CAN_L):
 
-![alt text](<Captura de ecrã 2025-11-04, às 12.08.58.png>)
+![can-topology](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/images/CANtopology2.png)
 
 
 ### Topology Characteristics
@@ -53,7 +53,7 @@ CAN is implemented as a **multi-drop bus** — all nodes share the same two wire
 - Any node can transmit, but only **one at a time**.
 - Nodes can be added or removed easily without changing the others.
 
-![alt text](<Captura de ecrã 2025-11-04, às 12.31.35.png>)
+![can-topology-2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/images/CANtopology.png)
 
 ---
 
@@ -64,7 +64,7 @@ The CAN bus is **half-duplex**, meaning:
 - Data flows **in one direction at a time**.
 - When one node transmits, all others listen simultaneously.
 
-![alt text](<Captura de ecrã 2025-11-04, às 12.20.47.png>)
+![half-duplex](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/images/Half-duplex-communication.png)
 
 Unlike full-duplex systems (e.g., Ethernet), CAN avoids collisions using an **arbitration mechanism** — nodes monitor the bus and back off when they detect higher-priority messages.
 
@@ -102,7 +102,7 @@ Result:
 Each CAN message is called a **frame**.  
 In Classical CAN, a standard frame includes:
 
-![alt text](<Captura de ecrã 2025-11-04, às 12.28.45.png>)
+![can-frame](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/images/CANFrame.png)
 
 | Field | Bits | Description |
 |:--|:--|:--|
