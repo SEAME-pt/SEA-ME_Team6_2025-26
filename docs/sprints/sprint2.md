@@ -5,11 +5,11 @@
 ---
 
 ## 📌 Epics
-- [ ] **Epic** — Definition of Car Architecture - Software & Hardware - [Epic 7 - #34](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/34)
-- [ ] **Epic** — Study Technologies - [Epic 8 - #35](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/35)
-- [ ] **Epic** — Qt App - Cluster Instrument - [Epic 9 - #36](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/36)
+- [x] **Epic** — Definition of Car Architecture - Software & Hardware - [Epic 7 - #34](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/34)
+- [x] **Epic** — Study Technologies - [Epic 8 - #35](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/35)
+- [x] **Epic** — Qt App - Cluster Instrument - [Epic 9 - #36](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/36)
 - [ ] **Epic** — Implement TSF in Github - [Epic 6 - #33](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/33)
-- [ ] **Epic** — Engineering Process Refinement - [Epic 10 - #37](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/37)
+- [x] **Epic** — Engineering Process Refinement - [Epic 10 - #37](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/37)
 
 ---
 
@@ -42,9 +42,11 @@
   - Crosscompilation scheme
   - ![Crosscompilation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/fix-qt-app-minor-changes/docs/demos/system-architecture-cross.png)
   - 3D model of the car
-  - 
+  - ![3d-car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/3d-car.jpg)
+  - ![3d-car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/3d-car2.jpg)
+  - ![3d-car3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/3d-car3.jpg)
   - Energy consumption plan
-  - 
+  - ![Eletric-Scheme](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/eletric-scheme.png)
   - CANbus communication scheme
   - ![CANScheme](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/CANbus%20Scheme%20Updated.png)
       
@@ -61,8 +63,8 @@
 ## 🔎 Retrospective
 - **Went well**:
   - Clear division of work; solid documentation culture.
-  - Cross-compilation + autostart achieved.
-  - Architectural choices converging (AGL + RTOS + CAN).
+  - All of the **high priority** goals completed ✅
+  - Sprint goal completed ✅
   - AGL installed on Raspberry Pi - **bonus objective!**
 
 - **To improve**:
@@ -70,3 +72,6 @@
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7)
+
+## 🔗 Useful Links
+- Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7
