@@ -1,5 +1,18 @@
 # How CAN Bus Works
 
+# Index
+
+1. [Introduction](#1-introduction)  
+2. [Physical Signal and Electrical Layer](#2-physical-signal-and-electrical-layer)  
+3. [Bus Topology](#3-bus-topology)  
+4. [Half-Duplex Communication](#4-half-duplex-communication)  
+5. [Asynchronous Transmission](#5-asynchronous-transmission)  
+6. [Message Arbitration](#6-message-arbitration)  
+7. [CAN Data Frame Structure](#7-can-data-frame-structure)  
+8. [Summary of Key Properties](#8-summary-of-key-properties)  
+9. [Why It Matters in Automotive Systems](#9-why-it-matters-in-automotive-systems)  
+10. [References](#10-references)
+
 ## 1. Introduction
 
 The **Controller Area Network (CAN)** is a serial communication protocol developed by Bosch in the 1980s, designed for reliable data exchange between electronic control units (ECUs) in vehicles and embedded systems.
