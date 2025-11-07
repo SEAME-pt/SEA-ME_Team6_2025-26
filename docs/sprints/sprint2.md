@@ -68,7 +68,8 @@
   - AGL installed on Raspberry Pi - **bonus objective!**
 
 - **To improve**:
-  - Spikes showcase - presenting the study done to the team. 
+  - Spikes showcase - presenting the study done to the team.
+  - Enhance our working methodology - **continuous work**.
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7)
