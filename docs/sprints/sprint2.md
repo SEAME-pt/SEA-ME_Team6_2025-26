@@ -72,6 +72,3 @@
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7)
-
-## 🔗 Useful Links
-- Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7
