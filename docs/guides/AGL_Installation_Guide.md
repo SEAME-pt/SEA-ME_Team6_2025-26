@@ -87,6 +87,15 @@ repo init -b quillback -m quillback_17.1.10.xml \
     -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
 ```
 
+Or.. Download the AGL source code for the **Terrific Trout v20.0.1** ('latest-stable' version) release:
+
+```bash
+cd $AGL_TOP
+mkdir master
+cd master
+repo init -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
+```
+
 ### Synchronize Repositories
 
 Fetch all required source repositories:
