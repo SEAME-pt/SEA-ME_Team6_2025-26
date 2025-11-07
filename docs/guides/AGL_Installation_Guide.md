@@ -110,11 +110,17 @@ repo sync
 
 ## Raspberry Pi 5 Configuration
 
-Initialize the build environment for Raspberry Pi 5 with demo and development features:
+If you choose **Quirky Quillback 17.1.10**, initialize the build environment for Raspberry Pi 5 with demo and development features:
 
 ```bash
 cd $AGL_TOP
 source meta-agl/scripts/aglsetup.sh -m raspberrypi5 -b build-rpi5 agl-demo agl-devel
+```
+
+But if you choose **Terrific Trout v20.0.1**...
+```bash
+cd $AGL_TOP
+source /master/meta-agl/scripts/aglsetup.sh -m raspberrypi5 -b build-rpi5 agl-demo agl-devel
 ```
 
 **Parameters:**
