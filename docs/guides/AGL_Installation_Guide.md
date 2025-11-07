@@ -120,7 +120,7 @@ source meta-agl/scripts/aglsetup.sh -m raspberrypi5 -b build-rpi5 agl-demo agl-d
 But if you choose **Terrific Trout v20.0.1**...
 ```bash
 cd $AGL_TOP
-source /master/meta-agl/scripts/aglsetup.sh -m raspberrypi5 -b build-rpi5 agl-demo agl-devel
+source master/meta-agl/scripts/aglsetup.sh -m raspberrypi5 -b build-rpi5 agl-demo agl-devel
 ```
 
 **Parameters:**
