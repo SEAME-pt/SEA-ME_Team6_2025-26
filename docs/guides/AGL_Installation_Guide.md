@@ -56,6 +56,7 @@ Set up the workspace directory structure:
 ```bash
 export AGL_TOP=$HOME/agl-workspace
 mkdir -p $AGL_TOP
+cd $AGL_TOP
 ```
 
 ### Install Repo Tool
@@ -63,6 +64,7 @@ mkdir -p $AGL_TOP
 The Repo tool is required for managing the AGL source repositories:
 
 ```bash
+cd $AGL_TOP
 mkdir -p ~/bin
 export PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
@@ -77,7 +79,7 @@ chmod a+x ~/bin/repo
 
 ### Initialize Repository
 
-Download the AGL source code for the **Quirky Quillback 17.1.10** release:
+Download the AGL source code for the **Quirky Quillback 17.1.10** ('old-stable' version) release:
 
 ```bash
 cd $AGL_TOP
