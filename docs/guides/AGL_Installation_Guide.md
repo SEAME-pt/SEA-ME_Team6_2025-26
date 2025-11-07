@@ -294,4 +294,8 @@ Power on the Raspberry Pi 5 to boot into AGL. The system will perform initial se
 - **Target Hardware:** Raspberry Pi 5
 - **Image Type:** IVI Demo with Qt Cross-SDK
 
+
+## Credits goes to..... 
+
+- **https://docs.automotivelinux.org/en/trout/#01_Getting_Started/02_Building_AGL_Image/03_Downloading_AGL_Software/**
 ---
