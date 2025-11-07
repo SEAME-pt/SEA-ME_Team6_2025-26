@@ -11,7 +11,7 @@ CAN is robust against electrical noise, supports real-time communication, and in
 
 **First test implementation** - Microcontroller + speed sensor + MCP2551 module
 
-![alt text](<CANbus Scheme Updated.png>)
+![<CANbus Scheme Updated.png>](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/CANbus%20Scheme%20Updated.png)
 
 ## 2. Purpose in Our Project
 
