@@ -203,6 +203,30 @@ HelloQt6Qml_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/HelloQt6Qml.dir/build.make CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.s
 .PHONY : HelloQt6Qml_autogen/mocs_compilation.cpp.s
 
+src/backend/timeprovider.o: src/backend/timeprovider.cpp.o
+.PHONY : src/backend/timeprovider.o
+
+# target to build an object file
+src/backend/timeprovider.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HelloQt6Qml.dir/build.make CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o
+.PHONY : src/backend/timeprovider.cpp.o
+
+src/backend/timeprovider.i: src/backend/timeprovider.cpp.i
+.PHONY : src/backend/timeprovider.i
+
+# target to preprocess a source file
+src/backend/timeprovider.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HelloQt6Qml.dir/build.make CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.i
+.PHONY : src/backend/timeprovider.cpp.i
+
+src/backend/timeprovider.s: src/backend/timeprovider.cpp.s
+.PHONY : src/backend/timeprovider.s
+
+# target to generate assembly for a file
+src/backend/timeprovider.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HelloQt6Qml.dir/build.make CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.s
+.PHONY : src/backend/timeprovider.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -244,6 +268,9 @@ help:
 	@echo "... HelloQt6Qml_autogen/mocs_compilation.o"
 	@echo "... HelloQt6Qml_autogen/mocs_compilation.i"
 	@echo "... HelloQt6Qml_autogen/mocs_compilation.s"
+	@echo "... src/backend/timeprovider.o"
+	@echo "... src/backend/timeprovider.i"
+	@echo "... src/backend/timeprovider.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

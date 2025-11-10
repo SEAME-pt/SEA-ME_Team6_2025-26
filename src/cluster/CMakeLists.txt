@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link,${CMAKE_SYSROOT}/u
 
 add_executable(HelloQt6Qml
     src/main.cpp
+    src/backend/timeprovider.cpp
     qml.qrc
 )
 
