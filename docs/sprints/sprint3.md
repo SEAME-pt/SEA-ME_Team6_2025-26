@@ -18,6 +18,7 @@
   - [ ] Review and approve **documentation templates and structure**
 - [ ] **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [ ] Refine **TSF implementation** and traceability setup in GitHub 
+  - [ ] Improve Github Actions (after granted permission) automizations
   - [ ] Continue the **study of GenAI** and its potential application with the Hailo accelerator
 - [ ] **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [ ] Study **COVESA** uServices for future integration
