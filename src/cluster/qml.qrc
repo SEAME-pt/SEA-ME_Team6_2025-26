@@ -1,13 +1,14 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
+        <!-- Screens -->
+        <file>qml/screens/home.qml</file>
+        <file>qml/screens/cluster.qml</file>
+        <!-- Themes -->
+        <file>qml/themes/BaseTheme.qml</file>
+        <!-- Backend -->
+        <file>src/backend/timeprovider.cpp</file>
+        <file>src/backend/timeprovider.hpp</file>
 
-        <!-- <file>qml/components/a.qml</file>
-        <file>qml/themes/base.qml</file>
-
-        <file>assets/icons</file>
-        <file>assets/images</file>
-        <file>assets/fonts</file> -->
     </qresource>
 </RCC>
-

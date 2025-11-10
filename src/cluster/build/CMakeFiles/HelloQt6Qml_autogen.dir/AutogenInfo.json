@@ -285,7 +285,15 @@
 	"CMAKE_SOURCE_DIR" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster",
 	"DEP_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/HelloQt6Qml_autogen/deps",
 	"DEP_FILE_RULE_NAME" : "HelloQt6Qml_autogen/timestamp",
-	"HEADERS" : [],
+	"HEADERS" : 
+	[
+		[
+			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.hpp",
+			"MU",
+			"VU2PALRVTW/moc_timeprovider.cpp",
+			null
+		]
+	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
 	"INCLUDE_DIR" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/HelloQt6Qml_autogen/include",
 	"MOC_COMPILATION_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/HelloQt6Qml_autogen/mocs_compilation.cpp",
@@ -366,6 +374,11 @@
 	"SETTINGS_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles/HelloQt6Qml_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[
+			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp",
+			"MU",
+			null
+		],
 		[
 			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/main.cpp",
 			"MU",

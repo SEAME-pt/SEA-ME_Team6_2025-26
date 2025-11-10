@@ -66,12 +66,12 @@ include CMakeFiles/HelloQt6Qml_autogen_timestamp_deps.dir/compiler_depend.make
 # Include the progress variables for this target.
 include CMakeFiles/HelloQt6Qml_autogen_timestamp_deps.dir/progress.make
 
-CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.4.2
 CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.4.2
 CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/qt6/libexec/moc
 CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6DBus.so.6.4.2
-CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Qml.so.6.4.2
+CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.4.2
 CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Quick.so.6.4.2
+CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6Qml.so.6.4.2
 CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: /usr/lib/x86_64-linux-gnu/libQt6QuickControls2.so.6.4.2
 
 HelloQt6Qml_autogen_timestamp_deps: CMakeFiles/HelloQt6Qml_autogen_timestamp_deps

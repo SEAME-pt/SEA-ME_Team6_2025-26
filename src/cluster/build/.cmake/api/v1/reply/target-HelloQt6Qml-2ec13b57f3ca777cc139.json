@@ -54,7 +54,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 23,
+				"line" : 24,
 				"parent" : 0
 			},
 			{
@@ -411,7 +411,8 @@
 			[
 				0,
 				1,
-				4
+				2,
+				5
 			]
 		}
 	],
@@ -511,23 +512,24 @@
 			[
 				0,
 				1,
-				4
+				2,
+				5
 			]
 		},
 		{
 			"name" : "",
 			"sourceIndexes" : 
 			[
-				2,
-				3
+				3,
+				4
 			]
 		},
 		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				5,
-				6
+				6,
+				7
 			]
 		}
 	],
@@ -544,6 +546,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/backend/timeprovider.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
