@@ -50,4 +50,4 @@
 - **To improve**:
 
 ## 🔗 Useful Links
-- Sprint board/view: [Sprint 3](https://github.com/orgs/SEAME-pt/projects/89/views/7)
+- Sprint board/view: [Sprint 3](https://github.com/orgs/SEAME-pt/projects/89/views/8?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Linked+pull+requests%22%2C%22Sub-issues+progress%22%5D&sortedBy%5Bdirection%5D=&sortedBy%5BcolumnId%5D=)
