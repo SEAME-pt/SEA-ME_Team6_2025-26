@@ -34,11 +34,11 @@ Use this document as a reference when working on new screens, refactoring compon
 <a id="sec-core-visual-blocks"></a>
 ## 🧱 Core Visual Building Blocks
 
-##### Item
+### Item
 `Item` is the invisible base class for almost all visual QML elements.  
 You can think of it as a container or a positioning box - it doesn't draw anything itself, but defines where and how things appear.
 
-###### Common Properties
+#### Common Properties
 
 - **x, y** - Position relative to the parent.
 - **width, height** - Size of the item.
@@ -48,11 +48,11 @@ You can think of it as a container or a positioning box - it doesn't draw anythi
 - **anchors** - Layout system to align items relative to other items.
 - **parent** - Reference to the parent item in the visual tree.
 
-##### Anchors
+### Anchors
 `Anchors` are QML's built-in layout system for aligning and positioning elements relative to each other.  
 They replace manual `x` and `y` coordinates with logical relationships, making your UI much more flexible.
 
-###### Common Properties
+#### Common Properties
 
 - **anchors.fill: parent** - Fills the parent entirely.
 - **anchors.centerIn: parent** - Centers inside parent.
@@ -64,14 +64,14 @@ They replace manual `x` and `y` coordinates with logical relationships, making y
 <a id="sec-qml-elements"></a>
 ## 📚 QML Elements
 
-##### ApplicationWindow
+### ApplicationWindow
 
-###### Overview
+#### Overview
 `ApplicationWindow` is the root visual window for QML applications that use the `QtQuick.Controls` module.  
 It acts as the top-level container for all UI elements and provides built-in support for headers, footers, menus and toolbars.  
 It provides the base surface where layouts, components and visual themes are rendered.
 
-###### Basic Properties
+#### Basic Properties
 
 - **visible** | bool  
 Determines if the window is displayed on screen. You usually set this to `true` so your app appears.
@@ -91,7 +91,7 @@ The text shown in the OS title bar. Example: `title: "Instrument Cluster"`.
 - **flags** | Qt.WindowFlags  
 Controls how the window behaves - frameless, fullscreen, etc. Example: `flags: Qt.FramelessWindowHint`.
 
-###### Layout & Structure Properties
+#### Layout & Structure Properties
 
 - **header** | Item  
 An optional area at the top for navigation or titles.
@@ -108,7 +108,7 @@ The background visual behind everything (color, gradient or image).
 - **menubar** | Item  
 Optional area for menus (mostly for desktop).
 
-###### Functional Properties
+#### Functional Properties
 
 - **activeFocusControl** | Control (read-only)  
 The control (like a text field or button) that currently has keyboard focus. Useful if you want to check which item the user is interacting with.
@@ -122,22 +122,22 @@ Defines the language and number/date formatting settings for the window.
 - **window** | ApplicationWindow  
 Let's any item inside your app access its parent window - for example, `window.title = "My app"`.
 
-###### Tips & Notes
+#### Tips & Notes
 
 - In production or embedded setups, replace `visible: true` with `visibility: "FullScreen"` for a cleaner UI.
 - Keep only one `ApplicationWindow` per app - additional windows should use the `Window``type if needed.
 - Avoid heavy logic or animations in the root window; delegate those to child components.
 
 
-##### Loader
+### Loader
 
-###### Overview
+#### Overview
 `Loader` is a QML type that dynamically loads other QML components at runtime.  
 Instead of declaring everything upfront, you can use `Loader` to load (and unload) visual items as needed - improving performance and flexibility in large UIs.  
 Think of it like a "placeholder" that you can tell what to display later.  
 It's especially useful when switching screens, lazy-loading content, or managing memory efficiently.
 
-###### Basic Properties
+#### Basic Properties
 
 - **source** | url  
 The path or URL of the QML file to load. Example: `source: "MyComponent.qml"`.
@@ -160,7 +160,7 @@ Sets the opacity of the loader (and its loaded item). Example: `opacity: 0.8`.
 
 - **anchors, x, y, width, height** | Standard layout properties for positioning the loaded item.  
 
-###### Layout & Structure Properties
+#### Layout & Structure Properties
 
 - **item** | Item (read-only)  
 Reference to the loaded QML object. You can access its properties. Example: `loader.item.color = "red"`.
@@ -174,7 +174,7 @@ Current state of the loader: `Loader.Null`, `Loader.Ready`, `Loader.Loading` or 
 - **activeFocus** | bool  
 When the loaded item or loader currently has keyboard focus.
 
-###### Functional Properties
+#### Functional Properties
 
 - **onLoaded** | signal  
 Triggered when the source finished loading successfully.
@@ -191,7 +191,7 @@ Changes the loaded component dynamically.
 - **sourceComponent.destroy()** | method  
 Destroys the currently loaded item (useful for freeing memory).
 
-###### Tips & Notes
+#### Tips & Notes
 
 - Set `active: false` initially, and then enable it when you need the component. This avoids long startup times.
 - You can dynamically change screens by calling `setSource("AnotherPage.qml")`.
@@ -199,14 +199,14 @@ Destroys the currently loaded item (useful for freeing memory).
 - Use `asynchronous: true` for smoother transitions when loading large QML files or complex UIs.
 - Monitor `status` and `onStatusChanged` to detect loading errors and handle them gracefully.
 
-##### Rectangle
+### Rectangle
 
-###### Overview
+#### Overview
 The `Rectangle` is one of the most common and fundamental QML elements.  
 It's a simple visual item that draws a rectangle on the screen - often used as backgrounds, containers, or decorative shapes for other components.  
 It's a great building block for almost any visual layout - buttons, card, panels, etc.
 
-###### Basic Properties
+#### Basic Properties
 
 - **color** | color  
 Sets the rectangle's fill color. Example: `color: "#ffffff"`.
@@ -223,7 +223,7 @@ Fills the rectangle with a smooth color transition. Example: `gradient: Gradient
 - **antialiasing** | bool  
 Enables smooth edges (useful for rounded rectangles). Example: `antialiasing: true`.
 
-###### Layout & Structure Properties
+#### Layout & Structure Properties
 
 - **x, y** | real  
 Position of the rectangle relative to its parent. Example: `x: 150; y:50`.
@@ -246,8 +246,7 @@ Rotates the rectangle in degrees. Example: `rotation: 45`.
 - **scale** | real  
 Scales the rectangle size proportionally. Example: `scale: 1.2`.
 
-
-###### Functional Properties
+#### Functional Properties
 
 - **clip** | bool  
 When `true`, child items are clipped to the rectangle's boundaries. Useful for masking overflow.
@@ -259,7 +258,7 @@ Alias for antialiasing in older versions.
 Natural size of the rectangle if no explicit size is set.
 
 
-###### Tips & Notes
+#### Tips & Notes
 
 - Don't overuse `antialiasing` on many items - it can impact rendering speed on low-power devices.
 - Many higher-level QML controls internally use `Rectangle` for their visual background.
