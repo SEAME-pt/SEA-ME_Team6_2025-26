@@ -510,3 +510,5 @@ Text {
 - https://doc.qt.io/qt-6/qml-qtquick-loader.html
 - https://doc.qt.io/qt-6/qml-qtquick-rectangle.html
 - https://doc.qt.io/qt-6/qml-qtquick-layouts-rowlayout.html
+- https://doc.qt.io/qt-6/qml-qtquick-layouts-columnlayout.html
+- https://doc.qt.io/qt-6/qml-qtquick-text.html
