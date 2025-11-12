@@ -81,8 +81,12 @@ HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.hpp
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/main.qml
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/themes/BaseTheme.qml
-HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/home.qml
-HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/cluster.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/HomeScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/SettingsScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/ClusterScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/BaseScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/NavBar.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/TopBar.qml
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /usr/lib/qt6/libexec/rcc
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Automatic RCC for qml.qrc"
 	/usr/bin/cmake -E cmake_autorcc /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles/HelloQt6Qml_autogen.dir/AutoRcc_qml_EWIEGA46WW_Info.json 
