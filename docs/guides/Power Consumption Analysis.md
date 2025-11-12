@@ -6,7 +6,7 @@
 |-----------|----------|--------------|------------------|------------------|---------------|---------------|-------|
 | **Raspberry Pi 5** | 1 | 5.0 | 500 | 5000 | 2.5 | 25.0 | Idle: ~3W, Max Performance: 25W |
 | **Hailo-8 HAT (26 TOPS)** | 1 | 3.3-5.0 | 200 | 2500 | 0.66 | 12.5 | Typical: 2.5W, Max: ~12.5W |
-| **B-U585I-IOT02A** | 1 | 3.3 | 2 | 500 | 0.007 | 1.65 | With WiFi active: ~170mA @ 5V |
+| **B-U585I-IOT02A** | 1 | 5.0 | 2 | 500 | 0.007 | 1.65 | With WiFi active: ~170mA @ 5V |
 | **Servo Motor WS-MG99SR** | 1 | 4.8-6.0 | 100 | 1200 | 0.5 | 7.2 | Idle: ~100mA, Stall: ~1200mA |
 | **DC Motors (propulsion)** | 2 | 6.0-12.0 | 200 | 2000 | 2.4 | 48.0 | Per motor: 1.2W-24W (depends on specific motor) |
 | **MCP2515 CAN Transceiver** | 2 | 5.0 | 1 | 5 | 0.01 | 0.05 | Typical: 5mA/module, Standby: 1μA |
