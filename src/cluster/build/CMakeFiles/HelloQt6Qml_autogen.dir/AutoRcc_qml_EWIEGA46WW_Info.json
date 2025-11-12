@@ -12,8 +12,12 @@
 		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.hpp",
 		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/main.qml",
 		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/themes/BaseTheme.qml",
-		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/home.qml",
-		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/cluster.qml"
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/HomeScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/SettingsScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/ClusterScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/BaseScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/NavBar.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/TopBar.qml"
 	],
 	"LOCK_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles/HelloQt6Qml_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,

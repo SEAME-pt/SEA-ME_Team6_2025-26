@@ -2,8 +2,13 @@
     <qresource prefix="/">
         <file>qml/main.qml</file>
         <!-- Screens -->
-        <file>qml/screens/home.qml</file>
-        <file>qml/screens/cluster.qml</file>
+        <file>qml/screens/BaseScreen.qml</file>
+        <file>qml/screens/HomeScreen.qml</file>
+        <file>qml/screens/ClusterScreen.qml</file>
+        <file>qml/screens/SettingsScreen.qml</file>
+        <!-- Components -->
+        <file>qml/components/NavBar.qml</file>
+        <file>qml/components/TopBar.qml</file>
         <!-- Themes -->
         <file>qml/themes/BaseTheme.qml</file>
         <!-- Backend -->
