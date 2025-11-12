@@ -305,15 +305,18 @@ cluster/
 │   ├── backend/        #  Classes handling logic / simulation
 │   │   ├── timeprovider.cpp
 │   │   └── timeprovider.hpp
-│   └── utils/
-│       └── a.cpp       #  Helper modules
+│   └── utils/          #  Helper modules
+│       └── a.cpp
 ├── qml/                #  QML UI Code
 │   ├── main.qml
 │   ├── components/     #  Reusable UI parts
-│   │   └── a.qml
+│   │   └── TopBar.qml
+│   │   └── NavBar.qml
 │   ├── screens/        #  Multi-view layouts (Cluster, Settings)
-│   │   └── cluster.qml
-│   │   └── home.qml
+│   │   └── BaseScreen.qml
+│   │   └── ClusterScreen.qml
+│   │   └── HomeScreen.qml
+│   │   └── SettingsScreen.qml
 │   └── themes/         #  Styling / Color schemes
 │       └── BaseTheme.qml
 ├── assets/
