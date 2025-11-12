@@ -89,7 +89,7 @@ ApplicationWindow {
 }
 ```
 
-### Basic Properties
+#### Basic Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -102,7 +102,7 @@ ApplicationWindow {
 
 ---
 
-### Layout & Structure Properties
+#### Layout & Structure Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -114,7 +114,7 @@ ApplicationWindow {
 
 ---
 
-### Functional Properties
+#### Functional Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -151,7 +151,7 @@ Loader {
 }
 ```
 
-### Basic Properties
+#### Basic Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -165,7 +165,7 @@ Loader {
 
 ---
 
-### Layout & Structure Properties
+#### Layout & Structure Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -176,7 +176,7 @@ Loader {
 
 ---
 
-### Functional Properties
+#### Functional Properties
 
 | **Property / Signal / Method** | **Type** | **Description** | **Example** |
 |--------------------------------|-----------|------------------|--------------|
@@ -215,7 +215,7 @@ Rectangle {
 }
 ```
 
-### Basic Properties
+#### Basic Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -227,7 +227,7 @@ Rectangle {
 
 ---
 
-### Layout & Structure Properties
+#### Layout & Structure Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
@@ -241,7 +241,7 @@ Rectangle {
 
 ---
 
-### Functional Properties
+#### Functional Properties
 
 | **Property** | **Type** | **Description** | **Example** |
 |---------------|-----------|------------------|--------------|
