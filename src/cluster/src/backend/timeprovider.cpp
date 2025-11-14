@@ -9,8 +9,8 @@ TimeProvider::TimeProvider(QObject *parent): QObject(parent) {
 void TimeProvider::updateTime() {
     QDateTime now = QDateTime::currentDateTime();
 
-    QString newTime = now.toString("hh:mm");
-    QString newDate = now.toString("dddd, MMM d");
+    QString newTime = now.toString("h:mm AP");
+    QString newDate = now.toString("dddd | MMMM d, yyyy");
 
     if (newTime != _currTime) {
         _currTime = newTime;
@@ -24,3 +24,5 @@ void TimeProvider::updateTime() {
 
 QString TimeProvider::currTime() const { return _currTime; }
 QString TimeProvider::currDate() const { return _currDate; }
+
+//g++ main.cpp -o datetime_test $(pkg-config --cflags --libs Qt6Core)
