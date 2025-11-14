@@ -156,7 +156,7 @@ build HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp | ${cmake_ninja_workdir}HelloQt
 #############################################
 # Phony custom command for CMakeFiles/HelloQt6Qml_autogen_timestamp_deps
 
-build CMakeFiles/HelloQt6Qml_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: phony /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6DBus.so.6.4.2 /usr/lib/qt6/libexec/moc /usr/lib/x86_64-linux-gnu/libQt6QuickControls2.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Qml.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Quick.so.6.4.2
+build CMakeFiles/HelloQt6Qml_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/HelloQt6Qml_autogen_timestamp_deps: phony /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Quick.so.6.4.2 /usr/lib/qt6/libexec/moc /usr/lib/x86_64-linux-gnu/libQt6Gui.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6DBus.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6Qml.so.6.4.2 /usr/lib/x86_64-linux-gnu/libQt6QuickControls2.so.6.4.2
 
 
 #############################################

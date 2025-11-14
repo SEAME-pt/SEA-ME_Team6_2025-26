@@ -29,7 +29,7 @@ Rectangle {
             }
 
             Rectangle {
-                Layout.preferredHeight: 32
+                Layout.preferredHeight: 48
                 Layout.fillWidth: true
                 opacity: 0
             }
