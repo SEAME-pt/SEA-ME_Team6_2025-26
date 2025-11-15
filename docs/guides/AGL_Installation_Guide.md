@@ -93,8 +93,8 @@ Or.. Download the AGL source code for the **Terrific Trout v20.0.1** ('latest-st
 cd $AGL_TOP
 mkdir master
 cd master
-repo init -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
-```
+repo init -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo \
+          -b trout -m trout_20.0.2.xml```
 
 ### Synchronize Repositories
 
@@ -105,6 +105,35 @@ repo sync
 ```
 
 **Note:** This process may take significant time depending on your internet connection speed.
+
+## (What could possibly go wrong?)
+
+Could connect to repo ...
+
+Create a local manifest with a mirror
+```bash
+cd $AGL_TOP
+mkdir -p .repo/local_manifests
+nano .repo/local_manifests/qt6_mirror.xml
+```
+and this inside
+```bash
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remove-project name="yocto/meta-qt6" />
+
+  <project name="YoeDistro/meta-qt6"
+           path="external/meta-qt6"
+           remote="github"
+           revision="6.7" />
+</manifest>
+```
+and then force the sync with the mirror you set up, and after make a full sync just to be sure :)
+```bash
+repo sync --force-sync external/meta-qt6
+repo sync 
+```
+
 
 ---
 
