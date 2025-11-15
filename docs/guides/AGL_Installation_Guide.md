@@ -106,9 +106,9 @@ repo sync
 
 **Note:** This process may take significant time depending on your internet connection speed.
 
-## (What could possibly go wrong?)
+## (What could possibly go wrong here?)
 
-Could connect to repo ...
+When downloading the meta-qt6 repository from the code.qt.io server, the server is not responding in time.
 
 Create a local manifest with a mirror
 ```bash
@@ -225,6 +225,7 @@ ls $AGL_TOP/meta-agl-demo/recipes-platform/images/
 ```
 
 Common targets include:
+- `agl-image-minimal-crosssdk`: Minimal Image with cross-compilation SDK
 - `agl-ivi-demo-qt`: IVI demo with Qt framework
 - `agl-ivi-demo-qt-crosssdk`: IVI demo with Qt and cross-compilation SDK
 - `agl-demo-platform`: Complete AGL demo platform
@@ -241,6 +242,17 @@ Build the AGL image with Qt SDK support:
 cd $AGL_TOP/build-rpi5
 bitbake agl-ivi-demo-qt-crosssdk
 ```
+## (What could possibly go wrong here?)
+
+The firmware has a restricted license (synaptics-killswitch) that is not on your list of accepted licenses
+
+Add the new license to you conf/local.conf file (at the end of the file):
+
+```bash
+LICENSE_FLAGS_ACCEPTED += "synaptics-killswitch"
+```
+
+
 
 ### Build Process Overview
 
