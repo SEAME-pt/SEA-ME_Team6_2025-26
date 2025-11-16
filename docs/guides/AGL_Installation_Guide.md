@@ -451,15 +451,16 @@ WantedBy=multi-user.target
 And finally, activate this service
 
 ```
+# Reload services
 systemctl daemon-reload
 
-# Ativar para iniciar no boot
+# Enable service
 systemctl enable wifi-autostart.service
 
-# Iniciar agora (teste)
+# Start service
 systemctl start wifi-autostart.service
 
-# Verificar status
+# Check status
 systemctl status wifi-autostart.service
 
 ```
