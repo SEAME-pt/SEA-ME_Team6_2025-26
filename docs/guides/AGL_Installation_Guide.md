@@ -385,54 +385,87 @@ If there is a response, the network is functional.
 
 ---
 
-# 5. Create an Auto-Startup Script
+## 5. Create an Auto-Startup Script
 
 To make Wi-Fi start automatically after login.
 
 Create the script:
 
 ```sh
-nano /etc/profile.d/wpa-autostart.sh
+mkdir -p /opt/scripts
+nano /opt/scripts/wifi-autostart.sh
 ```
 
 Write this inside:
 
 ```sh
 #!/bin/sh
-# Executar em background para não atrasar o login
-(
-    sleep 5
-    ip link set wlan0 up
-    sleep 2
-    killall wpa_supplicant 2>/dev/null
-    sleep 1
-    wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -D nl80211
-    sleep 5
-    udhcpc -i wlan0
-) &
+
+sleep 5
+ip link set wlan0 up
+sleep 2
+killall wpa_supplicant 2>/dev/null
+sleep 1
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -D nl80211
+sleep 5
+udhcpc -i wlan0
+
 ```
 
 Make it executable:
 
 ```sh
-chmod +x /etc/profile.d/wpa-autostart.sh
+chmod +x /opt/scripts/wifi-autostart.sh
 ```
 
----
+Create the service in systemd
 
-## Additional note (optional, but useful)
-
-If AGL is still attempting to manage networks with another service (e.g., NetworkManager in custom builds), ensure that only **wpa_supplicant** controls the interface:
-
-```sh
-rfkill unblock all
+```
+nano /etc/systemd/system/wifi-autostart.service
 ```
 
-And to confirm that the interface exists:
+and write this inside:
 
-```sh
-ip a
 ```
+[Unit]
+Description=WiFi Auto-Connect at Boot
+After=network.target
+Before=sshd.service ssh.service multi-user.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/scripts/wifi-autostart.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+# Restart if anything fails
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+And finally, activate this service
+
+```
+systemctl daemon-reload
+
+# Ativar para iniciar no boot
+systemctl enable wifi-autostart.service
+
+# Iniciar agora (teste)
+systemctl start wifi-autostart.service
+
+# Verificar status
+systemctl status wifi-autostart.service
+
+```
+
+
+
 
 ---
 
