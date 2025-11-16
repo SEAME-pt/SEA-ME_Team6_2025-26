@@ -324,6 +324,119 @@ Power on the Raspberry Pi 5 to boot into AGL. The system will perform initial se
 
 ---
 
+
+### You've made it this far? What problem are you likely to encounter?
+
+## 🛑 Error -> *"Can't connect to internet with connman"*
+
+### 1. Check status, then stop and then disable ConnMan
+
+```sh
+systemctl status connman
+systemctl stop connman
+systemctl disable connman
+```
+
+---
+
+## 2. Clean old files that may exist for wpa_supplicant
+
+```sh
+rm -r /var/run/wpa_supplicant/wlan0
+```
+
+---
+
+## 3. Create new config for Wi‑Fi
+
+Generate the `/etc/wpa_supplicant.conf` file with the credentials:
+
+```sh
+wpa_passphrase "NetworkName(SSID)" "password" > /etc/wpa_supplicant.conf
+```
+
+Initialize wpa_supplicant:
+
+```sh
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+```
+
+Activate the interface:
+
+```sh
+ip link set wlan0 up
+```
+
+Get a new IP via DHCP:
+
+```sh
+udhcpc -i wlan0
+```
+
+---
+
+## 4. Connection Test
+
+```sh
+ping -c 4 8.8.8.8
+```
+
+If there is a response, the network is functional.
+
+---
+
+# 5. Create an Auto-Startup Script
+
+To make Wi-Fi start automatically after login.
+
+Create the script:
+
+```sh
+nano /etc/profile.d/wpa-autostart.sh
+```
+
+Write this inside:
+
+```sh
+#!/bin/sh
+# Executar em background para não atrasar o login
+(
+    sleep 5
+    ip link set wlan0 up
+    sleep 2
+    killall wpa_supplicant 2>/dev/null
+    sleep 1
+    wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -D nl80211
+    sleep 5
+    udhcpc -i wlan0
+) &
+```
+
+Make it executable:
+
+```sh
+chmod +x /etc/profile.d/wpa-autostart.sh
+```
+
+---
+
+## Additional note (optional, but useful)
+
+If AGL is still attempting to manage networks with another service (e.g., NetworkManager in custom builds), ensure that only **wpa_supplicant** controls the interface:
+
+```sh
+rfkill unblock all
+```
+
+And to confirm that the interface exists:
+
+```sh
+ip a
+```
+
+---
+
+
 ## Troubleshooting
 
 ### Common Issues
@@ -351,7 +464,7 @@ Power on the Raspberry Pi 5 to boot into AGL. The system will perform initial se
 - **Image Type:** IVI Demo with Qt Cross-SDK
 
 
-## Credits goes to..... 
+## Part of the credits goes to..... 
 
 - **https://docs.automotivelinux.org/en/trout/#01_Getting_Started/02_Building_AGL_Image/03_Downloading_AGL_Software/**
 ---
