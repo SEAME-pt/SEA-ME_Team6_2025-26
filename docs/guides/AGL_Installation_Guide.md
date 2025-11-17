@@ -327,6 +327,8 @@ Power on the Raspberry Pi 5 to boot into AGL. The system will perform initial se
 
 ### You've made it this far? What problem are you likely to encounter?
 
+
+## WIFI CONNECTION
 ## 🛑 Error -> *"Can't connect to internet with connman"*
 
 ### 1. Check status, then stop and then disable ConnMan
@@ -465,10 +467,118 @@ systemctl status wifi-autostart.service
 
 ```
 
+---
 
+## SSH CONFIGURATION on AGL
+
+### 1. Manual Verification and Testing
+
+Confirm the location of the sshd binary:
+```
+which sshd
+
+```
+The expected output should be /usr/sbin/sshd.
+
+
+Try to start the service manually:
+```
+/usr/sbin/sshd -D &
+```
+
+
+Confirm that the process is running:
+```
+ps aux | grep sshd
+```
+
+
+### 2. Create the systemd Service
+
+To make SSH start automatically on boot, you need to create a systemd service file.
+```
+nano /etc/systemd/system/sshd.service
+```
+Add the following content to the file:
+```
+    [Unit]
+    Description=OpenSSH Daemon
+    After=network.target
+
+    [Service]
+    Type=forking
+    ExecStart=/usr/sbin/sshd
+    ExecReload=/bin/kill -HUP $MAINPID
+    KillMode=process
+    Restart=always
+    RestartSec=5s
+
+    [Install]
+    WantedBy=multi-user.target
+```
+
+### 3.  Enable and Start the Service
+
+Stop any manually running sshd instances:
+```
+killall sshd
+```
+
+Reload systemd to read the new service file:
+```
+systemctl daemon-reload
+```
+
+Enable the service to start automatically on boot:
+```
+systemctl enable sshd
+```
+
+Start the service:
+```
+systemctl start sshd
+```
+
+Check the service status:
+```
+    systemctl status sshd
+```
+The output should indicate that the service is active (running).
+
+
+### 4. Verify Network Connection
+
+Confirm that the service is listening on port 22 (the default SSH port).
+```
+netstat -tlnp | grep :22
+```
+You should see a line showing the service listening on 0.0.0.0:22.
+
+### 5. Set the Root Password
+
+To log in via SSH, you need to set a password for the root user (or another user).
+Bash
+```
+passwd root
+```
+
+
+### 6. 💻 Test Remote Access
+
+Finally, from another computer on the same network, try to access your AGL device. Replace <IP_of_RASPBERRY> with your device's actual IP address.
+```
+ssh root@<IP_of_RASPBERRY>
+```
+Accept the SSH key fingerprint if it's your first time connecting, and then enter the password you set in the previous step.
+
+
+And it's working!!
 
 
 ---
+
+
+
 
 
 ## Troubleshooting
