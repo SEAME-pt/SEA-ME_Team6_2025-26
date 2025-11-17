@@ -17,7 +17,9 @@ This guide provides comprehensive instructions for building and deploying Automo
 7. [Available Build Targets](#available-build-targets)
 8. [Building the Image](#building-the-image)
 9. [Flashing to microSD Card](#flashing-to-microsd-card)
-10. [Hardware Setup and Boot](#hardware-setup-and-boot)
+10. [Wifi Configuration](#wifi-connection)
+11. [Ssh Set-up](#ssh-configuration-on-agl)
+12. [Hardware Setup and Boot](#hardware-setup-and-boot)
 
 ---
 
