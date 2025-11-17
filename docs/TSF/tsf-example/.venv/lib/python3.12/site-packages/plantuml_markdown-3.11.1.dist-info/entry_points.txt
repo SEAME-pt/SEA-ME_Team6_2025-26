@@ -1,0 +1,2 @@
+[markdown.extensions]
+plantuml_markdown = plantuml_markdown:PlantUMLMarkdownExtension
