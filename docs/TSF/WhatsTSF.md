@@ -13,8 +13,16 @@ TSF focuses on **critical systems**—where **security, performance, availabilit
 - **Quantify trust** (via scores);
 - **Maintain consistency** between what the software claims to do and what it actually does.
 
+### Current Status
 
-🧩 Trustable Software Framework (TSF) — Overview and Technical Context
+- TSF is **incubated at the Eclipse Foundation**, with **active development by Codethink**.  
+- It is **open source**, licensed under **EPL 2.0** and **CC BY-SA 4.0**.  
+- Main development occurs on Codethink's GitLab:  
+  👉 [https://gitlab.com/CodethinkLabs/trustable/trustable](https://gitlab.com/CodethinkLabs/trustable/trustable)
+- The **official tooling** is **TruDAG** (Trustable Directed Acyclic Graph tool), implemented in Python.  
+- The model is based on **Directed Acyclic Graphs (DAGs)** composed of **Statements** linked by logical relationships.
+
+### 🧩 Trustable Software Framework (TSF) — Overview and Technical Context
 
 📚 Official source (GitLab Project)
 
@@ -23,12 +31,12 @@ TSF focuses on **critical systems**—where **security, performance, availabilit
 
 In short:
 
-TSF extends Doorstop to provide full traceability and certification evidence management.
+- TSF extends Doorstop to provide full traceability and certification evidence management.
 
-⚙️ What is Doorstop
+### ⚙️ What is Doorstop
 
-Doorstop is the foundation of TSF.
-It’s a Python-based tool that uses YAML files to represent requirements, tests, and documentation in a version-controlled and traceable way.
+- Doorstop is the foundation of TSF.
+- It’s a Python-based tool that uses YAML files to represent requirements, tests, and documentation in a version-controlled and traceable way.
 
 📘 Official source (Doorstop README):
 
@@ -38,19 +46,19 @@ It’s a Python-based tool that uses YAML files to represent requirements, tests
 💡 Instead of using Word or Excel, each requirement is a small .yaml file stored next to your source code in Git.
 This makes it possible to link requirements, implementation, and verification directly.
 
-🧠 What is trudag
+### 🧠 What is trudag
 
-trudag is the command-line interface (CLI) included with the trustable package.
-It’s used to generate traceability diagrams and documents from TSF repositories.
+- trudag is the command-line interface (CLI) included with the trustable package.
+- It’s used to generate traceability diagrams and documents from TSF repositories.
 
-It converts relationships between requirements and tests into .dot files (Graphviz format), which can later be exported as PDF or PNG to visualize traceability.
+- It converts relationships between requirements and tests into .dot files (Graphviz format), which can later be exported as PDF or PNG to visualize traceability.
 
 📗 Official source (Trustable CLI docs):
 
 “The trudag CLI builds traceability diagrams (.dot files) from TSF repositories.”
 👉 Source: https://gitlab.com/trustable/trustable/-/tree/main/frontends/cli
 
-🔷 What are .dot files
+### 🔷 What are .dot files
 
 .dot files use the Graphviz DOT language, which is a plain text graph description format used to represent nodes and links.
 
@@ -63,58 +71,30 @@ It converts relationships between requirements and tests into .dot files (Graphv
 
 [REQ-001] --> [TEST-001]
 
+### What is a Graph (in TSF context)
 
-This enables automatic generation of traceability diagrams for:
+A graph is a set of nodes connected by edges:
 
-Requirements
+- Each node is a Statement (a claim about the software).
 
-Tests
+- Each edge is a logical link, meaning “this leads to that” or “this depends on that”.
 
-Verification activities
+----
 
-Certification evidence
+### Directed Acyclic Graph - TSF uses a DAG (Directed Acyclic Graph):
 
-🔗 How the Components Fit Together
+- Directed → edges have direction (A supports B).
 
-| Component           | Role                                                              | File Types             |
-| ------------------- | ----------------------------------------------------------------- | ---------------------- |
-| **Trustable (TSF)** | Complete framework (includes Doorstop + trudag + other utilities) | `.yaml`, `.dot`        |
-| **Doorstop**        | Requirements management foundation                                | `.yaml`                |
-| **trudag**          | Diagram and report generator for TSF                              | `.dot`, `.pdf`, `.png` |
+- Acyclic → no cycles allowed (A cannot depend on itself indirectly).
 
+💡 Simple analogy:
+Imagine a family tree: each person (Statement) is linked to parents/children. No one can be their own ancestor → no cycles.
 
-🪜 Why We Use This Installation Method
+### Types of Statements
 
-✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages.
-✔️ Security reason: TSF is used in safety-critical domains where dependency control is essential.
-✔️ Traceability reason: All requirements and evidence are version-controlled in GitHub as YAML files, supporting certification standards like DO-178C, ISO 26262, and EN 50128.
+#### 🔹 Conceptual Structure
 
-📘 Source (Trustable GitLab):
-
-“TSF supports traceability and assurance evidence in compliance with certification standards.”
-👉 https://gitlab.com/trustable/trustable
-
-| Tool                | Purpose                                          | Key Feature                                  |
-| ------------------- | ------------------------------------------------ | -------------------------------------------- |
-| **TSF (Trustable)** | End-to-end traceability and assurance management | Integrates requirements, tests, and evidence |
-| **Doorstop**        | Requirements management                          | YAML-based storage, version control ready    |
-| **trudag**          | Visualization tool                               | Generates Graphviz `.dot` diagrams           |
-
-
----
-
-## 2. Current Status
-
-- TSF is **incubated at the Eclipse Foundation**, with **active development by Codethink**.  
-- It is **open source**, licensed under **EPL 2.0** and **CC BY-SA 4.0**.  
-- Main development occurs on Codethink's GitLab:  
-  👉 [https://gitlab.com/CodethinkLabs/trustable/trustable](https://gitlab.com/CodethinkLabs/trustable/trustable)
-- The **official tooling** is **TruDAG** (Trustable Directed Acyclic Graph tool), implemented in Python.  
-- The model is based on **Directed Acyclic Graphs (DAGs)** composed of **Statements** linked by logical relationships.
-
-### 🔹 Conceptual Structure
-
-Each project is described by a **trust graph**, composed of:
+Like it was said, each project is described by a **trust graph**, composed of:
 - **Expectations** → requirements or goals defined by stakeholders.  
 - **Assertions** → statements connecting expectations and evidence.  
 - **Premises / Evidence** → concrete proofs (documents, code, test results, audits, etc.).  
@@ -125,34 +105,150 @@ From these elements, TSF builds a **traceable model**, allowing you to:
 - Link test results and automated analyses.
 - Automatically evaluate **Confidence Scores** via CI/CD.
 
+#### 🔹 Resuming Table
+| Type                | Description (What it is)                                          | Function (What it does)                                | Example                               |
+|---------------------|-------------------------------------------------------------------|----------------------------------------------------------|----------------------------------------|
+| **Expectation**     | What the software should achieve (goal defined by stakeholders)   | Top of the graph — what we want to prove                | “System responds under 200ms”          |
+| **Assertion**       | Logical justification (reason why something is true)              | Connects Expectations to Evidence                        | “Performance tests are automated”      |
+| **Evidence (Premise)** | Concrete proof                                                   | Shows that the Assertion is true                         | “Automated tests show avg 180ms”       |
+| **Assumption**      | External factor presumed true                                      | Condition required for Assertions/Expectations to hold   | “System runs on Linux”                 |
+
+#### Links in the graph:
+
+- Expectation → supported by Assertions
+
+- Assertions → supported by Evidence
+
+- Assumptions → linked as external conditions
+
+#### Simple Visual Representation
+Expectation: Software XYZ is safe
+        |
+     Assertion: Automated security tests passed
+        |
+     Evidence: CI/CD logs show 0 failures
+        |
+   Assumption: Runs on Linux
+
+Each level is a layer of the graph.
+
+If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect, signaling a review is needed.
+
+#### This enables automatic generation of traceability diagrams for:
+
+- Requirements
+
+- Tests
+
+- Verification activities
+
+- Certification evidence
+
+#### ✅ Difference Between Expectation and Assertion (simple and direct explanation)
+
+Think about it like this:
+
+##### 🔹 Expectation = What we want to be true
+
+An **Expectation** is a **goal, requirement, or intention** of the project.
+
+It is **high-level**, something the stakeholders want.
+
+###### Examples of Expectations:
+- “The system is secure.”
+- “The response time is below 200ms.”
+- “The software behaves reliably under load.”
+
+These are **macro-level statements** that need justification.
+
 ---
 
-## 3. How to Implement TSF in Practice
+##### 🔹 Assertion = How we justify that Expectation
 
-### 🧾 Methodology Steps
+An **Assertion** is a **logical statement** that connects an Expectation to the Evidence.
 
-1. **Define Expectations**  
-   → What the software should achieve (functional and non-functional).  
-   Example: “The system must respond in under 200ms for 95% of requests.”
+It answers the question: **“Why do we believe this is true?”**
 
-2. **Identify Evidence**  
-   → Which artifacts prove these claims?  
-   Example: automated tests, performance logs, code reviews, security documentation.
+Assertions act as **bridges** in the graph.
 
-3. **Document Assumptions**  
-   → External factors the project depends on (e.g., client infrastructure).
+###### Examples of Assertions:
+- “Security tests are executed automatically in CI.”
+- “All commits pass static code analysis.”
+- “Load tests run nightly on a production-like environment.”
 
-4. **Record Logic (Assertions)**  
-   → Create links between Expectations and Evidence, forming a **DAG**.  
-   Each link represents a logical deduction (“this evidence supports this expectation”).
-
-5. **Assess Confidence**  
-   → Automate metric collection and generate scores.  
-   (This can be integrated into CI/CD pipelines.)
+Assertions are **not proofs** — they are **reasons** that support the Expectation.
 
 ---
 
-## 4. Tools: TruDAG
+#### 🧩 Simple visual example
+
+##### Expectation
+“The system is secure.”
+
+⬇️ *Why?* (Assertion)
+
+##### Assertion
+“Security tests are executed automatically in CI.”
+
+⬇️ *What proof do we have?* (Evidence)
+
+##### Evidence
+“CI logs show 0 failed security tests in the last 50 runs.”
+
+---
+
+##### Visual summary
+Expectation
+↓
+Assertion
+↓
+Evidence
+
+---
+
+#### 💡 Analogy
+
+Imagine you are in an oral exam and the professor asks:
+
+**❓ “Why do you believe the system is secure?”**  
+(Expectation)
+
+You answer:
+
+**💬 “Because the security tests run automatically and never fail.”**  
+(Assertion)
+
+Then you show:
+
+**📄 “Here are the logs from the last 6 months.”**  
+(Evidence)
+
+---
+
+#### ✔️ Golden rule
+
+- **Expectations** = what we want to prove  
+- **Assertions** = how we justify it  
+- **Evidence** = proof supporting the justification
+
+### 🔗 How the Components Fit Together
+
+📘 Source (Trustable GitLab):
+
+“TSF supports traceability and assurance evidence in compliance with certification standards.”
+👉 https://gitlab.com/trustable/trustable
+
+#### 🔧 TSF Component Overview (Unified Table)
+
+| Component / Tool    | Role / Purpose                                                   | Key Feature                                      | File Types Produced / Used |
+|---------------------|------------------------------------------------------------------|--------------------------------------------------|-----------------------------|
+| **TSF (Trustable)** | End-to-end traceability + assurance framework (uses Doorstop + trudag + other utilities) | Integrates requirements, tests, evidence, and confidence scoring | `.yaml`, `.dot` |
+| **Doorstop**        | Requirements management foundation                               | YAML-based version-controlled requirements        | `.yaml` |
+| **trudag**          | Diagram + report generator for TSF                                | Generates Graphviz diagrams and PDFs with DAGs    | `.dot`, `.pdf`, `.png` |
+
+---
+
+## 2. Tools: TruDAG ... installation
 
 **TruDAG** is the **official tool** for implementing TSF.  
 It allows you to **create, manage, and evaluate Trustable Graphs** directly in your Git repository.
@@ -169,112 +265,115 @@ OR
 pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-🔹 Basic Usage
+### 🔹 Basic Usage
 
 After installation, you can:
 
-Create Statements (Expectations, Assertions, Evidence, Assumptions);
+- Create Statements (Expectations, Assertions, Evidence, Assumptions);
 
-Define links between them;
+- Define links between them;
 
-Associate artifacts (files, tests, outputs);
+- Associate artifacts (files, tests, outputs);
 
-Generate Confidence Scores and reports.
+- Generate Confidence Scores and reports.
 
 🧩 Each Statement and its links are recorded in the Git repository, ensuring native traceability.
 
-## 🧮 5. Relation to Traceability Matrix and Other Approaches
+### 🪜 Why We Use This Installation Method
 
-TSF replaces (or generalizes) traditional traceability matrices, but in a live and automated form rather than static documents.
+✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages.
+✔️ Security reason: TSF is used in safety-critical domains where dependency control is essential.
+✔️ Traceability reason: All requirements and evidence are version-controlled in GitHub as YAML files, supporting certification standards like DO-178C, ISO 26262, and EN 50128.
 
-Method	Traditional Form	TSF / TruDAG
-Traceability Matrix	Manually in Excel or dedicated tools	Represented as a graph (DAG) in Git
-Evidence	Linked via documents	Linked via verifiable artifacts and metadata
-Updates	Manual, error-prone	Automated via CI/CD
-Assessment	Subjective	Quantifiable with “Confidence Scores”
-Scalability	Limited	High, with composition across projects
+## ⚙️ 3. Simple Lab
 
-Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is the practical management tool.
+This is an example of a workflow for TSF.
 
-| Method                  | Traditional Form                     | TSF / TruDAG                                     |
-| ----------------------- | ------------------------------------ | ------------------------------------------------ |
-| **Traceability Matrix** | Manually in Excel or dedicated tools | Represented as a **graph (DAG)** in Git          |
-| **Evidence**            | Linked via documents                 | Linked via **verifiable artifacts and metadata** |
-| **Updates**             | Manual, error-prone                  | **Automated** via CI/CD                          |
-| **Assessment**          | Subjective                           | **Quantifiable** with “Confidence Scores”        |
-| **Scalability**         | Limited                              | **High**, with composition across projects       |
+1. Create virtual env  
+    ```bash
+    python3.12 -m venv .venv
+    source .venv/bin/activate
+    ```
 
+2. Install trudag (official TSF tool)  
+    ```bash
+    git clone https://gitlab.com/CodethinkLabs/trustable/trustable.git /tmp/trustable
+    cd /tmp/trustable
+    git checkout v2025.09.16
+    pip install .
+    cd -
+    ```
 
+3. trudag --init & Create requirement  
+    ```bash
+    trudag --init
+    trudag manage create-item UR 001 reqs/
+    # Edit UR-001.md - change the template
+    # -> do this for every requirement (UR, SYSR, SOFR, TC)
+    trudag manage lint
+    ```
 
-## ⚙️ 6. Simplified Implementation Example
-### 1️⃣ What is a Graph (in TSF context)
+4. Link requirements  
+    ```bash
+    trudag manage create-link UR-001 SYSR-001
+    # -> do this for every requirement
+    trudag manage lint
+    ```
 
-A graph is a set of nodes connected by edges:
+5. Review requirements  
+    ```bash
+    trudag manage set-item XX-001
+    # Review every requirement needed
+    ```
 
-Each node is a Statement (a claim about the software).
+6. Add references/evidence & configure scoring  
+    - Add reference files to the requirements/tests  
+    - The files must exist in the correct path  
 
-Each edge is a logical link, meaning “this leads to that” or “this depends on that”.
+    ```bash
+    trudag manage lint
+    trudag score
+    ```
 
-TSF uses a DAG – Directed Acyclic Graph:
+---
 
-Directed → edges have direction (A supports B).
+# Requirement template:
 
-Acyclic → no cycles allowed (A cannot depend on itself indirectly).
+```yaml
+---
+id: UR-001
+normative: true
+level: 1.1
 
-💡 Simple analogy:
-Imagine a family tree: each person (Statement) is linked to parents/children. No one can be their own ancestor → no cycles.
+references:
+  - type: "file"
+    path: "ref1.md"
+---
 
-### 2️⃣ Types of Statements
-Type	Description	Example
-Expectation	What the software should achieve (defined by stakeholders)	“System responds under 200ms”
-Assertion	Logical link between Expectations and Evidence	“Performance tests are automated”
-Evidence (Premise)	Concrete proof supporting an Assertion	“Automated tests show avg 180ms”
-Assumption	External factor presumed true	“System runs on Linux”
+---
+id: UR-001
+normative: true
+level: 1.2
 
-Links in the graph:
+references:
+  - type: "file"
+    path: "ref2.md"
 
-Expectation → supported by Assertions
+reviewers:
+  - name: David
+    email: david.fernandes@seame.pt
+    reviewed: "2025-11-12 - Approved by David david.fernandes@seame.pt"
+    review_status: true
 
-Assertions → supported by Evidence
+score:
+  David: 0.2
+  Joao: 0.4
+---
+```
 
-Assumptions → linked as external conditions
+## ⚙️ 4. Detailed Implementation Example
 
-### 3️⃣ Building a TSF Graph Practically
-
-Define what you want to prove (Expectation).
-Example: “Software XYZ is safe”
-
-Create Statements to explain the path:
-
-Assertion: “Code passed automated security tests”
-
-Evidence: “Test logs show 0 failures”
-
-Link Statements in the graph:
-
-Assertion → linked to Expectation
-
-Evidence → linked to Assertion
-
-TruDAG manages this process.
-Each Statement and link is recorded in Git.
-TruDAG can then calculate a confidence score: how trustworthy is this Expectation based on available Evidence.
-
-### 4️⃣ Simple Visual Representation
-Expectation: Software XYZ is safe
-        |
-     Assertion: Automated security tests passed
-        |
-     Evidence: CI/CD logs show 0 failures
-        |
-   Assumption: Runs on Linux
-
-
-Each level is a layer of the graph.
-
-If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect, signaling a review is needed.
-
-### 5️⃣ Practical Implementation with TruDAG
+. Practical Implementation with TruDAG
 
 Assume a project XYZ aims to prove it is safe and trustworthy.
 
@@ -295,43 +394,104 @@ OR
 pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-### 🧱 Step 3: Create Statements
+### 🧱 Step 3: Init
+```bash
+trudag --init 
+```
+
+### Step 4: Create Statements
 ```bash
 trudag manage create-item "Software XYZ is safe" ./XYZ/ --type Expectation
 trudag manage create-item "Automated security tests passed" ./XYZ/ --type Assertion
 trudag manage create-item "CI/CD logs show 0 failures" ./XYZ/ --type Evidence
 trudag manage create-item "Runs on Linux" ./XYZ/ --type Assumption
 ```
-
-### 🔗 Step 4: Link Statements
+. Check for errors in the graph connections
+```bash
+trudag manage lint 
+```
+### 🔗 Step 5: Link Statements
 ```bash
 trudag manage create-link "Automated security tests passed" "Software XYZ is safe"
 trudag manage create-link "CI/CD logs show 0 failures" "Automated security tests passed"
 trudag manage create-link "Runs on Linux" "Automated security tests passed"
 ```
 
-### 🧩 Step 5: Evaluate Confidence
+### 🧩 Step 6: Validate Evidente
+```bash 
+trudag manage set-item "Software XYZ is safe" ./XYZ/ --type Expectation
+trudag manage set-item "Automated security tests passed" ./XYZ/ --type Assertion
+trudag manage set-item "CI/CD logs show 0 failures" ./XYZ/ --type Evidence
+trudag manage set-item "Runs on Linux" ./XYZ/ --type Assumption
+```
+. Check for errors in the graph connections
+```bash
+trudag manage lint 
+```
+
+### Step 7: Evaluate Confidence
 ```bash
 trudag score
 ```
 
+### Step 8: Publish
+```bash
+trudag publish
+```
+
+## Other commands
+. inspect specific items or links 
+```bash
+trugad manage show-item 
+trudag manage show-link
+```
+.reviewing items
+```bash
+trudag manage set-item #name of the item#
+trudag manage set item #name of the item1# #name of the item2#
+```
+.Clearing suspect items
+```bash
+trudag manage set link #name of the item#
+```
+. Linking a trustable graph
+```bash
+trudag manage lint 
+```
+
 TruDAG traverses the graph, checks all links and evidence, and calculates how much we can trust the Expectation.
 
-### 🔑 Step 6: Key Takeaways
 
-Not a static Excel matrix — it is a graph of Statements in Git.
+## 🧮 4. Relation to Traceability Matrix and Other Approaches
 
-Each Statement is traceable and linked to concrete evidence.
+TSF replaces (or generalizes) traditional traceability matrices, but in a live and automated form rather than static documents.
 
-TruDAG automates creation, linking, and analysis.
+| Method                  | Traditional Form                     | TSF / TruDAG                                     |
+| ----------------------- | ------------------------------------ | ------------------------------------------------ |
+| **Traceability Matrix** | Manually in Excel or dedicated tools | Represented as a **graph (DAG)** in Git          |
+| **Evidence**            | Linked via documents                 | Linked via **verifiable artifacts and metadata** |
+| **Updates**             | Manual, error-prone                  | **Automated** via CI/CD                          |
+| **Assessment**          | Subjective                           | **Quantifiable** with “Confidence Scores”        |
+| **Scalability**         | Limited                              | **High**, with composition across projects       |
 
-Confidence is calculated automatically, but human review remains essential.
+Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is the practical management tool.
 
-➡️ Outcome: a report with confidence scores, evidence, and traceable logical dependencies.
 
-## 🧭 7. Conclusion
+## 🧭 5. Conclusion
 
 TSF provides a modern, formal approach to assess software trustability, replacing manual documents and matrices with a declarative, traceable structure integrated into the development workflow.
+
+### 🔑 Key Takeaways
+
+- Not a static Excel matrix — it is a graph of Statements in Git.
+
+- Each Statement is traceable and linked to concrete evidence.
+
+- TruDAG automates creation, linking, and analysis.
+
+- Confidence is calculated automatically, but human review remains essential.
+
+➡️ Outcome: a report with confidence scores, evidence, and traceable logical dependencies.
 
 ### ✅ Practical steps:
 
@@ -344,6 +504,7 @@ TSF provides a modern, formal approach to assess software trustability, replacin
 - Automate analysis via CI/CD
 
 - Discard traditional spreadsheets and traceability tools
+
 
 ## 📚 References
 
