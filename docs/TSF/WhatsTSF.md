@@ -379,13 +379,13 @@ score:
 
 Assume a project XYZ aims to prove it is safe and trustworthy.
 
-### 🪄 Step 1: Initialize Repository
+#### 🪄 Step 1: Initialize Repository
 ```bash
 git init XYZ
 cd XYZ
 ```
 
-### 📦 Step 2: Install TruDAG / Trustable
+#### 📦 Step 2: Install TruDAG / Trustable
 ```bash
 pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
@@ -396,12 +396,12 @@ OR
 pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-### 🧱 Step 3: Init
+#### 🧱 Step 3: Init
 ```bash
 trudag --init 
 ```
 
-### Step 4: Create Statements
+#### Step 4: Create Statements
 ```bash
 trudag manage create-item "Software XYZ is safe" ./XYZ/ --type Expectation
 trudag manage create-item "Automated security tests passed" ./XYZ/ --type Assertion
@@ -412,14 +412,14 @@ trudag manage create-item "Runs on Linux" ./XYZ/ --type Assumption
 ```bash
 trudag manage lint 
 ```
-### 🔗 Step 5: Link Statements
+#### 🔗 Step 5: Link Statements
 ```bash
 trudag manage create-link "Automated security tests passed" "Software XYZ is safe"
 trudag manage create-link "CI/CD logs show 0 failures" "Automated security tests passed"
 trudag manage create-link "Runs on Linux" "Automated security tests passed"
 ```
 
-### 🧩 Step 6: Validate Evidente
+#### 🧩 Step 6: Validate Evidente
 ```bash 
 trudag manage set-item "Software XYZ is safe" ./XYZ/ --type Expectation
 trudag manage set-item "Automated security tests passed" ./XYZ/ --type Assertion
@@ -431,17 +431,17 @@ trudag manage set-item "Runs on Linux" ./XYZ/ --type Assumption
 trudag manage lint 
 ```
 
-### Step 7: Evaluate Confidence
+#### Step 7: Evaluate Confidence
 ```bash
 trudag score
 ```
 
-### Step 8: Publish
+#### Step 8: Publish
 ```bash
 trudag publish
 ```
 
-## Other commands
+#### Other commands
 . Inspect specific items or links 
 ```bash
 trugad manage show-item 
@@ -462,7 +462,6 @@ trudag manage lint
 ```
 
 TruDAG traverses the graph, checks all links and evidence, and calculates how much we can trust the Expectation.
-
 
 ## 🧮 5. Relation to Traceability Matrix and Other Approaches
 
