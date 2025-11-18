@@ -1,5 +1,0 @@
-id: SYS-001
-title: The system shall monitor battery temperature.
-type: requirement
-status: draft
-rationale: Ensures safety under thermal conditions.

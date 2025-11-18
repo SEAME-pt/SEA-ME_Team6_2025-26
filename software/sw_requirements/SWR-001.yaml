@@ -1,5 +1,0 @@
-id: SWR-001
-title: The software shall trigger an alert if battery temperature exceeds 50°C.
-type: requirement
-status: draft
-derived_from: SYS-001

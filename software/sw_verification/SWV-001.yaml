@@ -1,5 +1,0 @@
-id: SWV-001
-title: Unit test verifies alert when temperature exceeds 50°C.
-type: verification
-status: draft
-verifies: SWR-001
