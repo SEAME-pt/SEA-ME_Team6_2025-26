@@ -144,17 +144,17 @@ If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect
 
 - Certification evidence
 
-#### ✅ Difference Between Expectation and Assertion (simple and direct explanation)
+### ✅ Difference Between Expectation and Assertion (simple and direct explanation)
 
 Think about it like this:
 
-##### 🔹 Expectation = What we want to be true
+#### 🔹 Expectation = What we want to be true
 
 An **Expectation** is a **goal, requirement, or intention** of the project.
 
 It is **high-level**, something the stakeholders want.
 
-###### Examples of Expectations:
+##### Examples of Expectations:
 - “The system is secure.”
 - “The response time is below 200ms.”
 - “The software behaves reliably under load.”
@@ -163,7 +163,7 @@ These are **macro-level statements** that need justification.
 
 ---
 
-##### 🔹 Assertion = How we justify that Expectation
+#### 🔹 Assertion = How we justify that Expectation
 
 An **Assertion** is a **logical statement** that connects an Expectation to the Evidence.
 
@@ -171,7 +171,7 @@ It answers the question: **“Why do we believe this is true?”**
 
 Assertions act as **bridges** in the graph.
 
-###### Examples of Assertions:
+##### Examples of Assertions:
 - “Security tests are executed automatically in CI.”
 - “All commits pass static code analysis.”
 - “Load tests run nightly on a production-like environment.”
@@ -180,24 +180,24 @@ Assertions are **not proofs** — they are **reasons** that support the Expectat
 
 ---
 
-#### 🧩 Simple visual example
+### 🧩 Simple visual example
 
-##### Expectation
+#### Expectation
 “The system is secure.”
 
 ⬇️ *Why?* (Assertion)
 
-##### Assertion
+#### Assertion
 “Security tests are executed automatically in CI.”
 
 ⬇️ *What proof do we have?* (Evidence)
 
-##### Evidence
+#### Evidence
 “CI logs show 0 failed security tests in the last 50 runs.”
 
 ---
 
-##### Visual summary
+#### Visual summary
 Expectation
 ↓
 Assertion
@@ -206,7 +206,7 @@ Evidence
 
 ---
 
-#### 💡 Analogy
+### 💡 Analogy
 
 Imagine you are in an oral exam and the professor asks:
 
@@ -225,7 +225,7 @@ Then you show:
 
 ---
 
-#### ✔️ Golden rule
+### ✔️ Golden rule
 
 - **Expectations** = what we want to prove  
 - **Assertions** = how we justify it  
@@ -281,9 +281,11 @@ After installation, you can:
 
 ### 🪜 Why We Use This Installation Method
 
-✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages.
+✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages <br>
 ✔️ Security reason: TSF is used in safety-critical domains where dependency control is essential.
+<br>
 ✔️ Traceability reason: All requirements and evidence are version-controlled in GitHub as YAML files, supporting certification standards like DO-178C, ISO 26262, and EN 50128.
+<br>
 
 ## ⚙️ 3. Simple Lab
 
@@ -337,7 +339,7 @@ This is an example of a workflow for TSF.
 
 ---
 
-# Requirement template:
+### Requirement template:
 
 ```yaml
 ---
@@ -440,12 +442,12 @@ trudag publish
 ```
 
 ## Other commands
-. inspect specific items or links 
+. Inspect specific items or links 
 ```bash
 trugad manage show-item 
 trudag manage show-link
 ```
-.reviewing items
+.Reviewing items
 ```bash
 trudag manage set-item #name of the item#
 trudag manage set item #name of the item1# #name of the item2#
