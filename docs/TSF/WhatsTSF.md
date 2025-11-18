@@ -22,7 +22,7 @@ TSF focuses on **critical systems**—where **security, performance, availabilit
 - The **official tooling** is **TruDAG** (Trustable Directed Acyclic Graph tool), implemented in Python.  
 - The model is based on **Directed Acyclic Graphs (DAGs)** composed of **Statements** linked by logical relationships.
 
-### 🧩 Trustable Software Framework (TSF) — Overview and Technical Context
+### 🧩 1.1. Trustable Software Framework (TSF) — Overview and Technical Context
 
 📚 Official source (GitLab Project)
 
@@ -33,7 +33,7 @@ In short:
 
 - TSF extends Doorstop to provide full traceability and certification evidence management.
 
-### ⚙️ What is Doorstop
+### ⚙️ 1.2. What is Doorstop
 
 - Doorstop is the foundation of TSF.
 - It’s a Python-based tool that uses YAML files to represent requirements, tests, and documentation in a version-controlled and traceable way.
@@ -46,7 +46,7 @@ In short:
 💡 Instead of using Word or Excel, each requirement is a small .yaml file stored next to your source code in Git.
 This makes it possible to link requirements, implementation, and verification directly.
 
-### 🧠 What is trudag
+### 🧠 1.3. What is trudag
 
 - trudag is the command-line interface (CLI) included with the trustable package.
 - It’s used to generate traceability diagrams and documents from TSF repositories.
@@ -58,7 +58,7 @@ This makes it possible to link requirements, implementation, and verification di
 “The trudag CLI builds traceability diagrams (.dot files) from TSF repositories.”
 👉 Source: https://gitlab.com/trustable/trustable/-/tree/main/frontends/cli
 
-### 🔷 What are .dot files
+### 🔷 1.4. What are .dot files
 
 .dot files use the Graphviz DOT language, which is a plain text graph description format used to represent nodes and links.
 
@@ -71,7 +71,7 @@ This makes it possible to link requirements, implementation, and verification di
 
 [REQ-001] --> [TEST-001]
 
-### What is a Graph (in TSF context)
+### 1.5. What is a Graph (in TSF context)
 
 A graph is a set of nodes connected by edges:
 
@@ -81,7 +81,7 @@ A graph is a set of nodes connected by edges:
 
 ----
 
-### Directed Acyclic Graph - TSF uses a DAG (Directed Acyclic Graph):
+### 1.6. Directed Acyclic Graph - TSF uses a DAG (Directed Acyclic Graph):
 
 - Directed → edges have direction (A supports B).
 
@@ -90,7 +90,7 @@ A graph is a set of nodes connected by edges:
 💡 Simple analogy:
 Imagine a family tree: each person (Statement) is linked to parents/children. No one can be their own ancestor → no cycles.
 
-### Types of Statements
+### 1.7. Types of Statements
 
 #### 🔹 Conceptual Structure
 
@@ -144,7 +144,7 @@ If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect
 
 - Certification evidence
 
-### ✅ Difference Between Expectation and Assertion (simple and direct explanation)
+### ✅ 1.8. Difference Between Expectation and Assertion (simple and direct explanation)
 
 Think about it like this:
 
@@ -180,7 +180,7 @@ Assertions are **not proofs** — they are **reasons** that support the Expectat
 
 ---
 
-### 🧩 Simple visual example
+### 🧩 1.9. Simple visual example
 
 #### Expectation
 “The system is secure.”
@@ -225,13 +225,13 @@ Then you show:
 
 ---
 
-### ✔️ Golden rule
+### ✔️ 1.20. Golden rule
 
 - **Expectations** = what we want to prove  
 - **Assertions** = how we justify it  
 - **Evidence** = proof supporting the justification
 
-### 🔗 How the Components Fit Together
+### 🔗 1.21. How the Components Fit Together
 
 📘 Source (Trustable GitLab):
 
@@ -253,7 +253,7 @@ Then you show:
 **TruDAG** is the **official tool** for implementing TSF.  
 It allows you to **create, manage, and evaluate Trustable Graphs** directly in your Git repository.
 
-### 🔹 Installation
+### 🔹 2.1. Installation
 
 ```bash
 pipx install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
@@ -265,7 +265,7 @@ OR
 pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/packages/pypi/simple
 ```
 
-### 🔹 Basic Usage
+### 🔹 2.2. Basic Usage
 
 After installation, you can:
 
@@ -279,7 +279,7 @@ After installation, you can:
 
 🧩 Each Statement and its links are recorded in the Git repository, ensuring native traceability.
 
-### 🪜 Why We Use This Installation Method
+### 🪜 2.3. Why We Use This Installation Method
 
 ✔️ Technical reason: Using pipx keeps the TSF environment isolated, avoiding version conflicts with system-wide Python packages <br>
 ✔️ Security reason: TSF is used in safety-critical domains where dependency control is essential.
@@ -464,7 +464,7 @@ trudag manage lint
 TruDAG traverses the graph, checks all links and evidence, and calculates how much we can trust the Expectation.
 
 
-## 🧮 4. Relation to Traceability Matrix and Other Approaches
+## 🧮 5. Relation to Traceability Matrix and Other Approaches
 
 TSF replaces (or generalizes) traditional traceability matrices, but in a live and automated form rather than static documents.
 
@@ -479,11 +479,11 @@ TSF replaces (or generalizes) traditional traceability matrices, but in a live a
 Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is the practical management tool.
 
 
-## 🧭 5. Conclusion
+## 🧭 6. Conclusion
 
 TSF provides a modern, formal approach to assess software trustability, replacing manual documents and matrices with a declarative, traceable structure integrated into the development workflow.
 
-### 🔑 Key Takeaways
+### 🔑 7. Key Takeaways
 
 - Not a static Excel matrix — it is a graph of Statements in Git.
 
