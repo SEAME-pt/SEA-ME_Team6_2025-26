@@ -2,6 +2,10 @@
 
 ## 1. What is TSF (Trustable Software Framework)
 
+“TSF specifies how metadata about a software project is stored and managed in a git repository, alongside the software’s source code and documentation.”
+📘 Official source (GitLab project): https://www.codethink.co.uk/trustable-software-framework.
+https://projects.eclipse.org/projects/technology.tsf 
+
 The Trustable Software Framework (TSF) is an open-source toolset designed to manage requirements, evidence, and verification activities for safety- and mission-critical software — especially in aerospace, defense, automotive, and medical domains, where the software must be demonstrably trustworthy.
 
 The **Eclipse Trustable Software Framework (TSF)** is a **model and methodology to assess the "trustability" of software**, based on **verifiable evidence** of how it is developed, tested, and maintained.
@@ -46,6 +50,11 @@ In short:
 💡 Instead of using Word or Excel, each requirement is a small .yaml file stored next to your source code in Git.
 This makes it possible to link requirements, implementation, and verification directly.
 
+📘 Official source (GitLab project)
+
+“Trustable Software Framework (TSF) builds on top of Doorstop to manage requirements, tests, and assurance cases in a traceable, verifiable way.”
+👉 Source: https://gitlab.com/trustable/trustable
+
 ### 🧠 1.3. What is trudag
 
 - trudag is the command-line interface (CLI) included with the trustable package.
@@ -60,7 +69,7 @@ This makes it possible to link requirements, implementation, and verification di
 
 ### 🔷 1.4. What are .dot files
 
-.dot files use the Graphviz DOT language, which is a plain text graph description format used to represent nodes and links.
+The extension .dot comes from the Graphviz DOT language (comes and uses), a language (plain text graph description) that is used to describe grafs (nodes and connections).
 
 📚 Official source (Graphviz):
 
@@ -70,6 +79,16 @@ This makes it possible to link requirements, implementation, and verification di
 💡 In TSF, DOT files are used to visualize relationships like:
 
 [REQ-001] --> [TEST-001]
+
+#### This enables automatic generation of traceability diagrams for:
+
+- Requirements
+
+- Tests
+
+- Verification activities
+
+- Certification evidence
 
 ### 1.5. What is a Graph (in TSF context)
 
@@ -93,6 +112,11 @@ Imagine a family tree: each person (Statement) is linked to parents/children. No
 ### 1.7. Types of Statements
 
 #### 🔹 Conceptual Structure
+
+«TSF begins with a set of Tenets and Assertions: Concise, verifiable statements about what must be true for software to be considered trustable.»
+“These statements document claims about the software or the project… The graph describes how high-level or external goals for the software project (Expectations) are supported by more specific objectives (Assertions) and ultimately Evidence.”
+📗 Official source (Trustable CLI docs): https://codethinklabs.gitlab.io/trustable/trustable/index.html
+https://projects.eclipse.org/projects/technology.tsf
 
 Like it was said, each project is described by a **trust graph**, composed of:
 - **Expectations** → requirements or goals defined by stakeholders.  
@@ -133,16 +157,6 @@ Expectation: Software XYZ is safe
 Each level is a layer of the graph.
 
 If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect, signaling a review is needed.
-
-#### This enables automatic generation of traceability diagrams for:
-
-- Requirements
-
-- Tests
-
-- Verification activities
-
-- Certification evidence
 
 ### ✅ 1.8. Difference Between Expectation and Assertion (simple and direct explanation)
 
@@ -400,6 +414,11 @@ pip install trustable --index-url https://gitlab.com/api/v4/projects/66600816/pa
 ```bash
 trudag --init 
 ```
+. Expectec result:
+
+INFO: Created new dot database at .dotstop.dot
+
+📄 This creates the .dotstop file, which will be used by trudag to plot, export or calcule the Trustable Score.
 
 #### Step 4: Create Statements
 ```bash
@@ -408,7 +427,7 @@ trudag manage create-item "Automated security tests passed" ./XYZ/ --type Assert
 trudag manage create-item "CI/CD logs show 0 failures" ./XYZ/ --type Evidence
 trudag manage create-item "Runs on Linux" ./XYZ/ --type Assumption
 ```
-. Check for errors in the graph connections
+. Check suspect/unreviewed items and errors in the graph connections
 ```bash
 trudag manage lint 
 ```
@@ -426,12 +445,13 @@ trudag manage set-item "Automated security tests passed" ./XYZ/ --type Assertion
 trudag manage set-item "CI/CD logs show 0 failures" ./XYZ/ --type Evidence
 trudag manage set-item "Runs on Linux" ./XYZ/ --type Assumption
 ```
-. Check for errors in the graph connections
+. Check suspect/unreviewed items and errors in the graph connections
 ```bash
 trudag manage lint 
 ```
 
 #### Step 7: Evaluate Confidence
+. This calculates scores recursively using Evidence scores (SME + validators) and produces a resume. A doc describes the recursive calcule (W^i * t_E).
 ```bash
 trudag score
 ```
@@ -459,6 +479,17 @@ trudag manage set link #name of the item#
 . Linking a trustable graph
 ```bash
 trudag manage lint 
+```
+. Get Score
+```bash
+trudag score           # executes validators and prints resume 
+trudag score --no-validate  # if we want only to propague SME scores
+```
+. Publish Report
+```bash
+trudag publish
+trudag publish --figures     # includes figures for temporal analysis - historical figures
+trudag publish --no-validate # it publish without execute the validators
 ```
 
 TruDAG traverses the graph, checks all links and evidence, and calculates how much we can trust the Expectation.
@@ -510,6 +541,8 @@ TSF provides a modern, formal approach to assess software trustability, replacin
 ## 📚 7. References
 
 - Eclipse TSF Project Page: https://projects.eclipse.org/projects/technology.tsf
+
+- Codethink: https://www.codethink.co.uk/trustable-software-framework.html
 
 - Codethink TSF GitLab: https://gitlab.com/CodethinkLabs/trustable/trustable
 
