@@ -483,7 +483,7 @@ Thus, no traditional matrix is needed—the TSF graph replaces it, and TruDAG is
 
 TSF provides a modern, formal approach to assess software trustability, replacing manual documents and matrices with a declarative, traceable structure integrated into the development workflow.
 
-### 🔑 7. Key Takeaways
+### 🔑 Key Takeaways
 
 - Not a static Excel matrix — it is a graph of Statements in Git.
 
@@ -508,7 +508,7 @@ TSF provides a modern, formal approach to assess software trustability, replacin
 - Discard traditional spreadsheets and traceability tools
 
 
-## 📚 References
+## 📚 7. References
 
 - Eclipse TSF Project Page: https://projects.eclipse.org/projects/technology.tsf
 
