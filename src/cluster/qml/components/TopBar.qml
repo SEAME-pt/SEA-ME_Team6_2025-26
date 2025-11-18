@@ -4,13 +4,17 @@ import QtQuick.Layouts
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
 
-Rectangle {
+Item {
     id: topBar
-    color: BaseTheme.black
-    Layout.preferredHeight: 48
+    Layout.preferredHeight: 16
     Layout.fillWidth: true
 
-    TimeProvider { id: clock }
+    TimeProvider {
+        id: clock
+    }
+    SystemStatus {
+        id: system
+    }
 
     // LEFT BLOCK
     Item {
@@ -25,13 +29,13 @@ Rectangle {
 
             Text {
                 text: clock.currTime
-                font.pixelSize: 12
+                font.pixelSize: 14
                 font.bold: true
                 color: "white"
             }
             Text {
                 text: clock.currDate
-                font.pixelSize: 10
+                font.pixelSize: 12
                 color: "white"
             }
         }
@@ -40,16 +44,34 @@ Rectangle {
     // CENTER BLOCK
     Text {
         text: clock.currTime
+        font.pixelSize: 14
         color: "white"
         anchors.centerIn: parent
     }
 
     // RIGHT BLOCK
-    Text {
-        text: "Right"
-        color: "white"
+    Item {
         anchors.right: parent.right
-        anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
+        height: parent.height
+        anchors.rightMargin: 16
+
+        Row {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 4
+
+            Image {
+                source: system.batteryIconSource
+                width: 16
+                height: 16
+                fillMode: Image.PreserveAspectFit
+            }
+            /*
+            Text {
+                text: system.currBatteryLvl + "%"
+                font.pixelSize: 10
+                color: "white"
+            }*/
+        }
     }
 }

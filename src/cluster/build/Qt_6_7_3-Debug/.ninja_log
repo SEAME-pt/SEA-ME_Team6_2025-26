@@ -1,0 +1,25 @@
+# ninja log v5
+21	87	1763489291206843159	HelloQt6Qml_autogen/timestamp	53a584c8732cdba6
+21	87	1763489291206843159	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/timestamp	53a584c8732cdba6
+1080	6153	1763398482372160422	CMakeFiles/HelloQt6Qml.dir/src/main.cpp.o	c94f51dbb91f4f7f
+21	87	1763489291206843159	HelloQt6Qml_autogen/mocs_compilation.cpp	53a584c8732cdba6
+21	87	1763489291206843159	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/mocs_compilation.cpp	53a584c8732cdba6
+1079	5287	1763398481501150134	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o	e843dfb5160f4dcd
+14	43	1763491277168875471	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+14	43	1763491277168875471	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+43	101	1763491277228876226	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	d7dc97408aa75e78
+1080	4998	1763398481217146780	CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o	18513d0638c52104
+1081	5037	1763398481257147252	CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o	a11cd41c57208de2
+101	499	1763491277622881182	HelloQt6Qml	7b46aaec1651629d
+19	97	1763491370271042990	HelloQt6Qml_autogen/timestamp	53a584c8732cdba6
+19	97	1763491370271042990	HelloQt6Qml_autogen/mocs_compilation.cpp	53a584c8732cdba6
+19	97	1763491370271042990	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/timestamp	53a584c8732cdba6
+19	97	1763491370271042990	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/mocs_compilation.cpp	53a584c8732cdba6
+103	122	1763491374404094662	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+103	122	1763491374404094662	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+122	183	1763491374465095425	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	d7dc97408aa75e78
+183	641	1763491374919101100	HelloQt6Qml	7b46aaec1651629d
+17	38	1763491384059215325	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+17	38	1763491384059215325	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	4f2532264e53052a
+38	92	1763491384115216024	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	d7dc97408aa75e78
+92	484	1763491384503220871	HelloQt6Qml	7b46aaec1651629d

@@ -13,25 +13,45 @@ Rectangle {
         anchors.fill: parent
         spacing: 0
 
-        NavBar { }
-
-        ColumnLayout {
-            Layout.fillHeight: true; Layout.fillWidth: true
-            Layout.rightMargin: 16
-            spacing: 0
-
-            TopBar { }
-
-            Loader {
-                id: pageLoader
-                Layout.fillWidth: true; Layout.fillHeight: true
-                source: "../screens/ClusterScreen.qml"
+        NavBar {
+            id: navBar
+            onChangeScreen: function(page){
+                pageLoader.source = page;
             }
+        }
+
+        Rectangle {
+            id: contentBackground
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: BaseTheme.blackLight
+            radius: 16
+            clip: true
 
             Rectangle {
-                Layout.preferredHeight: 48
-                Layout.fillWidth: true
-                opacity: 0
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                width: 16
+                color: parent.color
+                radius: 0
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 16
+                spacing: 0
+
+                TopBar {
+                    Layout.bottomMargin: 16
+                }
+
+                Loader {
+                    id: pageLoader
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    source: "../screens/ClusterScreen.qml"
+                }
             }
         }
     }

@@ -5,38 +5,64 @@ import ClusterTheme 1.0
 
 Item {
     id: navBar
-    Layout.preferredWidth: 80
+    Layout.preferredWidth: 64
     Layout.fillHeight: true
 
+    signal changeScreen(string page)
+
+    function setActiveNavButton(button) {
+        for (var i = 0; i < layout.children.length; i++) {
+            var child = layout.children[i]
+            if (child.hasOwnProperty("active")) {
+                child.active = (child === button)
+            }
+        }
+    }
+
     ColumnLayout {
-        anchors.centerIn: parent
+        id: layout
+        anchors.fill: parent
+        anchors.topMargin: 16
+        anchors.bottomMargin: 16
+        anchors.leftMargin: 4
+        anchors.rightMargin: 8
         spacing: 16
 
-        Rectangle {
-            id: homeButton
-            width: 48
-            height: 48
-            radius: 8
-            color: BaseTheme.white
-            Layout.alignment: Qt.AlignHCenter
+        NavButton {
+            id: homeBtn
+            iconInactive: "qrc:/assets/icons/house-solid-full.svg"
+            iconActive: "qrc:/assets/icons/house-active-solid-full.svg"
+            active: false
+            onClicked: {
+                navBar.setActiveNavButton(this)
+                changeScreen("../screens/HomeScreen.qml")
+            }
         }
 
-        Rectangle {
-            id: clusterButton
-            width: 48
-            height: 48
-            radius: 8
-            color: BaseTheme.white
-            Layout.alignment: Qt.AlignHCenter
+        NavButton {
+            id: clusterBtn
+            iconInactive: "qrc:/assets/icons/car-solid-full.svg"
+            iconActive: "qrc:/assets/icons/car-active-solid-full.svg"
+            active: true
+            onClicked: {
+                navBar.setActiveNavButton(this)
+                changeScreen("../screens/ClusterScreen.qml")
+            }
         }
 
-        Rectangle {
-            id: settingsButton
-            width: 48
-            height: 48
-            radius: 8
-            color: BaseTheme.white
-            Layout.alignment: Qt.AlignHCenter
+        Item {
+            Layout.fillHeight: true
+        }
+
+        NavButton {
+            id: settingsBtn
+            iconInactive: "qrc:/assets/icons/gear-solid-full.svg"
+            iconActive: "qrc:/assets/icons/gear-active-solid-full.svg"
+            active: false
+            onClicked: {
+                navBar.setActiveNavButton(this)
+                changeScreen("../screens/SettingsScreen.qml")
+            }
         }
     }
 }
