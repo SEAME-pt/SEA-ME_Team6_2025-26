@@ -180,7 +180,7 @@ Assertions are **not proofs** — they are **reasons** that support the Expectat
 
 ---
 
-### 🧩 1.9. Simple visual example
+### 🧩 1.8.1. Simple visual example
 
 #### Expectation
 “The system is secure.”
@@ -225,13 +225,13 @@ Then you show:
 
 ---
 
-### ✔️ 1.20. Golden rule
+### ✔️ 1.8.2. Golden rule
 
 - **Expectations** = what we want to prove  
 - **Assertions** = how we justify it  
 - **Evidence** = proof supporting the justification
 
-### 🔗 1.21. How the Components Fit Together
+### 🔗 1.9. How the Components Fit Together
 
 📘 Source (Trustable GitLab):
 
