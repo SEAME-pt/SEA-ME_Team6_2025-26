@@ -356,12 +356,16 @@ TSF provides a modern, formal approach to assess software trustability, replacin
 - TruDAG Methodology & Documentation: https://codethinklabs.gitlab.io/trustable/trustable/index.html
 
 - TruDAG Installation Guide: https://codethinklabs.gitlab.io/trustable/trustable/trudag/install.html#user
+. https://gitlab.com/CodethinkLabs/trustable/trustable/-/tree/main/docs/trudag 
 
 - TSF Methodology Overview: https://codethinklabs.gitlab.io/trustable/trustable/methodology.html
 
 - https://score-json.github.io/json/main/generated/trustable_graph.html
 
-- https://pad.codethink.co.uk/Bz7i6JRyRBSLC_Y7ID4lYQ
+- Meetings: https://pad.codethink.co.uk/Bz7i6JRyRBSLC_Y7ID4lYQ
+
+- Question: https://gitlab.com/CodethinkLabs/trustable/trustable/-/issues/22
+. https://gitlab.com/CodethinkLabs/trustable/trustable/-/issues?sort=created_date&state=opened&first_page_size=100&page_after=eyJjcmVhdGVkX2F0IjoiMjAyNS0wNi0xMSAxMTo1MDoxNy4wNjQxNDMwMDAgKzAwMDAiLCJpZCI6IjE2ODczNjk4OCJ9
 
 ## 💡 “Any consideration of trust must be based on evidence.”
 — Trustable Software Framework
