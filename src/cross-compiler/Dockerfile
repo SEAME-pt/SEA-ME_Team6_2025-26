@@ -175,19 +175,19 @@ RUN { \
     set -e && \
     mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
     cd qt6/src && \
-    echo "=== Downloading Qt 6.9.1 submodules ===" && \
-    wget https://download.qt.io/official_releases/qt/6.9/6.9.1/submodules/qtbase-everywhere-src-6.9.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.9/6.9.1/submodules/qtshadertools-everywhere-src-6.9.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.9/6.9.1/submodules/qtdeclarative-everywhere-src-6.9.1.tar.xz && \
+    echo "=== Downloading Qt 6.7.3 submodules ===" && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtbase-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     \
     echo "=== Extracting Qt sources for host build ===" && \
     cd ../host-build && \
-    tar xf ../src/qtbase-everywhere-src-6.9.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.9.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.9.1.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.7.3.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     \
     echo "=== Building qtbase for host ===" && \
-    cd qtbase-everywhere-src-6.9.1 && \
+    cd qtbase-everywhere-src-6.7.3 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
@@ -196,25 +196,25 @@ RUN { \
     cmake --install . && \
     \
     echo "=== Building qtshadertools for host ===" && \
-    cd ../qtshadertools-everywhere-src-6.9.1 && \
+    cd ../qtshadertools-everywhere-src-6.7.3 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
     \
     echo "=== Building qtdeclarative for host ===" && \
-    cd ../qtdeclarative-everywhere-src-6.9.1 && \
+    cd ../qtdeclarative-everywhere-src-6.7.3 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
     \
     echo "=== Extracting Qt sources for Raspberry Pi cross-build ===" && \
     cd ../../pi-build && \
-    tar xf ../src/qtbase-everywhere-src-6.9.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.9.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.9.1.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.7.3.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     \
     echo "=== Building qtbase for Raspberry Pi ===" && \
-    cd qtbase-everywhere-src-6.9.1 && \
+    cd qtbase-everywhere-src-6.7.3 && \
     /build/qt6/host/bin/qt-cmake \
         -GNinja \
         -DCMAKE_BUILD_TYPE=Release \
@@ -234,7 +234,7 @@ RUN { \
     cmake --install . && \
     \
     echo "=== Building qtshadertools for Raspberry Pi ===" && \
-    cd ../qtshadertools-everywhere-src-6.9.1 && \
+    cd ../qtshadertools-everywhere-src-6.7.3 && \
     /build/qt6/host/bin/qt-configure-module . -- \
         -DQT_HOST_PATH=/build/qt6/host \
         -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
@@ -244,7 +244,7 @@ RUN { \
     cmake --install . && \
     \
     echo "=== Building qtdeclarative for Raspberry Pi (QML + Quick + Controls2) ===" && \
-    cd ../qtdeclarative-everywhere-src-6.9.1 && \
+    cd ../qtdeclarative-everywhere-src-6.7.3 && \
     /build/qt6/host/bin/qt-configure-module . -- \
         -DQT_HOST_PATH=/build/qt6/host \
         -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
@@ -253,7 +253,7 @@ RUN { \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
     \
-    echo "=== Qt 6.9.1 cross-compilation completed successfully ==="; \
+    echo "=== Qt 6.7.3 cross-compilation completed successfully ==="; \
 } 2>&1 | tee -a /build.log
 
 RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .

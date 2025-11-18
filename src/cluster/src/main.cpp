@@ -3,6 +3,7 @@
 #include <QQuickWindow>
 #include <QDebug>
 #include "backend/timeprovider.hpp"
+#include "backend/systemstatus.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
     engine.addImportPath("qrc:/qml");
     qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"), "ClusterTheme", 1, 0, "BaseTheme");
     qmlRegisterType<TimeProvider>("Cluster.Backend", 1, 0, "TimeProvider");
+    qmlRegisterType<SystemStatus>("Cluster.Backend", 1, 0, "SystemStatus");
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
@@ -22,6 +24,7 @@ int main(int argc, char *argv[])
 
     engine.load(url);
 
+    qDebug() << "Qt version:" << QT_VERSION_STR;
     if (engine.rootObjects().isEmpty())
         return -1;
 

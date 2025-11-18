@@ -1,0 +1,9 @@
+# ninja log v5
+3	95	1763389287359897664	HelloQt6Qml_autogen/timestamp	a6224d4f6b9e5202
+3	95	1763389287359897664	HelloQt6Qml_autogen/mocs_compilation.cpp	a6224d4f6b9e5202
+3	95	1763389287359897664	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/HelloQt6Qml_autogen/timestamp	a6224d4f6b9e5202
+3	95	1763389287359897664	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/HelloQt6Qml_autogen/mocs_compilation.cpp	a6224d4f6b9e5202
+95	127	1763389287401898190	HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	1969f467ca56dbe8
+95	127	1763389287401898190	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp	1969f467ca56dbe8
+127	178	1763389287451898816	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o	5656e9b0bb24840f
+128	290	1763389287561900193	CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o	7cde6c31113a67fc

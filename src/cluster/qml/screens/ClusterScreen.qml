@@ -11,7 +11,7 @@ Rectangle {
         spacing: 20
 
         Text {
-            text: "Welcome to SEA:ME Cluster"
+            text: "Cluster VRUM VRUM"
             font.pixelSize: 24
             font.bold: true
             color: "black"

@@ -1,19 +1,36 @@
 <RCC>
     <qresource prefix="/">
+        <!-- QML -->
         <file>qml/main.qml</file>
-        <!-- Screens -->
+        <!-- QML Screens -->
         <file>qml/screens/BaseScreen.qml</file>
         <file>qml/screens/HomeScreen.qml</file>
         <file>qml/screens/ClusterScreen.qml</file>
         <file>qml/screens/SettingsScreen.qml</file>
-        <!-- Components -->
+        <!-- QML Components -->
         <file>qml/components/NavBar.qml</file>
+        <file>qml/components/NavButton.qml</file>
         <file>qml/components/TopBar.qml</file>
-        <!-- Themes -->
+        <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
-        <!-- Backend -->
+
+        <!-- Backend C++ files -->
         <file>src/backend/timeprovider.cpp</file>
         <file>src/backend/timeprovider.hpp</file>
+        <file>src/backend/systemstatus.cpp</file>
+        <file>src/backend/systemstatus.hpp</file>
 
+        <!-- Icons  -->
+        <file>assets/icons/battery-empty-solid-full.svg</file>
+        <file>assets/icons/battery-quarter-solid-full.svg</file>
+        <file>assets/icons/battery-half-solid-full.svg</file>
+        <file>assets/icons/battery-three-quarters-solid-full.svg</file>
+        <file>assets/icons/battery-full-solid-full.svg</file>
+        <file>assets/icons/car-solid-full.svg</file>
+        <file>assets/icons/car-active-solid-full.svg</file>
+        <file>assets/icons/gear-solid-full.svg</file>
+        <file>assets/icons/gear-active-solid-full.svg</file>
+        <file>assets/icons/house-solid-full.svg</file>
+        <file>assets/icons/house-active-solid-full.svg</file>
     </qresource>
 </RCC>

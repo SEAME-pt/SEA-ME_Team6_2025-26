@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o.d"
   "CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o"
   "CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o"
+  "CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o.d"
   "CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o"
   "CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o.d"
   "CMakeFiles/HelloQt6Qml.dir/src/main.cpp.o"
