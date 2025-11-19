@@ -444,14 +444,14 @@ We do NOT create artifacts by manually adding links or copying .dotstop.dot cont
 . Correct: trudag export --artifact myartifact.tar.gz --project-name "SEA-ME Team6"
 
 . Incorrect:
-
+```bash
 ❌ It´s not created in the .dotstop.dot
 ❌ Editing .dotstop.dot manually 
 ❌ Copying links from a source project
 ❌ It´s not writen mannualy
 ❌ Creating “artifacts” by uploading or creating Markdown files mannually
 ❌ An artifact is not a link inside a .md
-
+```
 Artifacts exist to guarantee:
 
 . consistency
@@ -1033,6 +1033,7 @@ This model comes from the Trustable Software Initiative (2024–2025) in GitLab 
 
 Here are some open-source projects demonstrating TSF structure, folder naming, and file organization.
 
+```bash
 tsf-demo/
 ├─ .dotstop.dot # Graph of traceability links
 ├─ docs/
@@ -1050,7 +1051,7 @@ tsf-demo/
 │ └─ obstacle-detection.md
 └─ tests/
 └─ lane-keeping-tests.md
-
+```
 
 **Explanation:**
 
