@@ -244,6 +244,7 @@ Evidence can include:
 
 **TSF Statement Hierarchy:**
 
+```bash
 Expectation (Goal)
 │
 ├─ Assertion (Claim)
@@ -253,9 +254,10 @@ Expectation (Goal)
 │       │   ├─ Reference (document, code, test)
 │       │   └─ Validator (automated check)
 │       └─ Assumption (contextual condition)
+````
 
 Example: 
-
+```bash
 Expectation: Car shall keep lane within ±0.3m
 │
 ├─ Assertion: Lane keeping accuracy verified in simulation
@@ -266,6 +268,7 @@ Expectation: Car shall keep lane within ±0.3m
 │       │   └─ Validator: lane_keeping_validator()
 │       └─ Assumption: Road markings visible in daylight
 ---
+```
 
 From these elements, TSF builds a **traceable model**, allowing you to:
 - Justify each requirement with evidence.
@@ -488,7 +491,7 @@ The following series of operations will then occur:
    . The consuming project will need to add evidence items to prove how these needs are being satisfied for the needs to be scored.
 - A "root" item is created in the specified directory, which contains the score for the project being consumed, along with any additional metadata.
    . The consuming project can incorporate this item into their graph, either by linking to it directly or by referencing it as an evidence artifact.
-   
+
 The imported items should then be added to (or updated in) the consuming graph, treating these just like any other added or updated items.
 
 #### 📌 Why export/import exist
