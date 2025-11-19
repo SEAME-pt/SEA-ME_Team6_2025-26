@@ -417,6 +417,15 @@ Example use case:
 They are essentially packages of traceability graphs.
 ---
 
+#### Producing an Artifact
+To create and operate on the "needs" graph, use the top-level --needs option:
+
+. trudag --needs init will create the .needs.dot file.
+. trudag --needs manage create-item ... will create an item in the needs graph.
+. Any trudag command, except export, can be run with this option.
+
+Run trudag export --artifact --project-name to write the artifact to a file specified by --artifact. This will both resolve references and run validators for the graph, so any required plugins must be available when performing an export.
+
 #### 🚀 Creating an Artifact (producer project)
 
 ```bash
@@ -448,6 +457,13 @@ Artifacts exist to guarantee:
 
 #### 🚀 Consuming an Artifact
 
+- For a consuming project, once the artifact has been obtained, run trudag import to add it into the local trustable graph. This command uses the following parameters:
+
+--artifact: (required) The path from which to read the artifact
+--needs-dir/-d: (required) The path to the directory where any items should be extracted.
+--graph-root/-R: The top-level item from which the score should be extracted.
+--namespace/-n: (required) Prefix for any extracted items. This helps resolve any name conflicts.
+
 ```bash
 trudag import --artifact path/to/myartifact.tar.gz \
   --needs-dir ./docs/needs \
@@ -460,28 +476,20 @@ Purpose:
 . enforce modularity
 . ensure proof chains exist
 
-
 This will automatically:
 
 . Create “NEED” items the downstream project must satisfy
-
 . Link them under the specified namespace
-
 . Extend the .dotstop.dot graph and dependencies
-
 . It generates .md files to the user to fullfil
 
-#### 🧠 Why artifacts exist
-
-1. Reuse requirements across multiple projects
-
-Example:
-
-- Project A defines security requirements requisitos de segurança
-
-- Project B imports those requirements as an artifact
-
-- Project B just need to fullfil evidences, and not to rewrite everything
+The following series of operations will then occur:
+- Needs items will be created in the specified directory.
+   . The consuming project will need to add evidence items to prove how these needs are being satisfied for the needs to be scored.
+- A "root" item is created in the specified directory, which contains the score for the project being consumed, along with any additional metadata.
+   . The consuming project can incorporate this item into their graph, either by linking to it directly or by referencing it as an evidence artifact.
+   
+The imported items should then be added to (or updated in) the consuming graph, treating these just like any other added or updated items.
 
 #### 📌 Why export/import exist
 
@@ -490,12 +498,20 @@ Because TSF is meant for composable safety cases, automotive systems, and multi-
 That means you can:
 
 . Export validated evidence
-
 . Import requirements from upstream projects
-
 . Reuse trust chains
 
 This is especially useful when one team depends on another team’s software or ML component.
+
+#### 🧠 Why artifacts exist 
+
+1. Reuse requirements across multiple projects
+
+   Example:
+
+   - Project A defines security requirements requisitos de segurança
+   - Project B imports those requirements as an artifact
+   - Project B just need to fullfil evidences, and not to rewrite everything
 
 2. Freeze versions of traceability snapshots (we export a snapshot of the state of the graph in that particular moment)
 
@@ -1009,7 +1025,6 @@ Generates a Trustable Score report showing how much of the project is verified.
 This model comes from the Trustable Software Initiative (2024–2025) in GitLab trustable/trustable, updating the classic Doorstop model for AI data, automotive software, and continuous traceability.
 
 “trudag plot replaces build as the command to render a complete traceability graph of the .dotstop database.” — Trustable Documentation, GitLab, CLI section, 2025.10 release
-
 
 ##### TSF Real Project Examples
 
