@@ -663,7 +663,44 @@ Important: Like it was said, Graphviz is not required for scoring or publishing 
 Source: Graphviz official docs (https://graphviz.org
 )
 
-### 🔗 1.12. How the Components Fit Together
+### 🔗 1.12. Remote Graph
+
+In a TSF graph, it helps to break work into smaller, verifiable projects that can be integrated into larger graphs. A Remote Graph is one of these building blocks. It is a finished artifact or snapshot that you can depend on but not change.
+
+![alt text](image.png)
+
+**What is a Remote Graph?**
+Think of a remote graph like a published library:
+. It is immutable: once published, it never changes.
+. You must use it as-is: you cannot edit its internals.
+. It defines clear needs: it tells you what you must resolve in order for you to use it safely.
+. It acts as an interface: connecting what the remote graph provides with what your local graph must supply.
+
+**Parts of a Remote Graph**
+A remote graph usually contains two complementary pieces: the Resolved Graph and the Needs Graph.
+
+**Resolved Graph**
+The resolved graph is a frozen snapshot of a graph at a specific point in time, everything that has already been computed (Validators) or processed (References).
+
+Key points:
+. Includes pre-computed scores and references
+. Read-only: you cannot attach new local items directly into it.
+. Exports content and references used to build it.
+   - Including needs from another remote graph.
+      . Does not expose transitive dependencies (you can’t automatically see what it depends on).
+
+**Needs Graph**
+The needs graph describes what is not yet resolved. This is what your local graph must provide in order to make use of the remote graph. Think of it as the “contract clauses” of the artifact.
+
+Key points:
+
+. Includes unresolved assumptions such as AoUs (Assumptions of Use).
+. Imported into your local graph under a namespace for clarity.
+. Must be scored locally, even if you choose to ignore parts of it.
+   - Important: ignored assumptions must still be documented.
+. Ensures your local graph complies with the requirements of the remote graph.
+
+### 1.13. How the Components Fit Together
 
 📘 Source (Trustable GitLab):
 
