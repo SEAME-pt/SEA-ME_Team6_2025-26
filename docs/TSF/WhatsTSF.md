@@ -724,7 +724,7 @@ Key points:
 
 ### 1.13. Trustable Tenets and Assertions
 
-
+![alt text](image.png)
 This overview uses a generic "XYZ" software project/product as an example. For XYZ specifically, we need to collect and evaluate evidence for all of the following:
 
 Provenance: where it comes from, who produced it, and what claims they make about it
