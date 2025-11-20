@@ -689,7 +689,7 @@ Source: Graphviz official docs (https://graphviz.org
 
 In a TSF graph, it helps to break work into smaller, verifiable projects that can be integrated into larger graphs. A Remote Graph is one of these building blocks. It is a finished artifact or snapshot that you can depend on but not change.
 
-![alt text](image.png)
+![alt text](image-7.png)
 
 **What is a Remote Graph?**
 Think of a remote graph like a published library:
@@ -757,10 +757,11 @@ In practice XYZ must be released into production regularly, to introduce planned
 
 ### 1.15. Applying TSF - theory
 
-![alt text](image-3.png)
-
 . The Trustable Software Framework is a special kind of project that is purely formed of requirements. It is intended to be composed with large software projects like XYZ, enabling them to audit the quality, completeness and correctness of their own arguments.
+
+
 ![alt text](image-4.png)
+
 A simple example Trustable Graph
 
 . The TSF and XYZ should be managed separately. We recommend that you first perform one iteration of the Methodology directly to XYZ, before applying TSF.
@@ -774,7 +775,9 @@ A simple example Trustable Graph
 . The image below illustrates what this may look like for a subset of the TSF. Intermediate Statements Ui are used to tie XYZ's Statements and Artifacts into XYZ.
 Note: The example below is incomplete and does not represent a sufficient argument for any TA.
 
+
 ![alt text](image-5.png)
+
 TSF applied to a simple project
 
 . U1 makes a Statement about the source code XYZ provides, supporting TA-ITERATIONS
