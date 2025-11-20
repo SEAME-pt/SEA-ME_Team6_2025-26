@@ -292,6 +292,8 @@ From these elements, TSF builds a **traceable model**, allowing you to:
 - Assumptions → linked as external conditions
 
 #### Simple Visual Representation
+```bash
+
 Expectation: Software XYZ is safe
         |
      Assertion: Automated security tests passed
@@ -299,6 +301,7 @@ Expectation: Software XYZ is safe
      Evidence: CI/CD logs show 0 failures
         |
    Assumption: Runs on Linux
+```
 
 Each level is a layer of the graph.
 
