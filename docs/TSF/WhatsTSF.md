@@ -307,6 +307,23 @@ Each level is a layer of the graph.
 
 If something changes (e.g., a test fails), TruDAG marks the Statement as Suspect, signaling a review is needed.
 
+### Summary
+
+![alt text](image-1.png)
+![alt text](image-2.png)
+
+**Summary**
+In this section we will quickly recap the new objects and relationships we introduced in the methodology:
+
+**Concepts in the Methodology**
+- Artifacts are components, products or byproducts of XYZ.
+- Evidence is a Premise that is supported with an Artifact
+- Assumptions are Premises that are unsupported
+- Artifacts can Qualify Assertions
+- Artifacts can Validate Premises, making them Evidence
+- Premises can Reference Artifacts to create Evidence
+
+
 ### ✅ 1.8. Difference Between Expectation and Assertion (simple and direct explanation)
 
 Think about it like this:
@@ -719,6 +736,34 @@ Key points:
 | **trudag**          | Diagram + report generator for TSF                                | Generates Graphviz diagrams and PDFs with DAGs    | `.dot`, `.pdf`, `.png` |
 
 ---
+
+### 1.14. Applying TSF - theory
+
+![alt text](image-3.png)
+
+. The Trustable Software Framework is a special kind of project that is purely formed of requirements. It is intended to be composed with large software projects like XYZ, enabling them to audit the quality, completeness and correctness of their own arguments.
+![alt text](image-4.png)
+A simple example Trustable Graph
+
+. The TSF and XYZ should be managed separately. We recommend that you first perform one iteration of the Methodology directly to XYZ, before applying TSF.
+
+. This means deciding on your Expectations and building an argument for them out of Statements. At this stage, its fine to have many broad Assumptions. The image on the right shows an example of how this may look: We have two Expectations, X1 and X2, supported by several Assertions which in turn are linked to Statements left as Assumptions, Zi.
+
+. Now we apply the TSF. Each TA in the TSF is in fact an Assumption that must be satisfied by XYZ. When we compose TSF with XYZ, we turn these Assumptions into Assertions by linking them in to both new and existing argumentation.
+
+. To turn each TA from an Assumption into an Assertion, consider the Statements and Artifacts from XYZ that can be used to support the TAs. Note that this may require treating some Statements as Artifact. For instance, in TA-BEHAVIOURS you will need to reference XYZ's Expectations. Similarly, TA-CONSTRAINTS requires you to reference XYZ's Assumptions. You may need to make new Artifacts to support TAs you have not considered before. For example, TA-ITERATIONS requires you to assemble and provide all source code with each constructed iteration of XYZ.
+
+. The image below illustrates what this may look like for a subset of the TSF. Intermediate Statements Ui are used to tie XYZ's Statements and Artifacts into XYZ.
+Note: The example below is incomplete and does not represent a sufficient argument for any TA.
+
+![alt text](image-5.png)
+TSF applied to a simple project
+
+. U1 makes a Statement about the source code XYZ provides, supporting TA-ITERATIONS
+. U2 makes a Statement about a property of XYZ's Expectations, supporting TA-BEHAVIOURS
+. U3 makes a Statement about a property of XYZ's Assumptions, supporting TA-CONSTRAINTS
+
+. The Expectation in the TSF, TRUSTABLE-SOFTWARE therefore provides a transparent and arms-length (though not truly independent) assessment of the trust we can place in XYZ's Expectations and their score. This structure, although optional, allows upstream and downstream projects to reuse the argumentation body independently of the TSF and to separately reevaluate their trustability.
 
 ## 2. Tools: TruDAG ... installation
 
