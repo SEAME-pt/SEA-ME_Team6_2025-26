@@ -720,7 +720,22 @@ Key points:
    - Important: ignored assumptions must still be documented.
 . Ensures your local graph complies with the requirements of the remote graph.
 
-### 1.13. How the Components Fit Together
+### 1.13. Trustable Tenets and Assertions
+
+
+This overview uses a generic "XYZ" software project/product as an example. For XYZ specifically, we need to collect and evaluate evidence for all of the following:
+
+Provenance: where it comes from, who produced it, and what claims they make about it
+Construction: how to construct, install and run it. Also, how to be sure that we constructed, installed and ran it correctly
+Change: how to update it, and be confident that it will not break or regress
+Expectations: what it is expected to do, and what it must not do
+Results: what it actually does, compared to our expectations
+Confidence: our confidence in the software, based on all of the above
+Software and systems complexity has increased to the extent that in most cases we cannot aspire to bug-free software, deterministic behaviours, or complete test coverage.
+
+In practice XYZ must be released into production regularly, to introduce planned updates and improvements, and irregularly to address severe problems and security vulnerabilities. Every release can and should be considered to involve risk. The Trustable Software framework aims to provide guidance for measuring, managing and minimising the risk associated with a software product/project, both in general and for each release.
+
+### 1.14. How the Components Fit Together
 
 📘 Source (Trustable GitLab):
 
@@ -737,7 +752,7 @@ Key points:
 
 ---
 
-### 1.14. Applying TSF - theory
+### 1.15. Applying TSF - theory
 
 ![alt text](image-3.png)
 
