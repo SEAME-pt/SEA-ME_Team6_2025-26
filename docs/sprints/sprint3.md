@@ -5,22 +5,22 @@
 ---
 
 ## 📌 Epics
--  **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+- #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [x] Install and configure **AGL** on the Raspberry Pi 
   - [x] Install and test **ThreadX RTOS** on the STM32
   - [x] Establish **CANbus communication** between microcontroller and Raspberry Pi 
   - [x] Configure **auto-start of the Qt cluster app** on AGL (migrated from Bookworm)
--  **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
+- #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
   - [x] Test the **new hardware layout** without the expansion board 
   - [x] Validate power distribution and component behavior under load
--  **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
+- #### **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Approve and apply **documentation tutorials** 
   - [ ] Review and approve **documentation templates and structure**
--  **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
+- #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [x] Refine **TSF implementation** and traceability setup in GitHub 
   - [ ] Improve Github Actions (after granted permission) automizations
   - [ ] Continue the **study of GenAI** and its potential application with the Hailo accelerator
--  **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
+- #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [ ] Study **COVESA** uServices for future integration
   - [x] Study **uProtocol** for data exchange between ECUs 
 
@@ -45,7 +45,7 @@
   - Validation of energy supply for Raspberry Pi 5
   - ![Rasp energy validation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
   - Cluster updates
-  - ![Atual state cluster](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-state-sprint3.jpeg)
+  - ![Atual state cluster](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-display-sprint3.jpeg)
   - 
   - ![Cluster mockup](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-mockup-sprint3.jpeg)
   - 
