@@ -25,7 +25,7 @@ Item {
         anchors.topMargin: 16
         anchors.bottomMargin: 16
         anchors.leftMargin: 4
-        anchors.rightMargin: 8
+        anchors.rightMargin: 4
         spacing: 16
 
         NavButton {
