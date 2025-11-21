@@ -30,19 +30,37 @@ while IFS= read -r -d '' f; do
 	fi
 done < <(find "$SEARCH_DIR" -type f -name "*.md" -print0 | sort -z)
 
-# Second pass: create items
+TMPDIR="$ROOT/.trudag_tmp"
+rm -rf "$TMPDIR" || true
+mkdir -p "$TMPDIR"
+
+# Second pass: create items (we create temp copies with IDs sanitized because
+# the local trudag CLI expects filenames like PREFIX-<ID_WITH_UNDERSCORES>.md
 for id in "${!id_to_file[@]}"; do
 	f=${id_to_file[$id]}
-		# split id into PREFIX and numeric id (e.g. EXPECT-L0-001 -> PREFIX=EXPECT, ID=L0-001)
-		prefix="${id%%-*}"
-		id_suffix="${id#*-}"
-		if [ "${DO_TRUDAG:-0}" = "1" ]; then
-			echo "RUN: trudag manage create-item '$prefix' '$id_suffix' '$f'"
-			trudag manage create-item "$prefix" "$id_suffix" "$f" || echo "trudag create-item failed for $f"
-		else
-			echo "DRY-RUN: trudag manage create-item '$prefix' '$id_suffix' '$f'"
-		fi
+	# split id into PREFIX and numeric id (e.g. EXPECT-L0-001 -> PREFIX=EXPECT, ID=L0-001)
+	prefix="${id%%-*}"
+	id_suffix="${id#*-}"
+	# sanitize id for filesystem/Trudag by replacing '-' with '_'
+	id_sanitized="${id_suffix//-/_}"
+	dest_name="${prefix}-${id_sanitized}.md"
+	dest_path="$TMPDIR/$dest_name"
+
+	# copy the markdown to the temp dir with the expected filename
+	cp "$f" "$dest_path"
+
+	if [ "${DO_TRUDAG:-0}" = "1" ]; then
+		echo "RUN: trudag manage create-item '$prefix' '$id_sanitized' '$TMPDIR'  (from $f)"
+		trudag manage create-item "$prefix" "$id_sanitized" "$TMPDIR" || echo "trudag create-item failed for $f"
+	else
+		echo "DRY-RUN: trudag manage create-item '$prefix' '$id_sanitized' '$TMPDIR'  (from $f)"
+	fi
 done
+
+# clean up temp dir (keep it if DO_TRUDAG=0 for inspection)
+if [ "${DO_TRUDAG:-0}" = "1" ]; then
+	rm -rf "$TMPDIR"
+fi
 
 # Simple linking heuristic: for EXPECT-<X> -> ASSERT-<X>, ASSERT-<X> -> EVID-<X>
 if [ "${RUN_LINKS:-0}" = "1" ]; then
