@@ -33,6 +33,8 @@
 
 # 🧪 4. Verify ThreadX Is Running
 
+<img width="1851" height="1138" alt="image" src="https://github.com/user-attachments/assets/3c70aa7d-53c5-42b1-87fd-b4d871169877" />
+
   1. Enable a GPIO Output for the LED.
   - Pick a pin.
   - Mode: **GPIO_Output**
