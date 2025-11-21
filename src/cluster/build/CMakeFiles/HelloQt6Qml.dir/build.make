@@ -77,7 +77,23 @@ HelloQt6Qml_autogen/timestamp: CMakeFiles/HelloQt6Qml.dir/compiler_depend.ts
 
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml.qrc
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: CMakeFiles/HelloQt6Qml_autogen.dir/AutoRcc_qml_EWIEGA46WW_Info.json
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.hpp
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.hpp
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/main.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/themes/BaseTheme.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/HomeScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/SettingsScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/ClusterScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/BaseScreen.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/NavBar.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/TopBar.qml
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-quarter-solid-full.svg
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-empty-solid-full.svg
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-full-solid-full.svg
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-half-solid-full.svg
+HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-three-quarters-solid-full.svg
 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp: /usr/lib/qt6/libexec/rcc
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Automatic RCC for qml.qrc"
 	/usr/bin/cmake -E cmake_autorcc /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles/HelloQt6Qml_autogen.dir/AutoRcc_qml_EWIEGA46WW_Info.json 
@@ -110,10 +126,38 @@ CMakeFiles/HelloQt6Qml.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HelloQt6Qml.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/main.cpp -o CMakeFiles/HelloQt6Qml.dir/src/main.cpp.s
 
+CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o: CMakeFiles/HelloQt6Qml.dir/flags.make
+CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp
+CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o: CMakeFiles/HelloQt6Qml.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o -MF CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o.d -o CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o -c /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp
+
+CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp > CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.i
+
+CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp -o CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.s
+
+CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o: CMakeFiles/HelloQt6Qml.dir/flags.make
+CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o: /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp
+CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o: CMakeFiles/HelloQt6Qml.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o -MF CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o.d -o CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o -c /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp
+
+CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp > CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.i
+
+CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp -o CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.s
+
 CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o: CMakeFiles/HelloQt6Qml.dir/flags.make
 CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o: HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp
 CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o: CMakeFiles/HelloQt6Qml.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o -MF CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o.d -o CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o -c /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp
 
 CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.i: cmake_force
@@ -128,6 +172,8 @@ CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.s: cmake_f
 HelloQt6Qml_OBJECTS = \
 "CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o" \
 "CMakeFiles/HelloQt6Qml.dir/src/main.cpp.o" \
+"CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o" \
+"CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o" \
 "CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o"
 
 # External object files for target HelloQt6Qml
@@ -135,6 +181,8 @@ HelloQt6Qml_EXTERNAL_OBJECTS =
 
 HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/mocs_compilation.cpp.o
 HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/src/main.cpp.o
+HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/src/backend/timeprovider.cpp.o
+HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/src/backend/systemstatus.cpp.o
 HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp.o
 HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/build.make
 HelloQt6Qml: /usr/lib/x86_64-linux-gnu/libQt6QuickControls2.so.6.4.2
@@ -149,7 +197,7 @@ HelloQt6Qml: /usr/lib/x86_64-linux-gnu/libGLX.so
 HelloQt6Qml: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 HelloQt6Qml: /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.4.2
 HelloQt6Qml: CMakeFiles/HelloQt6Qml.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable HelloQt6Qml"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable HelloQt6Qml"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/HelloQt6Qml.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
