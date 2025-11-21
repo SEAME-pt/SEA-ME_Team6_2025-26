@@ -1,5 +1,0 @@
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/CMakeFiles/HelloQt6Qml.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/CMakeFiles/edit_cache.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/CMakeFiles/rebuild_cache.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/CMakeFiles/HelloQt6Qml_autogen_timestamp_deps.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/build/CMakeFiles/HelloQt6Qml_autogen.dir
