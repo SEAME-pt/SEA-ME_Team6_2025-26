@@ -12,9 +12,9 @@ Item {
     TimeProvider {
         id: clock
     }
-    SystemStatus {
+    /*SystemStatus {
         id: system
-    }
+    }*/
 
     // LEFT BLOCK
     Item {
@@ -60,13 +60,13 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
 
-            Image {
+            /*Image {
                 source: system.batteryIconSource
                 width: 16
                 height: 16
                 fillMode: Image.PreserveAspectFit
             }
-            /*
+
             Text {
                 text: system.currBatteryLvl + "%"
                 font.pixelSize: 10
