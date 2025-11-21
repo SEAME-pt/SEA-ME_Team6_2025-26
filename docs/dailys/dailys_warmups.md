@@ -36,5 +36,32 @@
 | **12/11/2025** | **Joao** <br><br> | **Daily Goals:** <br> 1. Test AGL installation <br> 2. Finalize 3D model of the car <br> 3. Implement a CPP script <br> 4. Complete Documentation (Qt/QML, Cross Compiling, UI Design, Autostart) <br> 5. Confirm Microcontroller ↔ CanBus communication <br> 6. Continue TSF implementation and GitHub automations <br> 7. Turn repository public and test branch protection & workflows <br> 8. Start AI study (ML, DL, GenAI) <br> 9. Update daily | **Done:** <br> 9. Update daily <br><br> **In Progress / To Be Done:** <br> Everything else | **BLOCKERS:** <br> Check if we need  Victor’s authorization for GitHub Actions and PRs  <br><br> **REMINDERS**<br><br>**Missing:** <br> - Headers <br> - Longer DSI cables <br> - Multiple microHDMI adapters <br> - Raspberry Pi 5 heatsinks/fans <br><br> **Pending:** <br><br>  **Standup with Paulo Meeting Notes** 1 - ALG didn´t boot. The answer was to disable uboot; 2 - Can Controller question about using Can controller or Can hat. Answer was Can Hat is better because its thinner, the cable are and we don´t need to make cable connections once it connects directly using the pins that connect directly with the pins of the Rasp5; 3 - They recommended to make dailys  **Next Module Issues:** <br> 1. AGL: research what Yocto is (Linux distribution builder) <br> 2. CAN communication: use CAN, not CAN-FD <br> 3. CAN setup: Raspberry → MF2515 → CAN cable → MF2515 → STM32 <br> 4. Research and use Eclipse uProtocol for I2C/SPI/GPIO abstraction <br> 5. Upcoming meetings: TSF → Nov 6; ThreadX → Nov 11/14 (TBD); Architecture Blueprints Eclipse → TBD |
 | **13/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day | In Progress / To be Done | Equal to 12/11/2025 |
 | **14/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day | In Progress / To be Done | Equal to 12/11/2025 |
-| **17/11/2025** | **Joao** <br><br> | **Daily Goals:** <br> 1. Test AGL installation <br> 2. Finalize 3D model of the car <br> 3. Implement a CPP script <br> 4. Complete Documentation (Qt/QML, Cross Compiling, UI Design, Autostart) <br> 5. Confirm Microcontroller ↔ CanBus communication <br> 6. Continue TSF implementation and GitHub automations <br> 7. Turn repository public and test branch protection & workflows <br> 8. Start AI study (ML, DL, GenAI) <br> 9. Meeting regarding TSF questions - "ECLIPSE TSF Q&A questions" <br> 10.Update daily | **Done:** <br> 1. Test AGL installation <br> 2. Finalize 3D model of the car <br> 9. Update daily <br><br> **In Progress / To Be Done:** <br> Everything else | **BLOCKERS:** <br> Check if we need  Victor’s authorization for GitHub Actions and PRs  <br><br> **REMINDERS**<br><br>**Missing:** <br> - Headers <br> - Longer DSI cables <br> - Multiple microHDMI adapters <br> - Raspberry Pi 5 heatsinks/fans <br><br> **Pending:** <br><br>  **Next Module Issues:** <br> 1. AGL: research what Yocto is (Linux distribution builder) <br> 2. CAN communication: use CAN, not CAN-FD <br> 3. CAN setup: Raspberry → MF2515 → CAN cable → MF2515 → STM32 <br> 4. Research and use Eclipse uProtocol for I2C/SPI/GPIO abstraction <br> 5. Upcoming meetings: TSF → Nov 6; ThreadX → Nov 11/14 (TBD); Architecture Blueprints Eclipse → TBD |
-| **18/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day | In Progress / To be Done | Equal to 17/11/2025 |
+| **17/11/2025** | **Joao** <br><br> | **Daily Goals:** <br> 1. Test AGL installation <br> 2. Finalize 3D model of the car <br> 3. Implement a CPP script <br> 4. Complete Documentation (Qt/QML, Cross Compiling, UI Design, Autostart) <br> 5. Confirm Microcontroller ↔ CanBus communication <br> 6. Continue TSF implementation and GitHub automations <br> 7. Turn repository public and test branch protection & workflows <br> 8. Start AI study (ML, DL, GenAI) <br> 9. Meeting regarding TSF questions - "ECLIPSE TSF Q&A questions" <br> 10. Thread X Installations and test <br> 11. Update daily | **Done:** <br> 1. Test AGL installation <br> 2. Finalize 3D model of the car <br> 11. Update daily <br><br> **In Progress / To Be Done:** <br> Everything else | **BLOCKERS:** <br> Check if we need  Victor’s authorization for GitHub Actions and PRs  <br><br> **REMINDERS**<br><br>**Missing:** <br> - Headers <br> - Longer DSI cables <br> - Multiple microHDMI adapters <br> - Raspberry Pi 5 heatsinks/fans <br><br> **Pending:** <br><br>  **Next Module Issues:** <br> 1. AGL: research what Yocto is (Linux distribution builder) <br> 2. CAN communication: use CAN, not CAN-FD <br> 3. CAN setup: Raspberry → MF2515 → CAN cable → MF2515 → STM32 <br> 4. Research and use Eclipse uProtocol for I2C/SPI/GPIO abstraction <br> 5. Upcoming meetings: TSF → Nov 6; ThreadX → Nov 11/14 (TBD); Architecture Blueprints Eclipse → TBD |
+| **18/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day **Victory of the day** - 10. Thread X Installations and test DONE| In Progress / To be Done | Equal to 17/11/2025 |
+| **19/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day **Victory of today** - unidirectional comunication betwen STM 32 e Rasp | In Progress / To be Done | **Standup Meeting Paulo Notes** Team Updates
+
+Group 2 reported a blockage in the wheel connection via I²C; they are unable to establish communication.
+
+The DrivaPi group is having difficulties booting directly from the SSD.
+
+Filipe will help them with this; if we have the same problems, we can talk to them.
+
+Workflow & GitHub
+
+One of the teams suggested using GitHub Actions to run a linter (e.g., clang-tidy) only on the code sections changed in each Pull Request.
+
+The importance of keeping issues well-described and linked to each other was reinforced.
+
+This way, it's possible to tag Filipe, Paulo, or Pedro directly in the issue, and they can comment directly on GitHub.
+
+Keep the GitHub board updated: To Do → In Progress → Done.
+
+Suggestion to change views to iterations on GitHub
+
+Technical Development
+
+ThreadX needs to ensure control of the motor, servos, sensor, and CAN. Some teams are having difficulties with this.
+
+Filipe is going to ask Pete A. Zouk (I don't remember the name exactly) for another example of a TSF implementation 🎉 |
+| **20/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day **Victory of today** - bidirectional comunication betwen STM 32 e Rasp | In Progress / To be Done | Equal to 17/11/2025 |
+| **21/11/2025** | **Joao** <br><br> | Continued implementation of the items mentioned on the previous day **Victory of today** - QT opens on display without  | In Progress / To be Done | Equal to 17/11/2025 |
