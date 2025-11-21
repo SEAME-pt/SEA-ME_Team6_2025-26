@@ -58,6 +58,8 @@
   - [CAN implementation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/CAN-test-guide.md)
   - [TSF Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/TSF/WhatsTSF.md)
   - [Joystick on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
+  - [QML guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/QML-guide.md)
+  - [Cluster Instrument](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/src/cluster/README.md)
 
 ---
 
