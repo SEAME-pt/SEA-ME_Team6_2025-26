@@ -16,8 +16,8 @@
 <a id="sec-intro"></a>
 ## 👋 Introduction
 
-A cross-compiler is a type of compiler capable of generating executable code for a plataform or operating system different from the one which it is running.  
-In simpler terms, it allows developers to build programs for another achitecture or environment - for example, compiling code on a computer (x86_64) that will later run on a smaller embedded device such as a Raspberry Pi (ARM64).  
+A cross-compiler is a type of compiler capable of generating executable code for a platform or operating system different from the one which it is running.  
+In simpler terms, it allows developers to build programs for another architecture or environment - for example, compiling code on a computer (x86_64) that will later run on a smaller embedded device such as a Raspberry Pi (ARM64).  
 Cross-compilation is especially useful when the target system:
  - Has limited computational resources.
  - Runs on a different CPU architecture (eg. ARM vs x86).
@@ -41,8 +41,8 @@ By defining a clear separation between the host and the target, cross-compilatio
 - **Sysroot**: A structured snapshot of the target's filesystem (libraries, headers, binaries) used during compilation to ensure correct linking and compatibility.
 - **CMake Toolchain File**: A configuration file defining compiler paths, sysroot locations and platform settings that guide the cross-compile process.
 - **Docker Integration**: Containerized environments used to isolate, reproduce, and automate cross-compilation, avoiding host dependency issues.
-- **Dual-Container Architecture**: One Docker image replicates the target system to generate the sysroot, another hosts the cross-compiler that buils the project and Qt for ARM.
-- **Qt Cross-Build**: Qt itself is built inside the cross-compiler container using the ARM sysroot, enabling deployment of complext QtQuick/QML apps directly to Raspberry Pi.
+- **Dual-Container Architecture**: One Docker image replicates the target system to generate the sysroot, another hosts the cross-compiler that builds the project and Qt for ARM.
+- **Qt Cross-Build**: Qt itself is built inside the cross-compiler container using the ARM sysroot, enabling deployment of complect QtQuick/QML apps directly to Raspberry Pi.
 - **Dependency Consistency**: Ensures that the same versions of libraries used during compilation exist on the target device, preventing runtime errors.
 - **Environment Replication**: Recreates the Raspberry Pi's file system and libraries inside the host machine through Docker, eliminating the need for physical hardware during builds.
 - **Automation**: The entire toolchain setup, build and packaging process is fully scripted through Dockerfiles and CMake commands for reproducibility.
@@ -60,8 +60,8 @@ By defining a clear separation between the host and the target, cross-compilatio
 ## 🤔 Why we use Cross-Compilation
 
 During the early stages of development, we experimented with several methods to build and deploy our Qt application on the Raspberry Pi.  
-Although each method seemed viable in theory, we quickly encountered techincal barriers that made local or direct builds impractical.  
-The challenges ultimately led us to adopt a cross-compilatio  workflow, which proved to be faster, more reliable and scalable.
+Although each method seemed viable in theory, we quickly encountered technical barriers that made local or direct builds impractical.  
+The challenges ultimately led us to adopt a cross-compilation workflow, which proved to be faster, more reliable and scalable.
 
 ##### **Attempt 1 - Building Directly on the Raspberry Pi**
 
@@ -70,25 +70,25 @@ While simple, this approach exposed several limitations of the Raspberry Pi envi
 - **Hardware Constraints:**
 The Raspberry Pi, while capable for runtime execution, lacks the computational power required to build large projects efficiently. Compiling Qt 6 and the associated modules can take many hours, sometimes exceeding the device's thermal or memory limits.
 - **Package Fragmentation and Version Mismatches:**
-The official Raspberry Pi repositories provide older or incomplete Qt packages, and attempting to compile newer versions let to incompatible versions, missing modules and depdency conflicts.
+The official Raspberry Pi repositories provide older or incomplete Qt packages, and attempting to compile newer versions let to incompatible versions, missing modules and dependency conflicts.
 
 
-Despite several attepemts, this method proved unreliable, time-consuming and unsuitable for a reproducible development workflow.
+Despite several attempts, this method proved unreliable, time-consuming and unsuitable for a reproducible development workflow.
 
 ##### **Attempt 2 - Building on the Host and Transferring the Executable**
 
 After facing repeated build failures on the Raspberry Pi, we tried a different strategy, compile the project on our development workstation (Ubuntu x86_64) using the standard Qt setup and then copy the generated binary to the Raspberry Pi via SSH.  
 At first this approach seemed promising - compilation on a desktop was fast and stable, and deployment was straightforward.  
-Howerver, once transferred the executable refused to run, returning the error:  
+However, once transferred the executable refused to run, returning the error:  
 ```bash
 ./HelloQt6Qml: cannot execute binary file: Exec format error
 ```
-This occured because the binary was compiled for a different CPU architecture.  
+This occurred because the binary was compiled for a different CPU architecture.  
 Our host machine used and x86_64 processor, while the Raspberry Pi runs on an ARM64 (AArch64) architecture.  
 Even though both run Linux, their instruction sets, memory alignment, and binary interfaces are fundamentally incompatible.  
 In other words, the Raspberry Pi simple could not execute a binary compiled for x86_64.
 This approach highlighted a critical reality:  
-**To run an application on a target device with a different architecture, you must buil it for that architecture.**
+**To run an application on a target device with a different architecture, you must build it for that architecture.**
 
 After these experiments, it became clear that what we needed was a way to compile on our host machine, taking advantage of its speed and resources, but generate binaries that would run on the Raspberry Pi's ARM64 environment.  
 That's where cross-compilation comes in.  
@@ -109,9 +109,9 @@ Cross-compiling Qt manually for the Raspberry Pi can be extremely complex, it re
 - Installing and configuring a cross-compiler toolchain for ARM64.
 - Copying or generating a sysroot (a mirror of the target filesystem).
 - Setting multiple CMake variables (`CMAKE_SYSROOT`, `CMAKE_PREFIX_PATH`, etc).
-- Ensuring consitent library versions between host and target. 
+- Ensuring consistent library versions between host and target. 
 
-Doing this manually often leads to configuration drift, version conflicts, and inconsistent build accros different developers or systems.
+Doing this manually often leads to configuration drift, version conflicts, and inconsistent build across different developers or systems.
 
 ##### **Manual Setup**
 Without Docker, you can still cross-compile by installing:

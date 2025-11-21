@@ -1,0 +1,5 @@
+[console_scripts]
+doorstop=doorstop.cli.main:main
+doorstop-gui=doorstop.gui.main:main
+doorstop-server=doorstop.server.main:main
+

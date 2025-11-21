@@ -185,7 +185,7 @@ $ qmake --version
 $ cmake --version
 $ g++ --version
 ```
-If you encounter any erros such as `Command 'qmake' not found`, `Command 'cmake' not found` or `Command 'g++' not found`, refer to the [🚨 Issues Log](#sec-issues) for troubleshooting, specifically:
+If you encounter any errors such as `Command 'qmake' not found`, `Command 'cmake' not found` or `Command 'g++' not found`, refer to the [🚨 Issues Log](#sec-issues) for troubleshooting, specifically:
 
   - [Issue #1 - QMake not found after installation](#issue-1)
   - [Issue #2 - CMake not found after installation](#issue-2)
@@ -269,7 +269,7 @@ $ ./QtQuickTest
 
 If a window with "Hello QtQuick!" appears this means the setup is complete.
 
-If you encounter any erros such as `Could NOT find OpenGL & Could NOT find WrapOpenGL`, `CMake Error at CMakeLists.txt:9 (find_package)`, refer to the [🚨 Issues Log](#sec-issues) for troubleshooting, specifically:
+If you encounter any errors such as `Could NOT find OpenGL & Could NOT find WrapOpenGL`, `CMake Error at CMakeLists.txt:9 (find_package)`, refer to the [🚨 Issues Log](#sec-issues) for troubleshooting, specifically:
 
   - [Issue #4 - Qt6Gui or WrapOpenGL not found when running cmake ..](#issue-4)
   - [Issue #5 - Could not find package configuration file provided by "Qt6"](#issue-5)
@@ -303,17 +303,22 @@ cluster/
 ├── src/                #  C++ Backend source files
 │   ├── main.cpp
 │   ├── backend/        #  Classes handling logic / simulation
-│   │   ├── a.cpp
-│   │   └── a.hpp
-│   └── utils/
-│       └── logger.cpp  #  Helper modules
+│   │   ├── timeprovider.cpp
+│   │   └── timeprovider.hpp
+│   └── utils/          #  Helper modules
+│       └── a.cpp
 ├── qml/                #  QML UI Code
 │   ├── main.qml
 │   ├── components/     #  Reusable UI parts
-│   │   └── a.qml
+│   │   └── TopBar.qml
+│   │   └── NavBar.qml
 │   ├── screens/        #  Multi-view layouts (Cluster, Settings)
+│   │   └── BaseScreen.qml
+│   │   └── ClusterScreen.qml
+│   │   └── HomeScreen.qml
+│   │   └── SettingsScreen.qml
 │   └── themes/         #  Styling / Color schemes
-│       └── base.qml
+│       └── BaseTheme.qml
 ├── assets/
 │   ├── icons/
 │   ├── images/
@@ -352,7 +357,239 @@ More information on how to build and deploy the cluster on the Raspberry Pi on `
 <a id="sec-ui-components"></a>
 ## 🎨 UI Design & Components
 
-?
+This section covers both:  
+- Frontend Components (QML): Define visuals and interactions.
+- Backend Components (C++): Handle data, simulation, and logic.
+
+They work together through Qt's signal-slot and QT_PROPERTY systems - allowing the frontend to automatically update when backend data changes.
+
+##### Frontend Components (QML)
+
+###### What is a QML Component?  
+In QtQuick, a component is a reusable building block of UI - similar to a widget or custom view in other frameworks.  
+Each component represents a self-contained visual element that can be easily reused, styled, and bound to dynamic data.  
+You can think of QML components as "mini UI modules" - they encapsulate:  
+- Structure (layout & child terms).
+- Behavior (animations, bindings, interactions).
+- Styling (colors, themes, shapes).
+
+A component can be:  
+- Inline - declared inside another QML file.
+- Standalone - saved as a separate `.qml` file inside your `components/` folder and imported wherever needed.
+
+##### Backend Components (C++)
+Backend components are C++ classes responsible for:
+- Simulating or acquiring data (e.g., time, speed, temperature).
+- Processing business logic.
+- Exposing properties and signals to QML.
+
+They don't render anything - they act as data providers or controllers for the QML frontend.  
+
+###### Example: `TimeProvider` Component  
+Let's say you want to show the current day and hour in your QML cluster.
+
+`timeprovider.hpp`
+```hpp
+#include <QObject>
+#include <QTimer>
+#include <QDateTime>
+
+class TimeProvider : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString currentTime READ currentTime NOTIFY timeChanged)
+    Q_PROPERTY(QString currentDate READ currentDate NOTIFY dateChanged)
+
+public:
+    explicit TimeProvider(QObject *parent = nullptr);
+
+    QString currentTime() const;
+    QString currentDate() const;
+
+signals:
+    void timeChanged();
+    void dateChanged();
+
+private slots:
+    void updateTime();
+
+private:
+    QString m_currentTime;
+    QString m_currentDate;
+    QTimer m_timer;
+};
+```
+
+`timeprovider.cpp`
+```cpp
+#include "timeprovider.hpp"
+
+TimeProvider::TimeProvider(QObject *parent)
+    : QObject(parent)
+{
+    updateTime();
+    connect(&m_timer, &QTimer::timeout, this, &TimeProvider::updateTime);
+    m_timer.start(1000); // update every second
+}
+
+void TimeProvider::updateTime()
+{
+    QDateTime now = QDateTime::currentDateTime();
+
+    QString newTime = now.toString("hh:mm");
+    QString newDate = now.toString("dddd, MMM d");
+
+    if (newTime != m_currentTime) {
+        m_currentTime = newTime;
+        emit timeChanged();
+    }
+
+    if (newDate != m_currentDate) {
+        m_currentDate = newDate;
+        emit dateChanged();
+    }
+}
+
+QString TimeProvider::currentTime() const { return m_currentTime; }
+QString TimeProvider::currentDate() const { return m_currentDate; }
+```
+
+To make this available to your QML files, register it in your main.cpp before loading the QML engine:  
+
+`main.cpp`
+```cpp
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include "backend/timeprovider.hpp"
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+
+    qmlRegisterType<TimeProvider>("Cluster.Backend", 1, 0, "TimeProvider");
+
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    return app.exec();
+}
+```
+
+Now you can use the C++ Component just like any QML item:
+
+```qml
+import QtQuick
+import QtQuick.Controls
+import Cluster.Backend 1.0
+
+Rectangle {
+    width: 400
+    height: 200
+    color: BaseTheme.black
+
+    TimeProvider {
+        id: clock
+    }
+
+    Column {
+        anchors.centerIn: parent
+        spacing: 8
+
+        Text {
+            text: clock.currentTime
+            color: BaseTheme.white
+            font.pixelSize: 32
+        }
+
+        Text {
+            text: clock.currentDate
+            color: BaseTheme.primaryLight
+            font.pixelSize: 16
+        }
+    }
+}
+```
+
+The `TimeProvider` updates every second, and QML automatically reacts to `timeChanged` and `dateChanged` signals.  
+No manual pooling - that's the magic of Q_PROPERTY bindings.
+
+###### Understanding a C++ QML Component  
+A QML-exposed C++ class is usually a `QObject` subclass that exposed properties, signals and slots to QML.  
+This is what allows he backend logic (C++) and frontend UI (QML) to stay in sync.  
+
+Let's break down the `TimeProvider` example and explain what's happening.
+
+**`Q_OBJECT` - the foundation of all Qt meta-classes**  
+```cpp
+class TimeProvider: public QObject {
+  Q_OBJECT
+```
+
+**What it does:**  
+- Enables the Qt Meta-Object System, which provides:
+  - Reflection (the ability to discover properties/methods/signals at runtime).
+  - Signals & slots.
+  - Dynamic property access (what QML uses to "see" your C++ properties).
+- Required any class that uses `Q_PROPERTY`, `signals`, or `slots`.
+
+Without it, the class compiles but it won't work with QML - it can't send or receive signals, and QML can't see its properties.  
+
+**`Q_PROPERTY` - exposing data to QML**  
+```cpp
+Q_PROPERTY(QString currentTime READ currentTime NOTIFY timeChanged)
+Q_PROPERTY(QString currentDate READ currentDate NOTIFY dateChanged)
+```
+
+Each `Q_PROPERTY` tells Qt:
+- What data type the property has (`QString`).
+- What getter function to use (`READ currentTime`).
+- Optionally, what setter function to use (`WRITE setCurrentTime`).
+- What signal notifies changes (`NOTIFY timeChanged`).
+
+This is how QML knows what data exists on your C++ object.  
+QML can bind to it like this:  
+```qml
+Text { text: timeProvider.currentTime }
+```
+
+When your C++ code emits `timeChanged()`, QML automatically re-renders the bound text.
+
+**`signals` - telling QML that something changed**  
+```cpp
+signals:
+    void timeChanged();
+    void dateChanged();
+```
+
+A signal is a message that something happened.  
+When emitted, QML bindings that depend on the property automatically update.  
+
+Example:  
+```cpp
+    emit timeChanged();
+```
+
+That tells QML: "the `currentTime` property changed - refresh any UI that depends on it."
+
+**`slots` - callable functions (event handlers)**  
+```cpp
+private slots:
+    void updateTime();
+```
+
+A slot is a function that can be:
+- Automatically called when a signal is emitted (via `connect()`).
+- Called manually from QML (if marked public slots).
+
+In our example, the slot `updateTime()` runs every second via a `QTimer`:
+```cpp
+connect(&m_timer, &QTimer::timeout, this, &TimeProvider::updateTime);
+```
+
+For more advanced techniques and examples, refer to `docs/guides/QML-guide.md`.
 
 ---
 

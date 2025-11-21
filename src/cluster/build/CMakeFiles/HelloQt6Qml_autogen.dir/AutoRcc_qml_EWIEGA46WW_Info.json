@@ -8,7 +8,23 @@
 	"INCLUDE_DIR" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/HelloQt6Qml_autogen/include",
 	"INPUTS" : 
 	[
-		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/main.qml"
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.hpp",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.hpp",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/main.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/themes/BaseTheme.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/HomeScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/SettingsScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/ClusterScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/screens/BaseScreen.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/NavBar.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml/components/TopBar.qml",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-quarter-solid-full.svg",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-empty-solid-full.svg",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-full-solid-full.svg",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-half-solid-full.svg",
+		"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/assets/icons/battery-three-quarters-solid-full.svg"
 	],
 	"LOCK_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/CMakeFiles/HelloQt6Qml_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,

@@ -347,7 +347,7 @@ Qt6QuickTemplates2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6QuickTemplates2
 Qt6Quick_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6Quick
 
 //The directory containing a CMake configuration file for Qt6.
-Qt6_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
+Qt6_DIR:PATH=Qt6_DIR-NOTFOUND
 
 //Path to a program.
 Vulkan_GLSLANG_VALIDATOR_EXECUTABLE:FILEPATH=Vulkan_GLSLANG_VALIDATOR_EXECUTABLE-NOTFOUND
