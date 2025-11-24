@@ -47,6 +47,6 @@ We’re practicing a **end-to-end engineering flow**:
 
 - @daviduartecf - David Fernandes
 - @jpjpcs - João Silva
-- @rcosta-r - Ruben Carvalho
+- @rcosta-c - Ruben Carvalho
 - @vasferre - Vasco Ferreira
 - @dinoguei-seame - Diogo NNogueira
