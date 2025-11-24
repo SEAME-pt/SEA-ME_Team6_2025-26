@@ -1,6 +1,6 @@
 # 🏁 Sprint 4 — (24/11/2025 → 05/12/2025)
 
-> ## **Sprint Goal**: Update team's knowledge documentation foundations and Assemble and validate the new system’s hardware.
+> ## **Sprint Goal**: Update team's knowledge documentation foundations & Assemble and validate the new system’s hardware.
 
 ---
 
