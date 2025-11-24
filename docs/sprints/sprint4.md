@@ -1,24 +1,24 @@
-# 🏁 Sprint 3 — (24/11/2025 → 05/12/2025)
+# 🏁 Sprint 4 — (24/11/2025 → 05/12/2025)
 
-> ## **Sprint Goal**: Assemble and validate the new system’s hardware and documentation foundations.
+> ## **Sprint Goal**: Assemble and validate the new system’s hardware and refine team's documentation foundations.
 
 ---
 
 ## 📌 Epics
-- #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Remote display auto-start Qt app
 - #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
   - [ ] Assemble Vehicle Layout
   - [ ] Test New Power Distribution and Validate It
   - [ ] Component Testing: 
-        - [ ]  **Servo motors ↔ Microcontroller**
-        - [ ]  **DC motor ↔ Microcontroller**
+  - [ ]  **Servo motors ↔ Microcontroller**
+  - [ ]  **DC motor ↔ Microcontroller**
+- #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+  - [ ] Remote display auto-start Qt app
+  - [ ] Test and validate motors with script
 - #### **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Approve and apply **documentation tutorials** 
   - [ ] Review and approve **documentation templates and structure**
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-  - [ ] Project Management Overview
-  - [ ] **Create CI/CD**
+  - [ ] Project Management Overview 
 
 
 ---
