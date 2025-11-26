@@ -1,36 +1,26 @@
 ---
 id: EVID-L0-1
-header: "Evidence: Documentation inspection. - The system architecture shall be defined and documented to describe hardware..."
-text: |
-  This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+header: 'Evidence: Documentation inspection. - The system architecture shall be defined
+  and documented to describe hardware...'
+text: 'This evidence item collects repository artifacts, sprint reports and demo images
+  that demonstrate the requirement is met.
 
-  The following artifacts are included as references and should be reviewed as evidence:
-
-  - Sprint reports describing related activities (sprint1..3).
-  - Demos and diagrams related to the requirement.
-  - Guides and analyses related to the decision.
-
-level: 1.1
+  '
+level: '1.1'
 normative: false
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
-  - type: "file"
-    path: "../../../../docs/demos/system-architecture-cross.png"
-  - type: "file"
-    path: "../../../../docs/demos/first_qt_app.jpeg"
-  - type: "file"
-    path: "../../../../docs/demos/eletric-scheme.png"
-  - type: "file"
-    path: "../../../../docs/guides/Power Consumption Analysis.md"
-  - type: "file"
-    path: "../../../../docs/guides/AGL_Installation_Guide.md"
-reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+- type: file
+  path: ../../../../demos/assembled-car1.jpeg
+- type: file
+  path: ../../../../demos/assembled-car2.jpeg
+- type: file
+  path: ../../../../demos/eletric-scheme.png
+- type: file
+  path: ../../../../guides/Power%20Consumption%20Analysis.md
+- type: file
+  path: ../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 ---
 
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

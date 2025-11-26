@@ -1,20 +1,16 @@
 ---
 id: EXPECT-L0-15
-header: "Agile"
-text: |
-  Agile: The team shall follow Agile (Scrum) methodology for project management.
+header: Agile
+text: 'Agile: The team shall follow Agile (Scrum) methodology for project management.
 
-level: 1.1
+  '
+level: '1.15'
 normative: true
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
+- id: ASSERT-L0-15
+  path: ../assertions/ASSERT-L0-15.md
 reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
 

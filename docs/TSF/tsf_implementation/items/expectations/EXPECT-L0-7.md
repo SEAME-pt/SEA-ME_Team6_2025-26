@@ -1,20 +1,16 @@
 ---
 id: EXPECT-L0-7
-header: "QT Crosscompilation should be achieved"
-text: |
-  QT Crosscompilation should be achieved.
+header: QT Crosscompilation should be achieved
+text: 'QT Crosscompilation should be achieved using docker or other solution.
 
-level: 1.1
+  '
+level: '1.7'
 normative: true
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
+- id: ASSERT-L0-7
+  path: ../assertions/ASSERT-L0-7.md
 reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
 

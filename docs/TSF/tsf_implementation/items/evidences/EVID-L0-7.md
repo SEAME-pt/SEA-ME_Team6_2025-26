@@ -1,36 +1,24 @@
 ---
 id: EVID-L0-7
-header: "Evidence: QT program crosscompliation validated with final exec file obtained, and execution of the exec file in the Rasp5 OS. - QT Crosscompilation should be achieved"
-text: |
-  This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+header: 'Evidence: QT program crosscompliation validated with final exec file obtained,
+  and execution of the exec file in the Rasp5 OS. - QT Crosscompilation should be
+  achieved'
+text: 'This evidence item collects repository artifacts, sprint reports and demo images
+  that demonstrate the requirement is met.
 
-  The following artifacts are included as references and should be reviewed as evidence:
 
-  - Sprint reports describing related activities (sprint1..3).
-  - Demos and diagrams related to the requirement.
-  - Guides and analyses related to the decision.
+  - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/fix-qt-app-minor-changes/src/cross-compiler
 
-level: 1.1
+  '
+level: '1.7'
 normative: false
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
-  - type: "file"
-    path: "../../../../docs/demos/system-architecture-cross.png"
-  - type: "file"
-    path: "../../../../docs/demos/first_qt_app.jpeg"
-  - type: "file"
-    path: "../../../../docs/demos/eletric-scheme.png"
-  - type: "file"
-    path: "../../../../docs/guides/Power Consumption Analysis.md"
-  - type: "file"
-    path: "../../../../docs/guides/AGL_Installation_Guide.md"
-reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+- type: file
+  path: ../../../../demos/system-architecture-cross.png
 ---
 
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/fix-qt-app-minor-changes/src/cross-compiler

@@ -1,20 +1,16 @@
 ---
 id: EXPECT-L0-8
-header: "Connect the Rasp5 to the STM 32 (bidirectional) using Can..."
-text: |
-  Connect the Rasp5 to the STM 32 (bidirectional) using Can Protocol.
+header: Use CAN to connect the Rasp5 to the STM 32 (bidirectional)
+text: 'Connect the Rasp5 to the STM 32 (bidirectional) using Can Protocol.
 
-level: 1.1
+  '
+level: '1.8'
 normative: true
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
+- id: ASSERT-L0-8
+  path: ../assertions/ASSERT-L0-8.md
 reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
 
