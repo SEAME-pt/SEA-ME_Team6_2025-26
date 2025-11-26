@@ -1,6 +1,6 @@
 ---
 id: EXPECT-L0-17
-header: "Introduce in the project"
+header: "Introduce AI in the project"
 text: |
   Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC".
 
