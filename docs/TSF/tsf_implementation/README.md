@@ -1,64 +1,32 @@
-# TSF Minimal Implementation (exemplo)
+# TSF Implementation — Sea:ME (official-format)
 
-Este é um exemplo mínimo e funcional para começar a implementar o Trustable
-Software Framework (TSF) no teu projeto `Sea:ME`.
+This folder contains the Trustable Software Framework implementation for the Sea:ME project.
+This implementation follows the Trustable/Trudag upstream format (fields: `id`, `header`, `text`, `level`, `normative`, `references`, `reviewers`, etc.) to ensure compatibility with `trudag`/`dotstop`.
 
-Objetivo: fornecer uma estrutura simples com quatro tipos de ficheiros:
-- Expectation (EX-...)
-- Assertion (AS-...)
-- Assumption (ASU-...)
-- Evidence (EV-...)
+Layout
+- `items/expectations/` — Expectation items (`EXPECT-L0-*.md`)
+- `items/assertions/` — Assertions (`ASSERT-L0-*.md`)
+- `items/assumptions/` — Assumptions (`ASU-*.md`)
+- `items/evidences/` — Evidence items (`EVID-L0-*.md`)
+- `graph/graph.dot` — editable Graphviz DOT representing trace links
+- `scripts/generate_from_requirements.py` — generator to create/update items from `LO_requirements.md`
+- `scripts/run_trudag_publish.sh` — wrapper to run `trudag` commands to create links, resolve, and publish
+- `validators/` — simple validators (front-matter, evidence path/hash)
 
-Cada item é um ficheiro Markdown com front-matter mínimo. As ligações entre
-itens são descritas no `graph/graph.dot` (formato DOT). Esta abordagem:
+Guiding principle
+- Items are written in English and follow the upstream Trustable schema so `trudag` can manage/lint/score/publish the graph.
 
-- é suficiente para começar hoje
-- permite evolução para `trudag`/`dotstop` depois
-
-Estrutura criada:
-
-```
-docs/TSF/tsf_implementation/
-├─ README.md
-├─ items/
-│  ├─ EX-001_expectation.md
-│  ├─ AS-001_assertion.md
-│  ├─ ASU-001_assumption.md
-│  └─ EV-001_evidence.md
-└─ graph/
-   └─ graph.dot
-```
-
-Próximos passos rápidos (no terminal, a partir do root do repo):
+Next steps
+1. Run the generator to create EXPECT/ASSERT/EVID skeletons from `docs/TSF/requirements/LO_requirements.md`:
 
 ```bash
-# Ver ficheiros criados
-ls -la docs/TSF/tsf_implementation
-
-# Adicionar e commitar (se quiseres guardar no repo)
-git add docs/TSF/tsf_implementation
-git commit -m "Add minimal TSF implementation example"
-git push origin development
+python3 docs/TSF/tsf_implementation/scripts/generate_from_requirements.py
 ```
 
-Como usar:
-- Abre os ficheiros em `items/` e ajusta as declarações para o teu projeto
-  Sea:ME.
-- Edita `graph/graph.dot` para ligar outros items.
-- Mais tarde podes trocar para `trudag`/`dotstop` quando estiveres pronto.
+2. Review generated items and then run the `trudag` publish flow (requires `trudag` installed):
 
-Se quiseres, eu adapto estes exemplos a requisitos concretos do `Sea:ME` —
-diz quais são as expectativas que queres representar e eu escrevo as items.
-# TSF implementation
+```bash
+bash docs/TSF/tsf_implementation/scripts/run_trudag_publish.sh
+```
 
-This folder contains the Trustable Software Framework implementation for the project.
-
-Structure:
-- references/
-  - expectations/
-  - assertions/
-  - assumptions/
-  - evidences/
-- validators/
-
-Each item is a markdown file using the Trudag/Trustable template (YAML front matter). Use `trudag manage` to create / link / lint / score.
+See `TSF_IMPLEMENTATION.md` for detailed commands and CI configuration.
