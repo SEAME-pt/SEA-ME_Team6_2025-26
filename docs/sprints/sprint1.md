@@ -98,5 +98,6 @@ EXPECT-L0-1 - "System architecture is defined and documented
   EXPECT-L0-12 - "Wireless DCI display":
   EXPECT-L0-13 - "Project & GitHub setup":
   EXPECT-L0-14 - "TSF & Documentation":
-  EXPECT-L0-15 - "Agile and Scrum";
-  EXPECT-L0-16 - "CI/CD";
+  EXPECT-L0-15 - "Agile and Scrum":
+  EXPECT-L0-16 - "CI/CD":
+  EXPECT-L0-17 - "Introduce AI in the project":
