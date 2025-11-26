@@ -1,21 +1,18 @@
 ---
 id: EXPECT-L0-16
-header: "CI/CD"
-text: |
-  CI/CD: The project repository shall include a working GitHub Actions workflow
+header: CI/CD
+text: 'CI/CD: The project repository shall include a working GitHub Actions workflow
+
   for continuous integration (CI) and continuous delivering (CD).
 
-level: 1.1
+  '
+level: '1.16'
 normative: true
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
+- id: ASSERT-L0-16
+  path: ../assertions/ASSERT-L0-16.md
 reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
 

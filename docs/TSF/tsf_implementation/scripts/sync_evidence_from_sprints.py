@@ -88,7 +88,7 @@ def update_evid_file(rid, artifacts):
             refs_lines = refs_part.strip().splitlines()[1:] if refs_part.strip()!='references:' else []
             existing = []
             for rl in refs_lines:
-                m = re.search(r"path: \"?([^"]+)\"?", rl)
+                m = re.search(r'path:\s*"?([^\"]+)"?', rl)
                 if m:
                     existing.append(m.group(1))
             # build added refs avoiding duplicates

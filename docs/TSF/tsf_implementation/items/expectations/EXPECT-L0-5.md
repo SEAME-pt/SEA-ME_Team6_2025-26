@@ -1,21 +1,15 @@
 ---
 id: EXPECT-L0-5
-header: "The system shall be capable of launching a basic Qt..."
-text: |
-  The system shall be capable of launching a basic Qt application on the PiRacer’s
-  built-in display.
-
-level: 1.1
+header: Launch a basic Qt
+text: "The system shall be capable of launching a basic Qt application on the PiRacer\u2019\
+  s\nbuilt-in display.\n"
+level: '1.5'
 normative: true
 references:
-  - type: "file"
-    path: "../../../../docs/sprints/sprint1.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint2.md"
-  - type: "file"
-    path: "../../../../docs/sprints/sprint3.md"
+- id: ASSERT-L0-5
+  path: ../assertions/ASSERT-L0-5.md
 reviewers:
-  - name: "Joao Jesus Silva"
-    email: "joao.silva@seame.pt"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
 
