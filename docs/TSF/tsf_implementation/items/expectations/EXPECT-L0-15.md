@@ -1,8 +1,9 @@
 ---
 id: EXPECT-L0-15
-header: "Agile and Scrum"
+header: "Agile"
 text: |
   Agile: The team shall follow Agile (Scrum) methodology for project management.
+
 level: 1.1
 normative: true
 references:

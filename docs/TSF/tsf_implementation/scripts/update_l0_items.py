@@ -51,15 +51,19 @@ def parse_requirements(md_text):
 def write_expectation(rid, data):
     path = ITEMS / 'expectations' / f'EXPECT-{rid}.md'
     header = short_summary(data['requirement'], maxlen=60)
-    content = f"---\n" \
-        + f"id: EXPECT-{rid}\n" \
-        + f"header: \"{header}\"\n" \
-        + "text: |\n"
-    # write multiline requirement
-    for line in re.sub(r'\s+', ' ', data['requirement']).split('. '):
-        if line.strip():
-            content += f"  {line.strip()}\n"
-    content += f"level: 1.1\nnormative: true\nreferences:\n"
+    # normalize whitespace and wrap into readable paragraphs
+    import textwrap
+    req_text = re.sub(r'\s+', ' ', data['requirement']).strip()
+    wrapped = textwrap.wrap(req_text, width=80)
+    content = (
+        f"---\n"
+        f"id: EXPECT-{rid}\n"
+        f"header: \"{header}\"\n"
+        f"text: |\n"
+    )
+    for line in wrapped:
+        content += f"  {line}\n"
+    content += "\nlevel: 1.1\nnormative: true\nreferences:\n"
     for r in SPRINT_REFS:
         content += f"  - type: \"file\"\n    path: \"../../../../{r}\"\n"
     content += f"reviewers:\n  - name: \"{REVIEWER['name']}\"\n    email: \"{REVIEWER['email']}\"\n---\n\n"
@@ -112,12 +116,13 @@ def write_evidence(rid, data):
 def main():
     md = REQ.read_text(encoding='utf-8')
     items = parse_requirements(md)
-    # operate on L0-2..L0-16
-    for i in range(2, 17):
-        rid = f'L0-{i}'
-        if rid not in items:
-            print(f"WARN: {rid} not found in requirements (skipping)")
-            continue
+    # operate on all parsed L0 items (including newly added ones)
+    # sort by numeric id
+    def keyfn(rid):
+        m = re.match(r'L0-(\d+)', rid)
+        return int(m.group(1)) if m else 9999
+
+    for rid in sorted(items.keys(), key=keyfn):
         data = items[rid]
         write_expectation(rid, data)
         write_assertion(rid, data)

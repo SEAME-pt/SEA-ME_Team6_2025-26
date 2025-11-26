@@ -1,6 +1,6 @@
 ---
-id: EVID-L0-1
-header: "Evidence: Documentation inspection. - The system architecture shall be defined and documented to describe hardware..."
+id: EVID-L0-17
+header: "Evidence: Code implementation verification with achieved effect. - Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC""
 text: |
   This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 

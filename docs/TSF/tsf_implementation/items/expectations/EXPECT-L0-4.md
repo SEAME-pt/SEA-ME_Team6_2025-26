@@ -1,8 +1,11 @@
 ---
 id: EXPECT-L0-4
-header: "Remote Control driveable Car Model"
+header: "Driveable Car with Remote Control/Driveable Car Model..."
 text: |
-  Driveable Car Model (Hardware + Software): The PiRacer shall support remote control functionality to operate the motors (steering and propulsion).
+  Driveable Car with Remote Control/Driveable Car Model (Hardware + Software): The
+  PiRacer shall support remote control functionality to operate the motors
+  (steering and propulsion).
+
 level: 1.1
 normative: true
 references:

@@ -1,8 +1,10 @@
 ---
 id: EXPECT-L0-6
-header: "The Qt GUI shall display static graphical elements"
+header: "The Qt GUI shall display static graphical elements such as..."
 text: |
-  The Qt GUI shall display static graphical elements such as shapes, text, or images to form a simple user interface.
+  The Qt GUI shall display static graphical elements such as shapes, text, or
+  images to form a simple user interface.
+
 level: 1.1
 normative: true
 references:
