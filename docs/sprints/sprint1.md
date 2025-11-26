@@ -33,14 +33,20 @@
 - **Delivered**:
     - Qt app code in [Qt app](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
 - **Demos**:
-  
-    - ![Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car1.jpeg)
-    - ![Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/assembled-car2.jpeg)
-    - ![QtApp](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/first_qt_app.jpeg)
-    - ![mockup1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup5.jpeg)
-    - ![mockup2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup3.jpeg)
-    - ![mockup3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup2.jpeg)
-    - ![mockup4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/19-create-simple-tsf-requirements/docs/demos/mockup6.jpeg)
+
+Car Architecture: 
+      - ![Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
+    - ![Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
+
+QT:
+    - ![QtApp](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg)
+    - ![mockup1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
+    - ![mockup2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
+    - ![mockup3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
+    - ![mockup4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
+    - ![mockup5](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
+    - ![mockup6](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
+               
       
 - **Docs updated**:
     - Documentation in [Docs](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs)
