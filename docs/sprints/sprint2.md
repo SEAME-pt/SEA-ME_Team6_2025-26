@@ -109,12 +109,14 @@ EXPECT-L0-14 - "TSF & Documentation":
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 2](https://github.com/orgs/SEAME-pt/projects/89/views/7)
 
+
 ## TSF Useful: 
   EXPECT-L0-1 - "System architecture is defined and documented":
   EXPECT-L0-2 - "Hardware Assembly: Fully assemble the PiRacer robot":
   EXPECT-L0-3 - "Software Setup capable of running Qt applications":
-  EXPECT-L0-4 - "Driveable Car with Remote Control"
-  EXPECT-L0-5 - "Launch basic Qt on built-in display"
+  EXPECT-L0-4 - "Driveable Car with Remote Control":
+  EXPECT-L0-5 - "Launch basic Qt on built-in display":
+  EXPECT-L0-6 - "The Qt GUI shall display static graphical elements":
   EXPECT-L0-7 - "QT Crosscompilation should be achieved":
   EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
   EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS";
