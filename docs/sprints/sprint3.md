@@ -68,7 +68,7 @@ EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional
 
 
       
-- **Docs updated**:
+- **Docs/Guides updated**:
 
   **SOFTWARE**
   
@@ -101,6 +101,19 @@ EXPECT-L0-14 - "TSF & Documentation":
 
 EXPECT-L0-4 - "Driveable Car with Remote Control":
   - [Joystick on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
+
+
+- **Images**:
+
+**CAN**
+
+  EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  - [CANFrame image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANFrame.png) 
+- [CAN Signal](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANsignal.png)
+- [CAN Topology](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology.png)
+- [CAN Topology 2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology2.png)
+- [CAN half-duplex-communication](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png)
+
 
 ---
 
