@@ -40,23 +40,32 @@ EXPECT-L0-5 - "Launch basic Qt on built-in display":
   
 **ARCHITECTURE**:
 EXPECT-L0-1 - "System architecture is defined and documented
-      - ![Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
-    - ![Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
+      - [Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
+    - [Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
 
 **QT**:
   EXPECT-L0-5 - "Launch basic Qt on built-in display":
-    - ![QtApp](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg)
+    - [QtApp](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg)
   EXPECT-L0-6 - "The Qt GUI shall display static graphical elements";
-  - ![mockup1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
-    - ![mockup2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
-    - ![mockup3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
-    - ![mockup4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
-    - ![mockup5](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
-    - ![mockup6](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
+  - [mockup1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
+    - [mockup2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
+    - [mockup3](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
+    - [mockup4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
+    - [mockup5](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
+    - [mockup6](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
                
       
-- **Docs updated**:
+- **Docs/Guides updated**:
+
     - Documentation in [Docs](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs)
+
+
+**GITHUB**
+
+- EXPECT-L0-17 - "Introduce AI in the project":
+- [Github guidelines](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-guidelines.md)
+- [Github guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-actions-guide.md)
+
 
 ---
 
