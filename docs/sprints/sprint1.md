@@ -62,10 +62,15 @@ EXPECT-L0-1 - "System architecture is defined and documented
 
 **GITHUB**
 
-- EXPECT-L0-17 - "Introduce AI in the project":
+  EXPECT-L0-13 - "Project & GitHub setup":
 - [Github guidelines](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-guidelines.md)
 - [Github guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-actions-guide.md)
 
+**AGILE SCRUM**
+EXPECT-L0-15 - "Agile and Scrum":
+- [Scrum Implementation: Dailys](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md)
+- [Scrum Implementation: Sprints](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints)
+- [Scrum Implementation: Project Board](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/projects?query=is%3Aopen)
 
 ---
 
