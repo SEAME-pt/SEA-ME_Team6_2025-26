@@ -98,6 +98,8 @@ EXPECT-L0-5 - "Launch basic Qt on built-in display":
 **CAN**
 EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
   - [CAN implementation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md)
+- [CAN explanation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-explanation.md)
+
 **TSF**
 EXPECT-L0-14 - "TSF & Documentation":
   - [TSF Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/WhatsTSF.md)
