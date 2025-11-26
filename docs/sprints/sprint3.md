@@ -102,8 +102,6 @@ EXPECT-L0-14 - "TSF & Documentation":
 EXPECT-L0-4 - "Driveable Car with Remote Control":
   - [Joystick on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
 
-
-
 ---
 
 ## 🔎 Retrospective
@@ -134,3 +132,4 @@ EXPECT-L0-4 - "Driveable Car with Remote Control":
   EXPECT-L0-15 - "Agile and Scrum":
   EXPECT-L0-16 - "CI/CD":
   EXPECT-L0-17 - "Introduce AI in the project":
+  
