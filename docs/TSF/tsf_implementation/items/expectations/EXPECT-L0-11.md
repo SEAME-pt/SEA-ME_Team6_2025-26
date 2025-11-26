@@ -1,8 +1,10 @@
 ---
 id: EXPECT-L0-11
-header: "QT cluster UI **auto-start on boot** on display"
+header: "The Qt cluster UI shall **auto-start on boot** and display..."
 text: |
-  The Qt cluster UI shall **auto-start on boot** and display fullscreen on the car’s built-in display.
+  The Qt cluster UI shall **auto-start on boot** and display fullscreen on the
+  car’s built-in display.
+
 level: 1.1
 normative: true
 references:

@@ -1,8 +1,10 @@
 ---
 id: EXPECT-L0-5
-header: "Launch basic Qt on built-in display"
+header: "The system shall be capable of launching a basic Qt..."
 text: |
-  The system shall be capable of launching a basic Qt application on the PiRacer’s built-in display.
+  The system shall be capable of launching a basic Qt application on the PiRacer’s
+  built-in display.
+
 level: 1.1
 normative: true
 references:

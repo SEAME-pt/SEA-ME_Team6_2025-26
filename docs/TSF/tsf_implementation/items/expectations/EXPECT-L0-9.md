@@ -1,8 +1,10 @@
 ---
 id: EXPECT-L0-9
-header: "ThreadX running on the Microcontroller (STM32) as a RTOS"
+header: "ThreadX should be used on the Microcontroller (STM32) as a..."
 text: |
-  ThreadX should be used on the Microcontroller (STM32) as a RTOS, receiving signals from the speedometer and controlling the servos and DC motor.
+  ThreadX should be used on the Microcontroller (STM32) as a RTOS, receiving
+  signals from the speedometer and controlling the servos and DC motor.
+
 level: 1.1
 normative: true
 references:

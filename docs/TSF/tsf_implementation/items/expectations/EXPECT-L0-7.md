@@ -2,7 +2,8 @@
 id: EXPECT-L0-7
 header: "QT Crosscompilation should be achieved"
 text: |
-  QT Crosscompilation should be achieved using docker or other solution.
+  QT Crosscompilation should be achieved.
+
 level: 1.1
 normative: true
 references:

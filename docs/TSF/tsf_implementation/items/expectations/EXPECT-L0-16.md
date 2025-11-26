@@ -2,7 +2,9 @@
 id: EXPECT-L0-16
 header: "CI/CD"
 text: |
-  CI/CD: The project repository shall include a working GitHub Actions workflow for continuous integration (CI) and continuous delivering (CD).
+  CI/CD: The project repository shall include a working GitHub Actions workflow
+  for continuous integration (CI) and continuous delivering (CD).
+
 level: 1.1
 normative: true
 references:

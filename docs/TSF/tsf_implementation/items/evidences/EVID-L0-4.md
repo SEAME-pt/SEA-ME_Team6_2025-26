@@ -1,6 +1,6 @@
 ---
 id: EVID-L0-4
-header: "Evidence: Live demonstration or test log. - Driveable Car Model (Hardware + Software)"
+header: "Evidence: Live demonstration or test log. - Driveable Car with Remote Control/Driveable Car Model (Hardware + Software)"
 text: |
   This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 

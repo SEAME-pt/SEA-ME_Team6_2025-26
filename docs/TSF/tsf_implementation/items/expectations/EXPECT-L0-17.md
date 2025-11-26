@@ -1,9 +1,8 @@
 ---
-id: EXPECT-L0-13
-header: "Project & GitHub setup"
+id: EXPECT-L0-17
+header: "Introduce in the project"
 text: |
-  Project & GitHub setup: The team shall set up a GitHub repository hosting the
-  project code, documentation, and2 version control history.
+  Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC".
 
 level: 1.1
 normative: true
