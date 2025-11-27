@@ -39,7 +39,7 @@ The base system used is **agl-image-minimal** with extensions to support:
 The custom layer `meta-seame` is created in the AGL workspace to add project-specific configurations:
 
 ```
-$AGL_TOP/master/
+$AGL_TOP/
 ├── meta-agl/
 ├── meta-agl-demo/
 ├── meta-agl-devel/
