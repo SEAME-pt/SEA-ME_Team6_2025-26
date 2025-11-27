@@ -6,6 +6,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   that demonstrate the requirement is met.
 
   '
+references:
     - type: file
       path: ../../../../demos/system-architecture-cross.png
     - type: url
@@ -18,81 +19,81 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
       path: ../../../../demos/eletric-scheme.png
     - type: url
       path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/demos/eletric-scheme.png
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/docs/demos/eletric-scheme.png
-  - type: file
-    path: ../../../../docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/docs/guides/Power%20Consumption%20Analysis.md
-  - type: file
-    path: ../../../../docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: file
-    path: ../../../../docs/docs/docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/docs/guides/AGL_Installation_Guide.md
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
+    - type: url
+        path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: file
+      path: ../../../../docs/guides/Power Consumption Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: file
+      path: ../../../../docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
+    - type: url
+      path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
