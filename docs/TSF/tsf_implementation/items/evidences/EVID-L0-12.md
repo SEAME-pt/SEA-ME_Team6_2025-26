@@ -7,15 +7,15 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
     - type: file
-      path: ../../../../docs/demos/system-architecture-cross.png
+      path: ../../../../demos/system-architecture-cross.png
     - type: url
       path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/system-architecture-cross.png
     - type: file
-      path: ../../../../docs/demos/first_qt_app.jpeg
+      path: ../../../../demos/first_qt_app.jpeg
     - type: url
       path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg
     - type: file
-      path: ../../../../docs/demos/eletric-scheme.png
+      path: ../../../../demos/eletric-scheme.png
     - type: url
       path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/docs/docs/docs/docs/docs/docs/docs/demos/eletric-scheme.png

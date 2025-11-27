@@ -9,9 +9,8 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.11'
 normative: false
 references:
-references:
   - type: file
-    path: ../../../../docs/demos/system-architecture-cross.png
+    path: ../../../../demos/system-architecture-cross.png
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/system-architecture-cross.png
 ---

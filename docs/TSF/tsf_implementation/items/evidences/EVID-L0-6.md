@@ -49,5 +49,9 @@ references:
     path: ../../../../docs/demos/Cluster-study.jpeg
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg
+  - type: file
+    path: ../../../../../src/cluster
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

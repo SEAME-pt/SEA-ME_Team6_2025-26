@@ -1,3 +1,13 @@
+{
+  "name": "SEA-ME_Team6_2025-26",
+  "description": "dotstop config for this repository. Points to the local TSF implementation directory used by trudag.",
+  "roots": [
+    "docs/TSF/tsf_implementation"
+  ],
+  "note": "This is a repo-specific .dotstop.dot used as a hint for trudag/gravitz. Use `trudag init` locally to regenerate a reproducible dotstop using SHAs.",
+  "generated_by": "custom",
+  "version": "0.1"
+}
 // Placeholder .dotstop.dot
 // This file is a placeholder to indicate that `trudag publish` should create the
 // resolved `.dotstop.dot` manifest with SHA attributes. Do not edit by hand once
