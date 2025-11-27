@@ -18,9 +18,12 @@ references:
   path: ../../../../docs/guides/Power Consumption Analysis.md
 - type: file
   path: ../../../../docs/guides/AGL_Installation_Guide.md
+ - type: file
+   path: ../../../../docs/guides/github-actions-guide.md
+review_status: accepted
+review_score: ~
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
----
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

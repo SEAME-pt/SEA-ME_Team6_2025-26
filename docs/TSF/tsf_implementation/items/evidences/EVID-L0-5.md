@@ -35,6 +35,12 @@ references:
   path: ../../../../guides/QML-guide.md
 - type: file
   path: ../../../../../src/cluster/README.md
+ - type: file
+   path: ../../../../../src/cluster/src/main.cpp
+ - type: file
+   path: ../../../../../src/cluster/qml/main.qml
+review_status: accepted
+review_score: ~
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
