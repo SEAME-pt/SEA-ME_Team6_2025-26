@@ -9,16 +9,19 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.17'
 normative: false
 references:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
- - type: file
-   path: ../../../../guides/github-guidelines.md
- - type: file
-   path: ../../../../guides/genAI-pair-programming-guidelines.md
- - type: file
-   path: ../../../../guides/Generative-AI-and-LLMs-for-Dummies.pdf
-review_status: accepted
-review_score: ~
+references:
+  - type: file
+    path: ../../../../docs/guides/github-guidelines.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-guidelines.md
+  - type: file
+    path: ../../../../docs/guides/genAI-pair-programming-guidelines.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
+  - type: file
+    path: ../../../../docs/guides/generative-ai-for-beginners.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/generative-ai-for-beginners.md
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

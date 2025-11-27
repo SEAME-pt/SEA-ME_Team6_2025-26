@@ -8,22 +8,15 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.16'
 normative: false
 references:
-- type: file
-  path: ../../../../docs/demos/system-architecture-cross.png
-- type: file
-  path: ../../../../docs/demos/first_qt_app.jpeg
-- type: file
-  path: ../../../../docs/demos/eletric-scheme.png
-- type: file
-  path: ../../../../docs/guides/Power Consumption Analysis.md
-- type: file
-  path: ../../../../docs/guides/AGL_Installation_Guide.md
- - type: file
-   path: ../../../../docs/guides/github-actions-guide.md
-review_status: accepted
-review_score: ~
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - type: file
+    path: ../../../../.github/workflows
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
+  - type: file
+    path: ../../../../docs/guides/github-actions-guide.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md
+---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+- name: Joao Jesus Silva
