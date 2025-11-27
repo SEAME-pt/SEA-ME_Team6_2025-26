@@ -9,11 +9,11 @@ level: '1.16'
 normative: false
 references:
   - type: file
-    path: ../../../../.github/workflows
+    path: ../../../../../.github/workflows
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
   - type: file
-    path: ../../../../docs/guides/github-actions-guide.md
+    path: ../../../../guides/github-actions-guide.md
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md
 ---
