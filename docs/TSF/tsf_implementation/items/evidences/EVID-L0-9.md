@@ -2,27 +2,12 @@
 id: EVID-L0-9
 header: 'Evidence: Software test including Visual inspection of the message bidirectional
   transmission. - ThreadX should be used on the Microcontroller (STM32) as a RTOS,
-  receiving...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
-level: '1.9'
-normative: false
-references:
-- type: file
-  path: ../../../../docs/demos/system-architecture-cross.png
-- type: file
-  path: ../../../../docs/demos/first_qt_app.jpeg
-- type: file
-  path: ../../../../docs/demos/eletric-scheme.png
-- type: file
-  path: ../../../../docs/guides/Power Consumption Analysis.md
-- type: file
-  path: ../../../../docs/guides/AGL_Installation_Guide.md
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
----
-
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+  - type: file
+    path: ../../../../docs/guides/ThreadX_Installation_Guide.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadX_Installation_Guide.md
+  - type: file
+    path: ../../../../docs/guides/AGL and ThreadX benefits Guide.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL%20and%20ThreadX%20benefits%20Guide.md
+ 

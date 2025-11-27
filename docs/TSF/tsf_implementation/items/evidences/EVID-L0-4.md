@@ -9,18 +9,14 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.4'
 normative: false
 references:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
-- type: file
-  path: ../../../../guides/Install%20and%20Test%20Joystick%20in%20AGL.md
- - type: file
-   path: ../../../../../src/inital_program/main.py
- - type: file
-   path: ../../../../../src/inital_program/install_initial_program.md
- - type: file
-   path: ../../../../../src/inital_program/jetcam/README.md
-review_status: accepted
-review_score: ~
+  - type: file
+    path: ../../../../docs/guides/Install and Test Joystick in AGL.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md
+  - type: file
+    path: ../../../../src/inital_program
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/inital_program
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

@@ -9,19 +9,11 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.11'
 normative: false
 references:
-- type: file
-  path: ../../../../docs/demos/system-architecture-cross.png
-- type: file
-  path: ../../../../docs/demos/first_qt_app.jpeg
-- type: file
-  path: ../../../../docs/demos/eletric-scheme.png
-- type: file
-  path: ../../../../docs/guides/Power Consumption Analysis.md
-- type: file
-  path: ../../../../docs/guides/AGL_Installation_Guide.md
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+references:
+  - type: file
+    path: ../../../../docs/demos/system-architecture-cross.png
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/system-architecture-cross.png
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

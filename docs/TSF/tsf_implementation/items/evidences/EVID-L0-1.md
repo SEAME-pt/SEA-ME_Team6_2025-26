@@ -9,18 +9,26 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.1'
 normative: false
 references:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
-- type: file
-  path: ../../../../demos/assembled-car1.jpeg
-- type: file
-  path: ../../../../demos/assembled-car2.jpeg
-- type: file
-  path: ../../../../demos/eletric-scheme.png
-- type: file
-  path: ../../../../guides/Power%20Consumption%20Analysis.md
-- type: file
-  path: ../../../../demos/Validation-of-energy-layout-sprint3.jpeg
+  - type: file
+    path: ../../../../docs/demos/assembled-car1.jpeg
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg
+  - type: file
+    path: ../../../../docs/demos/assembled-car2.jpeg
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg
+  - type: file
+    path: ../../../../docs/demos/eletric-scheme.png
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
+  - type: file
+    path: ../../../../docs/demos/Validation-of-energy-layout-sprint3.jpeg
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg
+  - type: file
+    path: ../../../../docs/guides/Power Consumption Analysis.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
