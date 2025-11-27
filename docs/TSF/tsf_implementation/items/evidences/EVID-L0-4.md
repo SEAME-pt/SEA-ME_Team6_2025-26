@@ -13,6 +13,14 @@ references:
   email: joao.silva@seame.pt
 - type: file
   path: ../../../../guides/Install%20and%20Test%20Joystick%20in%20AGL.md
+ - type: file
+   path: ../../../../../src/inital_program/main.py
+ - type: file
+   path: ../../../../../src/inital_program/install_initial_program.md
+ - type: file
+   path: ../../../../../src/inital_program/jetcam/README.md
+review_status: accepted
+review_score: ~
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

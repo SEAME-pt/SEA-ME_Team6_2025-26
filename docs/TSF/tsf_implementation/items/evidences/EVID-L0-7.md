@@ -17,6 +17,18 @@ references:
   email: joao.silva@seame.pt
 - type: file
   path: ../../../../demos/system-architecture-cross.png
+ - type: file
+   path: ../../../../../src/cross-compiler/README.md
+ - type: file
+   path: ../../../../../src/cross-compiler/Dockerfile
+ - type: file
+   path: ../../../../../src/cross-compiler/DockerFileRasp
+ - type: file
+   path: ../../../../../src/cross-compiler/opencvToolchain.cmake
+ - type: file
+   path: ../../../../../src/cross-compiler/toolchain.cmake
+review_status: accepted
+review_score: ~
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
