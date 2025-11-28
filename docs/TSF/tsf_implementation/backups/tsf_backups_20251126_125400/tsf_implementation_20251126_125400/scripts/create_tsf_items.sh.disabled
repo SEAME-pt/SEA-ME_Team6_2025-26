@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# This script prints the trudag manage create-item commands for all TSF markdown files
+# and, if DO_TRUDAG=1 is set, will attempt to run them.
+# WARNING: The exact `trudag` CLI flags may vary. Review printed commands before running.
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SEARCH_DIR="$ROOT/references"
+
+echo "TSF create-items script"
+
+action() {
+  local md="$1"
+  echo "-- will create item from: $md"
+  if [ "${DO_TRUDAG:-0}" = "1" ]; then
+    echo "Running: trudag manage create-item --file '$md'"
+    trudag manage create-item --file "$md" || echo "trudag create-item failed for $md"
+  else
+    echo "DRY-RUN: trudag manage create-item --file '$md'"
+  fi
+}
+
+# iterate over references (expectations/assertions/assumptions/evidences)
+find "$SEARCH_DIR" -type f -name "*.md" | sort | while read -r f; do
+  action "$f"
+done
+
+# TODO: create linking rules (expectation -> assertion, assertion -> evidence)
+# This needs a mapping graph. You can add a CSV or map file with links and then
+# use `trudag manage create-link` to create the relationships.
+
+if [ "${DO_TRUDAG:-0}" = "1" ]; then
+  echo "Note: links creation is not implemented automatically. Add link mappings before publish."
+fi
