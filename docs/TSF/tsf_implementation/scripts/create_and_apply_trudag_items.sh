@@ -6,11 +6,14 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [ -z "$ROOT" ]; then
   ROOT="$(cd "$(dirname "$0")/../../../../.." && pwd)"
 fi
-BACKUP="$ROOT/docs/TSF/tsf_implementation/items_backup_${DATE}.tar.gz"
+# allow override and compute target dir
+TSF_DIR=${TSF_DIR:-docs/TSF/tsf_implementation}
+TSF_ROOT="$ROOT/$TSF_DIR"
+BACKUP="$ROOT/$TSF_DIR/items_backup_${DATE}.tar.gz"
 
 echo "Backing up items to $BACKUP"
 mkdir -p "$ROOT/docs/TSF/tsf_implementation"
-if tar -czf "$BACKUP" -C "$ROOT" docs/TSF/tsf_implementation/items; then
+if tar -czf "$BACKUP" -C "$ROOT" "$TSF_DIR/items"; then
   echo "Backup created: $BACKUP"
 else
   echo "Backup failed or items dir missing; aborting" >&2
@@ -18,12 +21,12 @@ else
 fi
 
 # Create missing items
-mkdir -p "$ROOT/.trudag_items"
+mkdir -p "$TSF_ROOT/.trudag_items"
 missing_count=0
 failed_count=0
 
 # iterate files
-for md in "$ROOT"/docs/TSF/tsf_implementation/items/*/*.md; do
+for md in "$TSF_ROOT/items"/*/*.md; do
   [ -f "$md" ] || continue
   folder=$(basename "$(dirname "$md")")
   case "$folder" in
@@ -40,15 +43,16 @@ for md in "$ROOT"/docs/TSF/tsf_implementation/items/*/*.md; do
   fi
   name=$(echo "$id" | sed 's/[^A-Za-z0-9_]/_/g')
   item_key="${PREFIX}-${name}"
-  if trudag manage show-item "$item_key" >/dev/null 2>&1; then
+  if (cd "$TSF_ROOT" && trudag manage show-item "$item_key") >/dev/null 2>&1; then
     echo "Item exists: $item_key — skipping"
     continue
   fi
   echo "Creating item: $item_key from $md"
-  item_dir="$ROOT/.trudag_items/${PREFIX}/${name}"
+  item_dir="$TSF_ROOT/.trudag_items/${PREFIX}/${name}"
+  mkdir -p "$(dirname "$item_dir")"
   mkdir -p "$item_dir"
   cp "$md" "$item_dir/item.md"
-  if trudag manage create-item "$PREFIX" "$name" "$item_dir"; then
+  if (cd "$TSF_ROOT" && trudag manage create-item "$PREFIX" "$name" "$item_dir"); then
     echo "Created: $item_key"
     missing_count=$((missing_count+1))
   else
@@ -60,7 +64,7 @@ done
 echo "Create summary: created=$missing_count failed=$failed_count"
 
 # Apply links from graph
-GRAPH="$ROOT/docs/TSF/tsf_implementation/graph/graph.dot"
+GRAPH="$TSF_ROOT/graph/graph.dot"
 if [ -f "$GRAPH" ]; then
   echo "Applying links from graph"
   awk '/->/ {print}' "$GRAPH" | while read -r line; do
@@ -87,7 +91,7 @@ if [ -f "$GRAPH" ]; then
     parent_key="${parent_prefix}-${parent_name}"
     child_key="${child_prefix}-${child_name}"
     echo "Creating link: $parent_key -> $child_key"
-    if trudag manage create-link "$parent_key" "$child_key"; then
+    if (cd "$TSF_ROOT" && trudag manage create-link "$parent_key" "$child_key"); then
       echo "Linked: $parent_key -> $child_key"
     else
       echo "Failed link: $parent_key -> $child_key" >&2
@@ -99,6 +103,6 @@ fi
 
 # Run lint
 echo "Running: trudag manage lint"
-trudag manage lint || echo "lint finished with issues"
+(cd "$TSF_ROOT" && trudag manage lint) || echo "lint finished with issues"
 
 echo "All done. Backup: $BACKUP. Created: $missing_count failed: $failed_count"

@@ -53,5 +53,10 @@ references:
     path: ../../../../../src/cluster
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
+  - type: file
+    path: ../../../../../docs/ui_design/README.md
+  - type: url
+    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/ui_design/README.md
+
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

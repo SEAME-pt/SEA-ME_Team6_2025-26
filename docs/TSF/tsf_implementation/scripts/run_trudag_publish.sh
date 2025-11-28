@@ -5,6 +5,11 @@ set -e
 DRY_RUN=${DRY_RUN:-0}
 NO_PUBLISH=${NO_PUBLISH:-0}
 ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+# directory inside the repo where the TSF implementation lives (changeable via env)
+TSF_DIR=${TSF_DIR:-docs/TSF/tsf_implementation}
+TSF_ROOT="$ROOT/$TSF_DIR"
+
+# operate from repo root by default; commands that use the dot DB will `cd` into $TSF_ROOT
 cd "$ROOT"
 
 if ! command -v trudag >/dev/null 2>&1; then
@@ -13,9 +18,9 @@ if ! command -v trudag >/dev/null 2>&1; then
 fi
 
 echo "Ensure trudag DB exists (init if missing)"
-if [ ! -f .dotstop.dot ]; then
-  echo ".dotstop.dot not found — running 'trudag init'"
-  trudag init || true
+if [ ! -f "$TSF_ROOT/.dotstop.dot" ]; then
+  echo ".dotstop.dot not found in $TSF_ROOT — running 'trudag init' there"
+  (cd "$TSF_ROOT" && mkdir -p "$TSF_ROOT" && trudag init) || true
 else
   echo "Using existing .dotstop.dot"
 fi
@@ -55,12 +60,12 @@ create_items_from_dir() {
   done
 }
 
-create_items_from_dir EXPECTATIONS docs/TSF/tsf_implementation/items/expectations/*.md
-create_items_from_dir ASSERTIONS docs/TSF/tsf_implementation/items/assertions/*.md
-create_items_from_dir EVIDENCES docs/TSF/tsf_implementation/items/evidences/*.md
+create_items_from_dir EXPECTATIONS "$TSF_ROOT/items/expectations"/*.md
+create_items_from_dir ASSERTIONS "$TSF_ROOT/items/assertions"/*.md
+create_items_from_dir EVIDENCES "$TSF_ROOT/items/evidences"/*.md
 
 # also create assumptions items if present
-for p in docs/TSF/tsf_implementation/items/assumptions/*.md; do
+for p in "$TSF_ROOT/items/assumptions"/*.md; do
   [ -f "$p" ] || continue
   id=$(awk '/^id:/{print $2; exit}' "$p" || true)
   name=$(echo "$id" | sed 's/[^A-Za-z0-9_]/_/g')
@@ -70,12 +75,12 @@ for p in docs/TSF/tsf_implementation/items/assumptions/*.md; do
   fi
   echo "Creating assumption item: prefix=assumptions id=$id name=$name source=$p"
   # prepare item dir and copy source
-  item_dir="${ROOT}/.trudag_items/ASSUMPTIONS/${name}"
+  item_dir="${TSF_ROOT}/.trudag_items/ASSUMPTIONS/${name}"
   mkdir -p "$(dirname "$item_dir")"
   mkdir -p "$item_dir"
   cp "$p" "$item_dir/item.md"
   item_key="ASSUMPTIONS-${name}"
-  if trudag manage show-item "$item_key" >/dev/null 2>&1; then
+  if (cd "$TSF_ROOT" && trudag manage show-item "$item_key") >/dev/null 2>&1; then
     echo "Item $item_key already exists — skipping create-item"
     continue
   fi
@@ -87,14 +92,14 @@ for p in docs/TSF/tsf_implementation/items/assumptions/*.md; do
 done
 
 # create basic links using graph if present
-if [ -f docs/TSF/tsf_implementation/graph/graph.dot ]; then
+  if [ -f "$TSF_ROOT/graph/graph.dot" ]; then
   echo "Graph exists; ensure links correspond to graph (manual step may be required)."
 # If graph.dot contains edges, parse them and try to create corresponding links.
 # Expected simple edge formats: A -> B  or "A" -> "B"
-  if grep -F -- "->" docs/TSF/tsf_implementation/graph/graph.dot >/dev/null 2>&1; then
+  if grep -F -- "->" "$TSF_ROOT/graph/graph.dot" >/dev/null 2>&1; then
     echo "Graph exists and contains edges; creating links from graph..."
     # read edges and create links
-    awk '/->/ {print}' docs/TSF/tsf_implementation/graph/graph.dot | while read -r line; do
+    awk '/->/ {print}' "$TSF_ROOT/graph/graph.dot" | while read -r line; do
       # strip comments and trailing semicolons
       edge=$(echo "$line" | sed 's://.*::' | sed 's/;//g')
       # extract from/to tokens
@@ -120,9 +125,9 @@ if [ -f docs/TSF/tsf_implementation/graph/graph.dot ]; then
         child_key="${child_prefix}-${child_name}"
         echo "Creating link: $from -> $to (using keys: $parent_key -> $child_key)"
         if [ "$DRY_RUN" -eq 1 ]; then
-          echo "DRY RUN: trudag manage create-link $parent_key $child_key"
+          echo "DRY RUN: (cd $TSF_ROOT && trudag manage create-link $parent_key $child_key)"
         else
-          trudag manage create-link "$parent_key" "$child_key" || echo "create-link failed: $parent_key -> $child_key"
+          (cd "$TSF_ROOT" && trudag manage create-link "$parent_key" "$child_key") || echo "create-link failed: $parent_key -> $child_key"
         fi
       fi
     done
@@ -136,13 +141,13 @@ if [ "$DRY_RUN" -eq 1 ] || [ "$NO_PUBLISH" -eq 1 ]; then
   echo "DRY RUN / NO_PUBLISH set; skipping lint/score/publish. Set DRY_RUN=0 NO_PUBLISH=0 to run."
 else
   echo "Linting"
-  trudag manage lint || true
+  (cd "$TSF_ROOT" && trudag manage lint) || true
 
   echo "Scoring"
-  trudag score || true
+  (cd "$TSF_ROOT" && trudag score) || true
 
   echo "Publishing (this will generate/refresh .dotstop.dot)"
-  trudag publish || true
+  (cd "$TSF_ROOT" && trudag publish) || true
 fi
 
 echo "trudag publish complete"
