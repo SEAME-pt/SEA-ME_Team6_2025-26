@@ -9,50 +9,41 @@ Rectangle {
     color: BaseTheme.black
     anchors.fill: parent
 
-    RowLayout {
+    ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        NavBar {
-            id: navBar
-            onChangeScreen: function(page){
-                pageLoader.source = page;
-            }
-        }
+        // Top bar
+        TopBar {}
 
-        Rectangle {
-            id: contentBackground
+        // Middle content
+        RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: BaseTheme.blackLight
-            radius: 16
-            clip: true
+            spacing: 0
 
-            Rectangle {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                width: 16
-                color: parent.color
-                radius: 0
+            LeftScreen {}
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Rectangle {
+                    anchors.fill: parent
+                    color: baseScreen.color
+                }
             }
 
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 16
-                spacing: 0
-
-                TopBar {
-                    Layout.bottomMargin: 16
-                }
-
-                Loader {
-                    id: pageLoader
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    source: "../screens/ClusterScreen.qml"
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Rectangle {
+                    anchors.fill: parent
+                    color: baseScreen.color
                 }
             }
         }
+
+        // Bottom bar
+        BottomBar {}
     }
 }

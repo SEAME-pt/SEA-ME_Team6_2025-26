@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "backend/timeprovider.hpp"
 #include "backend/systemstatus.hpp"
+#include "backend/speedprovider.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +16,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"), "ClusterTheme", 1, 0, "BaseTheme");
     qmlRegisterType<TimeProvider>("Cluster.Backend", 1, 0, "TimeProvider");
     qmlRegisterType<SystemStatus>("Cluster.Backend", 1, 0, "SystemStatus");
+    qmlRegisterType<SpeedProvider>("Cluster.Backend", 1, 0, "SpeedProvider");
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

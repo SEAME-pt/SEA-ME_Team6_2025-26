@@ -53,7 +53,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 25,
+				"line" : 26,
 				"parent" : 0
 			},
 			{
@@ -431,7 +431,8 @@
 				1,
 				2,
 				3,
-				6
+				4,
+				7
 			]
 		}
 	],
@@ -537,29 +538,30 @@
 				1,
 				2,
 				3,
-				6
+				4,
+				7
 			]
 		},
 		{
 			"name" : "Resources",
 			"sourceIndexes" : 
 			[
-				4
+				5
 			]
 		},
 		{
 			"name" : "",
 			"sourceIndexes" : 
 			[
-				5
+				6
 			]
 		},
 		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				7,
-				8
+				8,
+				9
 			]
 		}
 	],
@@ -588,6 +590,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/backend/systemstatus.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/backend/speedprovider.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

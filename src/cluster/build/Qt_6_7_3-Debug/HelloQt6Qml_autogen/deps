@@ -6,6 +6,8 @@ HelloQt6Qml_autogen/timestamp: \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/HelloQt6Qml_autogen/moc_predefs.h \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/qml.qrc \
+	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/speedprovider.cpp \
+	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/speedprovider.hpp \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.hpp \
 	/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/timeprovider.cpp \
