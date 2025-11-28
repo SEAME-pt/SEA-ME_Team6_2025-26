@@ -19,6 +19,7 @@ add_executable(HelloQt6Qml
     src/main.cpp
     src/backend/timeprovider.cpp
     src/backend/systemstatus.cpp
+    src/backend/speedprovider.cpp
     qml.qrc
 )
 

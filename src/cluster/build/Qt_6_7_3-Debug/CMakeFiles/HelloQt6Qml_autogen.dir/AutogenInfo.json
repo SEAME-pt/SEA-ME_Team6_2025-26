@@ -1123,6 +1123,12 @@
 	"HEADERS" : 
 	[
 		[
+			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/speedprovider.hpp",
+			"MU",
+			"VU2PALRVTW/moc_speedprovider.cpp",
+			null
+		],
+		[
 			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.hpp",
 			"MU",
 			"VU2PALRVTW/moc_systemstatus.cpp",
@@ -1217,6 +1223,11 @@
 	"SETTINGS_FILE" : "/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/HelloQt6Qml_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[
+			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/speedprovider.cpp",
+			"MU",
+			null
+		],
 		[
 			"/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/src/backend/systemstatus.cpp",
 			"MU",
