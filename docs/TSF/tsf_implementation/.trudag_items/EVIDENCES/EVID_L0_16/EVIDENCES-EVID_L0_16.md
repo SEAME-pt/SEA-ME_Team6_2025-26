@@ -8,15 +8,15 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.16'
 normative: false
 references:
-  - type: file
-    path: ../../../../../.github/workflows
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
-  - type: file
-    path: ../../../../guides/github-actions-guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md
-score: 1
+- type: file
+  path: ../../../../../.github/workflows
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
+- type: file
+  path: ../../../../guides/github-actions-guide.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md
+score: 1.0
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
