@@ -1,37 +1,35 @@
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_14. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_16. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_2. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_3. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_1. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_3. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_9. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_17. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_13. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_1. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_5. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_4. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_2. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_10. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_6. Score set to zero.
 WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_11. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_13. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_9. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_12. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_17. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_9. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_3. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_16. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_15. Score set to zero.
 WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_7. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_8. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_11. Score set to zero.
 WARNING: Score not provided for Item EVIDENCES-EVID_L0_15. Score set to zero.
 WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_6. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_8. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_10. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_17. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_1. Score set to zero.
 WARNING: Score not provided for Item EVIDENCES-EVID_L0_12. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_5. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_8. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_13. Score set to zero.
 WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_14. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_7. Score set to zero.
-WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_15. Score set to zero.
 WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_16. Score set to zero.
-WARNING: Score not provided for Item EVIDENCES-EVID_L0_11. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_10. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_6. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_14. Score set to zero.
 WARNING: Score not provided for Item EVIDENCES-EVID_L0_4. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_2. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_7. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_5. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_17. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_5. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_4. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_13. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_8. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_2. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_1. Score set to zero.
+WARNING: Score not provided for Item ASSUMPTIONS-ASSUMP_L0_3. Score set to zero.
+WARNING: Score not provided for Item EVIDENCES-EVID_L0_9. Score set to zero.
 ASSERTIONS-ASSERT_L0_1 = 0.0
 ASSERTIONS-ASSERT_L0_10 = 0.0
 ASSERTIONS-ASSERT_L0_11 = 0.0
@@ -52,7 +50,7 @@ ASSERTIONS-ASSERT_L0_9 = 0.0
 ASSUMPTIONS-ASSUMP_L0_1 = 0.0
 ASSUMPTIONS-ASSUMP_L0_10 = 0.0
 ASSUMPTIONS-ASSUMP_L0_11 = 0.0
-ASSUMPTIONS-ASSUMP_L0_12 = 0.0
+ASSUMPTIONS-ASSUMP_L0_12 = 0.6
 ASSUMPTIONS-ASSUMP_L0_13 = 0.0
 ASSUMPTIONS-ASSUMP_L0_14 = 0.0
 ASSUMPTIONS-ASSUMP_L0_15 = 0.0
@@ -86,7 +84,7 @@ EVIDENCES-EVID_L0_9 = 0.0
 EXPECTATIONS-EXPECT_L0_1 = 0.0
 EXPECTATIONS-EXPECT_L0_10 = 0.0
 EXPECTATIONS-EXPECT_L0_11 = 0.0
-EXPECTATIONS-EXPECT_L0_12 = 0.0
+EXPECTATIONS-EXPECT_L0_12 = 0.3
 EXPECTATIONS-EXPECT_L0_13 = 0.0
 EXPECTATIONS-EXPECT_L0_14 = 0.0
 EXPECTATIONS-EXPECT_L0_15 = 0.0
