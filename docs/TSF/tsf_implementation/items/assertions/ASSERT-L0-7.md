@@ -1,5 +1,29 @@
 ---
-level: '1.1'
+id: ASSERT-L0-7
+header: We should be able to crosscompile our QT program outside the Operating System...
+text: 'We should be able to crosscompile our QT program outside the Operating System
+  and the included the exec file running on it
+
+  System architecture documentation maps components to implemented modules: The system
+  architecture documentation (diagrams and descriptive documents) shall provide a
+  clear mapping between the listed hardware and software components and their implementation
+  (e.g
+
+  Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).
+
+  '
+level: '1.7'
 normative: true
+references:
+- type: file
+  path: ../expectations/EXPECT-L0-7.md
+- type: file
+  path: ../evidences/EVID-L0-7.md
+review_status: accepted
+review_score: ~
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+score: 0.4
 ---
 
