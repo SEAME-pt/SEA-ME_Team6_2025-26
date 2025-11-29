@@ -15,4 +15,5 @@ references:
     path: ../../../../guides/AGL and ThreadX benefits Guide.md
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL%20and%20ThreadX%20benefits%20Guide.md
-
+score: 1
+---

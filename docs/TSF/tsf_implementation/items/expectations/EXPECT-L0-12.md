@@ -15,5 +15,5 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
+score: 0.2
 ---
-

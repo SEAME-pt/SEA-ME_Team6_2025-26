@@ -37,4 +37,5 @@ references:
     path: ../../../../demos/Validation-of-energy-layout-sprint3.jpeg
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg
-
+score: 1
+---

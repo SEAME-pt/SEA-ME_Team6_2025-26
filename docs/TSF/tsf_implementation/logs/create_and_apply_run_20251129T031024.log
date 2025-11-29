@@ -1,0 +1,227 @@
+Backing up items to /Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/backups/items_backup_20251129_031024.tar.gz
+Backup created: /Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/backups/items_backup_20251129_031024.tar.gz
+Item exists: ASSERTIONS-ASSERT_L0_1 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_10 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_11 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_12 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_13 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_14 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_15 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_16 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_17 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_2 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_3 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_4 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_5 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_6 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_7 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_8 — skipping
+Item exists: ASSERTIONS-ASSERT_L0_9 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_1 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_10 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_11 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_12 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_13 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_14 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_15 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_16 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_17 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_2 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_3 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_4 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_5 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_6 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_7 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_8 — skipping
+Item exists: ASSUMPTIONS-ASSUMP_L0_9 — skipping
+Item exists: EVIDENCES-EVID_L0_1 — skipping
+Item exists: EVIDENCES-EVID_L0_10 — skipping
+Item exists: EVIDENCES-EVID_L0_11 — skipping
+Item exists: EVIDENCES-EVID_L0_12 — skipping
+Item exists: EVIDENCES-EVID_L0_13 — skipping
+Item exists: EVIDENCES-EVID_L0_14 — skipping
+Item exists: EVIDENCES-EVID_L0_15 — skipping
+Item exists: EVIDENCES-EVID_L0_16 — skipping
+Item exists: EVIDENCES-EVID_L0_17 — skipping
+Item exists: EVIDENCES-EVID_L0_2 — skipping
+Item exists: EVIDENCES-EVID_L0_3 — skipping
+Item exists: EVIDENCES-EVID_L0_4 — skipping
+Item exists: EVIDENCES-EVID_L0_5 — skipping
+Item exists: EVIDENCES-EVID_L0_6 — skipping
+Item exists: EVIDENCES-EVID_L0_7 — skipping
+Item exists: EVIDENCES-EVID_L0_8 — skipping
+Item exists: EVIDENCES-EVID_L0_9 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_1 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_10 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_11 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_12 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_13 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_14 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_15 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_16 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_17 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_2 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_3 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_4 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_5 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_6 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_7 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_8 — skipping
+Item exists: EXPECTATIONS-EXPECT_L0_9 — skipping
+Create summary: created=0 failed=0
+Applying links from graph
+Creating link: EXPECTATIONS-EXPECT_L0_1 -> ASSERTIONS-ASSERT_L0_1
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_1 -> ASSERTIONS-ASSERT_L0_1
+Creating link: ASSERTIONS-ASSERT_L0_1 -> EVIDENCES-EVID_L0_1
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_1 -> EVIDENCES-EVID_L0_1
+Creating link: EXPECTATIONS-EXPECT_L0_1 -> ASSUMPTIONS-ASSUMP_L0_1
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_1 -> ASSUMPTIONS-ASSUMP_L0_1
+Creating link: EXPECTATIONS-EXPECT_L0_10 -> ASSERTIONS-ASSERT_L0_10
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_10 -> ASSERTIONS-ASSERT_L0_10
+Creating link: ASSERTIONS-ASSERT_L0_10 -> EVIDENCES-EVID_L0_10
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_10 -> EVIDENCES-EVID_L0_10
+Creating link: EXPECTATIONS-EXPECT_L0_10 -> ASSUMPTIONS-ASSUMP_L0_10
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_10 -> ASSUMPTIONS-ASSUMP_L0_10
+Creating link: EXPECTATIONS-EXPECT_L0_11 -> ASSERTIONS-ASSERT_L0_11
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_11 -> ASSERTIONS-ASSERT_L0_11
+Creating link: ASSERTIONS-ASSERT_L0_11 -> EVIDENCES-EVID_L0_11
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_11 -> EVIDENCES-EVID_L0_11
+Creating link: EXPECTATIONS-EXPECT_L0_11 -> ASSUMPTIONS-ASSUMP_L0_11
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_11 -> ASSUMPTIONS-ASSUMP_L0_11
+Creating link: EXPECTATIONS-EXPECT_L0_12 -> ASSERTIONS-ASSERT_L0_12
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_12 -> ASSERTIONS-ASSERT_L0_12
+Creating link: ASSERTIONS-ASSERT_L0_12 -> EVIDENCES-EVID_L0_12
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_12 -> EVIDENCES-EVID_L0_12
+Creating link: EXPECTATIONS-EXPECT_L0_12 -> ASSUMPTIONS-ASSUMP_L0_12
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_12 -> ASSUMPTIONS-ASSUMP_L0_12
+Creating link: EXPECTATIONS-EXPECT_L0_13 -> ASSERTIONS-ASSERT_L0_13
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_13 -> ASSERTIONS-ASSERT_L0_13
+Creating link: ASSERTIONS-ASSERT_L0_13 -> EVIDENCES-EVID_L0_13
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_13 -> EVIDENCES-EVID_L0_13
+Creating link: EXPECTATIONS-EXPECT_L0_13 -> ASSUMPTIONS-ASSUMP_L0_13
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_13 -> ASSUMPTIONS-ASSUMP_L0_13
+Creating link: EXPECTATIONS-EXPECT_L0_14 -> ASSERTIONS-ASSERT_L0_14
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_14 -> ASSERTIONS-ASSERT_L0_14
+Creating link: ASSERTIONS-ASSERT_L0_14 -> EVIDENCES-EVID_L0_14
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_14 -> EVIDENCES-EVID_L0_14
+Creating link: EXPECTATIONS-EXPECT_L0_14 -> ASSUMPTIONS-ASSUMP_L0_14
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_14 -> ASSUMPTIONS-ASSUMP_L0_14
+Creating link: EXPECTATIONS-EXPECT_L0_15 -> ASSERTIONS-ASSERT_L0_15
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_15 -> ASSERTIONS-ASSERT_L0_15
+Creating link: ASSERTIONS-ASSERT_L0_15 -> EVIDENCES-EVID_L0_15
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_15 -> EVIDENCES-EVID_L0_15
+Creating link: EXPECTATIONS-EXPECT_L0_15 -> ASSUMPTIONS-ASSUMP_L0_15
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_15 -> ASSUMPTIONS-ASSUMP_L0_15
+Creating link: EXPECTATIONS-EXPECT_L0_16 -> ASSERTIONS-ASSERT_L0_16
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_16 -> ASSERTIONS-ASSERT_L0_16
+Creating link: ASSERTIONS-ASSERT_L0_16 -> EVIDENCES-EVID_L0_16
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_16 -> EVIDENCES-EVID_L0_16
+Creating link: EXPECTATIONS-EXPECT_L0_16 -> ASSUMPTIONS-ASSUMP_L0_16
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_16 -> ASSUMPTIONS-ASSUMP_L0_16
+Creating link: EXPECTATIONS-EXPECT_L0_17 -> ASSERTIONS-ASSERT_L0_17
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_17 -> ASSERTIONS-ASSERT_L0_17
+Creating link: ASSERTIONS-ASSERT_L0_17 -> EVIDENCES-EVID_L0_17
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_17 -> EVIDENCES-EVID_L0_17
+Creating link: EXPECTATIONS-EXPECT_L0_17 -> ASSUMPTIONS-ASSUMP_L0_17
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_17 -> ASSUMPTIONS-ASSUMP_L0_17
+Creating link: EXPECTATIONS-EXPECT_L0_2 -> ASSERTIONS-ASSERT_L0_2
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_2 -> ASSERTIONS-ASSERT_L0_2
+Creating link: ASSERTIONS-ASSERT_L0_2 -> EVIDENCES-EVID_L0_2
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_2 -> EVIDENCES-EVID_L0_2
+Creating link: EXPECTATIONS-EXPECT_L0_2 -> ASSUMPTIONS-ASSUMP_L0_2
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_2 -> ASSUMPTIONS-ASSUMP_L0_2
+Creating link: EXPECTATIONS-EXPECT_L0_3 -> ASSERTIONS-ASSERT_L0_3
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_3 -> ASSERTIONS-ASSERT_L0_3
+Creating link: ASSERTIONS-ASSERT_L0_3 -> EVIDENCES-EVID_L0_3
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_3 -> EVIDENCES-EVID_L0_3
+Creating link: EXPECTATIONS-EXPECT_L0_3 -> ASSUMPTIONS-ASSUMP_L0_3
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_3 -> ASSUMPTIONS-ASSUMP_L0_3
+Creating link: EXPECTATIONS-EXPECT_L0_4 -> ASSERTIONS-ASSERT_L0_4
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_4 -> ASSERTIONS-ASSERT_L0_4
+Creating link: ASSERTIONS-ASSERT_L0_4 -> EVIDENCES-EVID_L0_4
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_4 -> EVIDENCES-EVID_L0_4
+Creating link: EXPECTATIONS-EXPECT_L0_4 -> ASSUMPTIONS-ASSUMP_L0_4
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_4 -> ASSUMPTIONS-ASSUMP_L0_4
+Creating link: EXPECTATIONS-EXPECT_L0_5 -> ASSERTIONS-ASSERT_L0_5
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_5 -> ASSERTIONS-ASSERT_L0_5
+Creating link: ASSERTIONS-ASSERT_L0_5 -> EVIDENCES-EVID_L0_5
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_5 -> EVIDENCES-EVID_L0_5
+Creating link: EXPECTATIONS-EXPECT_L0_5 -> ASSUMPTIONS-ASSUMP_L0_5
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_5 -> ASSUMPTIONS-ASSUMP_L0_5
+Creating link: EXPECTATIONS-EXPECT_L0_6 -> ASSERTIONS-ASSERT_L0_6
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_6 -> ASSERTIONS-ASSERT_L0_6
+Creating link: ASSERTIONS-ASSERT_L0_6 -> EVIDENCES-EVID_L0_6
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_6 -> EVIDENCES-EVID_L0_6
+Creating link: EXPECTATIONS-EXPECT_L0_6 -> ASSUMPTIONS-ASSUMP_L0_6
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_6 -> ASSUMPTIONS-ASSUMP_L0_6
+Creating link: EXPECTATIONS-EXPECT_L0_7 -> ASSERTIONS-ASSERT_L0_7
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_7 -> ASSERTIONS-ASSERT_L0_7
+Creating link: ASSERTIONS-ASSERT_L0_7 -> EVIDENCES-EVID_L0_7
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_7 -> EVIDENCES-EVID_L0_7
+Creating link: EXPECTATIONS-EXPECT_L0_7 -> ASSUMPTIONS-ASSUMP_L0_7
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_7 -> ASSUMPTIONS-ASSUMP_L0_7
+Creating link: EXPECTATIONS-EXPECT_L0_8 -> ASSERTIONS-ASSERT_L0_8
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_8 -> ASSERTIONS-ASSERT_L0_8
+Creating link: ASSERTIONS-ASSERT_L0_8 -> EVIDENCES-EVID_L0_8
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_8 -> EVIDENCES-EVID_L0_8
+Creating link: EXPECTATIONS-EXPECT_L0_8 -> ASSUMPTIONS-ASSUMP_L0_8
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_8 -> ASSUMPTIONS-ASSUMP_L0_8
+Creating link: EXPECTATIONS-EXPECT_L0_9 -> ASSERTIONS-ASSERT_L0_9
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_9 -> ASSERTIONS-ASSERT_L0_9
+Creating link: ASSERTIONS-ASSERT_L0_9 -> EVIDENCES-EVID_L0_9
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: ASSERTIONS-ASSERT_L0_9 -> EVIDENCES-EVID_L0_9
+Creating link: EXPECTATIONS-EXPECT_L0_9 -> ASSUMPTIONS-ASSUMP_L0_9
+WARNING: Attempted to set link to it's currently set status: LINKED
+Linked: EXPECTATIONS-EXPECT_L0_9 -> ASSUMPTIONS-ASSUMP_L0_9
+Running: trudag manage lint
+All done. Backup: /Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/backups/items_backup_20251129_031024.tar.gz. Created: 0 failed: 0

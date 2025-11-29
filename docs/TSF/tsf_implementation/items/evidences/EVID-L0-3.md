@@ -19,7 +19,7 @@ references:
     path: ../../../../guides/AGL_Configuration_Guide.md
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Configuration_Guide.md
-  
+score: 1
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
