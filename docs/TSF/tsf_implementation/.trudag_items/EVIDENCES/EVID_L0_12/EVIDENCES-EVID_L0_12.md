@@ -6,6 +6,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   that demonstrate the requirement is met.
 
   '
+normative: true
 references:
   - type: file
     path: docs/demos/system-architecture-cross.png
