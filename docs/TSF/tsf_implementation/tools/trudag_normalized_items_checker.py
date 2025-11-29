@@ -192,16 +192,10 @@ def main():
                             ref['type'] = 'file'
                     if 'path' in ref:
                         ref['path'] = normalize_path(str(ref['path']))
-                        # if this is a URL, skip local existence check
-                        if isinstance(ref.get('type'), str) and ref.get('type').lower() == 'url':
-                            pass
-                        elif str(ref['path']).lower().startswith('http://') or str(ref['path']).lower().startswith('https://'):
-                            # path looks like a URL, treat as external
-                            pass
-                        else:
-                            candidate = relative_in_repo(ref['path'], DEFAULT_IMPL_ROOT.parent.parent)
-                            if not candidate.exists():
-                                errors.append((f, 'ref_path_missing', ref['path']))
+                        # validate existence
+                        candidate = relative_in_repo(ref['path'], DEFAULT_IMPL_ROOT.parent.parent)
+                        if not candidate.exists():
+                            errors.append((f, 'ref_path_missing', ref['path']))
                     key = (ref.get('type'), ref.get('path') if 'path' in ref else None)
                     if key in seen:
                         continue
