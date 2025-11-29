@@ -4,8 +4,8 @@ header: 'Assumption: The DCI display fullscreen will be out of the car (wireless
 level: '1.12'
 normative: false
 references:
-- id: EXPECT-L0-12
-  path: ../expectations/EXPECT-L0-12.md
+- type: "file"
+  path: "docs/TSF/tsf_implementation/items/expectations/EXPECT-L0-12.md"
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
