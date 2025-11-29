@@ -1,16 +1,5 @@
 ---
-id: EXPECT-L0-15
-header: Agile
-text: 'Agile: The team shall follow Agile (Scrum) methodology for project management.
-
-  '
-level: '1.15'
+level: '1.1'
 normative: true
-references:
-- id: ASSERT-L0-15
-  path: ../assertions/ASSERT-L0-15.md
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
-score: 0.2
 ---
+
