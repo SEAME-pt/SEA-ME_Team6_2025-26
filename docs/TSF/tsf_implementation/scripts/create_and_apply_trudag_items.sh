@@ -9,7 +9,9 @@ fi
 # allow override and compute target dir
 TSF_DIR=${TSF_DIR:-docs/TSF/tsf_implementation}
 TSF_ROOT="$ROOT/$TSF_DIR"
-BACKUP="$ROOT/$TSF_DIR/items_backup_${DATE}.tar.gz"
+# place backups inside the tsf_implementation/backups directory
+mkdir -p "$TSF_ROOT/backups"
+BACKUP="$TSF_ROOT/backups/items_backup_${DATE}.tar.gz"
 
 echo "Backing up items to $BACKUP"
 mkdir -p "$ROOT/docs/TSF/tsf_implementation"
@@ -18,6 +20,27 @@ if tar -czf "$BACKUP" -C "$ROOT" "$TSF_DIR/items"; then
 else
   echo "Backup failed or items dir missing; aborting" >&2
   exit 1
+fi
+
+# Ensure the dot DB exists in docs/TSF and is initialised there.
+# This creates `docs/TSF/.dotstop.dot` which we prefer as the canonical DB location.
+TSF_PARENT_DB_DIR="$ROOT/docs/TSF"
+DOTSTOP_PATH="$TSF_PARENT_DB_DIR/.dotstop.dot"
+if [ ! -f "$DOTSTOP_PATH" ]; then
+  echo "Initializing trudag DB in $TSF_PARENT_DB_DIR"
+  if (cd "$TSF_PARENT_DB_DIR" && command -v trudag >/dev/null 2>&1 && trudag init); then
+    echo "trudag DB initialised at $DOTSTOP_PATH"
+  else
+    echo "Warning: could not run 'trudag init' in $TSF_PARENT_DB_DIR; creating empty dot file instead"
+    mkdir -p "$TSF_PARENT_DB_DIR"
+    touch "$DOTSTOP_PATH"
+  fi
+fi
+
+# Create a symlink at repository root `.dotstop.dot` pointing to the canonical TSF DB
+# so calls to trudag that search upward from other CWDs find the DB.
+if [ ! -f "$ROOT/.dotstop.dot" ]; then
+  ln -s "$DOTSTOP_PATH" "$ROOT/.dotstop.dot" || true
 fi
 
 # Create missing items
