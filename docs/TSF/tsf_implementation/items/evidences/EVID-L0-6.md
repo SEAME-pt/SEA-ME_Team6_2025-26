@@ -50,7 +50,7 @@ references:
 - type: url
   path: ../../../../demos/Cluster-study.jpeg
 - type: file
-  path: ../../../../../src/cluster
+  path: ../../../../../src/cluster/README.md
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
 - type: file
