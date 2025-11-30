@@ -5,9 +5,8 @@ header: 'Assumption: Availability of hardware and demonstrator components for sy
 level: '1.1'
 normative: false
 references:
-- id: EXPECT-L0-1
-  path: ../../../items/expectations/EXPECT-L0-1.md
-  type: file
+- type: file
+  path: ../../items/expectations/EXPECT-L0-1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

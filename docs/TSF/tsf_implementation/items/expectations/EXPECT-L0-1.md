@@ -12,7 +12,6 @@ text: 'The system architecture shall be defined and documented to describe hardw
 level: 1.1
 normative: true
 references:
-- id: ASSERT-L0-1
   path: ../assertions/ASSERT-L0-1.md
   type: file
 reviewers:
