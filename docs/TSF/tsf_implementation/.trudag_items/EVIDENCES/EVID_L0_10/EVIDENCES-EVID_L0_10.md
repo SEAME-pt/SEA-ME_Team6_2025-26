@@ -22,15 +22,15 @@ references:
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 - type: file
-  path: ../../../../demos/Validation-of-energy-layout-sprint0.jpeg
+  path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint0.jpeg
 - type: file
-  path: ../../../../demos/Validation-of-energy-layout-sprint1.jpeg
+  path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint1.jpeg
 - type: file
-  path: ../../../../demos/Validation-of-energy-layout-sprint2.jpeg
+  path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg
 score: 1.0
