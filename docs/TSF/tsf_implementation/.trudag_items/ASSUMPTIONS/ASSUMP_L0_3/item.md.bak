@@ -5,13 +5,12 @@ level: '1.3'
 normative: false
 references:
 - id: EXPECT-L0-3
-  path: ../expectations/EXPECT-L0-3.md
+  path: ../../../items/expectations/EXPECT-L0-3.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption: The system and development tooling target a Linux-based integration environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules required for platform-specific components (e.g., motor controllers, Hailo AI Hat, camera interfaces) are available or will be provided by component owners prior to verification.
 
 Acceptance criteria / notes:

@@ -36,7 +36,7 @@ references:
 - type: url
   path: ../../../../demos/system-architecture-cross.png
 - type: file
-  path: ../../../../../src/cross-compiler
+  path: ../../../../../src/cross-compiler/README.md
 - type: url
   path: ../../../../../src/cross-compiler/DockerFileRasp
 score: 1.0

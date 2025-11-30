@@ -5,13 +5,12 @@ level: '1.12'
 normative: false
 references:
 - id: EXPECT-L0-12
-  path: ../expectations/EXPECT-L0-12.md
+  path: ../../../items/expectations/EXPECT-L0-12.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption related to EXPECT-L0-12.md.
 
 Seeded from the expectation header: The DCI display fullscreen will be out of the car (wireless...

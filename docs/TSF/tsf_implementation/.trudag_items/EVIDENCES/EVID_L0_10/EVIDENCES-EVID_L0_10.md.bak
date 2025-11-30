@@ -20,8 +20,7 @@ references:
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power
-    Consumption Analysis.md
+  path: ../../../../../guides/Power Consumption Analysis.md
 - type: file
   path: ../../../../demos/Validation-of-energy-layout-sprint0.jpeg
 - type: url

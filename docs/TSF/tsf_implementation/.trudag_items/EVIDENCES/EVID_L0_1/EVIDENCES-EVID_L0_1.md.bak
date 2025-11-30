@@ -32,8 +32,7 @@ references:
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power
-    Consumption Analysis.md
+  path: ../../../../../guides/Power Consumption Analysis.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
