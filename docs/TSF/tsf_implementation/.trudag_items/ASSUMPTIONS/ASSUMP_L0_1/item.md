@@ -6,7 +6,7 @@ level: '1.1'
 normative: false
 references:
 - type: file
-  path: ../../items/expectations/EXPECT-L0-1.md
+  path: ../../../items/expectations/EXPECT-L0-1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
