@@ -9,6 +9,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.15'
 normative: false
+normative: true
 references:
 references:
   - type: file

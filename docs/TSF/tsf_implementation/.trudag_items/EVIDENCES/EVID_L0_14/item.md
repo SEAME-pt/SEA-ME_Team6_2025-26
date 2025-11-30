@@ -7,6 +7,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.14'
 normative: false
+normative: true
 references:
     - type: file
       path: ../../../../docs/TSF/WhatsTSF.md

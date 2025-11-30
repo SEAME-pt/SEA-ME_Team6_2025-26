@@ -7,6 +7,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.16'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../../.github/workflows

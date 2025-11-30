@@ -8,6 +8,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.11'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../demos/system-architecture-cross.png
