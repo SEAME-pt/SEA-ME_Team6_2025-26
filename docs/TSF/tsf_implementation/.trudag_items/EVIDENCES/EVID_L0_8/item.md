@@ -15,39 +15,39 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CANbus%20Scheme%20Updated.png
 - type: file
   path: ../../../../../guides/CAN-overview.md
-- type: url
+- type: file
   path: ../../../../../guides/CAN-overview.md
 - type: file
   path: ../../../../../demos/CAN-layout-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/CAN-layout-sprint3.jpeg
 - type: file
   path: ../../../../../guides/CAN-test-guide.md
-- type: url
+- type: file
   path: ../../../../../guides/CAN-test-guide.md
 - type: file
   path: ../../../../../guides/CAN-explanation.md
-- type: url
+- type: file
   path: ../../../../../guides/CAN-explanation.md
 - type: file
   path: ../../../../../images/CANFrame.png
-- type: url
+- type: file
   path: ../../../../../images/CANFrame.png
 - type: file
   path: ../../../../../images/CANsignal.png
-- type: url
+- type: file
   path: ../../../../../images/CANsignal.png
 - type: file
   path: ../../../../../images/CANtopology.png
-- type: url
+- type: file
   path: ../../../../../images/CANtopology.png
 - type: file
   path: ../../../../../images/CANtopology2.png
-- type: url
+- type: file
   path: ../../../../../images/CANtopology2.png
 - type: file
   path: ../../../../../images/Half-duplex-communication.png
-- type: url
+- type: file
   path: ../../../../../images/Half-duplex-communication.png
 score: 1
 ---

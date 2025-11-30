@@ -10,7 +10,7 @@ normative: true
 references:
 - type: file
   path: ../../../WhatsTSF.md
-- type: url
+- type: file
   path: ../../../WhatsTSF.md
 - type: file
   path: ../../../../docs/TSF/tsf_implementation

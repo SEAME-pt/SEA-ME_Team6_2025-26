@@ -11,15 +11,15 @@ normative: true
 references:
 - type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 - type: file
   path: ../../../../../demos/eletric-scheme.png
-- type: url
+- type: file
   path: ../../../../../demos/eletric-scheme.png
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
-- type: url
+- type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 - type: file
   path: ../../../../demos/Validation-of-energy-layout-sprint0.jpeg

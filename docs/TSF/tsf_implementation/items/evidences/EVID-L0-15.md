@@ -12,7 +12,7 @@ normative: true
 references:
 - type: file
   path: ../../../../dailys/dailys_warmups.md
-- type: url
+- type: file
   path: ../../../../dailys/dailys_warmups.md
 - type: file
   path: ../../../../docs/sprints
@@ -20,7 +20,7 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints
 - type: file
   path: ../../../../../README.md
-- type: url
+- type: file
   path: ../../../../../README.md
 score: 1.0
 ---

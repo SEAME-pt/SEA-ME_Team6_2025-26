@@ -11,15 +11,15 @@ normative: true
 references:
 - type: file
   path: ../../../../../guides/github-guidelines.md
-- type: url
+- type: file
   path: ../../../../../guides/github-guidelines.md
 - type: file
   path: ../../../../../guides/genAI-pair-programming-guidelines.md
-- type: url
+- type: file
   path: ../../../../../guides/genAI-pair-programming-guidelines.md
 - type: file
   path: ../../../../../guides/generative-ai-for-beginners.md
-- type: url
+- type: file
   path: ../../../../../guides/generative-ai-for-beginners.md
 score: 1
 ---

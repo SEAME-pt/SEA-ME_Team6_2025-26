@@ -19,25 +19,25 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cross-compiler/README.
 - type: file
   path: ../../../../../../src/cross-compiler/Dockerfile
-- type: url
+- type: file
   path: ../../../../../../src/cross-compiler/Dockerfile
 - type: file
   path: ../../../../../../src/cross-compiler/DockerFileRasp
 - type: file
   path: ../../../../../../src/cross-compiler/opencvToolchain.cmake
-- type: url
+- type: file
   path: ../../../../../../src/cross-compiler/opencvToolchain.cmake
 - type: file
   path: ../../../../../../src/cross-compiler/toolchain.cmake
-- type: url
+- type: file
   path: ../../../../../../src/cross-compiler/toolchain.cmake
 - type: file
   path: ../../../../../demos/system-architecture-cross.png
-- type: url
+- type: file
   path: ../../../../../demos/system-architecture-cross.png
 - type: file
   path: ../../../../../src/cross-compiler
-- type: url
+- type: file
   path: ../../../../../../src/cross-compiler/DockerFileRasp
 score: 1.0
 ---

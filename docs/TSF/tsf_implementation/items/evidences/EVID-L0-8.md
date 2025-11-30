@@ -11,43 +11,43 @@ normative: true
 references:
 - type: file
   path: ../../../../demos/CANbus Scheme Updated.png
-- type: url
+- type: file
   path: ../../../../demos/CANbus Scheme Updated.png
 - type: file
   path: ../../../../guides/CAN-overview.md
-- type: url
+- type: file
   path: ../../../../guides/CAN-overview.md
 - type: file
   path: ../../../../demos/CAN-layout-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../demos/CAN-layout-sprint3.jpeg
 - type: file
   path: ../../../../guides/CAN-test-guide.md
-- type: url
+- type: file
   path: ../../../../guides/CAN-test-guide.md
 - type: file
   path: ../../../../guides/CAN-explanation.md
-- type: url
+- type: file
   path: ../../../../guides/CAN-explanation.md
 - type: file
   path: ../../../../images/CANFrame.png
-- type: url
+- type: file
   path: ../../../../images/CANFrame.png
 - type: file
   path: ../../../../images/CANsignal.png
-- type: url
+- type: file
   path: ../../../../images/CANsignal.png
 - type: file
   path: ../../../../images/CANtopology.png
-- type: url
+- type: file
   path: ../../../../images/CANtopology.png
 - type: file
   path: ../../../../images/CANtopology2.png
-- type: url
+- type: file
   path: ../../../../images/CANtopology2.png
 - type: file
   path: ../../../../images/Half-duplex-communication.png
-- type: url
+- type: file
   path: ../../../../images/Half-duplex-communication.png
 score: 1.0
 ---

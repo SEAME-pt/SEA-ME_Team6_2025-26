@@ -11,11 +11,11 @@ normative: true
 references:
 - type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 - type: file
   path: ../../../../../demos/eletric-scheme.png
-- type: url
+- type: file
   path: ../../../../../demos/eletric-scheme.png
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
@@ -35,7 +35,7 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg
 - type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
 score: 1
 ---
