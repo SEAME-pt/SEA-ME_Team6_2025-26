@@ -5,13 +5,12 @@ level: '1.14'
 normative: false
 references:
 - id: EXPECT-L0-14
-  path: ../expectations/EXPECT-L0-14.md
+  path: ../../../items/expectations/EXPECT-L0-14.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption related to EXPECT-L0-14.md.
 
 Seeded from the expectation header: TSF & Documentation

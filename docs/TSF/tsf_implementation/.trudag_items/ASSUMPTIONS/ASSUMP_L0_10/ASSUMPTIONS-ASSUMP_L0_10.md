@@ -5,7 +5,7 @@ level: '1.10'
 normative: true
 references:
 - id: EXPECT-L0-10
-  path: ../expectations/EXPECT-L0-10.md
+  path: ../../../items/expectations/EXPECT-L0-10.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-10.md.
 ---
-
 Assumption related to EXPECT-L0-10.md.
 
 Seeded from the expectation header: Implement and test the changing from the old architecture...

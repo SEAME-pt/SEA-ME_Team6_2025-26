@@ -17,7 +17,6 @@ text: 'Assumption: The system and development tooling target a Linux-based integ
   camera interfaces) are available or will be provided by component owners prior to
   verification.'
 ---
-
 Assumption: The system and development tooling target a Linux-based integration environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules required for platform-specific components (e.g., motor controllers, Hailo AI Hat, camera interfaces) are available or will be provided by component owners prior to verification.
 
 Acceptance criteria / notes:

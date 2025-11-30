@@ -5,7 +5,7 @@ level: '1.13'
 normative: true
 references:
 - id: EXPECT-L0-13
-  path: ../expectations/EXPECT-L0-13.md
+  path: ../../../items/expectations/EXPECT-L0-13.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-13.md.
 ---
-
 Assumption related to EXPECT-L0-13.md.
 
 Seeded from the expectation header: Project & GitHub setup

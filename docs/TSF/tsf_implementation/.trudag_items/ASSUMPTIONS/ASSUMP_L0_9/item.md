@@ -5,13 +5,12 @@ level: '1.9'
 normative: false
 references:
 - id: EXPECT-L0-9
-  path: ../expectations/EXPECT-L0-9.md
+  path: ../../../items/expectations/EXPECT-L0-9.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption related to EXPECT-L0-9.md.
 
 Seeded from the expectation header: ThreadX should be used on the Microcontroller (STM32) as a...
