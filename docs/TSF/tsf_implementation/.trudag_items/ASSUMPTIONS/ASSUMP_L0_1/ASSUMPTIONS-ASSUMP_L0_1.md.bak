@@ -5,7 +5,6 @@ header: 'Assumption: Availability of hardware and demonstrator components for sy
 level: '1.1'
 normative: true
 references:
-- id: EXPECT-L0-1
   path: ../expectations/EXPECT-L0-1.md
   type: file
 reviewers:
