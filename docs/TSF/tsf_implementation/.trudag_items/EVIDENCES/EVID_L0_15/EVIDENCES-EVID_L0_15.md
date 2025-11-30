@@ -8,22 +8,21 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
 level: '1.15'
-normative: false
+normative: true
 references:
-references:
-  - type: file
-    path: ../../../../docs/dailys/dailys_warmups.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md
-  - type: file
-    path: ../../../../docs/sprints
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints
-  - type: file
-    path: ../../../../../README.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
-score: 1
+- type: file
+  path: ../../../../docs/dailys/dailys_warmups.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md
+- type: file
+  path: ../../../../docs/sprints
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints
+- type: file
+  path: ../../../../../README.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+score: 1.0
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

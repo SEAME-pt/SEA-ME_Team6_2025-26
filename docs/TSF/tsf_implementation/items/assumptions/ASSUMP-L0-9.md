@@ -2,14 +2,16 @@
 id: ASSUMP-L0-9
 header: 'Assumption: ThreadX should be used on the Microcontroller (STM32) as a...'
 level: '1.9'
-normative: false
+normative: true
 references:
 - id: EXPECT-L0-9
   path: ../expectations/EXPECT-L0-9.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
+text: Assumption related to EXPECT-L0-9.md.
 ---
 
 Assumption related to EXPECT-L0-9.md.

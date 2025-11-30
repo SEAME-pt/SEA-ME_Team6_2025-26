@@ -8,6 +8,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.4'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../guides/Install and Test Joystick in AGL.md

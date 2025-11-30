@@ -8,6 +8,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.10'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../demos/Validation-of-energy-layout-sprint3.jpeg

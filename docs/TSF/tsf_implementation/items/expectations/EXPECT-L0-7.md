@@ -9,9 +9,9 @@ normative: true
 references:
 - id: ASSERT-L0-7
   path: ../assertions/ASSERT-L0-7.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.2
 ---
 

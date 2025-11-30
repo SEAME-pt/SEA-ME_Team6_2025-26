@@ -7,57 +7,57 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
 level: '1.6'
-normative: false
+normative: true
 references:
-  - type: file
-    path: ../../../../docs/demos/mockup1.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg
-  - type: file
-    path: ../../../../docs/demos/mockup2.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg
-  - type: file
-    path: ../../../../docs/demos/mockup3.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg
-  - type: file
-    path: ../../../../docs/demos/mockup4.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg
-  - type: file
-    path: ../../../../docs/demos/mockup5.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg
-  - type: file
-    path: ../../../../docs/demos/mockup6.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg
-  - type: file
-    path: ../../../../docs/guides/QML-guide.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md
-  - type: file
-    path: ../../../../docs/demos/Cluster-display-sprint3.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint3.jpeg
-  - type: file
-    path: ../../../../docs/demos/Cluster-mockup-sprint3.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpeg
-  - type: file
-    path: ../../../../docs/demos/Cluster-study.jpeg
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg
-  - type: file
-    path: ../../../../../src/cluster
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
-  - type: file
-    path: ../../../../../docs/ui_design/README.md
-  - type: url
-    path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/ui_design/README.md
-
-score: 1
+- type: file
+  path: ../../../../docs/demos/mockup1.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg
+- type: file
+  path: ../../../../docs/demos/mockup2.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg
+- type: file
+  path: ../../../../docs/demos/mockup3.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg
+- type: file
+  path: ../../../../docs/demos/mockup4.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg
+- type: file
+  path: ../../../../docs/demos/mockup5.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg
+- type: file
+  path: ../../../../docs/demos/mockup6.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg
+- type: file
+  path: ../../../../docs/guides/QML-guide.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md
+- type: file
+  path: ../../../../docs/demos/Cluster-display-sprint3.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint3.jpeg
+- type: file
+  path: ../../../../docs/demos/Cluster-mockup-sprint3.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpeg
+- type: file
+  path: ../../../../docs/demos/Cluster-study.jpeg
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg
+- type: file
+  path: ../../../../../src/cluster
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
+- type: file
+  path: ../../../../../docs/ui_design/README.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/ui_design/README.md
+score: 1.0
 ---
+
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

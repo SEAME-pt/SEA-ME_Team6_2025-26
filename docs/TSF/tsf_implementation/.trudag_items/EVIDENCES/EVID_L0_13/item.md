@@ -7,6 +7,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.13'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../docs/guides/github-guidelines.md

@@ -7,7 +7,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
 level: '1.1'
-normative: false
+normative: true
 references:
   - type: file
     path: ../../../../demos/assembled-car.jpeg
@@ -33,7 +33,7 @@ references:
     path: ../../../../guides/Power Consumption Analysis.md
   - type: url
     path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md
-score: 1
+score: 1.0
 ---
 
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

@@ -12,6 +12,7 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
   '
 level: '1.5'
 normative: false
+normative: true
 references:
   - type: file
     path: ../../../../demos/first_qt_app.jpeg
