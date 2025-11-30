@@ -6,13 +6,12 @@ level: '1.1'
 normative: false
 references:
 - id: EXPECT-L0-1
-  path: ../expectations/EXPECT-L0-1.md
+  path: ../../../items/expectations/EXPECT-L0-1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface) and these components will be operational in the integration environment during verification activities.
 
 Acceptance criteria / notes:

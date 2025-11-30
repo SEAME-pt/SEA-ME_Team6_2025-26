@@ -19,7 +19,7 @@ references:
 - type: file
   path: ../../../../../../README.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+  path: ../../../../../../README.md
 - type: file
   path: ../../../../docs/projects
 - type: url

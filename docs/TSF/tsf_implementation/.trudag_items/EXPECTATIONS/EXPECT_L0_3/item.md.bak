@@ -13,10 +13,9 @@ level: '1.3'
 normative: true
 references:
 - id: ASSERT-L0-3
-  path: ../assertions/ASSERT-L0-3.md
+  path: ../../../items/assertions/ASSERT-L0-3.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.2
 ---
-

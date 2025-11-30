@@ -48,6 +48,6 @@ references:
 - type: file
   path: ../../../../images/Half-duplex-communication.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png
+  path: ../../../../images/Half-duplex-communication.png
 score: 1.0
 ---

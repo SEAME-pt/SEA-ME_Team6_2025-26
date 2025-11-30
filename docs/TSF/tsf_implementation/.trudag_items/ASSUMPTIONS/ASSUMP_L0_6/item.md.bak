@@ -5,13 +5,12 @@ level: '1.6'
 normative: false
 references:
 - id: EXPECT-L0-6
-  path: ../expectations/EXPECT-L0-6.md
+  path: ../../../items/expectations/EXPECT-L0-6.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption related to EXPECT-L0-6.md.
 
 Seeded from the expectation header: The Qt GUI shall display static graphical elements such as...
