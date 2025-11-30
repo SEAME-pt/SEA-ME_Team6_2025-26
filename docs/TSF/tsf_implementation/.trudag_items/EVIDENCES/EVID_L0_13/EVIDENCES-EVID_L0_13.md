@@ -10,15 +10,15 @@ normative: true
 references:
 - type: file
   path: ../../../../../guides/github-guidelines.md
-- type: url
+- type: file
   path: ../../../../../guides/github-guidelines.md
 - type: file
   path: ../../../../../guides/github-actions-guide.md
-- type: url
+- type: file
   path: ../../../../../guides/github-actions-guide.md
 - type: file
   path: ../../../../../../README.md
-- type: url
+- type: file
   path: ../../../../../../README.md
 - type: file
   path: ../../../../docs/projects

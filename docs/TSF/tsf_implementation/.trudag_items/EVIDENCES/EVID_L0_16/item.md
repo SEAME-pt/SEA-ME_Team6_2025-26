@@ -14,7 +14,7 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
 - type: file
   path: ../../../../../guides/github-actions-guide.md
-- type: url
+- type: file
   path: ../../../../../guides/github-actions-guide.md
 score: 1
 ---

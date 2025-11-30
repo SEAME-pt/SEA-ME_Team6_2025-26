@@ -8,7 +8,7 @@ normative: true
 references:
 - type: file
   path: ../../../../../guides/AGL_Installation_Guide.md
-- type: url
+- type: file
   path: ../../../../../guides/AGL_Installation_Guide.md
 - type: file
   path: ../../../../../guides/AGL and ThreadX benefits Guide.md

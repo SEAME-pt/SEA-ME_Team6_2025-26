@@ -9,11 +9,11 @@ normative: true
 references:
 - type: file
   path: ../../../../guides/ThreadX_Installation_Guide.md
-- type: url
+- type: file
   path: ../../../../guides/ThreadX_Installation_Guide.md
 - type: file
   path: ../../../../guides/AGL and ThreadX benefits Guide.md
-- type: url
+- type: file
   path: ../../../../guides/AGL and ThreadX benefits Guide.md
 score: 1.0
 ---

@@ -11,43 +11,43 @@ normative: true
 references:
 - type: file
   path: ../../../../../demos/mockup1.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup1.jpeg
 - type: file
   path: ../../../../../demos/mockup2.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup2.jpeg
 - type: file
   path: ../../../../../demos/mockup3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup3.jpeg
 - type: file
   path: ../../../../../demos/mockup4.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup4.jpeg
 - type: file
   path: ../../../../../demos/mockup5.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup5.jpeg
 - type: file
   path: ../../../../../demos/mockup6.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/mockup6.jpeg
 - type: file
   path: ../../../../../guides/QML-guide.md
-- type: url
+- type: file
   path: ../../../../../guides/QML-guide.md
 - type: file
   path: ../../../../../demos/Cluster-display-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Cluster-display-sprint3.jpeg
 - type: file
   path: ../../../../../demos/Cluster-mockup-sprint3.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Cluster-mockup-sprint3.jpeg
 - type: file
   path: ../../../../../demos/Cluster-study.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/Cluster-study.jpeg
 - type: file
   path: ../../../../../src/cluster
@@ -55,7 +55,7 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
 - type: file
   path: ../../../../../../README.md
-- type: url
+- type: file
   path: ../../../../../../README.md
 score: 1.0
 ---

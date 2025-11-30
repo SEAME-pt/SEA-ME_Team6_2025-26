@@ -11,23 +11,23 @@ level: '1.12'
 references:
 - type: file
   path: ../../../../../demos/system-architecture-cross.png
-- type: url
+- type: file
   path: ../../../../../demos/system-architecture-cross.png
 - type: file
   path: ../../../../../demos/first_qt_app.jpeg
-- type: url
+- type: file
   path: ../../../../../demos/first_qt_app.jpeg
 - type: file
   path: ../../../../../demos/eletric-scheme.png
-- type: url
+- type: file
   path: ../../../../../demos/eletric-scheme.png
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
-- type: url
+- type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 - type: file
   path: ../../../../../guides/AGL_Installation_Guide.md
-- type: url
+- type: file
   path: ../../../../../guides/AGL_Installation_Guide.md
 score: 1.0
 ---

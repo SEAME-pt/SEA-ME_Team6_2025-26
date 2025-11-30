@@ -11,7 +11,7 @@ normative: true
 references:
 - type: file
   path: ../../../../demos/system-architecture-cross.png
-- type: url
+- type: file
   path: ../../../../demos/system-architecture-cross.png
 score: 1.0
 ---
