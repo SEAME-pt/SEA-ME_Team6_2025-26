@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-13.md.
 ---
-
 Assumption related to EXPECT-L0-13.md.
 
 Seeded from the expectation header: Project & GitHub setup

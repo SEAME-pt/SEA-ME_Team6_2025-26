@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-15.md.
 ---
-
 Assumption related to EXPECT-L0-15.md.
 
 Seeded from the expectation header: Agile

@@ -18,12 +18,11 @@ level: '1.8'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-8.md
+  path: ../../../items/expectations/EXPECT-L0-8.md
 - type: file
-  path: ../evidences/EVID-L0-8.md
+  path: ../../../items/evidences/EVID-L0-8.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.4
 ---
-

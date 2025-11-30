@@ -17,7 +17,6 @@ text: 'Assumption: The project team will provide the required hardware and demon
   AI Hat, DC motors, servo motor, display interface) and these components will be
   operational in the integration environment during verification activities.'
 ---
-
 Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface) and these components will be operational in the integration environment during verification activities.
 
 Acceptance criteria / notes:

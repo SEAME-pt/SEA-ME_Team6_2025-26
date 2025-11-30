@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-16.md.
 ---
-
 Assumption related to EXPECT-L0-16.md.
 
 Seeded from the expectation header: CI/CD

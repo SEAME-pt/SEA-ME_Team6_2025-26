@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-6.md.
 ---
-
 Assumption related to EXPECT-L0-6.md.
 
 Seeded from the expectation header: The Qt GUI shall display static graphical elements such as...

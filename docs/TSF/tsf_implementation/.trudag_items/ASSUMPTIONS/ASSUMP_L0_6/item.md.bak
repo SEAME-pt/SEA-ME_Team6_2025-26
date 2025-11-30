@@ -1,0 +1,19 @@
+---
+id: ASSUMP-L0-6
+header: 'Assumption: The Qt GUI shall display static graphical elements such as...'
+level: '1.6'
+normative: false
+references:
+- id: EXPECT-L0-6
+  path: ../expectations/EXPECT-L0-6.md
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+score: 0.6
+---
+
+Assumption related to EXPECT-L0-6.md.
+
+Seeded from the expectation header: The Qt GUI shall display static graphical elements such as...
+
+Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).

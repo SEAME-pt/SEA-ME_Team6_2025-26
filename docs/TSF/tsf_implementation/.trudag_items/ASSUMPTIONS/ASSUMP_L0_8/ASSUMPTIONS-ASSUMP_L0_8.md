@@ -5,7 +5,7 @@ level: '1.8'
 normative: true
 references:
 - id: EXPECT-L0-8
-  path: ../expectations/EXPECT-L0-8.md
+  path: ../../../items/expectations/EXPECT-L0-8.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-8.md.
 ---
-
 Assumption related to EXPECT-L0-8.md.
 
 Seeded from the expectation header: Connect the Rasp5 to the STM 32 (bidirectional) using Can...

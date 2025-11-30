@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-4.md.
 ---
-
 Assumption related to EXPECT-L0-4.md.
 
 Seeded from the expectation header: Driveable Car with Remote Control/Driveable Car Model...

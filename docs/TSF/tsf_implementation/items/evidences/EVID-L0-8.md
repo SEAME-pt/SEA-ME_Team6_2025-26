@@ -10,46 +10,44 @@ level: '1.8'
 normative: true
 references:
 - type: file
-  path: ../../../../docs/demos/CANbus Scheme Updated.png
+  path: ../../../../demos/CANbus Scheme Updated.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CANbus
-    Scheme Updated.png
+  path: ../../../../demos/CANbus Scheme Updated.png
 - type: file
-  path: ../../../../docs/guides/CAN-overview.md
+  path: ../../../../guides/CAN-overview.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-overview.md
+  path: ../../../../guides/CAN-overview.md
 - type: file
-  path: ../../../../docs/demos/CAN-layout-sprint3.jpeg
+  path: ../../../../demos/CAN-layout-sprint3.jpeg
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-layout-sprint3.jpeg
+  path: ../../../../demos/CAN-layout-sprint3.jpeg
 - type: file
-  path: ../../../../docs/guides/CAN-test-guide.md
+  path: ../../../../guides/CAN-test-guide.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md
+  path: ../../../../guides/CAN-test-guide.md
 - type: file
-  path: ../../../../docs/guides/CAN-explanation.md
+  path: ../../../../guides/CAN-explanation.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-explanation.md
+  path: ../../../../guides/CAN-explanation.md
 - type: file
-  path: ../../../../docs/images/CANFrame.png
+  path: ../../../../images/CANFrame.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANFrame.png
+  path: ../../../../images/CANFrame.png
 - type: file
-  path: ../../../../docs/images/CANsignal.png
+  path: ../../../../images/CANsignal.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANsignal.png
+  path: ../../../../images/CANsignal.png
 - type: file
-  path: ../../../../docs/images/CANtopology.png
+  path: ../../../../images/CANtopology.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology.png
+  path: ../../../../images/CANtopology.png
 - type: file
-  path: ../../../../docs/images/CANtopology2.png
+  path: ../../../../images/CANtopology2.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology2.png
+  path: ../../../../images/CANtopology2.png
 - type: file
-  path: ../../../../docs/images/Half-duplex-communication.png
+  path: ../../../../images/Half-duplex-communication.png
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png
+  path: ../../../../images/Half-duplex-communication.png
 score: 1.0
 ---
-

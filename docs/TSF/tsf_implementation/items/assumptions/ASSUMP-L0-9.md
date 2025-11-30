@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-9.md.
 ---
-
 Assumption related to EXPECT-L0-9.md.
 
 Seeded from the expectation header: ThreadX should be used on the Microcontroller (STM32) as a...

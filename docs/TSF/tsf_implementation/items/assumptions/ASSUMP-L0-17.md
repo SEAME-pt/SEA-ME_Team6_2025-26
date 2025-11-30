@@ -13,7 +13,6 @@ reviewers:
 score: 0.6
 text: Assumption related to EXPECT-L0-17.md.
 ---
-
 Assumption related to EXPECT-L0-17.md.
 
 Seeded from the expectation header: Introduce AI in the project

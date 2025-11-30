@@ -11,9 +11,9 @@ level: '1.15'
 normative: true
 references:
 - type: file
-  path: ../../../../docs/dailys/dailys_warmups.md
+  path: ../../../../dailys/dailys_warmups.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md
+  path: ../../../../dailys/dailys_warmups.md
 - type: file
   path: ../../../../docs/sprints
 - type: url
@@ -21,8 +21,7 @@ references:
 - type: file
   path: ../../../../../README.md
 - type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+  path: ../../../../../README.md
 score: 1.0
 ---
-
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

@@ -5,13 +5,12 @@ level: '1.5'
 normative: false
 references:
 - id: EXPECT-L0-5
-  path: ../expectations/EXPECT-L0-5.md
+  path: ../../../items/expectations/EXPECT-L0-5.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
 ---
-
 Assumption related to EXPECT-L0-5.md.
 
 Seeded from the expectation header: The system shall be capable of launching a basic Qt...
