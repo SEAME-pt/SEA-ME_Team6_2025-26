@@ -9,9 +9,9 @@ level: '1.14'
 normative: true
 references:
 - type: file
-  path: ../../../../WhatsTSF.md
+  path: ../../../WhatsTSF.md
 - type: file
-  path: ../../../../WhatsTSF.md
+  path: ../../../WhatsTSF.md
 - type: file
   path: ../../../../docs/TSF/tsf_implementation
 - type: url
@@ -24,7 +24,7 @@ references:
   path: ../../../../docs/TSF/
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF
-score: 1
+score: 1.0
 ---
     
 

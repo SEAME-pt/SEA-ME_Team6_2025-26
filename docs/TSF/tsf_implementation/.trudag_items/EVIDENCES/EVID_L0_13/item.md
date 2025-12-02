@@ -9,17 +9,17 @@ level: '1.13'
 normative: true
 references:
 - type: file
-  path: ../../../../../guides/github-guidelines.md
+  path: ../../../../guides/github-guidelines.md
 - type: file
-  path: ../../../../../guides/github-guidelines.md
+  path: ../../../../guides/github-guidelines.md
 - type: file
-  path: ../../../../../guides/github-actions-guide.md
+  path: ../../../../guides/github-actions-guide.md
 - type: file
-  path: ../../../../../guides/github-actions-guide.md
+  path: ../../../../guides/github-actions-guide.md
 - type: file
-  path: ../../../../../../README.md
+  path: ../../../../../README.md
 - type: file
-  path: ../../../../../../README.md
+  path: ../../../../../README.md
 - type: file
   path: ../../../../docs/projects
 - type: url

@@ -11,33 +11,33 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
 level: '1.7'
-normative: false
+normative: true
 references:
 - type: file
-  path: ../../../../../../README.md
+  path: ../../../../../README.md
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cross-compiler/README.
 - type: file
-  path: ../../../../../../src/cross-compiler/Dockerfile
+  path: ../../../../../src/cross-compiler/Dockerfile
 - type: file
-  path: ../../../../../../src/cross-compiler/Dockerfile
+  path: ../../../../../src/cross-compiler/Dockerfile
 - type: file
-  path: ../../../../../../src/cross-compiler/DockerFileRasp
+  path: ../../../../../src/cross-compiler/DockerFileRasp
 - type: file
-  path: ../../../../../../src/cross-compiler/opencvToolchain.cmake
+  path: ../../../../../src/cross-compiler/opencvToolchain.cmake
 - type: file
-  path: ../../../../../../src/cross-compiler/opencvToolchain.cmake
+  path: ../../../../../src/cross-compiler/opencvToolchain.cmake
 - type: file
-  path: ../../../../../../src/cross-compiler/toolchain.cmake
+  path: ../../../../../src/cross-compiler/toolchain.cmake
 - type: file
-  path: ../../../../../../src/cross-compiler/toolchain.cmake
+  path: ../../../../../src/cross-compiler/toolchain.cmake
 - type: file
-  path: ../../../../../demos/system-architecture-cross.png
+  path: ../../../../demos/system-architecture-cross.png
 - type: file
-  path: ../../../../../demos/system-architecture-cross.png
+  path: ../../../../demos/system-architecture-cross.png
 - type: file
-  path: ../../../../../src/cross-compiler
+  path: ../../../../../src/cross-compiler/README.md
 - type: file
-  path: ../../../../../../src/cross-compiler/DockerFileRasp
-score: 1
+  path: ../../../../../src/cross-compiler/DockerFileRasp
+score: 1.0
 ---
