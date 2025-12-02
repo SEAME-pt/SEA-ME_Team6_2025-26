@@ -7,6 +7,7 @@
   - [⚙️ QML & C++ Integration](#sec-integration)
   - [ℹ️ Qt setup](#sec-qt-setup)
   - [🧰 Development Setup](#sec-development-setup)
+  - [🔀 Project Structuring and Layout](#sec-flow)
   - [🎨 UI Design & Components](#sec-ui-components)
   - [🚨 Issues Log](#sec-issues)
   - [🔗 Links](#sec-links)
@@ -351,6 +352,50 @@ Via Qt Creator:
 
 On Raspberry Pi:  
 More information on how to build and deploy the cluster on the Raspberry Pi on `../cross-compiler`
+
+---
+<a id="sec-flow"></a>
+## 🔀 Project Structuring and Layout
+
+The application's UI is organized into five primary QML components arranged in a top-center-bottom structure with two auxiliary side screens. This layout ensures a clean separation of responsibilities and makes each screen independently maintainable.
+
+### Overall Layout:
+<img width="1851" height="1138" alt="image" src="https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/images/Flow.jpg" />
+
+### Component Responsibilities
+
+#### TopBar.qml  
+- Stretches across the full width of the application.
+- Ideal location for:
+  - Application title
+  - Global navigation
+  - Status indicators
+  - Toolbar actions
+
+#### LeftScreen.qml  
+- Occupies the left region of the main content area.
+- Designed to display:
+  - The speedometer gauge
+  - Maximum speed indicator
+
+#### CenterScreen.qml  
+- Serves as the main working area.
+- Intended to display:
+  - Car visualization and dynamic circulation
+  - Current gear
+  - Signals indicators
+
+#### RightScreen.qml  
+- Mirroring the layout role of `LeftScreen.qml`, but positioned on the right.
+- Designed to contain:
+  - The tachometer
+
+#### BottomBar.qml  
+- Spans the entire width of the application.
+- Used to display:
+  - Information about the project sponsor
+
+The structure promotes clarity and modularity, and ease of maintenance. Each QML file is responsible for a specific section of the UI while remaining flexible enough to evolve or expand as the project grows. The three-panel central layout combined with the top and bottom bars forms a robust foundation for the cluster interface.
 
 ---
 
