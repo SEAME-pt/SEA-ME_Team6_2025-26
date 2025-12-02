@@ -8,10 +8,11 @@
 4. [Half-Duplex Communication](#4-half-duplex-communication)  
 5. [Asynchronous Transmission](#5-asynchronous-transmission)  
 6. [Message Arbitration](#6-message-arbitration)  
-7. [CAN Data Frame Structure](#7-can-data-frame-structure)  
-8. [Summary of Key Properties](#8-summary-of-key-properties)  
-9. [Why It Matters in Automotive Systems](#9-why-it-matters-in-automotive-systems)  
-10. [References](#10-references)
+7. [CAN Data Frame Structure](#7-can-data-frame-structure)
+8. [Classic CAN vs CAN FD](#8-classic-can-vs-can-fd)
+9. [Summary of Key Properties](#9-summary-of-key-properties)  
+10. [Why It Matters in Automotive Systems](#10-why-it-matters-in-automotive-systems)  
+11. [References](#11-references)
 
 ## 1. Introduction
 
@@ -120,7 +121,25 @@ In Classical CAN, a standard frame includes:
 
 ---
 
-## 8. Summary of Key Properties
+## 8. Classic CAN vs CAN FD
+
+| Feature | 🚗 Classic CAN | 🚀 CAN FD |
+|:--|:--|:--|
+| **Max Payload** | 8 bytes | 64 bytes |
+| **Arbitration Speed** | ≤ 1 Mbps | ≤ 1 Mbps |
+| **Data Speed** | ≤ 1 Mbps | **Up to 8 Mbps** |
+| **CRC** | 15-bit | 17/21-bit (stronger) |
+| **Compatibility** | Legacy systems | Modern systems; backward compatible |
+| **Ideal Use** | Simple sensors & actuators | High-data signals (ADAS, gateways) |
+
+### 🧠 Quick Summary
+- 🚗 **Classic CAN** → small, robust, perfect for simple/periodic signals  
+- 🚀 **CAN FD** → faster, larger frames, ideal for modern vehicles  
+- 🔄 CAN FD networks can still interoperate with Classic CAN nodes  
+
+---
+
+## 9. Summary of Key Properties
 
 | Property | Description |
 |:--|:--|
@@ -134,7 +153,7 @@ In Classical CAN, a standard frame includes:
 
 ---
 
-## 9. Why It Matters in Automotive Systems
+## 10. Why It Matters in Automotive Systems
 
 - **Low cost & reliability:** Proven over decades in automotive and industrial environments.
 - **Deterministic timing:** Critical for safety functions (ABS, engine control).  
@@ -144,7 +163,7 @@ In Classical CAN, a standard frame includes:
 
 ---
 
-## 10. References
+## 11. References
  
 - Microchip, *MCP2551 Datasheet*  
 - [Texas Instruments – Understanding and Applying CAN Bus](https://www.ti.com/lit/an/sloa101b/sloa101b.pdf)

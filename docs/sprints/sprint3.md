@@ -39,27 +39,81 @@
   - Hardware layout validated (component test - not "under load" test) ✅
   - Running Qt app on AGL ✅
   - CAN communication validated ✅
-  - ThreadX running on STM32 ✅
+  - ThreadX running on STM32 
+
+  
 - **Demos**:
+
+**ARCHITECTURE**
+
+EXPECT-L0-1 - "System architecture is defined and documented":
+EXPECT-L0-10 - "Implement new architecture.":
   - Validation of energy supply for Raspberry Pi 5
-  - ![Rasp energy validation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
+  - ![Rasp energy validation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
+
+**QT**
+
+EXPECT-L0-6 - "The Qt GUI shall display static graphical elements":
   - Cluster updates
-  - ![Atual state cluster](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-display-sprint3.jpeg)
-  - 
-  - ![Cluster mockup](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-mockup-sprint3.jpeg)
-  - 
-  - ![Cluster study](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/Cluster-study.jpeg)
-  - CAN layout
-  - ![CAN layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/CAN-layout-sprint3.jpeg) 
+  - ![Atual state cluster](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint3.jpeg)
+  - ![Cluster mockup](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpe
+  - ![Cluster study](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg)
+
+  **CAN**
+  
+EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+- CAN layout
+    - ![CAN layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-layout-sprint3.jpeg) 
+
+
+
       
-- **Docs updated**:
-  - [AGL Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/AGL_Installation_Guide.md)
-  - [ThreadX Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/ThreadX_Installation_Guide.md)
-  - [CAN implementation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/CAN-test-guide.md)
-  - [TSF Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/TSF/WhatsTSF.md)
-  - [Joystick on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
-  - [QML guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/QML-guide.md)
-  - [Cluster Instrument](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/src/cluster/README.md)
+- **Docs/Guides updated**:
+
+  **SOFTWARE**
+  
+EXPECT-L0-3 - "Software Setup capable of running Qt applications":
+  - [AGL Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md)
+EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS";
+  - [ThreadX Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadX_Installation_Guide.md
+EXPECT-L0-3 - "Software Setup capable of running Qt applications":
+EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS";
+  - [AGL VS ThreadX ]https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL%20and%20ThreadX%20benefits%20Guide.md
+
+**QT**
+
+EXPECT-L0-5 - "Launch basic Qt on built-in display":
+  - [QML guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+  - [Cluster Instrument](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cluster/README.md)
+  
+**CAN**
+
+EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  - [CAN implementation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md)
+- [CAN explanation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-explanation.md)
+
+**TSF**
+
+EXPECT-L0-14 - "TSF & Documentation":
+  - [TSF Guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/WhatsTSF.md)
+
+**JOYSTICK**
+
+EXPECT-L0-4 - "Driveable Car with Remote Control":
+  - [Joystick on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
+
+
+- **Images**:
+
+**CAN**
+
+  EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  - [CANFrame image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANFrame.png) 
+- [CAN Signal](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANsignal.png)
+- [CAN Topology](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology.png)
+- [CAN Topology 2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology2.png)
+- [CAN half-duplex-communication](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png)
+
 
 ---
 
@@ -72,3 +126,23 @@
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 3](https://github.com/orgs/SEAME-pt/projects/89/views/8?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Linked+pull+requests%22%2C%22Sub-issues+progress%22%5D&sortedBy%5Bdirection%5D=&sortedBy%5BcolumnId%5D=)
+
+## TSF Useful: 
+  EXPECT-L0-1 - "System architecture is defined and documented":
+  EXPECT-L0-2 - "Hardware Assembly: Fully assemble the PiRacer robot":
+  EXPECT-L0-3 - "Software Setup capable of running Qt applications":
+  EXPECT-L0-4 - "Driveable Car with Remote Control":
+  EXPECT-L0-5 - "Launch basic Qt on built-in display":
+  EXPECT-L0-6 - "The Qt GUI shall display static graphical elements":
+  EXPECT-L0-7 - "QT Crosscompilation should be achieved":
+  EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS";
+  EXPECT-L0-10 - "Implement new architecture.":
+  EXPECT-L0-11 - "QT cluster UI **auto-start on boot** on display":
+  EXPECT-L0-12 - "Wireless DCI display":
+  EXPECT-L0-13 - "Project & GitHub setup":
+  EXPECT-L0-14 - "TSF & Documentation":
+  EXPECT-L0-15 - "Agile and Scrum":
+  EXPECT-L0-16 - "CI/CD":
+  EXPECT-L0-17 - "Introduce AI in the project":
+  

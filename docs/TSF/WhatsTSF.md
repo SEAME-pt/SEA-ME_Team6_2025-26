@@ -270,6 +270,12 @@ Expectation: Car shall keep lane within ±0.3m
 ---
 ```
 
+**Goals → Expectations**
+**Strategies → Assertions**
+**Solutions → Evidence**
+**Context → Assumptions**
+**Principles → Tenets**
+
 From these elements, TSF builds a **traceable model**, allowing you to:
 - Justify each requirement with evidence.
 - Link test results and automated analyses.
