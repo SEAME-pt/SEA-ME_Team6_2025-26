@@ -12,11 +12,11 @@ text: 'The system architecture shall be defined and documented to describe hardw
 level: 1.1
 normative: true
 references:
+references:
 - id: ASSERT-L0-1
-  path: ../../../items/assertions/ASSERT-L0-1.md
   type: file
+  path: ../../../items/assertions/ASSERT-L0-1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.2
 ---
