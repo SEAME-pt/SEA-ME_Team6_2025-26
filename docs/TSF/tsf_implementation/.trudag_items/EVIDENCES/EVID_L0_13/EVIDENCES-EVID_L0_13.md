@@ -24,6 +24,6 @@ references:
   path: ../../../../docs/projects
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/projects
-score: 1.0
+score: 1
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

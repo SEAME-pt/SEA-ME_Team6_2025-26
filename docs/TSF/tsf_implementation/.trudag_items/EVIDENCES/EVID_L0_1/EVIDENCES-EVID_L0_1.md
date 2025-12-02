@@ -10,27 +10,17 @@ level: '1.1'
 normative: true
 references:
 - type: file
-  path: ../../../../demos/assembled-car.jpeg
+  path: ../../../../../demos/assembled-car.jpeg
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car.jpeg
 - type: file
   path: ../../../../../demos/assembled-car1.jpeg
 - type: file
-  path: ../../../../../demos/assembled-car1.jpeg
-- type: file
-  path: ../../../../../demos/assembled-car2.jpeg
-- type: file
   path: ../../../../../demos/assembled-car2.jpeg
 - type: file
   path: ../../../../../demos/eletric-scheme.png
 - type: file
-  path: ../../../../../demos/eletric-scheme.png
-- type: file
   path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: file
-  path: ../../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: file
-  path: ../../../../../guides/Power Consumption Analysis.md
 - type: file
   path: ../../../../../guides/Power Consumption Analysis.md
 score: 1.0
