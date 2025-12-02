@@ -7,7 +7,7 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score:
-  Auto: 0.6
+  score: 0.6
 text: Assumption related to EXPECT-L0-12.md.
 ---
 

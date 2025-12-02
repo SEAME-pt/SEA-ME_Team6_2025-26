@@ -16,7 +16,7 @@ references:
 - type: file
   path: ../evidences/EVID-L0-4.md
 review_status: accepted
-score: null
+score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
