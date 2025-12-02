@@ -15,11 +15,11 @@ level: '1.1'
 normative: true
 references:
 - type: file
-  path: ../../../items/expectations/EXPECT-L0-1.md
+  path: ../expectations/EXPECT-L0-1.md
 - type: file
-  path: ../../../items/evidences/EVID-L0-1.md
+  path: ../evidences/EVID-L0-1.md
+score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.4
 ---

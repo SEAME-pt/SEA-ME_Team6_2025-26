@@ -14,54 +14,54 @@ level: '1.5'
 normative: true
 references:
 - type: file
-  path: ../../../../../demos/first_qt_app.jpeg
+  path: ../../../../demos/first_qt_app.jpeg
 - type: file
-  path: ../../../../../demos/first_qt_app.jpeg
+  path: ../../../../demos/first_qt_app.jpeg
 - type: file
-  path: ../../../../../demos/mockup1.jpeg
+  path: ../../../../demos/mockup1.jpeg
 - type: file
-  path: ../../../../../demos/mockup1.jpeg
+  path: ../../../../demos/mockup1.jpeg
 - type: file
-  path: ../../../../../demos/mockup2.jpeg
+  path: ../../../../demos/mockup2.jpeg
 - type: file
-  path: ../../../../../demos/mockup2.jpeg
+  path: ../../../../demos/mockup2.jpeg
 - type: file
-  path: ../../../../../demos/mockup3.jpeg
+  path: ../../../../demos/mockup3.jpeg
 - type: file
-  path: ../../../../../demos/mockup3.jpeg
+  path: ../../../../demos/mockup3.jpeg
 - type: file
-  path: ../../../../../demos/mockup4.jpeg
+  path: ../../../../demos/mockup4.jpeg
 - type: file
-  path: ../../../../../demos/mockup4.jpeg
+  path: ../../../../demos/mockup4.jpeg
 - type: file
-  path: ../../../../../demos/mockup5.jpeg
+  path: ../../../../demos/mockup5.jpeg
 - type: file
-  path: ../../../../../demos/mockup5.jpeg
+  path: ../../../../demos/mockup5.jpeg
 - type: file
-  path: ../../../../../demos/mockup6.jpeg
+  path: ../../../../demos/mockup6.jpeg
 - type: file
-  path: ../../../../../demos/mockup6.jpeg
+  path: ../../../../demos/mockup6.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-display-sprint3.jpeg
+  path: ../../../../demos/Cluster-display-sprint3.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-display-sprint3.jpeg
+  path: ../../../../demos/Cluster-display-sprint3.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-mockup-sprint3.jpeg
+  path: ../../../../demos/Cluster-mockup-sprint3.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-mockup-sprint3.jpeg
+  path: ../../../../demos/Cluster-mockup-sprint3.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-study.jpeg
+  path: ../../../../demos/Cluster-study.jpeg
 - type: file
-  path: ../../../../../demos/Cluster-study.jpeg
+  path: ../../../../demos/Cluster-study.jpeg
 - type: file
-  path: ../../../../../guides/QML-guide.md
+  path: ../../../../guides/QML-guide.md
 - type: file
-  path: ../../../../../guides/QML-guide.md
+  path: ../../../../guides/QML-guide.md
 - type: file
-  path: ../../../../../../README.md
+  path: ../../../../../README.md
 - type: file
-  path: ../../../../../../README.md
-score: 1
+  path: ../../../../../README.md
+score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 

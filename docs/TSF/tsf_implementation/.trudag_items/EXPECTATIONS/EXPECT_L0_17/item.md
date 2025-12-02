@@ -8,10 +8,10 @@ level: '1.17'
 normative: true
 references:
 - id: ASSERT-L0-17
-  path: ../../../items/assertions/ASSERT-L0-17.md
+  path: ../assertions/ASSERT-L0-17.md
   type: file
+score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.2
 ---

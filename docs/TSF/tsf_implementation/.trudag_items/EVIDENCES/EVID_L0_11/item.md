@@ -10,9 +10,9 @@ level: '1.11'
 normative: true
 references:
 - type: file
-  path: ../../../../../demos/system-architecture-cross.png
+  path: ../../../../demos/system-architecture-cross.png
 - type: file
-  path: ../../../../../demos/system-architecture-cross.png
-score: 1
+  path: ../../../../demos/system-architecture-cross.png
+score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

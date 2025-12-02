@@ -5,7 +5,7 @@ level: '1.4'
 normative: true
 references:
 - id: EXPECT-L0-4
-  path: ../../../items/expectations/EXPECT-L0-4.md
+  path: ../../items/expectations/EXPECT-L0-4.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

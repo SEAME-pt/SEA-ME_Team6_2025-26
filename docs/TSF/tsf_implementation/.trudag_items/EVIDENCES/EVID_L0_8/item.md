@@ -7,47 +7,47 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 
   '
 level: '1.8'
-normative: false
+normative: true
 references:
 - type: file
-  path: ../../../../../demos/CANbus Scheme Updated.png
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CANbus%20Scheme%20Updated.png
+  path: ../../../../demos/CANbus Scheme Updated.png
 - type: file
-  path: ../../../../../guides/CAN-overview.md
+  path: ../../../../demos/CANbus Scheme Updated.png
 - type: file
-  path: ../../../../../guides/CAN-overview.md
+  path: ../../../../guides/CAN-overview.md
 - type: file
-  path: ../../../../../demos/CAN-layout-sprint3.jpeg
+  path: ../../../../guides/CAN-overview.md
 - type: file
-  path: ../../../../../demos/CAN-layout-sprint3.jpeg
+  path: ../../../../demos/CAN-layout-sprint3.jpeg
 - type: file
-  path: ../../../../../guides/CAN-test-guide.md
+  path: ../../../../demos/CAN-layout-sprint3.jpeg
 - type: file
-  path: ../../../../../guides/CAN-test-guide.md
+  path: ../../../../guides/CAN-test-guide.md
 - type: file
-  path: ../../../../../guides/CAN-explanation.md
+  path: ../../../../guides/CAN-test-guide.md
 - type: file
-  path: ../../../../../guides/CAN-explanation.md
+  path: ../../../../guides/CAN-explanation.md
 - type: file
-  path: ../../../../../images/CANFrame.png
+  path: ../../../../guides/CAN-explanation.md
 - type: file
-  path: ../../../../../images/CANFrame.png
+  path: ../../../../images/CANFrame.png
 - type: file
-  path: ../../../../../images/CANsignal.png
+  path: ../../../../images/CANFrame.png
 - type: file
-  path: ../../../../../images/CANsignal.png
+  path: ../../../../images/CANsignal.png
 - type: file
-  path: ../../../../../images/CANtopology.png
+  path: ../../../../images/CANsignal.png
 - type: file
-  path: ../../../../../images/CANtopology.png
+  path: ../../../../images/CANtopology.png
 - type: file
-  path: ../../../../../images/CANtopology2.png
+  path: ../../../../images/CANtopology.png
 - type: file
-  path: ../../../../../images/CANtopology2.png
+  path: ../../../../images/CANtopology2.png
 - type: file
-  path: ../../../../../images/Half-duplex-communication.png
+  path: ../../../../images/CANtopology2.png
 - type: file
-  path: ../../../../../images/Half-duplex-communication.png
-score: 1
+  path: ../../../../images/Half-duplex-communication.png
+- type: file
+  path: ../../../../images/Half-duplex-communication.png
+score: 1.0
 ---

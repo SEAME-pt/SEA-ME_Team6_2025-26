@@ -7,7 +7,7 @@ normative: true
 references:
 - id: EXPECT-L0-1
 - type: file
-  path: ../../../items/expectations/EXPECT-L0-1.md
+  path: ../../items/expectations/EXPECT-L0-1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

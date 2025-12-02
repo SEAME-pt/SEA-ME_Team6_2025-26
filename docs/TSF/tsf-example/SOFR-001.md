@@ -6,6 +6,7 @@ text: |
 level: 1.3
 normative: true
 
+score: 0.5
 reviewers:
   - name: "David"
     email: "david@example.com"
