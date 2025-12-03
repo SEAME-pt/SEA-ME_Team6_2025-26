@@ -11,8 +11,6 @@ references:
 - type: file
   path: ../../../WhatsTSF.md
 - type: file
-  path: ../../../WhatsTSF.md
-- type: file
   path: docs/TSF/tsf_implementation
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/TSF/tsf_implementation

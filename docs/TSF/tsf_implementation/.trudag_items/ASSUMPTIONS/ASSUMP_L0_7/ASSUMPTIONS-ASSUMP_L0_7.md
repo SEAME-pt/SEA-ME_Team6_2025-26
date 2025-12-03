@@ -3,10 +3,6 @@ id: ASSUMP_L0_7
 header: 'Assumption: QT Crosscompilation should be achieved'
 level: '1.7'
 normative: true
-references:
-- id: EXPECT-L0-7
-  path: ../expectations/EXPECT-L0-7.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

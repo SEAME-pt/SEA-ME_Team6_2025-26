@@ -14,11 +14,6 @@ text: 'At least one CI workflow successfully builds or tests the project upon co
   '
 level: '1.16'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-16.md
-- type: file
-  path: ../evidences/EVID-L0-16.md
 review_status: accepted
 score: 0.5
 reviewers:

@@ -12,10 +12,6 @@ text: 'Implement and test the changing from the old architecture to the new
   '
 level: '1.10'
 normative: true
-references:
-- id: ASSERT-L0-10
-  path: ../assertions/ASSERT-L0-10.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

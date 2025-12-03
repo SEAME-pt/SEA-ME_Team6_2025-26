@@ -15,11 +15,6 @@ text: 'All hardware components are correctly installed and operational
   '
 level: 1.2
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-2.md
-- type: file
-  path: ../evidences/EVID-L0-2.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

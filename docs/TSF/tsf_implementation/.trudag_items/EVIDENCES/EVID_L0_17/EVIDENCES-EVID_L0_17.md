@@ -12,13 +12,7 @@ references:
 - type: file
   path: docs/guides/github-guidelines.md
 - type: file
-  path: docs/guides/github-guidelines.md
-- type: file
   path: docs/guides/genAI-pair-programming-guidelines.md
-- type: file
-  path: docs/guides/genAI-pair-programming-guidelines.md
-- type: file
-  path: docs/guides/generative-ai-for-beginners.md
 - type: file
   path: docs/guides/generative-ai-for-beginners.md
 score: 1.0

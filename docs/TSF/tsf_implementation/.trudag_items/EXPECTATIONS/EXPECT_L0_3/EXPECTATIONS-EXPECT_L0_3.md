@@ -11,10 +11,6 @@ text: 'Software Setup: The system shall successfully boot the Raspberry Pi 5 and
   '
 level: '1.3'
 normative: true
-references:
-- id: ASSERT-L0-3
-  path: ../assertions/ASSERT-L0-3.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

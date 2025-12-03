@@ -9,8 +9,6 @@ text: 'This evidence item collects repository artifacts, sprint reports and demo
 level: '1.1'
 normative: true
 references:
-- type: file
-  path: docs/demos/assembled-car.jpeg
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car.jpeg
 - type: file

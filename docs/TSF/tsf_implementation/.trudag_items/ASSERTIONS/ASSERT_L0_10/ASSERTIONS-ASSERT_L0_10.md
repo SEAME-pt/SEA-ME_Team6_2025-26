@@ -15,11 +15,6 @@ text: 'A system architecture diagram and documents regarding power consumption a
   '
 level: '1.10'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-10.md
-- type: file
-  path: ../evidences/EVID-L0-10.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

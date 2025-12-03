@@ -13,11 +13,6 @@ text: 'Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC
   '
 level: '1.17'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-17.md
-- type: file
-  path: ../evidences/EVID-L0-17.md
 review_status: accepted
 score: 0.5
 reviewers:

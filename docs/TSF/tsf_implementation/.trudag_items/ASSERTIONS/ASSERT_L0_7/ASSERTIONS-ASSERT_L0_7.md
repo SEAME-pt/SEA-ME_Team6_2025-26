@@ -14,11 +14,6 @@ text: 'We should be able to crosscompile our QT program outside the Operating Sy
   '
 level: '1.7'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-7.md
-- type: file
-  path: ../evidences/EVID-L0-7.md
 review_status: accepted
 score: 0.5
 reviewers:

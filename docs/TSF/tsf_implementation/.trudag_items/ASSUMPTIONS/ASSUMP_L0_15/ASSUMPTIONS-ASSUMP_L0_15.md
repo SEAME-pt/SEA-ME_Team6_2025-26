@@ -3,10 +3,6 @@ id: ASSUMP_L0_15
 header: 'Assumption: Agile'
 level: '1.15'
 normative: true
-references:
-- id: EXPECT-L0-15
-  path: ../expectations/EXPECT-L0-15.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

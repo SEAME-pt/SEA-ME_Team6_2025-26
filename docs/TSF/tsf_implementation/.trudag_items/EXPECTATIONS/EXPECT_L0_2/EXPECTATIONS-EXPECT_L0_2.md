@@ -11,10 +11,6 @@ text: 'Hardware Assembly: Fully assemble the PiRacer robot, including the Raspbe
   '
 level: '1.2'
 normative: true
-references:
-- id: ASSERT-L0-2
-  path: ../assertions/ASSERT-L0-2.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

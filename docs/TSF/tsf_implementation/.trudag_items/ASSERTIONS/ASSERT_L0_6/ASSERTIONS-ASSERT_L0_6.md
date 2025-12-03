@@ -14,11 +14,6 @@ text: 'Upon application launch, the display shows visible static content (e.g., 
   '
 level: '1.6'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-6.md
-- type: file
-  path: ../evidences/EVID-L0-6.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

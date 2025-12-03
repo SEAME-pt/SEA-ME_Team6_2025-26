@@ -3,10 +3,6 @@ id: ASSUMP_L0_14
 header: 'Assumption: TSF & Documentation'
 level: '1.14'
 normative: true
-references:
-- id: EXPECT-L0-14
-  path: ../expectations/EXPECT-L0-14.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

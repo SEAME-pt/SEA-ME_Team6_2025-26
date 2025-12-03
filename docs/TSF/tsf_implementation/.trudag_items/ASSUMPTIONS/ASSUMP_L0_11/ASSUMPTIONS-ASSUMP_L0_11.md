@@ -3,10 +3,6 @@ id: ASSUMP_L0_11
 header: 'Assumption: The Qt cluster UI shall **auto-start on boot** and display...'
 level: '1.11'
 normative: true
-references:
-- id: EXPECT-L0-11
-  path: ../expectations/EXPECT-L0-11.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

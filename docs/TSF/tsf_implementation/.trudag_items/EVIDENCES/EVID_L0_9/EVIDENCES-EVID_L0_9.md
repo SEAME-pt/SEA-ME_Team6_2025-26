@@ -10,10 +10,6 @@ references:
 - type: file
   path: docs/guides/ThreadX_Installation_Guide.md
 - type: file
-  path: docs/guides/ThreadX_Installation_Guide.md
-- type: file
-  path: docs/guides/AGL and ThreadX benefits Guide.md
-- type: file
   path: docs/guides/AGL and ThreadX benefits Guide.md
 score: 1.0
 ---

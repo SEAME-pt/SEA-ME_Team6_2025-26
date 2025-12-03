@@ -15,11 +15,6 @@ text: 'A Scrum board exists with backlog items, sprint goals, and progress updat
   '
 level: '1.15'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-15.md
-- type: file
-  path: ../evidences/EVID-L0-15.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

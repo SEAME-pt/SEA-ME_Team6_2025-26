@@ -179,8 +179,25 @@ for category_dir in items_source.iterdir():
             i += 1
         
         new_yaml = '\n'.join(new_lines)
-        # Remove empty 'references:' line if no references remain
-        new_yaml = re.sub(r'references:\s*\n(?=[a-z]+:)', '', new_yaml)
+        
+        # Check if references: line exists but has no list items after it
+        # If so, remove the entire references: line
+        lines_check = new_yaml.split('\n')
+        final_lines = []
+        i = 0
+        while i < len(lines_check):
+            line = lines_check[i]
+            if line.strip() == 'references:':
+                # Check if next line is a list item (starts with '- ')
+                if i + 1 < len(lines_check) and lines_check[i + 1].strip().startswith('- '):
+                    final_lines.append(line)  # Keep it
+                # else skip it (no list items)
+            else:
+                final_lines.append(line)
+            i += 1
+        
+        new_yaml = '\n'.join(final_lines)
+        
         # Convert ID: EVID-L0-1 -> EVID_L0_1
         new_yaml = re.sub(r'^id: ([A-Z]+-[A-Z0-9]+-[0-9]+)', lambda m: f"id: {m.group(1).replace('-', '_')}", new_yaml, flags=re.MULTILINE)
         

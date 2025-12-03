@@ -6,10 +6,6 @@ text: 'Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC".
   '
 level: '1.17'
 normative: true
-references:
-- id: ASSERT-L0-17
-  path: ../assertions/ASSERT-L0-17.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

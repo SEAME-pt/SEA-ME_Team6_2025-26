@@ -10,11 +10,6 @@ text: "Upon application launch, the program successfully opens a Qt GUI window o
   \ AI Hat, DC motors, servo motor, display interface).\n"
 level: '1.11'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-11.md
-- type: file
-  path: ../evidences/EVID-L0-11.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

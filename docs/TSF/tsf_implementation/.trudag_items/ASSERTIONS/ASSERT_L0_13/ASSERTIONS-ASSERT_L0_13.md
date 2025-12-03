@@ -15,11 +15,6 @@ text: 'Repository contains all relevant source code, README, and requirements fi
   '
 level: '1.13'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-13.md
-- type: file
-  path: ../evidences/EVID-L0-13.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva
