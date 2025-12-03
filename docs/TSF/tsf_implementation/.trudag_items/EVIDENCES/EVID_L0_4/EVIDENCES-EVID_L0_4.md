@@ -1,0 +1,24 @@
+---
+id: EVID_L0_4
+header: 'Evidence: Live demonstration or test log. - Driveable Car with Remote Control/Driveable
+  Car Model (Hardware + Software)'
+text: 'This evidence item collects repository artifacts, sprint reports and demo images
+  that demonstrate the requirement is met.
+
+  '
+level: '1.4'
+normative: true
+references:
+- type: file
+  path: docs/guides/Install and Test Joystick in AGL.md
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install
+    and Test Joystick in AGL.md
+- type: file
+  path: src/inital_program
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/inital_program
+score: 1.0
+---
+
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

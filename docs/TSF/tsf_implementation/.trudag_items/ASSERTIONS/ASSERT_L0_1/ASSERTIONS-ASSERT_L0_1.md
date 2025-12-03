@@ -1,5 +1,5 @@
 ---
-id: ASSERT-L0-1
+id: ASSERT_L0_1
 header: A system architecture diagram or document is present in the repository
 text: 'A system architecture diagram or document is present in the repository
 
@@ -13,6 +13,12 @@ text: 'A system architecture diagram or document is present in the repository
   '
 level: '1.1'
 normative: true
+references:
+- type: file
+  path: ../expectations/EXPECT-L0-1.md
+- type: file
+  path: ../evidences/EVID-L0-1.md
+score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
