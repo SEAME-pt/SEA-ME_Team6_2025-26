@@ -10,11 +10,6 @@ text: "When executed, the program successfully opens a Qt GUI window on the PiRa
   \ servo motor, display interface).\n"
 level: '1.5'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-5.md
-- type: file
-  path: ../evidences/EVID-L0-5.md
 review_status: accepted
 score: 0.5
 reviewers:

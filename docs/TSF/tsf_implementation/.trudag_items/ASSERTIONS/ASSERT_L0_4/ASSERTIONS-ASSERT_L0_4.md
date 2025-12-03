@@ -10,11 +10,6 @@ text: "The system can receive remote input to control motor direction and speed\
   Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).\n"
 level: '1.4'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-4.md
-- type: file
-  path: ../evidences/EVID-L0-4.md
 review_status: accepted
 score: 0.5
 reviewers:

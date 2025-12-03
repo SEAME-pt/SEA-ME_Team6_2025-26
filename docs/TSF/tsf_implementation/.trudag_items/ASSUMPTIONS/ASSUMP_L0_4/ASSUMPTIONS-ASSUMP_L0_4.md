@@ -3,10 +3,6 @@ id: ASSUMP_L0_4
 header: 'Assumption: Driveable Car with Remote Control/Driveable Car Model...'
 level: '1.4'
 normative: true
-references:
-- id: EXPECT-L0-4
-  path: ../expectations/EXPECT-L0-4.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -5,10 +5,6 @@ text: "The system shall be capable of launching a basic Qt application on the Pi
   s\nbuilt-in display.\n"
 level: '1.5'
 normative: true
-references:
-- id: ASSERT-L0-5
-  path: ../assertions/ASSERT-L0-5.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

@@ -8,10 +8,6 @@ text: 'TSF & Documentation: The project shall apply the Trustable Software Frame
   '
 level: '1.14'
 normative: true
-references:
-- id: ASSERT-L0-14
-  path: ../assertions/ASSERT-L0-14.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

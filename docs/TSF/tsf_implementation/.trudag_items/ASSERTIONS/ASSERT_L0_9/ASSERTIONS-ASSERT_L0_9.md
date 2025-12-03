@@ -15,11 +15,6 @@ text: 'We should be able to install and use ThreadX on the Microcontroller (STM3
   '
 level: '1.9'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-9.md
-- type: file
-  path: ../evidences/EVID-L0-9.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

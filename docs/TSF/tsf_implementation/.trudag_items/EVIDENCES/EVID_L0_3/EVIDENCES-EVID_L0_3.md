@@ -9,10 +9,6 @@ references:
 - type: file
   path: docs/guides/AGL_Installation_Guide.md
 - type: file
-  path: docs/guides/AGL_Installation_Guide.md
-- type: file
-  path: docs/guides/AGL and ThreadX benefits Guide.md
-- type: file
   path: docs/guides/AGL and ThreadX benefits Guide.md
 - type: file
   path: docs/guides/AGL_Configuration_Guide.md

@@ -13,11 +13,6 @@ text: 'TSF documentation exists within the repository, showing traceability
   '
 level: '1.14'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-14.md
-- type: file
-  path: ../evidences/EVID-L0-14.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

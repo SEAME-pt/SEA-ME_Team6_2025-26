@@ -11,13 +11,7 @@ references:
 - type: file
   path: docs/guides/github-guidelines.md
 - type: file
-  path: docs/guides/github-guidelines.md
-- type: file
   path: docs/guides/github-actions-guide.md
-- type: file
-  path: docs/guides/github-actions-guide.md
-- type: file
-  path: README.md
 - type: file
   path: README.md
 - type: file

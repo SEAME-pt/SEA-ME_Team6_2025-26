@@ -13,11 +13,6 @@ text: 'A system architecture diagram or document is present in the repository
   '
 level: '1.1'
 normative: true
-references:
-- type: file
-  path: ../expectations/EXPECT-L0-1.md
-- type: file
-  path: ../evidences/EVID-L0-1.md
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva

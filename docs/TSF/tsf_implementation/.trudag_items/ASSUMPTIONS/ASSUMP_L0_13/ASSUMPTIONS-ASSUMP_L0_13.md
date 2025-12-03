@@ -3,10 +3,6 @@ id: ASSUMP_L0_13
 header: 'Assumption: Project & GitHub setup'
 level: '1.13'
 normative: true
-references:
-- id: EXPECT-L0-13
-  path: ../expectations/EXPECT-L0-13.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

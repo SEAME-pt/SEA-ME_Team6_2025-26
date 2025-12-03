@@ -9,10 +9,6 @@ text: 'The DCI display fullscreen will be out of the car (wireless display) lauc
   '
 level: '1.12'
 normative: true
-references:
-- id: ASSERT-L0-12
-  path: ../assertions/ASSERT-L0-12.md
-  type: file
 score: 0.5
 reviewers:
 - name: Joao Jesus Silva
