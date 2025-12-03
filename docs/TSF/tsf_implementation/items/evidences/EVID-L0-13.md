@@ -9,19 +9,19 @@ level: '1.13'
 normative: true
 references:
 - type: file
-  path: ../../../../guides/github-guidelines.md
+  path: docs/guides/github-guidelines.md
 - type: file
-  path: ../../../../guides/github-guidelines.md
+  path: docs/guides/github-guidelines.md
 - type: file
-  path: ../../../../guides/github-actions-guide.md
+  path: docs/guides/github-actions-guide.md
 - type: file
-  path: ../../../../guides/github-actions-guide.md
+  path: docs/guides/github-actions-guide.md
 - type: file
-  path: ../../../../../README.md
+  path: README.md
 - type: file
-  path: ../../../../../README.md
+  path: README.md
 - type: file
-  path: ../../../../docs/projects
+  path: docs/projects
 - type: url
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/projects
 score: 1.0

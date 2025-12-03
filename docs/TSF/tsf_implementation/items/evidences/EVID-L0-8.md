@@ -10,44 +10,44 @@ level: '1.8'
 normative: true
 references:
 - type: file
-  path: ../../../../demos/CANbus Scheme Updated.png
+  path: docs/demos/CANbus Scheme Updated.png
 - type: file
-  path: ../../../../demos/CANbus Scheme Updated.png
+  path: docs/demos/CANbus Scheme Updated.png
 - type: file
-  path: ../../../../guides/CAN-overview.md
+  path: docs/guides/CAN-overview.md
 - type: file
-  path: ../../../../guides/CAN-overview.md
+  path: docs/guides/CAN-overview.md
 - type: file
-  path: ../../../../demos/CAN-layout-sprint3.jpeg
+  path: docs/demos/CAN-layout-sprint3.jpeg
 - type: file
-  path: ../../../../demos/CAN-layout-sprint3.jpeg
+  path: docs/demos/CAN-layout-sprint3.jpeg
 - type: file
-  path: ../../../../guides/CAN-test-guide.md
+  path: docs/guides/CAN-test-guide.md
 - type: file
-  path: ../../../../guides/CAN-test-guide.md
+  path: docs/guides/CAN-test-guide.md
 - type: file
-  path: ../../../../guides/CAN-explanation.md
+  path: docs/guides/CAN-explanation.md
 - type: file
-  path: ../../../../guides/CAN-explanation.md
+  path: docs/guides/CAN-explanation.md
 - type: file
-  path: ../../../../images/CANFrame.png
+  path: docs/images/CANFrame.png
 - type: file
-  path: ../../../../images/CANFrame.png
+  path: docs/images/CANFrame.png
 - type: file
-  path: ../../../../images/CANsignal.png
+  path: docs/images/CANsignal.png
 - type: file
-  path: ../../../../images/CANsignal.png
+  path: docs/images/CANsignal.png
 - type: file
-  path: ../../../../images/CANtopology.png
+  path: docs/images/CANtopology.png
 - type: file
-  path: ../../../../images/CANtopology.png
+  path: docs/images/CANtopology.png
 - type: file
-  path: ../../../../images/CANtopology2.png
+  path: docs/images/CANtopology2.png
 - type: file
-  path: ../../../../images/CANtopology2.png
+  path: docs/images/CANtopology2.png
 - type: file
-  path: ../../../../images/Half-duplex-communication.png
+  path: docs/images/Half-duplex-communication.png
 - type: file
-  path: ../../../../images/Half-duplex-communication.png
+  path: docs/images/Half-duplex-communication.png
 score: 1.0
 ---
