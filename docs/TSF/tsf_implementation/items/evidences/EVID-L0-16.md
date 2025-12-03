@@ -14,8 +14,6 @@ references:
   path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
 - type: file
   path: docs/guides/github-actions-guide.md
-- type: file
-  path: docs/guides/github-actions-guide.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

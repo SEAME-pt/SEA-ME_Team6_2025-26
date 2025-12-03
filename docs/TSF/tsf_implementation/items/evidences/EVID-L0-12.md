@@ -12,21 +12,11 @@ references:
 - type: file
   path: docs/demos/system-architecture-cross.png
 - type: file
-  path: docs/demos/system-architecture-cross.png
-- type: file
-  path: docs/demos/first_qt_app.jpeg
-- type: file
   path: docs/demos/first_qt_app.jpeg
 - type: file
   path: docs/demos/eletric-scheme.png
 - type: file
-  path: docs/demos/eletric-scheme.png
-- type: file
   path: docs/guides/Power Consumption Analysis.md
-- type: file
-  path: docs/guides/Power Consumption Analysis.md
-- type: file
-  path: docs/guides/AGL_Installation_Guide.md
 - type: file
   path: docs/guides/AGL_Installation_Guide.md
 score: 1.0

@@ -20,24 +20,14 @@ references:
 - type: file
   path: src/cross-compiler/Dockerfile
 - type: file
-  path: src/cross-compiler/Dockerfile
-- type: file
   path: src/cross-compiler/DockerFileRasp
 - type: file
   path: src/cross-compiler/opencvToolchain.cmake
 - type: file
-  path: src/cross-compiler/opencvToolchain.cmake
-- type: file
   path: src/cross-compiler/toolchain.cmake
-- type: file
-  path: src/cross-compiler/toolchain.cmake
-- type: file
-  path: docs/demos/system-architecture-cross.png
 - type: file
   path: docs/demos/system-architecture-cross.png
 - type: file
   path: src/cross-compiler/README.md
-- type: file
-  path: src/cross-compiler/DockerFileRasp
 score: 1.0
 ---
