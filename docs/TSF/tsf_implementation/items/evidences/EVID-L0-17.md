@@ -10,17 +10,17 @@ level: '1.17'
 normative: true
 references:
 - type: file
-  path: ../../../../guides/github-guidelines.md
+  path: docs/guides/github-guidelines.md
 - type: file
-  path: ../../../../guides/github-guidelines.md
+  path: docs/guides/github-guidelines.md
 - type: file
-  path: ../../../../guides/genAI-pair-programming-guidelines.md
+  path: docs/guides/genAI-pair-programming-guidelines.md
 - type: file
-  path: ../../../../guides/genAI-pair-programming-guidelines.md
+  path: docs/guides/genAI-pair-programming-guidelines.md
 - type: file
-  path: ../../../../guides/generative-ai-for-beginners.md
+  path: docs/guides/generative-ai-for-beginners.md
 - type: file
-  path: ../../../../guides/generative-ai-for-beginners.md
+  path: docs/guides/generative-ai-for-beginners.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
