@@ -11,10 +11,15 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-4.md.
+text: 'The joystick or remote control hardware is available, functional, and compatible
+  with the target platform input subsystem before remote control integration testing
+  begins.'
 ---
-Assumption related to EXPECT-L0-4.md.
+The joystick or remote control hardware is available, functional, and compatible with the target platform input subsystem before remote control integration testing begins.
 
-Seeded from the expectation header: Driveable Car with Remote Control/Driveable Car Model...
+Acceptance criteria / notes:
+- Joystick device is recognized by the Linux input subsystem (e.g., /dev/input/js0).
+- Device drivers are installed and documented.
+- Input mapping configuration files are available or will be provided before testing.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Remote control verification for `EXPECT-L0-4` depends on external input hardware availability. This assumption clarifies that hardware procurement and driver availability are prerequisites.

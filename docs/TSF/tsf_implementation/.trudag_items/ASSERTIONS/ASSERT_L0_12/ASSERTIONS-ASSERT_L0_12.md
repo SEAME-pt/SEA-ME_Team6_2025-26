@@ -1,19 +1,9 @@
 ---
 id: ASSERT_L0_12
-header: Upon application launch, the wireless display should open a Qt GUI window
-  on...
-text: "Upon application launch, the wireless display should open a Qt GUI window on\
-  \ the PiRacer\u2019s screen with our program\nSystem architecture documentation\
-  \ maps components to implemented modules: The system architecture documentation\
-  \ (diagrams and descriptive documents) shall provide a clear mapping between the\
-  \ listed hardware and software components and their implementation (e.g\nExpansion\
-  \ Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).\n"
+header: Display streams wirelessly
+text: The Qt cluster display content from Raspberry Pi 5 successfully streams to Raspberry Pi 4 wirelessly using VNC protocol with acceptable latency.
 level: '1.12'
 normative: true
-<<<<<<< HEAD
-=======
-score: 0.5
->>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -7,10 +7,15 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-15.md.
+text: 'GitHub Projects and Agile/Scrum methodology documentation are accessible for
+  self-training before agile process adoption begins.'
 ---
-Assumption related to EXPECT-L0-15.md.
+GitHub Projects and Agile/Scrum methodology documentation are accessible for self-training before agile process adoption begins.
 
-Seeded from the expectation header: Agile
+Acceptance criteria / notes:
+- GitHub Projects is enabled and accessible for the repository.
+- Agile and Scrum training materials (online resources, books, documentation) are accessible to team members.
+- Team members complete individual self-training on Agile/Scrum methodologies.
+- Sprint schedules and ceremonies (standup, review, retrospective) are defined by the team.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Agile process adoption for `EXPECT-L0-15` depends on GitHub Projects tooling availability and individual self-training on Agile/Scrum methodologies. This assumption clarifies that the project uses GitHub Projects exclusively and relies on self-directed learning.

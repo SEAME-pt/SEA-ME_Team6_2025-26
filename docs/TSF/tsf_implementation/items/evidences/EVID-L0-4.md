@@ -7,13 +7,10 @@ normative: true
 references:
 - type: file
   path: docs/guides/AGL_ Joystick_installation_and_test.md
-- type: website
-  path: github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install
-    and Test Joystick in AGL.md
 - type: file
-  path: src/inital_program
-- type: website
-  path: github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/inital_program
+  path: src/inital_program/main.py
+- type: file
+  path: src/inital_program/install_initial_program.md
 score: 1.0
 ---
 

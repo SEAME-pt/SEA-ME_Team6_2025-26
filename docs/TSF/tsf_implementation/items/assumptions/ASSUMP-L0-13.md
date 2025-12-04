@@ -11,10 +11,14 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-13.md.
+text: 'GitHub repository access and permissions are granted to all project team members
+  before project setup verification begins.'
 ---
-Assumption related to EXPECT-L0-13.md.
+GitHub repository access and permissions are granted to all project team members before project setup verification begins.
 
-Seeded from the expectation header: Project & GitHub setup
+Acceptance criteria / notes:
+- All team members have GitHub accounts.
+- Repository permissions (read, write, admin) are configured according to roles.
+- Branch protection rules are documented.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Project setup verification for `EXPECT-L0-13` assumes that access control and team onboarding are handled externally to the technical verification process.

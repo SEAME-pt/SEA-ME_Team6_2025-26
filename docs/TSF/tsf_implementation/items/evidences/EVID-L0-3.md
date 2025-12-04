@@ -9,8 +9,6 @@ references:
   path: docs/guides/AGL_Installation_Guide.md
 - type: file
   path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-- type: file
-  path: docs/guides/AGL_Configuration_Guide.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

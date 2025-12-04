@@ -11,10 +11,14 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-6.md.
+text: 'Third-party font libraries and icon sets required by the Qt GUI are available
+  under compatible licenses before UI implementation begins.'
 ---
-Assumption related to EXPECT-L0-6.md.
+Third-party font libraries and icon sets required by the Qt GUI are available under compatible licenses before UI implementation begins.
 
-Seeded from the expectation header: The Qt GUI shall display static graphical elements such as...
+Acceptance criteria / notes:
+- External font files (e.g., TrueType, OpenType) are downloaded or accessible.
+- Icon sets (e.g., Font Awesome, Material Icons) are available with compatible licenses.
+- License terms allow redistribution and use in the project context.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Qt GUI implementation for `EXPECT-L0-6` depends on external font and icon libraries being legally available. This assumption clarifies that third-party asset procurement and licensing are prerequisites.

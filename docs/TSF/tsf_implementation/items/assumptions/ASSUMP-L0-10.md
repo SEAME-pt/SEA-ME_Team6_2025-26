@@ -11,10 +11,14 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-10.md.
+text: 'Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors,
+  sensors) are procured and available before system architecture implementation begins.'
 ---
-Assumption related to EXPECT-L0-10.md.
+Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors, sensors) are procured and available before system architecture implementation begins.
 
-Seeded from the expectation header: Implement and test the changing from the old architecture...
+Acceptance criteria / notes:
+- All hardware components listed in the architecture have been purchased or provided.
+- Components are received and physically available in the project workspace.
+- Component specifications match the planned architecture requirements.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Architecture implementation for `EXPECT-L0-10` depends on hardware availability. This assumption makes explicit that hardware procurement is a prerequisite for architecture realization.

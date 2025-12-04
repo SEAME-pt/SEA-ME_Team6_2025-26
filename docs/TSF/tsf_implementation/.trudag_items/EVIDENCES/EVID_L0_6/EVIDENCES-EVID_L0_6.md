@@ -1,11 +1,7 @@
 ---
 id: EVID_L0_6
-header: 'Evidence: Visual inspection of the running application. - The Qt GUI shall
-  display static graphical elements such as shapes, text, or...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: Static GUI elements shown
+text: The repository contains mockup images and cluster display screenshots showing static graphical elements in the Qt interface.
 level: '1.6'
 normative: true
 references:
@@ -31,13 +27,6 @@ references:
   path: docs/demos/Cluster-study.jpeg
 - type: file
   path: src/cluster/README.md
-<<<<<<< HEAD
-=======
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
->>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
-- type: file
-  path: README.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

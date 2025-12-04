@@ -11,10 +11,14 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-5.md.
+text: 'Qt runtime libraries and dependencies are installed and available on the target
+  platform before Qt application deployment begins.'
 ---
-Assumption related to EXPECT-L0-5.md.
+Qt runtime libraries and dependencies are installed and available on the target platform before Qt application deployment begins.
 
-Seeded from the expectation header: The system shall be capable of launching a basic Qt...
+Acceptance criteria / notes:
+- Qt6 runtime is installed (e.g., via apt or compiled from source).
+- Required Qt modules (QtCore, QtGui, QtWidgets, QtQml) are present.
+- Display server (Wayland or X11) is configured and operational.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Qt application verification for `EXPECT-L0-5` assumes that the Qt framework and runtime environment are already provisioned on the target system.

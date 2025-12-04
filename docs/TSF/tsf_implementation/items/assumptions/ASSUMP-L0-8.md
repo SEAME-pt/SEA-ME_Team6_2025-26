@@ -11,10 +11,15 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-8.md.
+text: 'CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed
+  and functional on both Raspberry Pi 5 and STM32 before CAN communication testing
+  begins.'
 ---
-Assumption related to EXPECT-L0-8.md.
+CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed and functional on both Raspberry Pi 5 and STM32 before CAN communication testing begins.
 
-Seeded from the expectation header: Connect the Rasp5 to the STM 32 (bidirectional) using Can...
+Acceptance criteria / notes:
+- CAN interface is recognized by Linux (e.g., can0 device exists).
+- CAN bus wiring is correctly connected between Rasp5 and STM32.
+- CAN bus termination resistors are properly installed.
 
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: CAN communication verification for `EXPECT-L0-8` depends on physical CAN hardware availability and correct installation. This assumption makes hardware prerequisites explicit.

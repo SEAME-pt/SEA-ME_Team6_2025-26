@@ -1,15 +1,7 @@
 ---
 id: EVID_L0_5
-header: 'Evidence: Demonstration or screenshot verification. - The system shall be
-  capable of launching a basic Qt application on the...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-
-
-
-
-  '
+header: Qt application demonstrated
+text: The repository contains screenshots and QML guide showing a basic Qt application running on the system.
 level: '1.5'
 normative: true
 references:

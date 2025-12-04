@@ -1,11 +1,7 @@
 ---
 id: EVID_L0_12
-header: 'Evidence: Visual inspection of the running application. - The DCI display
-  fullscreen will be out of the car (wireless display) lauching...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: Wireless display demonstrated
+text: The repository contains VNC configuration guides and demonstration images showing wireless display streaming.
 normative: true
 level: '1.12'
 references:

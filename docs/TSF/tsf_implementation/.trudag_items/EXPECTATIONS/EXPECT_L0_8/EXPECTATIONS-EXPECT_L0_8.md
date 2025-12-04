@@ -1,15 +1,9 @@
 ---
 id: EXPECT_L0_8
-header: Use CAN to connect the Rasp5 to the STM 32 (bidirectional)
-text: 'Connect the Rasp5 to the STM 32 (bidirectional) using Can Protocol.
-
-  '
+header: CAN communication established
+text: The Raspberry Pi 5 and STM32 microcontroller communicate bidirectionally using the CAN protocol.
 level: '1.8'
 normative: true
-<<<<<<< HEAD
-=======
-score: 0.5
->>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

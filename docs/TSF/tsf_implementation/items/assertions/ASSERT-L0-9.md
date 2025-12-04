@@ -1,18 +1,7 @@
 ---
 id: ASSERT-L0-9
-header: We should be able to install and use ThreadX on the Microcontroller (STM32),...
-text: 'We should be able to install and use ThreadX on the Microcontroller (STM32),
-  making all communications (including can) to pass in the STM32 and be controlled/managed
-  there using priorizations and threads
-
-  System architecture documentation maps components to implemented modules: The system
-  architecture documentation (diagrams and descriptive documents) shall provide a
-  clear mapping between the listed hardware and software components and their implementation
-  (e.g
-
-  Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).
-
-  '
+header: ThreadX operates on STM32
+text: The ThreadX RTOS successfully runs on the STM32 microcontroller and executes scheduled tasks according to the documented configuration.
 level: '1.9'
 normative: true
 references:
