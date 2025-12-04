@@ -1,19 +1,10 @@
 ---
 id: EVID-L0-1
-header: 'Evidence: Documentation inspection. - The system architecture shall be defined
-  and documented to describe hardware...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: Architecture documentation exists
+text: The repository contains system architecture diagrams, electrical schematics, and power consumption analysis documents.
 level: '1.1'
 normative: true
 references:
-<<<<<<< HEAD
-=======
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car.jpeg
->>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 - type: file
   path: docs/demos/assembled-car1.jpeg
 - type: file

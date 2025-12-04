@@ -1,10 +1,7 @@
 ---
 id: EVID-L0-2
-header: 'Evidence: Physical inspection and functional test. - Hardware Assembly'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: Hardware assembly documented
+text: The repository contains photographs and documentation showing the assembled demonstrator car hardware.
 level: '1.2'
 normative: true
 references:

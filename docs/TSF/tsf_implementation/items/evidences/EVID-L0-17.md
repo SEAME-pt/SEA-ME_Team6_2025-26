@@ -1,11 +1,7 @@
 ---
 id: EVID-L0-17
-header: 'Evidence: Code implementation verification with achieved effect. - Introduce
-  in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: AI tools usage documented
+text: The repository contains AI pair programming guidelines and documentation showing AI-assisted development practices.
 level: '1.17'
 normative: true
 references:

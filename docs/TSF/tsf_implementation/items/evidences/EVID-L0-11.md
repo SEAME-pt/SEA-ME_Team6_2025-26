@@ -1,11 +1,7 @@
 ---
 id: EVID-L0-11
-header: 'Evidence: Visual inspection of the running application. - The Qt cluster
-  UI shall **auto-start on boot** and display fullscreen on the...'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: Auto-start configuration documented
+text: The repository contains system configuration files and demonstration images showing automatic Qt application startup.
 level: '1.11'
 normative: true
 references:

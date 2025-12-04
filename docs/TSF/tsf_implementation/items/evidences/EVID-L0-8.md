@@ -1,11 +1,7 @@
 ---
 id: EVID-L0-8
-header: 'Evidence: Visual inspection of message passing from RP5 to STM and vice-versa.
-  - Connect the Rasp5 to the STM 32 (bidirectional) using Can Protocol'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+header: CAN communication documented
+text: The repository contains CAN configuration guides, test procedures, and demonstration images showing bidirectional communication.
 level: '1.8'
 normative: true
 references:
