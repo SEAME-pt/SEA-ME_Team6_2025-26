@@ -11,7 +11,6 @@ text: "The system can receive remote input to control motor direction and speed\
 level: '1.4'
 normative: true
 review_status: accepted
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

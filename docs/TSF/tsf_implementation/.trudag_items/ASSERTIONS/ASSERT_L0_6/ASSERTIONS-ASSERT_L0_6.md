@@ -14,7 +14,6 @@ text: 'Upon application launch, the display shows visible static content (e.g., 
   '
 level: '1.6'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

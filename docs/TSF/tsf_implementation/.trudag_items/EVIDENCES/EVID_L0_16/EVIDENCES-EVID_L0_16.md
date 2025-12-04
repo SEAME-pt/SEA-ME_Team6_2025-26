@@ -9,9 +9,7 @@ level: '1.16'
 normative: true
 references:
 - type: file
-  path: .github/workflows
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/.github/workflows
+  path: .github/workflows/daily-meeting.yml
 - type: file
   path: docs/guides/github-actions-guide.md
 score: 1.0

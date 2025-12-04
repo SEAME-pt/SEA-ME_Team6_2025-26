@@ -11,7 +11,6 @@ text: 'Hardware Assembly: Fully assemble the PiRacer robot, including the Raspbe
   '
 level: '1.2'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

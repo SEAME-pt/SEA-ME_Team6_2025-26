@@ -8,7 +8,6 @@ text: 'The Qt GUI shall display static graphical elements such as shapes, text, 
   '
 level: '1.6'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

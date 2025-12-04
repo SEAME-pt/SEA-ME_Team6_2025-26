@@ -11,7 +11,6 @@ text: 'Driveable Car with Remote Control/Driveable Car Model (Hardware + Softwar
   '
 level: '1.4'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

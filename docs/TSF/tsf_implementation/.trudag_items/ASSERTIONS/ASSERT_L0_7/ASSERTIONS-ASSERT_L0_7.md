@@ -15,7 +15,6 @@ text: 'We should be able to crosscompile our QT program outside the Operating Sy
 level: '1.7'
 normative: true
 review_status: accepted
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

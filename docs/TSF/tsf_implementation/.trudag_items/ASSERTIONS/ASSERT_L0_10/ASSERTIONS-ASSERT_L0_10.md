@@ -15,7 +15,6 @@ text: 'A system architecture diagram and documents regarding power consumption a
   '
 level: '1.10'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -6,7 +6,6 @@ text: 'Agile: The team shall follow Agile (Scrum) methodology for project manage
   '
 level: '1.15'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

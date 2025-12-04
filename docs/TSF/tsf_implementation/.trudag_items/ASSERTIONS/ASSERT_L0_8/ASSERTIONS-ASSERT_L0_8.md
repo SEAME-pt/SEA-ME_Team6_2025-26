@@ -16,7 +16,6 @@ text: 'A communication signal should be sent by the Rasp 5 and received in the S
   '
 level: '1.8'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

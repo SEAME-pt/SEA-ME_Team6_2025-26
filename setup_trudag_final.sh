@@ -295,8 +295,9 @@ while IFS= read -r line; do
             echo "    ✓ Created"
             link_count=$((link_count + 1))
         else
-            echo "    ✗ Failed: $output"
+            echo "    ✗ Failed: $(echo "$output" | head -1)"
             failed_links=$((failed_links + 1))
+            # Continue to next link instead of stopping
         fi
     fi
 done < "$GRAPH_DIR/graph.dot"

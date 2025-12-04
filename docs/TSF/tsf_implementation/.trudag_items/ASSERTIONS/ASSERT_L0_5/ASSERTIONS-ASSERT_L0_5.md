@@ -11,7 +11,6 @@ text: "When executed, the program successfully opens a Qt GUI window on the PiRa
 level: '1.5'
 normative: true
 review_status: accepted
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

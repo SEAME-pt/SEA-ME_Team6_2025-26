@@ -15,7 +15,6 @@ text: 'Repository contains all relevant source code, README, and requirements fi
   '
 level: '1.13'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

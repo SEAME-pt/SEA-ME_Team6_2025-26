@@ -15,7 +15,6 @@ references:
   path: ../expectations/EXPECT-L0-11.md
 - type: file
   path: ../evidences/EVID-L0-11.md
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

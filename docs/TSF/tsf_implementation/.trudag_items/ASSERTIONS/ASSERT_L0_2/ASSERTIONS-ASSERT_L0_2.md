@@ -15,7 +15,6 @@ text: 'All hardware components are correctly installed and operational
   '
 level: 1.2
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

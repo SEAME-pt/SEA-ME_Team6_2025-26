@@ -13,7 +13,6 @@ text: 'A system architecture diagram or document is present in the repository
   '
 level: '1.1'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

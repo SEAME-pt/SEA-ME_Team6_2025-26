@@ -10,7 +10,6 @@ references:
 - id: ASSERT-L0-8
   path: ../assertions/ASSERT-L0-8.md
   type: file
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

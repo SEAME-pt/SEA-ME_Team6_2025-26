@@ -15,7 +15,6 @@ text: 'A Scrum board exists with backlog items, sprint goals, and progress updat
   '
 level: '1.15'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

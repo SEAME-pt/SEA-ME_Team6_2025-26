@@ -12,7 +12,6 @@ text: 'Implement and test the changing from the old architecture to the new
   '
 level: '1.10'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

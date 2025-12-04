@@ -11,7 +11,6 @@ text: 'The system architecture shall be defined and documented to describe hardw
   '
 level: 1.1
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

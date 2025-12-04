@@ -6,7 +6,6 @@ text: 'Connect the Rasp5 to the STM 32 (bidirectional) using Can Protocol.
   '
 level: '1.8'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

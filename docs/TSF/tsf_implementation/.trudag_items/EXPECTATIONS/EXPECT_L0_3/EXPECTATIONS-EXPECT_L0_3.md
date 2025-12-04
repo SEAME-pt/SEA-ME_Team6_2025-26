@@ -11,7 +11,6 @@ text: 'Software Setup: The system shall successfully boot the Raspberry Pi 5 and
   '
 level: '1.3'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

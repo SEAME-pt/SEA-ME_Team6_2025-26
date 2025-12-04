@@ -8,7 +8,6 @@ text: 'TSF & Documentation: The project shall apply the Trustable Software Frame
   '
 level: '1.14'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -14,7 +14,6 @@ text: 'Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC
 level: '1.17'
 normative: true
 review_status: accepted
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

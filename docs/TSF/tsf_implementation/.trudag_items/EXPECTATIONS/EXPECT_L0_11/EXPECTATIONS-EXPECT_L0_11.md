@@ -5,7 +5,6 @@ text: "The Qt cluster UI shall **auto-start on boot** and display fullscreen on 
   car\u2019s built-in display.\n"
 level: '1.11'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

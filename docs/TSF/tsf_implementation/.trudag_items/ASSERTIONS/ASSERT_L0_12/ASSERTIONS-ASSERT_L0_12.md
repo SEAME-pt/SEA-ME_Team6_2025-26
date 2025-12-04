@@ -10,7 +10,6 @@ text: "Upon application launch, the wireless display should open a Qt GUI window
   \ Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).\n"
 level: '1.12'
 normative: true
-score: 0.5
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
