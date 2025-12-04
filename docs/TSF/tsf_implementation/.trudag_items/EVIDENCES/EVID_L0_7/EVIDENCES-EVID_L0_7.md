@@ -15,6 +15,11 @@ normative: true
 references:
 - type: file
   path: README.md
+<<<<<<< HEAD
+=======
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cross-compiler/README.
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 - type: file
   path: src/cross-compiler/Dockerfile
 - type: file
@@ -25,5 +30,10 @@ references:
   path: src/cross-compiler/toolchain.cmake
 - type: file
   path: docs/demos/system-architecture-cross.png
+<<<<<<< HEAD
+=======
+- type: file
+  path: src/cross-compiler/README.md
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 score: 1.0
 ---

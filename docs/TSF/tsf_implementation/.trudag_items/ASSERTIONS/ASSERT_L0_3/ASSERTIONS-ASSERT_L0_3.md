@@ -14,6 +14,10 @@ text: 'The PiRacer boots without system errors, and Qt development tools are acc
   '
 level: '1.3'
 normative: true
+<<<<<<< HEAD
+=======
+score: 0.5
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

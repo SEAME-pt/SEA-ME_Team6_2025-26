@@ -8,6 +8,10 @@ text: 'CI/CD: The project repository shall include a working GitHub Actions work
   '
 level: '1.16'
 normative: true
+<<<<<<< HEAD
+=======
+score: 0.5
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

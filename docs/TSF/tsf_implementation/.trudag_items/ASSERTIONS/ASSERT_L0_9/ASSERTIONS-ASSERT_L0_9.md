@@ -15,6 +15,10 @@ text: 'We should be able to install and use ThreadX on the Microcontroller (STM3
   '
 level: '1.9'
 normative: true
+<<<<<<< HEAD
+=======
+score: 0.5
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

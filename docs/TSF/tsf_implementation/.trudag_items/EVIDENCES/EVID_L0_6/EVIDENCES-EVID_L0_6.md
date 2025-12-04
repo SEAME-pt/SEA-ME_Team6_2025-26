@@ -31,6 +31,11 @@ references:
   path: docs/demos/Cluster-study.jpeg
 - type: file
   path: src/cluster/README.md
+<<<<<<< HEAD
+=======
+- type: url
+  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 - type: file
   path: README.md
 score: 1.0

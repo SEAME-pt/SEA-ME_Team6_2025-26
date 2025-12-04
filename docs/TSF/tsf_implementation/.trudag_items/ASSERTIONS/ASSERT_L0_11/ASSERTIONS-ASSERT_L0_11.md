@@ -10,6 +10,10 @@ text: "Upon application launch, the program successfully opens a Qt GUI window o
   \ AI Hat, DC motors, servo motor, display interface).\n"
 level: '1.11'
 normative: true
+<<<<<<< HEAD
+=======
+score: 0.5
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

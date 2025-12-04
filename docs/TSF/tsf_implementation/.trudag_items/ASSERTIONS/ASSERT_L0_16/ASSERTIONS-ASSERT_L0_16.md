@@ -15,6 +15,10 @@ text: 'At least one CI workflow successfully builds or tests the project upon co
 level: '1.16'
 normative: true
 review_status: accepted
+<<<<<<< HEAD
+=======
+score: 0.5
+>>>>>>> 9347e3550189f6f0c6af48867ebd2cca41518de4
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
