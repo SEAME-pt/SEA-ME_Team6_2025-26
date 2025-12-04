@@ -43,6 +43,9 @@ EXPECT-L0-1 - "System architecture is defined and documented
       - [Assembled car](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
     - [Assembled car2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
 EXPECT-L0-4 - "Driveable Car with Remote Control"
+    - [Car running](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Remote%20control%201%20evidence_EXPECT_L0_4.mp4)
+    - [Car running](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Remote%20control%202%20evidence_EXPECT_L0_4.mp4)
+
 
 **QT**:
   EXPECT-L0-5 - "Launch basic Qt on built-in display":
