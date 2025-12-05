@@ -4,16 +4,16 @@ SpeedProvider::SpeedProvider(QObject *parent)
     : QObject(parent), _currSpeed("0") {
 
     connect(&_timer, &QTimer::timeout, this, &SpeedProvider::updateSpeed);
-    _timer.start(100);
+    _timer.start(150);
 }
 
 void SpeedProvider::updateSpeed() {
     _speedValue += _increment;
 
-    if (_speedValue >= 40.0) {
+    if (_speedValue > 40.0) {
         _speedValue = 40.0;
         _increment = -_increment;
-    } else if (_speedValue <= 0.0) {
+    } else if (_speedValue < 0.0) {
         _speedValue = 0.0;
         _increment = -_increment;
     }
