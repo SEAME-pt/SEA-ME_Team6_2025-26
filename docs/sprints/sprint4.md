@@ -45,16 +45,15 @@
   - https://github.com/user-attachments/assets/e47dfee6-8d20-4a2b-88ba-0ed2be615f46
   - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
   - ![can_communication_test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-test.gif)
+  
   - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS";
-  - [ThreadX test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/ThreadX_Running.gif)
+  - ![ThreadX test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/ThreadX_Running.gif)
 
 - **Docs updated**:
-  - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
-  - [CAN test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
   - EXPECT-L0-6 - "The Qt GUI shall display static graphical elements":
   - EXPECT-L0-11 - "QT cluster UI **auto-start on boot** on display":
-  - [Cluster flow](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Flow.jpg)
-  - [Cluster current-layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint4.jpeg)
+  - ![Cluster flow](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Flow.jpg)
+  - ![Cluster current-layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint4.jpeg)
 
 - **Code/Tests**:
   - EXPECT-L0-10 - "Implement new architecture.":
@@ -62,6 +61,8 @@
   - EXPECT-L0-12 - "Wireless DCI display":
   - [Motors stress test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
 
+  - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  - [CAN test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
 
 ---
 
