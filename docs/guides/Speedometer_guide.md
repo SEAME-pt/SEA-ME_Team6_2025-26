@@ -46,6 +46,3 @@ In this case, I will choose the PA8 (D9) with its timer channel set to TIM1_CH1.
   3. Set Prescaler so timer resolution fits speed range.
   4. Enable NVIC interrupt for TIM1.
   5. Generate code and verify if it compiles correctly.
-
-# 4 Step - Implement Pulse Measurement Logic
-  # TO BE CONTINUED
