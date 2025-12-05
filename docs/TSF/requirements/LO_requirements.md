@@ -49,6 +49,166 @@ The PiRacer Warm-Up project aims to familiarize students with:
 
 ---
 
+## Evidence Details
+
+### L0-1: System Architecture
+**EXPECT-L0-1** — System architecture is defined and documented
+
+**Demos/Images:**
+- [assembled-car1.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
+- [assembled-car2.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
+- [eletric-scheme.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png)
+- [Validation-of-energy-layout-sprint3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
+
+**Guides/Docs:**
+- [Power Consumption Analysis.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md)
+
+### L0-2: Hardware Assembly
+**EXPECT-L0-2** — Hardware Assembly
+
+**Artifacts/Images:**
+- [3d-car.jpg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car.jpg)
+- [3d-car2.jpg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car2.jpg)
+- [3d-car3.jpg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car3.jpg)
+
+### L0-3: Software Setup
+**EXPECT-L0-3** — Software Setup (capable of running Qt applications)
+
+**Guides/Docs:**
+- [AGL_Installation_Guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md)
+- [AGL and ThreadX benefits Guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL%20and%20ThreadX%20benefits%20Guide.md)
+
+**Repository/Code:**
+- [src/cluster (Qt app)](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+
+### L0-4: Remote Control
+**EXPECT-L0-4** — Driveable Car with Remote Control (Hardware + Software)
+
+**Evidence/Guides:**
+- [Install and Test Joystick in AGL.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
+
+### L0-5: Qt Application Launch
+**EXPECT-L0-5** — Launch basic Qt on built-in display
+
+**Demos/Images:**
+- [first_qt_app.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg)
+
+**Repository/Code:**
+- [src/cluster (Qt app)](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+
+**Guides:**
+- [QML-guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+
+### L0-6: Qt GUI Static Elements
+**EXPECT-L0-6** — Qt GUI shall display static graphical elements
+
+**Demos/Images:**
+- [mockup1.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
+- [mockup2.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
+- [mockup3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
+- [mockup4.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
+- [mockup5.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
+- [mockup6.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
+- [Cluster-display-sprint3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint3.jpeg)
+- [Cluster-mockup-sprint3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpeg)
+- [Cluster-study.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg)
+
+**Guides:**
+- [QML-guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+- [UI Design README](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/ui_design/README.md)
+
+### L0-7: Qt Crosscompilation
+**EXPECT-L0-7** — QT Crosscompilation should be achieved
+
+**Demos/Images:**
+- [system-architecture-cross.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/system-architecture-cross.png)
+
+**Repository/Code:**
+- [src/cross-compiler (Dockerfile, toolchain, README)](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cross-compiler)
+
+**Guides:**
+- [Crosscompiling guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/fix-qt-app-minor-changes/src/cross-compiler)
+
+### L0-8: CAN Protocol Communication
+**EXPECT-L0-8** — Use CAN protocol to connect Rasp5 ↔ STM32 (bidirectional)
+
+**Demos/Images:**
+- [CANbus Scheme Updated.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CANbus%20Scheme%20Updated.png)
+- [CAN-layout-sprint3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-layout-sprint3.jpeg)
+- [CANFrame.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANFrame.png)
+- [CANsignal.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANsignal.png)
+- [CANtopology.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology.png)
+- [CANtopology2.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology2.png)
+- [Half-duplex-communication.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png)
+
+**Guides:**
+- [CAN-overview.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-overview.md)
+- [CAN-test-guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md)
+- [CAN-explanation.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-explanation.md)
+
+### L0-9: ThreadX RTOS
+**EXPECT-L0-9** — ThreadX on STM32 as RTOS
+
+**Guides:**
+- [ThreadX_Installation_Guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadX_Installation_Guide.md)
+- [AGL and ThreadX benefits Guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL%20and%20ThreadX%20benefits%20Guide.md)
+
+### L0-10: New Architecture Implementation
+**EXPECT-L0-10** — Implement new architecture (without expansion board)
+
+**Artifacts/Demos:**
+- [Validation-of-energy-layout-sprint1.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint1.jpeg)
+- [Validation-of-energy-layout-sprint2.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg)
+- [Validation-of-energy-layout-sprint3.jpeg](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
+- [eletric-scheme.png](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png)
+
+### L0-11: Qt Cluster Auto-start
+**EXPECT-L0-11** — Qt cluster UI auto-start on boot (fullscreen)
+
+**Artifacts/References:**
+- [src/cluster (app, autostart configs)](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+
+### L0-12: Wireless Display
+**EXPECT-L0-12** — DCI display (wireless) launching Qt
+
+### L0-13: Project & GitHub Setup
+**EXPECT-L0-13** — Project & GitHub setup
+
+**Guides:**
+- [github-guidelines.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-guidelines.md)
+- [github-actions-guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md)
+
+### L0-14: TSF & Documentation
+**EXPECT-L0-14** — TSF & Documentation
+
+**Guides:**
+- [WhatsTSF.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/WhatsTSF.md)
+
+### L0-15: Agile Methodology
+**EXPECT-L0-15** — Agile (Scrum)
+
+**Artifacts:**
+- [dailys_warmups.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md)
+- [Sprints folder](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints)
+- [Project board](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/projects)
+
+### L0-16: CI/CD
+**EXPECT-L0-16** — CI/CD (GitHub Actions)
+
+**Artifacts:**
+- [github-actions-guide.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md)
+- [tsf-validate.yml](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/tsf-validate.yml)
+
+### L0-17: AI Integration
+**EXPECT-L0-17** — Introduce AI / GENAI / ML / DL
+
+**Guides/Resources:**
+- [genAI-pair-programming-guidelines.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md)
+- [Generative-AI-and-LLMs-for-Dummies.pdf](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+- [External: Generative AI for Beginners](https://github.com/fprezado/generative-ai-for-beginners)
+
+---
+
 ## Traceability and Verification
 
 Each Level 0 requirement shall be traceable to:
