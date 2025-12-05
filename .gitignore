@@ -14,3 +14,6 @@
 cluster/cluster-qml-teste/
 HelloQt6
 HelloQt6Qml
+
+build/
+build

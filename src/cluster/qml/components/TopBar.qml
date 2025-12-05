@@ -1,8 +1,9 @@
-import QtQuick 6.7
-import QtQuick.Controls 6.7
-import QtQuick.Layouts 6.7
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
+import QtQuick.Effects
 
 Item {
     id: topBar
@@ -19,6 +20,8 @@ Item {
         height: 32
         anchors.horizontalCenter: parent.horizontalCenter
         color: BaseTheme.blackLight
+        bottomLeftRadius: 16
+        bottomRightRadius: 16
 
         RowLayout {
             id: row
@@ -29,6 +32,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 color: "transparent"
+
                 Text {
                     text: clock.currDate
                     font.pixelSize: 14
@@ -56,4 +60,16 @@ Item {
             }
         }
     }
+
+    MultiEffect {
+        source: base
+        anchors.fill: base
+        shadowEnabled: true
+        shadowColor: "#90ffffff"
+        shadowScale: 1
+        shadowOpacity: 0.8
+        shadowVerticalOffset: 6
+        shadowBlur: 1
+    }
+
 }
