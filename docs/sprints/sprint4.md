@@ -58,7 +58,7 @@
   - ### Sprint goal achieved!
 
 - ## **To improve**: 
-  - ### Increase the ambition of the total points of the sprint!
+  - ### Create a robust tests for the project!
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 4](https://github.com/orgs/SEAME-pt/projects/89/views/10)
