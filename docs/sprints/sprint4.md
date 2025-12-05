@@ -1,59 +1,67 @@
 # 🏁 Sprint 4 — (24/11/2025 → 05/12/2025)
 
-> ## **Sprint Goal**: Update team's knowledge documentation foundations & Assemble and validate the new system’s hardware.
+> ## **Sprint Goal**: Assemble and validate the new system’s hardware & Update team's knowledge documentation foundations.
 
 ---
 
 ## 📌 Epics
 - #### **Epic** — Team Knowlegde Update/Status Point - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
-  - [ ] Approve and apply **documentation tutorials** 
-  - [ ] Review and approve **documentation templates and structure**
-  - [ ] Spread knowledge among team
+  - [x] Approve and apply **documentation tutorials** 
+  - [x] Review and approve **documentation templates and structure**
+  - [x] Spread knowledge among team
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-  - [ ] Project Management Overview 
+  - [x] Project Management Overview 
 - #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [ ] Assemble Vehicle Layout
-  - [ ] Test New Power Distribution and Validate It
-  - [ ] Component Testing: 
-  - [ ]  **Servo motors ↔ Microcontroller**
-  - [ ]  **DC motor ↔ Microcontroller**
+  - [x] Assemble Vehicle Layout
+  - [x] Test New Power Distribution and Validate It
+  - [x] Component Testing: 
+  - [x]  **Servo motors ↔ Microcontroller**
+  - [x]  **DC motor ↔ Microcontroller**
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Remote display auto-start Qt app
-  - [ ] Test and validate motors with script
+  - [x] Remote display auto-start Qt app
+  - [x] Test and validate motors with script
 
 ---
 
 ## 📈 Actual Progress
 
-- ✅ Done:
+- ## ✅ Done: Sprint goal completed!! New layout architecture implemented successfully!! 🎉
+- ## ✅ Sprint 4 points: 44/44
 
-- ❌ Undone:
+- ❌ Undone: 
 ---
 
 ## ✅ Outcomes
+
 - **Delivered**:
+  - Hardware architecture validated! (Under stress - all components on)
+  - CAN communication test done!
+  - Display with auto-start running.
  
 - **Demos**:
+  - EXPECT-L0-10 - "Implement new architecture.":
+  - https://github.com/user-attachments/assets/e47dfee6-8d20-4a2b-88ba-0ed2be615f46
+ 
+  - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
+  - ![can_communication_test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-test.gif)
       
 - **Docs updated**:
-
-  **GEN AI**
-  EXPECT-L0-17 - "Introduce AI in the project":
- - [GEN AI guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md)
-- [Filipe Prezado guide] (https://github.com/fprezado/generative-ai-for-beginners)
-- [GEN AI guide for dummies]((https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+  - [CAN test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+  - [Cluster layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Flow.jpg)
+  - [Motors stress test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
 
 ---
 
-## 🔎 Retrospective
-- **Went well**:
-  - 
+# 🔎 Retrospective
+- ## **Went well**:
+  - ### All points of the sprint were achieved! 44/44
+  - ### Sprint goal achieved!
 
-- **To improve**: 
-  - 
+- ## **To improve**: 
+  - ### Increase the ambition of the total points of the sprint!
 
 ## 🔗 Useful Links
-- Sprint board/view: [Sprint 4](https://github.com/orgs/SEAME-pt/projects/89/views/10?visibleFields=%5B%22Title%22%2C%22Assignees%22%2C%22Status%22%2C%22Linked+pull+requests%22%2C%22Sub-issues+progress%22%2C%22Labels%22%2C229970248%5D&filterQuery=label%3A%22Sprint+4%22)
+- Sprint board/view: [Sprint 4](https://github.com/orgs/SEAME-pt/projects/89/views/10)
 
 ## TSF Useful: 
   EXPECT-L0-1 - "System architecture is defined and documented":
