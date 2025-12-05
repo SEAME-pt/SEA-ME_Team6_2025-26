@@ -1,77 +1,59 @@
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick 6.7
+import QtQuick.Controls 6.7
+import QtQuick.Layouts 6.7
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
 
 Item {
     id: topBar
-    Layout.preferredHeight: 16
+    Layout.preferredHeight: 40
     Layout.fillWidth: true
 
     TimeProvider {
         id: clock
     }
-    /*SystemStatus {
-        id: system
-    }*/
 
-    // LEFT BLOCK
-    Item {
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        width: 60
-        height: parent.height
+    Rectangle {
+        id: base
+        width: parent.width / 2
+        height: 32
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: BaseTheme.blackLight
 
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: -2
+        RowLayout {
+            id: row
+            anchors.fill: parent
+            spacing: 0
 
-            Text {
-                text: clock.currTime
-                font.pixelSize: 14
-                font.bold: true
-                color: "white"
-            }
-            Text {
-                text: clock.currDate
-                font.pixelSize: 12
-                color: "white"
-            }
-        }
-    }
-
-    // CENTER BLOCK
-    Text {
-        text: clock.currTime
-        font.pixelSize: 14
-        color: "white"
-        anchors.centerIn: parent
-    }
-
-    // RIGHT BLOCK
-    Item {
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height
-        anchors.rightMargin: 16
-
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 4
-
-            /*Image {
-                source: system.batteryIconSource
-                width: 16
-                height: 16
-                fillMode: Image.PreserveAspectFit
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                Text {
+                    text: clock.currDate
+                    font.pixelSize: 14
+                    color: "white"
+                    anchors.centerIn: parent
+                }
             }
 
-            Text {
-                text: system.currBatteryLvl + "%"
-                font.pixelSize: 10
-                color: "white"
-            }*/
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                Text {
+                    text: clock.currTime
+                    font.pixelSize: 14
+                    color: "white"
+                    anchors.centerIn: parent
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+            }
         }
     }
 }
