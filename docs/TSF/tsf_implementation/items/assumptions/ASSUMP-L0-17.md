@@ -11,11 +11,14 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-17.md.
+text: 'The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry
+  Pi 5 before AI model deployment testing begins.'
 ---
+The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry Pi 5 before AI model deployment testing begins.
 
-Assumption related to EXPECT-L0-17.md.
+Acceptance criteria / notes:
+- Hailo AI Hat is physically installed on the Raspberry Pi 5.
+- Hailo runtime and drivers are installed and operational.
+- Pre-trained AI models (if required) are available or documented.
 
-Seeded from the expectation header: Introduce AI in the project
-
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: AI integration verification for `EXPECT-L0-17` depends on Hailo AI Hat hardware availability and driver installation, which are external dependencies.

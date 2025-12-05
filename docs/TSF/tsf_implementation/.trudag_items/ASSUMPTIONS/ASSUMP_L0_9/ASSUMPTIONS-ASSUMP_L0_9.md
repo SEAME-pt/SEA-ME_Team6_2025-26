@@ -1,21 +1,20 @@
 ---
-id: ASSUMP-L0-9
+id: ASSUMP_L0_9
 header: 'Assumption: ThreadX should be used on the Microcontroller (STM32) as a...'
 level: '1.9'
 normative: true
-references:
-- id: EXPECT-L0-9
-  path: ../expectations/EXPECT-L0-9.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-9.md.
+text: 'The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK
+  or JTAG) before ThreadX firmware verification begins.'
 ---
+The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK or JTAG) before ThreadX firmware verification begins.
 
-Assumption related to EXPECT-L0-9.md.
+Acceptance criteria / notes:
+- ST-LINK debugger hardware is available and connected to the STM32.
+- STM32CubeProgrammer or OpenOCD is installed on the development host.
+- Firmware flashing and debugging procedures are documented.
 
-Seeded from the expectation header: ThreadX should be used on the Microcontroller (STM32) as a...
-
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: ThreadX verification for `EXPECT-L0-9` assumes that STM32 programming infrastructure (debugger, flashing tools) is already available and operational.

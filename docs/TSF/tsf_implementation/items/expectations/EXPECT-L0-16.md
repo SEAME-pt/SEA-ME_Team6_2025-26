@@ -1,11 +1,7 @@
 ---
 id: EXPECT-L0-16
-header: CI/CD
-text: 'CI/CD: The project repository shall include a working GitHub Actions workflow
-
-  for continuous integration (CI) and continuous delivering (CD).
-
-  '
+header: Continuous integration active
+text: The project repository includes automated CI/CD pipelines for building and testing code changes.
 level: '1.16'
 normative: true
 references:
@@ -16,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

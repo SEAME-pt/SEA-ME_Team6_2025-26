@@ -1,11 +1,7 @@
 ---
 id: EXPECT-L0-13
-header: Project & GitHub setup
-text: 'Project & GitHub setup: The team shall set up a GitHub repository hosting the
-
-  project code, documentation, and2 version control history.
-
-  '
+header: Version control established
+text: The project uses a GitHub repository with proper structure and version control practices.
 level: '1.13'
 normative: true
 references:
@@ -16,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

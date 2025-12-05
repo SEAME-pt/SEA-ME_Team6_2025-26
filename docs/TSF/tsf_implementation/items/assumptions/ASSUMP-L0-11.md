@@ -11,11 +11,15 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 score: 0.6
-text: Assumption related to EXPECT-L0-11.md.
+text: 'Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display
+  receiver) use systemd-based init systems that support service auto-start configuration
+  before Qt application boot automation testing begins.'
 ---
+Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display receiver) use systemd-based init systems that support service auto-start configuration before Qt application boot automation testing begins.
 
-Assumption related to EXPECT-L0-11.md.
+Acceptance criteria / notes:
+- Systemd is installed and operational on both Raspberry Pi 5 and Raspberry Pi 4.
+- Service file creation and enabling mechanisms are documented for both systems.
+- Display managers are configured for auto-login on both Rasp5 and Rasp4.
 
-Seeded from the expectation header: The Qt cluster UI shall **auto-start on boot** and display...
-
-Please refine this assumption with project-specific details (hardware availability, toolchain, datasets, timelines, etc.).
+Rationale: Auto-start verification for `EXPECT-L0-11` assumes systemd availability on both Raspberry Pi 5 (Qt cluster host) and Raspberry Pi 4 (wireless display receiver). This assumption makes the dual-system init configuration dependency explicit.

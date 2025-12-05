@@ -1,18 +1,7 @@
 ---
 id: ASSERT-L0-2
-header: All hardware components are correctly installed and operational
-text: 'All hardware components are correctly installed and operational
-
-  The PiRacer can power on and communicate with the display and motors
-
-  System architecture documentation maps components to implemented modules: The system
-  architecture documentation (diagrams and descriptive documents) shall provide a
-  clear mapping between the listed hardware and software components and their implementation
-  (e.g
-
-  Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).
-
-  '
+header: Hardware components assembled
+text: The demonstrator car hardware assembly is complete with all components physically installed and connected according to the documented architecture.
 level: 1.2
 normative: true
 references:
@@ -24,4 +13,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

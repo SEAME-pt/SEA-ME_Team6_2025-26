@@ -1,9 +1,7 @@
 ---
 id: EXPECT-L0-15
-header: Agile
-text: 'Agile: The team shall follow Agile (Scrum) methodology for project management.
-
-  '
+header: Agile methodology adopted
+text: The team follows Agile Scrum practices for iterative development and project management.
 level: '1.15'
 normative: true
 references:
@@ -14,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

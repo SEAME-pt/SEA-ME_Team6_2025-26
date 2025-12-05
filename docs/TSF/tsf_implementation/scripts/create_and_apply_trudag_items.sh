@@ -23,12 +23,12 @@ else
 fi
 
 # Ensure the dot DB exists in docs/TSF and is initialised there.
-# This creates `docs/TSF/.dotstop.dot` which we prefer as the canonical DB location.
+# This creates `docs/TSF/.needs.dot` which we prefer as the canonical DB location.
 TSF_PARENT_DB_DIR="$ROOT/docs/TSF"
-DOTSTOP_PATH="$TSF_PARENT_DB_DIR/.dotstop.dot"
+DOTSTOP_PATH="$TSF_PARENT_DB_DIR/.needs.dot"
 if [ ! -f "$DOTSTOP_PATH" ]; then
   echo "Initializing trudag DB in $TSF_PARENT_DB_DIR"
-  if (cd "$TSF_PARENT_DB_DIR" && command -v trudag >/dev/null 2>&1 && trudag init); then
+  if (cd "$TSF_PARENT_DB_DIR" && command -v trudag >/dev/null 2>&1 && trudag --needs init); then
     echo "trudag DB initialised at $DOTSTOP_PATH"
   else
     echo "Warning: could not run 'trudag init' in $TSF_PARENT_DB_DIR; creating empty dot file instead"
@@ -37,10 +37,10 @@ if [ ! -f "$DOTSTOP_PATH" ]; then
   fi
 fi
 
-# Create a symlink at repository root `.dotstop.dot` pointing to the canonical TSF DB
+# Create a symlink at repository root `.needs.dot` pointing to the canonical TSF DB
 # so calls to trudag that search upward from other CWDs find the DB.
-if [ ! -f "$ROOT/.dotstop.dot" ]; then
-  ln -s "$DOTSTOP_PATH" "$ROOT/.dotstop.dot" || true
+if [ ! -f "$ROOT/.needs.dot" ]; then
+  ln -s "$DOTSTOP_PATH" "$ROOT/.needs.dot" || true
 fi
 
 # Create missing items
@@ -66,7 +66,7 @@ for md in "$TSF_ROOT/items"/*/*.md; do
   fi
   name=$(echo "$id" | sed 's/[^A-Za-z0-9_]/_/g')
   item_key="${PREFIX}-${name}"
-  if (cd "$TSF_ROOT" && trudag manage show-item "$item_key") >/dev/null 2>&1; then
+  if (cd "$TSF_ROOT" && trudag --needs manage show-item "$item_key") >/dev/null 2>&1; then
     echo "Item exists: $item_key — skipping"
     continue
   fi
@@ -75,7 +75,7 @@ for md in "$TSF_ROOT/items"/*/*.md; do
   mkdir -p "$(dirname "$item_dir")"
   mkdir -p "$item_dir"
   cp "$md" "$item_dir/item.md"
-  if (cd "$TSF_ROOT" && trudag manage create-item "$PREFIX" "$name" "$item_dir"); then
+  if (cd "$TSF_ROOT" && trudag --needs manage create-item "$PREFIX" "$name" "$item_dir"); then
     echo "Created: $item_key"
     missing_count=$((missing_count+1))
   else
@@ -114,7 +114,7 @@ if [ -f "$GRAPH" ]; then
     parent_key="${parent_prefix}-${parent_name}"
     child_key="${child_prefix}-${child_name}"
     echo "Creating link: $parent_key -> $child_key"
-    if (cd "$TSF_ROOT" && trudag manage create-link "$parent_key" "$child_key"); then
+    if (cd "$TSF_ROOT" && trudag --needs manage create-link "$parent_key" "$child_key"); then
       echo "Linked: $parent_key -> $child_key"
     else
       echo "Failed link: $parent_key -> $child_key" >&2
@@ -126,6 +126,6 @@ fi
 
 # Run lint
 echo "Running: trudag manage lint"
-(cd "$TSF_ROOT" && trudag manage lint) || echo "lint finished with issues"
+(cd "$TSF_ROOT" && trudag --needs manage lint) || echo "lint finished with issues"
 
 echo "All done. Backup: $BACKUP. Created: $missing_count failed: $failed_count"

@@ -1,18 +1,7 @@
 ---
 id: ASSERT-L0-15
-header: A Scrum board exists with backlog items, sprint goals, and progress updates
-text: 'A Scrum board exists with backlog items, sprint goals, and progress updates
-
-  Team conducts dailys, stand-ups, sprint planning and sprint retrospectives
-
-  System architecture documentation maps components to implemented modules: The system
-  architecture documentation (diagrams and descriptive documents) shall provide a
-  clear mapping between the listed hardware and software components and their implementation
-  (e.g
-
-  Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).
-
-  '
+header: Agile processes active
+text: The team follows Agile development practices including sprint planning, daily standups, and retrospectives as documented in the sprint records.
 level: '1.15'
 normative: true
 references:
@@ -24,4 +13,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

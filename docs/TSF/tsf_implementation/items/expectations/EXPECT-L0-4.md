@@ -1,14 +1,7 @@
 ---
 id: EXPECT-L0-4
-header: Driveable Car with Remote Control
-text: 'Driveable Car with Remote Control/Driveable Car Model (Hardware + Software):
-  The
-
-  PiRacer shall support remote control functionality to operate the motors
-
-  (steering and propulsion).
-
-  '
+header: Remote control functional
+text: The demonstrator car responds to remote control inputs for steering and throttle control.
 level: '1.4'
 normative: true
 references:
@@ -19,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

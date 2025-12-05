@@ -1,21 +1,13 @@
 ---
-id: EVID-L0-9
-header: 'Evidence: Software test including Visual inspection of the message bidirectional
-  transmission. - ThreadX should be used on the Microcontroller (STM32) as a RTOS.'
-text: This evidence item collects repository artifacts demonstrating bidirectional
-  message transmission test results and related guides.
+id: EVID_L0_9
+header: ThreadX implementation documented
+text: The repository contains ThreadX installation guide, presentations, and demonstration images showing RTOS operation on STM32.
 level: '1.9'
 normative: true
 references:
 - type: file
-  path: ../../../../guides/ThreadX_Installation_Guide.md
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadX_Installation_Guide.md
+  path: docs/guides/ThreadX_Installation_Guide.md
 - type: file
-  path: ../../../../guides/AGL and ThreadX benefits Guide.md
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL
-    and ThreadX benefits Guide.md
+  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
 score: 1.0
 ---
-

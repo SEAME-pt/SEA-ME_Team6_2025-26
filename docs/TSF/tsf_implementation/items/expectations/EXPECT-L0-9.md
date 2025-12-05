@@ -1,11 +1,7 @@
 ---
 id: EXPECT-L0-9
-header: ThreadX should be installed and used on the Microcontroller (STM32)
-text: 'ThreadX should be used on the Microcontroller (STM32) as a RTOS, receiving
-
-  signals from the speedometer and controlling the servos and DC motor.
-
-  '
+header: Real-time OS operational
+text: The STM32 microcontroller runs the ThreadX real-time operating system for control tasks.
 level: '1.9'
 normative: true
 references:
@@ -16,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

@@ -1,13 +1,9 @@
 ---
-id: ASSUMP-L0-1
+id: ASSUMP_L0_1
 header: 'Assumption: Availability of hardware and demonstrator components for system
   architecture validation'
 level: '1.1'
 normative: true
-references:
-- id: EXPECT-L0-1
-  path: ../expectations/EXPECT-L0-1.md
-  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -17,7 +13,6 @@ text: 'Assumption: The project team will provide the required hardware and demon
   AI Hat, DC motors, servo motor, display interface) and these components will be
   operational in the integration environment during verification activities.'
 ---
-
 Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface) and these components will be operational in the integration environment during verification activities.
 
 Acceptance criteria / notes:

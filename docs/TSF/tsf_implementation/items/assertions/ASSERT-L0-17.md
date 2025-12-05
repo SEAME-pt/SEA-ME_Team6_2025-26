@@ -1,16 +1,7 @@
 ---
 id: ASSERT-L0-17
-header: 'Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC'
-text: 'Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC
-
-  System architecture documentation maps components to implemented modules: The system
-  architecture documentation (diagrams and descriptive documents) shall provide a
-  clear mapping between the listed hardware and software components and their implementation
-  (e.g.
-
-  Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface).
-
-  '
+header: AI tools integrated
+text: The team uses AI-assisted development tools including GitHub Copilot and follows the documented guidelines for AI pair programming practices.
 level: '1.17'
 normative: true
 references:
@@ -19,9 +10,7 @@ references:
 - type: file
   path: ../evidences/EVID-L0-17.md
 review_status: accepted
-review_score: null
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

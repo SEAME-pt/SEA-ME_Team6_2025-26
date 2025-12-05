@@ -1,9 +1,7 @@
 ---
 id: EXPECT-L0-7
-header: QT Crosscompilation should be achieved
-text: 'QT Crosscompilation should be achieved using docker or other solution.
-
-  '
+header: Cross-compilation capability exists
+text: The Qt application can be cross-compiled for the target hardware architecture.
 level: '1.7'
 normative: true
 references:
@@ -14,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-

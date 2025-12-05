@@ -1,39 +1,22 @@
 ---
-id: EVID-L0-2
-header: 'Evidence: Physical inspection and functional test. - Hardware Assembly'
-text: 'This evidence item collects repository artifacts, sprint reports and demo images
-  that demonstrate the requirement is met.
-
-  '
+id: EVID_L0_2
+header: Hardware assembly documented
+text: The repository contains photographs and documentation showing the assembled demonstrator car hardware.
 level: '1.2'
 normative: true
 references:
 - type: file
-  path: ../../../../docs/demos/3d-car.jpg
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car.jpg
+  path: docs/demos/3d-car.jpg
 - type: file
-  path: ../../../../docs/demos/3d-car2.jpg
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car2.jpg
+  path: docs/demos/3d-car2.jpg
 - type: file
-  path: ../../../../docs/demos/3d-car3.jpg
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car3.jpg
+  path: docs/demos/3d-car3.jpg
 - type: file
-  path: ../../../../demos/eletric-scheme.png
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
+  path: docs/demos/eletric-scheme.png
 - type: file
-  path: ../../../../demos/Validation-of-energy-layout-sprint3.jpeg
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg
+  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
 - type: file
-  path: ../../../../guides/Power Consumption Analysis.md
-- type: url
-  path: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power
-    Consumption Analysis.md
+  path: docs/guides/Power Consumption Analysis.md
 score: 1.0
 ---
-
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

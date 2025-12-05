@@ -1,14 +1,7 @@
 ---
 id: EXPECT-L0-2
-header: Hardware Assembly
-text: 'Hardware Assembly: Fully assemble the PiRacer robot, including the Raspberry
-  Pi
-
-  5, Hailo AI Hat, DC motors, servo motor, and display interface (first with the
-
-  old architecture. Then with the new one).
-
-  '
+header: Hardware assembly complete
+text: The demonstrator car hardware is fully assembled with all components correctly connected and operational.
 level: '1.2'
 normative: true
 references:
@@ -19,4 +12,3 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
-
