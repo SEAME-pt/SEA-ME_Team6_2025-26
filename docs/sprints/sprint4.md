@@ -48,6 +48,8 @@
 - **Docs updated**:
   - [CAN test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
   - [Cluster layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Flow.jpg)
+  - [Motors stress test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
+
 ---
 
 # 🔎 Retrospective
