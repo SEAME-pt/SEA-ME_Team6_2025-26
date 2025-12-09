@@ -46,8 +46,13 @@ Now lets see what **VISS** is.
 **VISS(Vehicle information Service Specification)** its an oped-standard from covesa for accessing data throug a **web style API**.
 It will allow you to read signals suchs as **Speed**, **battery state**, **GPS**, **Doorlock status**, etc.
 
-And now you ask me what the main purpose of **VISS** ?  **VISS** main porpuse is to solve the case where a dev would have to have to learn every car proprietary system and as you can tell that's not optimal so **VISS** gives vehicles a common way to share signals with applications.
-
+Other cool things you can do with **VISS**:
+  - Stream Live driving data to the laptop.
+  - Send logs to the cloud.
+  - Provide web dashboards.
+  - Enable remote monitoring during races.
+  
+And now you ask me what the main purpose of **VISS** ?  **VISS** main porpuse is to solve the case where a dev would have to learn every car proprietary system and as you can tell that's not optimal so **VISS** gives vehicles a common way to share signals with applications.
 
 Now that we know what **VSS** and **VISS** i can show you an exame on how covesa really works.
 
@@ -57,5 +62,15 @@ below im gonna give an example of a data flow to show you how Covesa works:
 
 1. **Sensors/ECUs** generate raw data.
 2. **VSS** gives the data standardized name & structures.
-3. **MiddleWare(uProtocol in our case)** exposes signals via VISS.
+3. **MiddleWare(uProtocol in our case)** exposes signals via **VISS**.
 4. Apps subscribe , read or process the signals.
+
+This architecture allows any compliant app to work with any compliant vehicle.
+
+# Benefits of Covesa
+  - **Interoperability** - Same app on different Vehicles.
+  - **Scalability** - Easier integration of new modules.
+  - **Developer friendly** - Web technologies.
+  - **Open ecosystem** - community driven innovation.
+  - **Faster prototyping** - Less time reinventing data interfaces.
+
