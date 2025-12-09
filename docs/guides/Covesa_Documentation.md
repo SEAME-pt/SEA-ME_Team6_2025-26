@@ -40,4 +40,22 @@ Vehicle:
       RPM:
         type: int
         unit: rpm
+```
+Now lets see what **VISS** is. 
 
+**VISS(Vehicle information Service Specification)** its an oped-standard from covesa for accessing data throug a **web style API**.
+It will allow you to read signals suchs as **Speed**, **battery state**, **GPS**, **Doorlock status**, etc.
+
+And now you ask me what the main purpose of **VISS** ?  **VISS** main porpuse is to solve the case where a dev would have to have to learn every car proprietary system and as you can tell that's not optimal so **VISS** gives vehicles a common way to share signals with applications.
+
+
+Now that we know what **VSS** and **VISS** i can show you an exame on how covesa really works.
+
+# How Covesa Works
+
+below im gonna give an example of a data flow to show you how Covesa works:
+
+1. **Sensors/ECUs** generate raw data.
+2. **VSS** gives the data standardized name & structures.
+3. **MiddleWare(uProtocol in our case)** exposes signals via VISS.
+4. Apps subscribe , read or process the signals.
