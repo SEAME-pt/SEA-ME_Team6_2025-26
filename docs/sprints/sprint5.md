@@ -1,6 +1,6 @@
 # 🏁 Sprint 5 — (09/12/2025 → 19/12/2025)
 
-> ## **Sprint Goal**:  Estabelish and Validate our RDAF(Real Data Architecture Flow)
+> ## **Sprint Goal**:  Establish and Validate our RDAF(Real Data Architecture Flow)
 ---
 
 ## 📌 Epics
@@ -19,10 +19,8 @@
   - [ ] Design and Establish CAN Protocol (13)
   - [ ] Initialize Data Processing with ThreadX (13)
   - [ ] Integrate Data from Multiple Sensors (5)
-
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [ ] UPROTOCOL, COVESA and KUKSA documentation (13)
-
 - #### **Epic** - Testing and Validate Software - [103](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/103)
   - [ ] Test Knowledge (Integration and Unit) (21) 
 ---
