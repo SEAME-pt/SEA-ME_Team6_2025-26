@@ -24,23 +24,9 @@ Rectangle {
 
             LeftScreen {}
 
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Rectangle {
-                    anchors.fill: parent
-                    color: baseScreen.color
-                }
-            }
+            CenterScreen {}
 
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Rectangle {
-                    anchors.fill: parent
-                    color: baseScreen.color
-                }
-            }
+            RightScreen {}
         }
 
         // Bottom bar

@@ -2,14 +2,18 @@
     <qresource prefix="/">
         <!-- QML -->
         <file>qml/main.qml</file>
+        
         <!-- QML Screens -->
         <file>qml/screens/BaseScreen.qml</file>
         <file>qml/screens/LeftScreen.qml</file>
 	<file>qml/screens/CenterScreen.qml</file>
 	<file>qml/screens/RightScreen.qml</file>
+	
         <!-- QML Components -->
         <file>qml/components/TopBar.qml</file>
         <file>qml/components/BottomBar.qml</file>
+        <file>qml/components/SpeedGauge.qml</file>
+        
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
 
