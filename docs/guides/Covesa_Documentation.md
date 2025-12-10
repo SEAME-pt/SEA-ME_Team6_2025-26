@@ -67,6 +67,49 @@ below im gonna give an example of a data flow to show you how Covesa works:
 
 This architecture allows any compliant app to work with any compliant vehicle.
 
+# Implementing Covesa
+
+How do we implement Covesa in our project ? Covesa is not a software that we can simply install, we just implement **VSS** tree so that our midleware can use it.
+so below is an example of how to implement **VSS**.
+
+**Define Custom VSS tree**
+  Create a YAML file, in our case we will name it **VSS.yaml**.
+  
+  ```
+  Vehicle:
+  Speed:
+    type: int
+    unit: km/h
+    description: "Current vehicle speed measured from speedometer"
+
+Chassis:
+  SteeringWheel:
+    Angle:
+      type: float
+      unit: degrees
+      description: "Current steering angle"
+
+Powertrain:
+  Battery:
+    StateOfCharge:
+      type: float
+      unit: percent
+      description: "Battery charge level"
+
+Sensors:
+  IMU:
+    AccelX:
+      type: float
+      unit: m/s2
+    AccelY:
+      type: float
+      unit: m/s2
+    AccelZ:
+      type: float
+      unit: m/s2
+```
+This is how you do a **VSS** implementation.
+
 # Benefits of Covesa
   - **Interoperability** - Same app on different Vehicles.
   - **Scalability** - Easier integration of new modules.
