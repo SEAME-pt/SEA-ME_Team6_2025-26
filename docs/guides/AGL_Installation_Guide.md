@@ -96,7 +96,8 @@ cd $AGL_TOP
 mkdir master
 cd master
 repo init -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo \
-          -b trout -m trout_20.0.2.xml```
+          -b trout -m trout_20.0.2.xml
+```
 
 ### Synchronize Repositories
 
