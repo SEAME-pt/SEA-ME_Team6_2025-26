@@ -11,7 +11,9 @@
 *.tgz
 
 # Local testing
-cluster/cluster-qml-teste/
+src/cluster/CMakeLists.txt.user
+src/cluster/build/
+src/cluster/build
 HelloQt6
 HelloQt6Qml
 
