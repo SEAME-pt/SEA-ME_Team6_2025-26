@@ -2,12 +2,17 @@
 
 # What is kuksa?
 
-  **Kuksa** is an open source project that provides a **standardized data layer** for vehicles, in combines **VSS(Vehicle Signal specification)**, **VISS(Vehicle Information Service Specification)**,
-  **Secure Databroker**, **uProtocol integration**, **Edge & Cloud documentation**.
+  **Kuksa** is an open-source project that provides a standardized data layer for vehicles. It integrates several technologies such as **VSS** (Vehicle Signal Specification), **VISS** (Vehicle Information Service Specification), and **uProtocol** to ensure secure, real-time data exchange across devices.
 
   Kuska also manages routes and stores the data produced by devices such as sensors and provides a platform for efficiently transferring this data between devices, storage and applications.
 
   **Kuksa** enables applications to read and write vehicle signals in a *standardized**, **secure**, and **hardware independent** way.
+
+  Quick note: when we refer to Publisher and subscriber, we mean this:
+
+    [Sensor (Publisher)] → [Kuksa Broker] → [Cloud Service/Database (Subscriber)]
+
+  
 
   **Why is Kuksa important for our project?**
 
@@ -127,6 +132,27 @@ In our case, we are going to use MQTT protocol because we want to send data to o
  5. Data Storage: The broker can store incoming data in a database or long-term retention and analysis.
     
  7. Real-Time Monitoring: A real-time dashboard or application subscribes to the data stream to display live updates for monitoring purposes.
+
+# Signal-to-Service vs. Service-to-Signal
+
+Here I'm going to show you the difference between Signal-to-Service vs. Service-to-Signal communication patterns.
+
+**Signal-to-Service** - think of it as when the speedometer sends the data to the STM.
+
+    [Sensor/Device] → [Kuksa Broker] → [Cloud Service/Database]
+
+example: Monitoring pi races speed.
+ - Signal: a speedometer mounted to the car that measures the speed.
+ - Service: STM32 that collects and visualizes the data.
+
+**Service-to-Signal** - 
+
+     [Cloud Service/Control System] → [Kuksa Broker] → [Device/Sensor]
+
+
+
+
+
 
 # Kuksa vs Kafka
 
