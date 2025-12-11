@@ -118,7 +118,30 @@ In our case, we are going to use MQTT protocol because we want to send data to o
    - Kuksa DataBroker offers APIs and SDKs for developers to integrate it into existing applications and systems.
 
 
-     
+#  Kuksa Workflow
+
+ 1. Devices Publish Data: This is when the device (sensors) publishes the data to the broker(kuksa) using mqtt.
+    
+ 3. Data Routing: Kuksa DataBroker routes the data to the appropriate subscribers(cloud or dashboard)
+    
+ 5. Data Storage: The broker can store incoming data in a database or long-term retention and analysis.
+    
+ 7. Real-Time Monitoring: A real-time dashboard or application subscribes to the data stream to display live updates for monitoring purposes.
+
+# Kuksa vs Kafka
+
+| Feature                 | **Kuksa DataBroker**                                                                          | **Apache Kafka**                                                                                 |
+| ----------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Primary Use Case**    | **IoT** and **edge-to-cloud** communication for real-time data between devices and the cloud. | **Real-time data streaming**, **event sourcing**, and **data pipelines** in large-scale systems. |
+| **Communication Model** | **Publish-Subscribe (Pub/Sub)** for IoT data exchange.                                        | **Publish-Subscribe (Pub/Sub)** for high-throughput streaming.                                   |
+| **Data Persistence**    | **Ephemeral** (optional persistence).                                                         | **Durable storage** of messages with log retention.                                              |
+| **Scalability**         | **Horizontal scalability** for IoT networks.                                                  | **Horizontal scalability** for high-throughput and large-scale systems.                          |
+| **Latency**             | **Low-latency**, optimized for IoT and edge.                                                  | **Low-latency**, but higher due to persistence and throughput demands.                           |
+| **Deployment**          | **Cloud, edge, and on-premises** for IoT systems.                                             | **Cloud and data center** for big data and enterprise systems.                                   |
+| **Integration**         | Easy integration with IoT devices, cloud platforms.                                           | Integrates well with **big data tools** (Apache Spark, Flink) and **enterprise systems**.        |
+| **Stream Processing**   | **Limited support**; external tools needed for complex processing.                            | **Strong support** via Kafka Streams and integration with stream processing frameworks.          |
+| **Fault Tolerance**     | **Fault-tolerant** for IoT environments.                                                      | **Highly fault-tolerant** with replication across clusters.                                      |
+
 
      
      
