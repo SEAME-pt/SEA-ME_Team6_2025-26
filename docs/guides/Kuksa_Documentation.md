@@ -79,9 +79,17 @@
     
      - Authorization & Access Control: Kuksa allows administrators to set up fine-grained access control policies.
 
+            [Device (TLS Encrypted)]
+                 →
+           [Kuksa Broker (Authz / ACLs)]
+                 →
+           [Subscriber (Trusted / Authenticated)]
+
+
      Quick example for better understanding:
 
       - In a healthcare application, patient data must be encrypted when transmitted to avoid privacy violations. Kuksa DataBroker ensures that all communication between medical devices and cloud storage is encrypted and that only authorized healthcare professionals can access the data.
+    
 
 # KUKSA Architecture
 
@@ -93,6 +101,13 @@
  - **Subscriber:** Any entity that listens for specific data streams from the broker.
 
  - **Storage Layer:** Kuksa can integrate with databases or other data storage systems for persistent storage.
+
+       [Publisher (Sensor Device)]
+               ↓
+          [Kuksa Broker]
+               ↓
+       [Subscribers: Cloud, Dashboards, Storage]
+
 
 **Protocols Supported:**
 
@@ -127,25 +142,34 @@ In our case, we are going to use MQTT protocol because we want to send data to o
 
  1. Devices Publish Data: This is when the device (sensors) publishes the data to the broker(kuksa) using mqtt.
     
- 3. Data Routing: Kuksa DataBroker routes the data to the appropriate subscribers(cloud or dashboard)
+ 2. Data Routing: Kuksa DataBroker routes the data to the appropriate subscribers(cloud or dashboard)
     
- 5. Data Storage: The broker can store incoming data in a database or long-term retention and analysis.
+ 3. Data Storage: The broker can store incoming data in a database or long-term retention and analysis.
     
- 7. Real-Time Monitoring: A real-time dashboard or application subscribes to the data stream to display live updates for monitoring purposes.
+ 4. Real-Time Monitoring: A real-time dashboard or application subscribes to the data stream to display live updates for monitoring purposes.
+
+        [Devices / Sensors]
+                ↓
+        [Kuksa Broker]
+                ↓
+        [Subscribers: Cloud / Dashboard]
+                ↓
+        [Storage Layer]
+
 
 # Signal-to-Service vs. Service-to-Signal
 
-Here I'm going to show you the difference between Signal-to-Service vs. Service-to-Signal communication patterns.
+Here, I'm going to show you the difference between Signal-to-Service vs. Service-to-Signal communication patterns.
 
-**Signal-to-Service** - think of it as when the speedometer sends the data to the STM.
+**Signal-to-Service** 
+
+ think of it as when the speedometer sends the data to the STM.
 
     [Sensor/Device] → [Kuksa Broker] → [Cloud Service/Database]
 
-example: Monitoring pi races speed.
- - Signal: a speedometer mounted to the car that measures the speed.
- - Service: STM32 that collects and visualizes the data.
+**Service-to-Signal** 
 
-**Service-to-Signal** - 
+ It's when the cloud sends commands to adjust the speed, steering, or braking.
 
      [Cloud Service/Control System] → [Kuksa Broker] → [Device/Sensor]
 
@@ -169,6 +193,8 @@ example: Monitoring pi races speed.
 | **Fault Tolerance**     | **Fault-tolerant** for IoT environments.                                                      | **Highly fault-tolerant** with replication across clusters.                                      |
 
 
-     
-     
+# Conclusion     
+
+Kuksa provides a secure, scalable, low-latency broker designed specifically for IoT and vehicle communication.
+Its support for VSS, MQTT, and real-time processing makes it ideal for our project, where timing and reliability are critical.
     
