@@ -7,7 +7,16 @@ normative: true
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Expansion Board"
+      - "Raspberry Pi 5"
+      - "Hailo AI Hat"
+      - "DC motors"
+      - "servo motor"
+      - "display interface"
 text: 'Assumption: The project team will provide the required hardware and demonstrator
   components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo
   AI Hat, DC motors, servo motor, display interface) and these components will be
