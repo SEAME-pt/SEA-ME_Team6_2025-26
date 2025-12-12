@@ -1,12 +1,12 @@
-# Covesa Docoumentation
+# Covesa Documentation
 
-# What is covesa ?
+# What is Covesa?
   - **Covesa** is an industry alliance focused on advancing connected vehicle technologies through open standards, shared innovation and collaboration.
     
-So what is the main goal of Covesa ?
-  - Covesa main goal is to enable a more intelligent, interoperable and personalized mobility experience.
+So what is the main goal of Covesa?
+  - Covesa's main goal is to enable a more intelligent, interoperable, and personalized mobility experience.
      
-Whats interesting for us? **VSS(Vehicle Signal Specification)** and whats that?
+What's interesting for us? **VSS(Vehicle Signal Specification)** and whats that?
   VSS is an open, standardized data model created by **COVESA (Connected Vehicle Systems Alliance)** to describe the signals and data inside a vehicle in a consistent, interoperable way.
   
 Now, im gonna give you some examples of what VSS is used for:
@@ -14,12 +14,12 @@ Now, im gonna give you some examples of what VSS is used for:
   - Vehicle Power Train.
   - Door Status(tells the user which door is open).
 
-  Basicly it stores data like **RPM**, **KM/h**, **ºc** and many more.
+  Basically it stores data like **RPM**, **KM/h**, **ºc**, and many more.
 
-So why do we use **VSS** and why its important ?
+So why do we use **VSS** and why is it important?
 
-  Every Automaker makes their own apps, their own software, and that makes it hard for apps to run across diferent brands, makes it hard on suplies when it comes to integrate software and makes it hard for devs o want to reuse code. And thats when **VSS** comes to save the day and solve those problems by giving the industry a shared and open source standard.
-Below are few examples on what vss can help you:
+  Every Automaker makes its own apps, its own software, and that makes it hard for apps to run across different brands, makes it hard on suppliers when it comes to integrating software, and makes it hard for devs who want to reuse code. And that's when **VSS** comes to save the day and solve those problems by giving the industry a shared and open source standard.
+Below are a few examples of what VSS can help you:
 
 | Without VSS        | With VSS                        |
 | ------------------ | ------------------------------- |
@@ -28,7 +28,7 @@ Below are few examples on what vss can help you:
 | Inconsistent units | Standard units                  |
 | Hard to integrate  | Apps work across vehicles       |
 
-So now that you understand what **VSS** is here is an example of a **VSS** structure.
+So now that you understand what **VSS** is, here is an example of a **VSS** structure.
 
 ```
 Vehicle:
@@ -41,10 +41,10 @@ Vehicle:
         type: int
         unit: rpm
 ```
-Now lets see what **VISS** is. 
+Now, let's see what **VISS** is. 
 
-**VISS(Vehicle information Service Specification)** its an oped-standard from covesa for accessing data throug a **web style API**.
-It will allow you to read signals suchs as **Speed**, **battery state**, **GPS**, **Doorlock status**, etc.
+**VISS(Vehicle Information Service Specification)** is an open-standard from Covesa for accessing data through a **web-style API**.
+It will allow you to read signals such as **Speed**, **battery state**, **GPS**, **Doorlock status**, etc.
 
 Other cool things you can do with **VISS**:
   - Stream Live driving data to the laptop.
@@ -52,49 +52,49 @@ Other cool things you can do with **VISS**:
   - Provide web dashboards.
   - Enable remote monitoring during races.
   
-And now you ask me what the main purpose of **VISS** ?  **VISS** main porpuse is to solve the case where a dev would have to learn every car proprietary system and as you can tell that's not optimal so **VISS** gives vehicles a common way to share signals with applications.
+And now you ask me what the main purpose of **VISS** is?  **VISS** main purpose is to solve the case where a dev would have to learn every car's proprietary system, and as you can tell, that's not optimal, so **VISS** gives vehicles a common way to share signals with applications.
 
-Now that we know what **VSS** and **VISS** i can show you an exame on how covesa really works.
+Now that we know what **VSS** and **VISS** are, I can show you an example of how Covesa really works.
 
 # How Covesa Works
 
-below im gonna give an example of a data flow to show you how Covesa works:
+Below, I'm gonna give an example of a data flow to show you how Covesa works:
 
 1. **Sensors/ECUs** generate raw data.
 2. **VSS** gives the data standardized name & structures.
 3. **MiddleWare(uProtocol in our case)** exposes signals via **VISS**.
-4. Apps subscribe , read or process the signals.
+4. Apps subscribe, read, or process the signals.
 
 This architecture allows any compliant app to work with any compliant vehicle.
 
 # Implementing Covesa
 
-How do we implement Covesa in our project ? Covesa is not a software that we can simply install, we just implement **VSS** tree so that our midleware can use it.
-so below is an example of how to implement **VSS**.
+How do we implement Covesa in our project? Covesa is not a software that we can simply install, we just implement **VSS** tree so that our midleware can use it.
+So below is an example of how to implement **VSS**.
 
 **Define Custom VSS tree**
-  Create a YAML file, in our case we will name it **VSS.yaml**.
+  Create a YAML file, in our case, we will name it **VSS.yaml**.
   
   ```
   Vehicle:
   Speed:
     type: int
     unit: km/h
-    description: "Current vehicle speed measured from speedometer"
+    description: "Current vehicle speed measured from the speedometer."
 
 Chassis:
-  SteeringWheel:
+  Steering Wheel:
     Angle:
       type: float
       unit: degrees
-      description: "Current steering angle"
+      description: "Current steering angle."
 
 Powertrain:
   Battery:
     StateOfCharge:
       type: float
       unit: percent
-      description: "Battery charge level"
+      description: "Battery charge level."
 
 Sensors:
   IMU:
