@@ -119,6 +119,9 @@ def validate_hardware_availability(configuration: dict[str, yaml]) -> tuple[floa
         "docs/demos",
         "docs/guides", 
         "docs/sprints",
+        "docs/dailys",
+        "docs/TSF",
+        "README.md",
         "src"
     ]
     search_paths = configuration.get("search_paths", default_paths)
@@ -258,7 +261,8 @@ def validate_software_dependencies(configuration: dict[str, yaml]) -> tuple[floa
     
     repo_root = Path(__file__).resolve().parents[1]
     
-    dependencies = configuration.get("dependencies", [])
+    # Support both "dependencies" and "packages" keys for backward compatibility
+    dependencies = configuration.get("dependencies", configuration.get("packages", []))
     if not dependencies:
         return (0.0, [ValueError("No dependencies specified in configuration")])
     

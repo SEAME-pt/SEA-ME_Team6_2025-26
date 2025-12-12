@@ -4,6 +4,10 @@ header: 'Assumption: Availability of hardware and demonstrator components for sy
   architecture validation'
 level: '1.1'
 normative: true
+references:
+- id: EXPECT_L0_1
+  type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_1/EXPECTATIONS-EXPECT_L0_1.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -13,16 +17,18 @@ evidence:
     components:
       - "Expansion Board"
       - "Raspberry Pi 5"
-      - "Hailo AI Hat"
+      - "Hailo Hat"
       - "DC motors"
       - "servo motor"
-      - "display interface"
+      - "Qt"
+      - "cluster"
+      - "DSI"
 text: 'Assumption: The project team will provide the required hardware and demonstrator
   components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo
-  AI Hat, DC motors, servo motor, display interface) and these components will be
-  operational in the integration environment during verification activities.'
+  Hat, DC motors, servo motor, Qt display/cluster via DSI interface) and these components
+  will be operational in the integration environment during verification activities.'
 ---
-Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, display interface) and these components will be operational in the integration environment during verification activities.
+Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo Hat, DC motors, servo motor, Qt display/cluster via DSI interface) and these components will be operational in the integration environment during verification activities.
 
 Acceptance criteria / notes:
 - Hardware units and connectors are available and powered in the test environment when required by integration tests.

@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Hailo Hat"
+      - "Raspberry Pi 5"
+      - "AI"
 text: 'The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry
   Pi 5 before AI model deployment testing begins.'
 ---

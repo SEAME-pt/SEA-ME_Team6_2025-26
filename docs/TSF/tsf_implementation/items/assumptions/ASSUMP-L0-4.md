@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "joystick"
+      - "gamepad"
+      - "controller"
 text: 'The joystick or remote control hardware is available, functional, and compatible
   with the target platform input subsystem before remote control integration testing
   begins.'

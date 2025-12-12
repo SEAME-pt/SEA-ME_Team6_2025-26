@@ -3,10 +3,20 @@ id: ASSUMP_L0_15
 header: 'Assumption: Agile'
 level: '1.15'
 normative: true
+references:
+- id: EXPECT_L0_15
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "Agile"
+      - "Scrum"
+      - "sprint"
 text: 'GitHub Projects and Agile/Scrum methodology documentation are accessible for
   self-training before agile process adoption begins.'
 ---

@@ -6,7 +6,14 @@ normative: true
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Raspberry Pi 4"
+      - "WiFi"
+      - "VNC"
+      - "Wayland"
 text: 'Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC
   server software (Wayland/VNC stack) are available and functional before wireless
   display integration testing begins.'

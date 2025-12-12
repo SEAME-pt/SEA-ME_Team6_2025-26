@@ -10,7 +10,14 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "GCC"
+      - "ARM64"
+      - "CMake"
+      - "cross-compil"
 text: 'GCC ARM64 cross-compiler, CMake, and Qt6 cross-compilation libraries are available
   and configured on the build host before cross-compilation activities begin.'
 ---
