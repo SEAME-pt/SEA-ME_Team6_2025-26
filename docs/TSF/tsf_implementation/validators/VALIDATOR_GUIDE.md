@@ -210,7 +210,7 @@ Understanding the difference between CI validators and TruDAG validators:
 2. **Direct push** to `development`
 3. **Manual execution** by developers
 
-**GitHub Actions Configuration** (`.github/workflows/tsf-validate.yml`):
+**GitHub Actions Configuration** (`.github/workflows/validate_items_formatation.yml`):
 
 ```yaml
 name: 'TSF Front-matter validation'
@@ -791,7 +791,7 @@ If you want TruDAG validators to also run in CI (to block PRs with low scores):
 **Option 1**: Add score check to existing CI workflow
 
 ```yaml
-# .github/workflows/tsf-validate.yml
+# .github/workflows/validate_items_formatation.yml
 - name: Validate TSF scores
   run: |
     python3 docs/TSF/tsf_implementation/validators/validate_items_formatation.py
