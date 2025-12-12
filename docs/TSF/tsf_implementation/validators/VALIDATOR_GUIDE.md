@@ -29,7 +29,7 @@ This comprehensive guide covers the validator architecture, implementation detai
 
 ## Overview
 
-The `validators.py` file contains **8 validator functions** that automate the scoring of TSF items (Assumptions, Assertions, Evidences, and Expectations). These validators are executed by TruDAG during the `trudag score` command.
+The `validators.py` file contains **3 universal validator functions** that automate the scoring of TSF assumptions by searching for evidence in the repository. These validators are executed by TruDAG during the `trudag score` command.
 
 **Key Features:**
 - Evidence-based validation (searches repository for actual proof)
@@ -299,116 +299,11 @@ EXPECTATIONS-EXPECT_L0_1 = 1.0
 
 # Part II: Technical Reference
 
-## Validator Functions Reference
-
-### 1. `manual_score`
-
-**Purpose**: Allows manual assignment of scores when automated validation is not feasible.
-
-**Configuration Requirements**:
-- `score`: float between 0.0 and 1.0
-
-**Returns**: The manually specified score
-
-**Use Case**: When expert judgment is required and no automated validation is possible.
-
-**Example**:
-```yaml
-evidence:
-  type: manual_score
-  configuration:
-    score: 0.8
-```
-
----
-
-### 2. `assertion_review`
-
-**Purpose**: Fixed score validator for assertions reviewed by Subject Matter Experts (SME).
-
-**Configuration Requirements**: None
-
-**Returns**: Fixed score of **0.5**
-
-**Use Case**: Assertions that have been reviewed but cannot be automatically validated.
-
-**Example**:
-```yaml
-evidence:
-  type: assertion_review
-  configuration: {}
-```
-
----
-
-### 3. `assumption_review`
-
-**Purpose**: Fixed score validator for assumptions reviewed by SME.
-
-**Configuration Requirements**: None
-
-**Returns**: Fixed score of **0.6**
-
-**Use Case**: Assumptions that have been reviewed by experts.
-
-**Example**:
-```yaml
-evidence:
-  type: assumption_review
-  configuration: {}
-```
-
----
-
-### 4. `evidence_artifacts`
-
-**Purpose**: Validates that evidence items have associated artifacts (documents, reports, etc.).
-
-**Configuration Requirements**:
-- `artifacts`: list of artifact references
-
-**Returns**: 
-- **1.0** if artifacts are present
-- **0.0** if no artifacts are specified (with warning)
-
-**Use Case**: Evidence items that claim to have supporting artifacts.
-
-**Example**:
-```yaml
-evidence:
-  type: evidence_artifacts
-  configuration:
-    artifacts:
-      - "path/to/report.pdf"
-      - "path/to/test_results.json"
-```
-
----
-
-### 5. `expectation_review`
-
-**Purpose**: Fixed score validator for expectations reviewed by SME.
-
-**Configuration Requirements**: None
-
-**Returns**: Fixed score of **0.5**
-
-**Use Case**: Expectations that have been reviewed by experts.
-
-**Example**:
-```yaml
-evidence:
-  type: expectation_review
-  configuration: {}
-```
-
----
-
 ## Universal Assumption Validators
 
-These three validators are designed to automatically validate assumptions by searching for evidence in the repository.
+These three validators automatically validate assumptions by searching for evidence in the repository.
 
-### 6. `validate_hardware_availability`
+### 1. `validate_hardware_availability`
 
 **Purpose**: Validates that hardware components mentioned in assumptions are documented in the repository.
 
@@ -464,7 +359,7 @@ Score = (validated components) / (total components)
 
 ---
 
-### 7. `validate_linux_environment`
+### 2. `validate_linux_environment`
 
 **Purpose**: Validates that Linux-specific tools and environment are documented in the repository.
 
@@ -511,7 +406,7 @@ Score = (documented tools) / (total tools)
 
 ---
 
-### 8. `validate_software_dependencies`
+### 3. `validate_software_dependencies`
 
 **Purpose**: Validates that software dependencies and libraries are documented in dependency files or documentation.
 
