@@ -21,4 +21,4 @@ jobs:
 
       - name: Run TSF validators
         run: |
-          python3 docs/TSF/tsf_implementation/validators/validate_all.py
+          python3 docs/TSF/tsf_implementation/validators/validate_items_formatation.py

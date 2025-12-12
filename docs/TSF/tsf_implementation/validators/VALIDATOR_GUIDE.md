@@ -133,9 +133,7 @@ evidence:
 
 ```
 validators/
-├── validate_all.py                    # CI validator
-├── validate_front_matter.py           # CI validator
-├── validate_extended.py               # CI validator
+├── validate_items_formatation.py      # CI validator (integrated)
 ├── validate_assump_l0_1_hardware.py   # TruDAG validator
 ├── validate_assump_l0_2_assembly.py   # TruDAG validator
 ├── validate_assump_l0_3_linux.py      # TruDAG validator
@@ -169,7 +167,7 @@ Understanding the difference between CI validators and TruDAG validators:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  CI VALIDATORS (validate_all.py)                            │
+│  CI VALIDATORS (validate_items_formatation.py)              │
 │  ├─ When: Pull requests, pushes to development/main         │
 │  ├─ What: Validates STRUCTURE and FORMAT                    │
 │  │   • YAML syntax                                          │
@@ -236,7 +234,7 @@ jobs:
       
       - name: Run TSF validators
         run: |
-          python3 docs/TSF/tsf_implementation/validators/validate_all.py
+          python3 docs/TSF/tsf_implementation/validators/validate_items_formatation.py
 ```
 
 **Execution Flow:**
@@ -246,10 +244,10 @@ Developer creates PR
     ↓
 GitHub Actions triggered
     ↓
-validate_all.py executes
-    ├─ validate_front_matter.py
-    ├─ validate_extended.py
-    └─ validate_structure.py
+validate_items_formatation.py executes
+    ├─ Front-matter validation
+    ├─ Extended validation
+    └─ Structure checks
     ↓
 All validations pass?
     ├─ YES → PR can be merged ✓
@@ -901,7 +899,7 @@ If you want TruDAG validators to also run in CI (to block PRs with low scores):
 # .github/workflows/tsf-validate.yml
 - name: Validate TSF scores
   run: |
-    python3 docs/TSF/tsf_implementation/validators/validate_all.py
+    python3 docs/TSF/tsf_implementation/validators/validate_items_formatation.py
     
     # Run trudag score and check for failures
     trudag score > scores.txt
