@@ -29,7 +29,7 @@ This comprehensive guide covers the validator architecture, implementation detai
 
 ## Overview
 
-The `validators.py` file contains **3 universal validator functions** that automate the scoring of TSF assumptions by searching for evidence in the repository. These validators are executed by TruDAG during the `trudag score` command.
+The `validators.py` file contains **3 universal validator functions** that automate the scoring of TSF assumptions by searching for evidence in the repository. These validators are executed by TruDAG during the `trudag score` command. Those are the "Real" Validators, i.e. the ones that are called by trudag. Beside those, we have validators that are called by github (namely GitHub Actions workflow that calls validate_items_formatation.py) to guarantee CI (continuous integration). They are not used by trudag, but are very useful to verify if the items (expectations, assertions, evidences, assumptions) are accordingly with what is expected in terms of structure, formatation.  
 
 **Key Features:**
 - Evidence-based validation (searches repository for actual proof)
@@ -42,10 +42,10 @@ The `validators.py` file contains **3 universal validator functions** that autom
 
 ## Validator Architecture
 
-We maintain **separation of concerns** between two types of validators:
+Like it was refered above, we maintain **separation of concerns** between two types of validators:
 
 - **Structure Validators** (CI): Validate YAML format, frontmatter structure, and file integrity
-- **Content Validators** (TruDAG): Validate claims, evidence, and assumption requirements
+- **Content Validators** (TruDAG): Validate claims, evidence, and assumption requirements and it´s called during trudag score.
 
 This separation ensures:
 - CI validators catch format errors early (before merge)
