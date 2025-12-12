@@ -4,7 +4,7 @@
 
   **Kuksa** is an open-source project that provides a standardized data layer for vehicles. It integrates several technologies such as **VSS** (Vehicle Signal Specification), **VISS** (Vehicle Information Service Specification), and **uProtocol** to ensure secure, real-time data exchange across devices.
 
-  Kuska also manages routes and stores the data produced by devices such as sensors and provides a platform for efficiently transferring this data between devices, storage and applications.
+  Kuska also manages routes and stores the data produced by devices such as sensors and provides a platform for efficiently transferring this data between devices, storage, and applications.
 
   **Kuksa** enables applications to read and write vehicle signals in a *standardized**, **secure**, and **hardware independent** way.
 
@@ -54,7 +54,7 @@
      
       How Kuksa Supports scalability?
 
-      **horizontal scalability** ensures that as your deployment grows—from dozens of devices to thousands and the system can continue to manage the load efficiently.
+      **horizontal scalability** ensures that as your deployment grows, from dozens of devices to thousands and the system can continue to manage the load efficiently.
 
      <img width="1122" height="765" alt="image" src="https://github.com/user-attachments/assets/07c47945-bb18-4639-9f83-b03f276f91a3" />
 
@@ -117,7 +117,7 @@
 
  - WebSocket: A protocol for persistent, full-duplex communication between clients and the broker.
 
-In our case, we are going to use MQTT protocol because we want to send data to our QT.
+In our case, we are going to use the MQTT protocol because we want to send data to our QT.
 
 # Benefits of Kuksa
 
@@ -140,11 +140,11 @@ In our case, we are going to use MQTT protocol because we want to send data to o
 
 #  Kuksa Workflow
 
- 1. Devices Publish Data: This is when the device (sensors) publishes the data to the broker(kuksa) using mqtt.
+ 1. Devices Publish Data: This is when the device (sensors) publishes the data to the broker(kuksa) using MQTT.
     
  2. Data Routing: Kuksa DataBroker routes the data to the appropriate subscribers(cloud or dashboard)
     
- 3. Data Storage: The broker can store incoming data in a database or long-term retention and analysis.
+ 3. Data Storage: The broker can store incoming data in a database for long-term retention and analysis.
     
  4. Real-Time Monitoring: A real-time dashboard or application subscribes to the data stream to display live updates for monitoring purposes.
 
