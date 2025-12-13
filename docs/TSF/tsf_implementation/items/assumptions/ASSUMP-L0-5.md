@@ -10,7 +10,14 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "Qt"
+      - "Qt6"
+      - "QtCore"
+      - "QtGui"
 text: 'Qt runtime libraries and dependencies are installed and available on the target
   platform before Qt application deployment begins.'
 ---

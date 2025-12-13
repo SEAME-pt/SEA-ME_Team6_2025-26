@@ -10,7 +10,16 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Expansion Board"
+      - "Raspberry Pi 5"
+      - "Raspberry Pi 4"
+      - "DC motors"
+      - "servo motor"
+      - "chassis"
 text: 'The required hardware components (Expansion Board, Raspberry Pi 5, Raspberry
   Pi 4, DC motors, servo motor, display interfaces, chassis) are procured and available
   before hardware assembly activities begin.'

@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "GitHub"
+      - "repository"
+      - "permissions"
 text: 'GitHub repository access and permissions are granted to all project team members
   before project setup verification begins.'
 ---

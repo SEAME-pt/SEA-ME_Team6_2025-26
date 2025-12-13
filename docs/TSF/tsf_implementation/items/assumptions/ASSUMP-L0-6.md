@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "font"
+      - "icon"
+      - "TrueType"
 text: 'Third-party font libraries and icon sets required by the Qt GUI are available
   under compatible licenses before UI implementation begins.'
 ---

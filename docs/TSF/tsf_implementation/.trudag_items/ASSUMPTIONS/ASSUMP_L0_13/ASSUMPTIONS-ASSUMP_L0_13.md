@@ -3,10 +3,20 @@ id: ASSUMP_L0_13
 header: 'Assumption: Project & GitHub setup'
 level: '1.13'
 normative: true
+references:
+- id: EXPECT_L0_13
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_13/EXPECTATIONS-EXPECT_L0_13.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "GitHub"
+      - "repository"
+      - "permissions"
 text: 'GitHub repository access and permissions are granted to all project team members
   before project setup verification begins.'
 ---

@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "GitHub Actions"
+      - "CI/CD"
+      - "workflow"
 text: 'GitHub Actions runner resources and execution quotas are available and sufficient
   for CI/CD pipeline execution before CI/CD verification begins.'
 ---

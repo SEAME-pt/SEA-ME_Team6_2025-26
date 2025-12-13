@@ -13,6 +13,10 @@ references:
   path: docs/sprints/sprint2.md
 - type: file
   path: docs/sprints/sprint3.md
+- type: file
+  path: docs/sprints/sprint4.md
+- type: file
+  path: docs/sprints/sprint5.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

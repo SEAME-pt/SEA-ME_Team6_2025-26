@@ -3,10 +3,21 @@ id: ASSUMP_L0_10
 header: 'Assumption: Implement and test the changing from the old architecture...'
 level: '1.10'
 normative: true
+references:
+- id: EXPECT_L0_10
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_10/EXPECTATIONS-EXPECT_L0_10.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Raspberry Pi 5"
+      - "Raspberry Pi 4"
+      - "STM32"
+      - "Hailo Hat"
 text: 'Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors,
   sensors) are procured and available before system architecture implementation begins.'
 ---

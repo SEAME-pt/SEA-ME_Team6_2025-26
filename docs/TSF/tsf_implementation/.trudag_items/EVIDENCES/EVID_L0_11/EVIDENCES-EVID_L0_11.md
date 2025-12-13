@@ -6,7 +6,7 @@ level: '1.11'
 normative: true
 references:
 - type: file
-  path: docs/demos/system-architecture-cross.png
+  path: docs/guides/AGL_Configuration_Guide.md
 score: 1.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

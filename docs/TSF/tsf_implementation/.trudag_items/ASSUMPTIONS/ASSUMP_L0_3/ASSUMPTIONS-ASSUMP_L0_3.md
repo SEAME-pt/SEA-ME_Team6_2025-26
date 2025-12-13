@@ -3,10 +3,21 @@ id: ASSUMP_L0_3
 header: 'Assumption: Target platform and drivers for software integration'
 level: '1.3'
 normative: true
+references:
+- id: EXPECT_L0_3
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_3/EXPECTATIONS-EXPECT_L0_3.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_linux_environment
+  configuration:
+    required_tools:
+      - "Ubuntu"
+      - "Linux"
+      - "kernel"
+      - "driver"
 text: 'Assumption: The system and development tooling target a Linux-based integration
   environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules
   required for platform-specific components (e.g., motor controllers, Hailo AI Hat,
