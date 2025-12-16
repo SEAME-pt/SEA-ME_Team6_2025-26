@@ -11,6 +11,17 @@
   In the modern-day automotive industry, different vehicles have different ECUs, multiple OS and apps from different vendors. As you can imagine, this is not  optimal because every vendor uses different protocols.
   uProtocol solves this problem by providing one universal layer of communication, making it easier.
 
+**Traditional:**
+  
+    [ECU A] --CAN--> [ECU B]
+    [ECU C] --Proprietary--> [ECU D]
+    
+    **With uProtocol:**
+    
+    [ECU A] \
+    [ECU B]  -- uProtocol -- [ECU C]
+    [ECU D] /
+
 
 # Key Goals of uProtocol
 
@@ -45,12 +56,33 @@ this will allow the speedometer to communicate without worrying about CAN specif
 
   - this part will also be responsabel for routing messages, validating messages and ensure the Quality of Service
 
+**message flow through uCore**
+
+     [Publisher ECU]
+            │
+            ▼
+    uCore: Format & Metadata
+            │
+            ▼
+      Transport Layer
+            │
+            ▼
+    [Subscriber ECU / App]
+
 Why is this important to us ?
 This will guarantee reliable and consistent communication between the speedometer, motor control ECU and brake control ECU.
 
 **uAPI**
 
   - This layer will provide apps a standard API, will support communication patterns such as Publish / Subscribe  and Request / Response.
+
+        Publish/Subscribe:
+        [Sensor] --> [uProtocol] --> [Dashboard / Cloud / ADAS]
+        
+        Request/Response:
+        [App] --> [uProtocol] --> [ECU]
+        [ECU] --> [uProtocol] --> [App]
+
 
 **Application layer**
 
