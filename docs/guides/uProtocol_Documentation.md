@@ -37,4 +37,30 @@
 **uTransport**
   - This layer will handle how messages move. What I mean by this is that this will define how data is delivered over existing networks(MQTT and CAN).
 
+Why this matter in our project?
+this will allow the speedometer to communicate without worrying about CAN specifics and MQTT implementation details and will make it easier to switch or add transports later.
+
+**uCore**
+  - this is the main part of uProtocol, this is where we will define our messages format, messages metadata and identifiers, also makes sure that all messages look the same across systems.
+
+  - this part will also be responsabel for routing messages, validating messages and ensure the Quality of Service
+
+Why is this important to us ?
+This will guarantee reliable and consistent communication between the speedometer, motor control ECU and brake control ECU.
+
+**uAPI**
+
+  - This layer will provide apps a standard API, will support communication patterns such as Publish / Subscribe  and Request / Response.
+
+**Application layer**
+
+  - this layer contains all vehicle apps and services such as speedometer service, brake monitoring and motor control logic
+
+how will this work ?
+
+  - **apps use uAPI.**
+  - **messages are handled by uCore.**
+  - **Data is delivered by uTransport**
+
+ 
 
