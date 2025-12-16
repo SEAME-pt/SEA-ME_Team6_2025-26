@@ -11,7 +11,7 @@
   In the modern-day automotive industry, different vehicles have different ECUs, multiple OS and apps from different vendors. As you can imagine, this is not  optimal because every vendor uses different protocols.
   uProtocol solves this problem by providing one universal layer of communication, making it easier.
 
-**Traditional:**
+    **Traditional:**
   
     [ECU A] --CAN--> [ECU B]
     [ECU C] --Proprietary--> [ECU D]
