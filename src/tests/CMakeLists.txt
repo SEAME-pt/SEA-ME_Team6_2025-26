@@ -1,100 +1,83 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 project(SEA_ME_Team6_Tests)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_AUTOMOC ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+option(ENABLE_COVERAGE "Enable coverage reporting" ON)
+
+if(ENABLE_COVERAGE)
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
+endif()
+
+# GTEST
+# ./SEA_ME_Team6_Tests
 
 enable_testing()
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG v1.14.0
+find_package(GTest REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Test)
+
+include_directories(../cluster/src/backend)
+
+file(GLOB BACKEND_SOURCES ../cluster/src/backend/*.cpp)
+
+add_executable(SEA_ME_Team6_Tests
+    ${BACKEND_SOURCES}
+    unit/speedprovider_test.cpp
 )
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-# include_directories(
-#     ${CMAKE_CURRENT_SOURCE_DIR}/../cluster
-#     ${CMAKE_CURRENT_SOURCE_DIR}/../CAN
-#     ${CMAKE_CURRENT_SOURCE_DIR}/../stm
-#     ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-#     ${CMAKE_CURRENT_SOURCE_DIR}/fixtures
-# )
-
-# add_subdirectory(integration)
-
-add_executable(all_tests
-    main.cpp
-)
-
-target_link_libraries(all_tests
+target_link_libraries(SEA_ME_Team6_Tests
     gtest
     gtest_main
-    gmock
+    pthread
+    gcov
+    Qt6::Core
+    Qt6::Test
 )
 
-add_subdirectory(unit)
+add_test(NAME speedprovider_test COMMAND SEA_ME_Team6_Tests)
 
-add_test(NAME AllTests COMMAND all_tests)
+# COVERAGE REPORT
+# make coverage
 
-# Coverage report generation (always available)
-find_program(LCOV_PATH lcov)
-find_program(GENHTML_PATH genhtml)
+if(ENABLE_COVERAGE)
+    find_program(LCOV_PATH lcov)
+    find_program(GENHTML_PATH genhtml)
 
-if(LCOV_PATH AND GENHTML_PATH)
-    message(STATUS "lcov found: ${LCOV_PATH}")
-    message(STATUS "genhtml found: ${GENHTML_PATH}")
-    
+    if(NOT LCOV_PATH OR NOT GENHTML_PATH)
+        message(FATAL_ERROR "lcov and/or genhtml not found")
+    endif()
+
     add_custom_target(coverage
-        # Clean old coverage data
-        COMMAND ${LCOV_PATH} --directory . --zerocounters
-        
-        # Run tests
-        COMMAND ${CMAKE_CTEST_COMMAND} --verbose
-        
-        # Capture coverage data (with error handling)
-        COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info 
-            --rc geninfo_unexecuted_blocks=1
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        COMMAND ${LCOV_PATH} --capture
+            --directory .
+            --output-file coverage.info
             --ignore-errors mismatch
-            --ignore-errors inconsistent
-        
-        # Remove unwanted files from coverage (system headers and googletest only)
-        COMMAND ${LCOV_PATH} --remove coverage.info 
-            '/usr/*' 
-            '*/_deps/*'
-            '*/googletest/*'
-            --output-file coverage.info.cleaned
+            --rc geninfo_unexecuted_blocks=1
+
+        COMMAND ${LCOV_PATH} --remove coverage.info
+            '/usr/*'
+            '*/tests/*'
+            '*/build/*_autogen/*'
+            --output-file coverage.filtered.info
             --ignore-errors unused
-        
-        # Generate HTML report
-        COMMAND ${GENHTML_PATH} -o coverage coverage.info.cleaned
-            --ignore-errors unmapped
-        
-        # Print summary
-        COMMAND ${LCOV_PATH} --list coverage.info.cleaned
-        
+
+        COMMAND ${GENHTML_PATH} coverage.filtered.info
+                "--output-directory=coverage_report"
+                "--title=SEA:ME Team 6 – Coverage Report"
+                "--legend"
+                "--precision=2"
+
+        COMMAND xdg-open coverage_report/index.html || true
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Generating code coverage report..."
+        COMMENT "Running tests and generating coverage report"
     )
-    
-    add_custom_command(TARGET coverage POST_BUILD
-        COMMAND ;
-        COMMENT "Open ${CMAKE_BINARY_DIR}/coverage/index.html in your browser to view the coverage report."
-    )
-else()
-    if(NOT LCOV_PATH)
-        message(WARNING "lcov not found! Coverage target will not be available.")
-        message(WARNING "Install with: sudo apt-get install lcov")
-    endif()
-    if(NOT GENHTML_PATH)
-        message(WARNING "genhtml not found! Coverage target will not be available.")
-    endif()
+
+
+    add_dependencies(coverage SEA_ME_Team6_Tests)
 endif()

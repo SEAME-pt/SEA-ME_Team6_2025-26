@@ -14,6 +14,8 @@
 src/cluster/CMakeLists.txt.user
 src/cluster/build/
 src/cluster/build
+tests/build/
+tests/build
 HelloQt6
 HelloQt6Qml
 
