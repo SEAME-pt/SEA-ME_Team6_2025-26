@@ -54,6 +54,11 @@ this will allow the speedometer to communicate without worrying about CAN specif
 **uCore**
   - this is the main part of uProtocol, this is where we will define our messages format, messages metadata and identifiers, also makes sure that all messages look the same across systems.
 
+          Topic: vehicle.speed
+          Payload: { value: 42.3 }
+          Metadata: { timestamp, source, QoS }
+
+
   - this part will also be responsabel for routing messages, validating messages and ensure the Quality of Service
 
 **message flow through uCore**
@@ -94,5 +99,6 @@ how will this work ?
   - **messages are handled by uCore.**
   - **Data is delivered by uTransport**
 
- 
+# Summary
 
+Uprotocol is a middleware for software defined vehicles that provides a communication layer for ECUs, apps and sensors. It supports both publish/subscriber and request/response communication patterns, with core layers including uTransport, which delivers messages over CAN and MQTT, uCore  which formats routes, validates messages and ensures Quality of Service and finally uAPI that provides a standard  interface for apps.
