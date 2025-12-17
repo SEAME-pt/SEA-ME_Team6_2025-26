@@ -5,11 +5,8 @@ text: The repository contains demonstration images and joystick installation gui
 level: '1.4'
 normative: true
 references:
-- type: file
   path: docs/guides/AGL_ Joystick_installation_and_test.md
-- type: file
   path: src/inital_program/main.py
-- type: file
   path: src/inital_program/install_initial_program.md
 score: 1.0
 ---

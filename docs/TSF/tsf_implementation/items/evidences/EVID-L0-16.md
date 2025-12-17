@@ -5,9 +5,7 @@ text: The repository contains GitHub Actions workflow files and guides for conti
 level: '1.16'
 normative: true
 references:
-- type: file
   path: .github/workflows/daily-meeting.yml
-- type: file
   path: docs/guides/github-actions-guide.md
 score: 1.0
 ---

@@ -5,9 +5,7 @@ text: The repository contains installation guides and demonstration images showi
 level: '1.3'
 normative: true
 references:
-- type: file
   path: docs/guides/AGL_Installation_Guide.md
-- type: file
   path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
 score: 1.0
 ---

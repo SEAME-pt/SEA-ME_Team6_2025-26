@@ -5,15 +5,10 @@ text: The repository contains VNC configuration guides and demonstration images 
 normative: true
 level: '1.12'
 references:
-- type: file
   path: docs/demos/system-architecture-cross.png
-- type: file
   path: docs/demos/first_qt_app.jpeg
-- type: file
   path: docs/demos/eletric-scheme.png
-- type: file
   path: docs/guides/Power Consumption Analysis.md
-- type: file
   path: docs/guides/AGL_Installation_Guide.md
 score: 1.0
 ---

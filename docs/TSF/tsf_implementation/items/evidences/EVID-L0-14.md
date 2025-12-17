@@ -5,7 +5,6 @@ text: The repository contains TSF documentation structure with requirements, evi
 level: '1.14'
 normative: true
 references:
-- type: file
   path: ../../TSF_docs/WhatsTSF.md
 score: 1.0
 ---

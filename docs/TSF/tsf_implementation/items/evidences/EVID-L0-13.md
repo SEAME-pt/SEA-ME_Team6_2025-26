@@ -5,9 +5,7 @@ text: The GitHub repository contains organized project code, documentation, and 
 level: '1.13'
 normative: true
 references:
-- type: file
   path: docs/guides/github-guidelines.md
-- type: file
   path: docs/guides/github-actions-guide.md
 score: 1.0
 ---
