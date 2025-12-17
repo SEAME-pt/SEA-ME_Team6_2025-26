@@ -2,7 +2,7 @@
  * @author souzitaaaa
  * @email diogo.nogueirasousa123@gmail.com
  * @create date 2025-12-16 14:41:53
- * @modify date 2025-12-16 15:21:29
+ * @modify date 2025-12-17 13:03:17
  * @desc SpeedProvider Class functions
  */
 
@@ -18,7 +18,7 @@
  * @signals: None
  */
 SpeedProvider::SpeedProvider(QObject *parent)
-    : QObject(parent), _currSpeed("0") {
+    : QObject(parent), _speedValue(0.0), _currSpeed(QString::number(0.0, 'f', 1)) {
 }
 
 /**
