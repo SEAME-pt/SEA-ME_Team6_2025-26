@@ -119,6 +119,134 @@
 
 In our case, we are going to use the MQTT protocol because we want to send data to our QT.
 
+**Protobuf(protocol buffers)**
+
+what it is ?
+
+ - this allows us to define structured data and automatically generate code to read/write that data.
+
+How will this work with kuksa ? basically kuksa will use protobuf to define vehicle signals and messages, then uProtocol or gRPC will serialize these messages across ECus.
+
+**abseil**
+
+what it is ?
+
+ - Abseil is an open source c++ library that provides utility functions and data structures for moderns c++ projects.
+
+how will this work with kuksa ? Kuksa databroker are often implemented in c++ so abseil helps us simplify and optimize the code that handle signals, serialization, threading or network communication.
+
+**gRPC**
+
+what it is ? 
+
+ - gRPC is a high performance, open source remote procedure call (RPC) framework that works on top of HTTP/2 and **protobuf**.
+
+how will this work with kuksa ? Kuksa will use this to expose services over gRPC, clients(Dashboard and cloud) use gRPC to subscirbe to vehicle signals and read/write signal values. Also protobuf is used as the message format within gRPC.
+
+**How they work toghether with kuksa?**
+
+    [Sensors / ECU] 
+          │
+          ▼
+      Signal Data
+          │
+          ▼
+    [Protobuf] -> serialized message
+          │
+          ▼
+    [uProtocol / gRPC Transport]
+          │
+          ▼
+    [KUKSA Databroker]
+          │
+          ▼
+    [Client Apps / Cloud Services] -> Deserialize via Protobuf
+
+- **Protobuf**: Defines the data and handles serialization.
+- **gRPC**: Handles communication between clients and KUKSA services.
+- **Abseil**: Provides utility and support for efficient, reliable code in c++ inside Kuksa.
+
+
+**How Protobuf, gRPC, and Abseil Help When Creating the Feeder**
+
+first lets clarify whats the feeder, a feeder is a **end-to-end path**, in our project will look like this:
+
+1.**Speedometer to STM32**
+
+    [Speedometer]
+          ↓ (analog / pulses)
+    [STM32]
+
+- Speedometer produces raw signals.
+- **SMT32** sample those signals and converts it into an **integer speed value**.
+
+2. **STM32 to Raspberry pi**
+
+this is where the **feeder starts**.
+    
+    [STM32]
+       |
+     CAN frame
+       |
+    [Raspberry Pi]
+
+- **STM32** encodes the speed into a **can frame** and sends it.
+- Rasp receives those **raw bytes**.
+
+3. **CAN feeder/ feeder service on raspeberry pi**
+
+       [CAN Interface]
+             ↓
+       [CAN Feeder Service]
+
+This feeder service will listen to **can frames**, will decode **raw bytes** to an int and it will map the value to a **SSV signal**(vahicle.speed).
+
+4. **Feeder to Kuksa databroker(agl)**
+
+This is where **gRPC** and **protobuf** enter.
+
+    [CAN Feeder Service]
+          ↓ gRPC
+    [KUKSA Databroker]
+
+Here the feeder will create a **protobuf message**(vahicle speed), then serializes it into **bytes**, **gRPC** will send it to **Kuksa databroker** and kuksa will update the signal
+
+5. **On Kuksa Databroker**
+
+       [KUKSA Databroker]
+
+Here **abseil** wil queue updates, handle concurrency and schedule subscribers.
+
+6. **Kuksa to Dashboard**
+
+       [KUKSA Databroker]
+             ↓ gRPC / WebSocket / MQTT
+       [QT Dashboard / Cloud / Apps]
+
+Here apps will subscrive to vehicle speed and receive real time updates.
+
+
+7 **Full scale flow**
+
+    [Speedometer]
+          ↓
+    [STM32]
+     (int speed)
+          ↓ CAN
+    [CAN Bus]
+          ↓
+    [Raspberry Pi (AGL)]
+       [CAN Feeder]
+            ↓ Protobuf
+            ↓ gRPC
+       [KUKSA Databroker]
+            ↓
+       [QT Dashboard / Cloud]
+
+**summary**
+
+ In this setup, the feeder starts on the Raspberry Pi, where a CAN feeder service decodes the STM32 CAN frames, converts the speed into a Protobuf message, and sends it via gRPC to the KUKSA Databroker running on AGL.
+ 
 # Benefits of Kuksa
 
  - **Scalability**
