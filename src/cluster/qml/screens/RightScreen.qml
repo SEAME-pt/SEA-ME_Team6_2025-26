@@ -12,39 +12,16 @@ Item {
     Layout.fillWidth: true
     Layout.margins: 0
 
-    SpeedProvider {
-        id: speedProvider
-    }
-
     Rectangle {
         id: base
         anchors.fill: parent
         color: BaseTheme.black
 
-
-        /*Row {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.centerIn: parent
-            spacing: 8
-
-            Text {
-                text: speedProvider.currSpeed
-                font.pixelSize: 64
-                font.bold: true
-                color: BaseTheme.white
-            }
-
-            Text {
-                text: "m/h"
-                font.pixelSize: 12
-                color: BaseTheme.white
-            }
-        }*/
         SpeedGauge {
             anchors.centerIn: parent
-            value: speedProvider.currSpeed
+            value: temperatureProvider.currTemperature
             minValue: 0
-            maxValue: 40
+            maxValue: 300
             startAngle: 135
             endAngle: 270
         }

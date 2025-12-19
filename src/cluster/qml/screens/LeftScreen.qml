@@ -12,10 +12,6 @@ Item {
     Layout.fillWidth: true
     Layout.margins: 0
 
-    SpeedProvider {
-        id: speedProvider
-    }
-
     Rectangle {
         id: base
         anchors.fill: parent
