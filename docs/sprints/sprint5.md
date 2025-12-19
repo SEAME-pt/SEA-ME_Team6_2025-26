@@ -44,15 +44,15 @@
  
 - **Demos**:
   - Coverage report - Testing
-  ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first-code-coverage.png)
+  ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/first-code-coverage.png)
   - Qt app receiving real values from CAN messages
-  ![Image](https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223)
+  - https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223
   - End-to-end communication with KUKSA
   ![Image](https://github.com/user-attachments/assets/93c0be02-b795-4251-90d5-cee29f532622)
   - CAN messages benchmark
   ![Image](https://github.com/user-attachments/assets/504d738f-c1b2-4f7c-8e9c-e903a6c60e4e)
   - Demo of starting Relay 
-  ![Image](https://github.com/user-attachments/assets/51083775-6852-4c18-8703-7d6342156b04)
+  - https://github.com/user-attachments/assets/51083775-6852-4c18-8703-7d6342156b04
 
 - **Docs updated**:
   - KUKSA integration in here -> [README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/kuksa-implementation/src/can_to_kuksa/README.md)
