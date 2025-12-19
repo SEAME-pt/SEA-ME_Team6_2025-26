@@ -1,5 +1,7 @@
 # 🚀 Cross-Compiler
 
+> **Disclaimer:** This document was created with the assistance of AI technology. The AI provided information and suggestions based on the references, which were then reviewed and edited for clarity and relevance. While the AI aided in generating content, the final document reflects our thoughts and decisions.
+
 ## 📚 Index
 - [👋 Introduction](#sec-intro)
 - [🧠 Core Ideas](#sec-core-ideas)
@@ -409,3 +411,9 @@ $ ./HelloQt6Qml
   - https://youtu.be/5XvQ_fLuBX0?si=WcI7c6L5jJSLzCvF  
   - https://www.docker.com/ 
   - https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/cross-compile
+
+---
+
+> **Document Version:** 1.0  
+  **Last Updated:** 6th November 2025  
+  **Contributor:** souzitaaaa
