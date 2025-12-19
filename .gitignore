@@ -10,6 +10,11 @@
 *.tar.gz
 *.tgz
 
+.dotstop_extensions.backup
+.dotstop_extensions.backup/
+.dotstop_extensions
+.dotstop_extensions/
+
 # Local testing
 src/cluster/CMakeLists.txt.user
 src/cluster/build/

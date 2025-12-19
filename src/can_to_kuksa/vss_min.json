@@ -1,0 +1,38 @@
+{
+  "Vehicle": {
+    "type": "branch",
+    "description": "Root vehicle branch",
+    "children": {
+      "Speed": {
+        "type": "sensor",
+        "datatype": "double",
+        "unit": "km/h",
+        "description": "Vehicle speed"
+      },
+      "Cabin": {
+        "type": "branch",
+        "description": "Cabin branch",
+        "children": {
+          "AirTemperature": {
+            "type": "sensor",
+            "datatype": "double",
+            "unit": "C",
+            "description": "Cabin air temperature"
+          }
+        }
+      },
+      "Test": {
+        "type": "branch",
+        "description": "Test/demo branch",
+        "children": {
+          "Heartbeat": {
+            "type": "sensor",
+            "datatype": "int32",
+            "unit": "",
+            "description": "Demo heartbeat counter"
+          }
+        }
+      }
+    }
+  }
+}
