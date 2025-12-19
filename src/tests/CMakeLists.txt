@@ -19,7 +19,7 @@ endif()
 enable_testing()
 
 find_package(GTest REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Core Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Test Network)
 
 include_directories(../cluster/src/backend)
 
@@ -37,6 +37,7 @@ target_link_libraries(SEA_ME_Team6_Tests
     gcov
     Qt6::Core
     Qt6::Test
+    Qt6::Network
 )
 
 add_test(NAME speedprovider_test COMMAND SEA_ME_Team6_Tests)
