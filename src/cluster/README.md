@@ -1,5 +1,7 @@
 # 🚀 Instrument Cluster
 
+> **Disclaimer:** This document was created with the assistance of AI technology. The AI provided information and suggestions based on the references, which were then reviewed and edited for clarity and relevance. While the AI aided in generating content, the final document reflects our thoughts and decisions.
+
 ## 📚 Index
   - [👋 Introduction](#sec-intro)
   - [🧠 Core Ideas](#sec-core-ideas)
@@ -884,5 +886,9 @@ There are two main ways to fix this, depending on whether we are using Qt Creato
  - https://www.qt.io
  - https://cmake.org  
  - https://packages.ubuntu.com
- 
 
+---
+
+> **Document Version:** 1.0  
+  **Last Updated:** 2nd December 2025  
+  **Contributor:** souzitaaaa

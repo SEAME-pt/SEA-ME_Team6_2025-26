@@ -1,5 +1,0 @@
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/HelloQt6Qml.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/edit_cache.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/rebuild_cache.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/HelloQt6Qml_autogen_timestamp_deps.dir
-/home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/cluster/build/Qt_6_7_3-Debug/CMakeFiles/HelloQt6Qml_autogen.dir

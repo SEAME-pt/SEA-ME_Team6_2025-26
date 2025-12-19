@@ -10,8 +10,17 @@
 *.tar.gz
 *.tgz
 
+.dotstop_extensions.backup
+.dotstop_extensions.backup/
+.dotstop_extensions
+.dotstop_extensions/
+
 # Local testing
-cluster/cluster-qml-teste/
+src/cluster/CMakeLists.txt.user
+src/cluster/build/
+src/cluster/build
+tests/build/
+tests/build
 HelloQt6
 HelloQt6Qml
 

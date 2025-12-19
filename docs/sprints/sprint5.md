@@ -8,57 +8,69 @@
 - #### **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Team Knowlegde Update/Status Point (5)
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-  - [ ] Update Project Board (3)
+  - [x] Update Project Board (3)
 - #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [ ] Integrate Speedometer with Hardware (3)
-  - [ ] Integrate Relay for Motor Driver (3)
-  - [ ] Mount and test SSD through USB device (3)
-  - [ ] Integrate Recharge Terminal (3)
+  - [x] Integrate Speedometer with Hardware (3)
+  - [x] Integrate Relay for Motor Driver (3)
+  - [x] Mount and test SSD through USB device (3)
+  - [x] Integrate Recharge Terminal (3)
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Test real data displaying in QT (8)
-  - [ ] Design and Establish CAN Protocol (13)
-  - [ ] Initialize Data Processing with ThreadX (13)
-  - [ ] Integrate Data from Multiple Sensors (5)
+  - [x] Test real data displaying in QT (8)
+  - [x] Design and Establish CAN Protocol (13)
+  - [x] Initialize Data Processing with ThreadX (13)
+  - [x] Integrate Data from Multiple Sensors (5)
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
-  - [ ] UPROTOCOL, COVESA and KUKSA documentation (13)
+  - [x] UPROTOCOL, COVESA and KUKSA documentation (13)
 - #### **Epic** - Testing and Validate Software - [103](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/103)
-  - [ ] Test Knowledge (Integration and Unit) (21) 
+  - [x] Test Knowledge (Integration and Unit) (21) 
 ---
 
 ## 📈 Actual Progress
 
-- ## ✅ Running... 🎉
-- ## ✅ Sprint 5 points: 0/93 (🔥🔥Ambitious!!🔥🔥)
+- ## ✅ Goal Completed! Implemention of end-to-end data flow
+- `STM32 (ThreadX) <-> CAN Bus <-> Raspberry Pi 5 (AGL) - (CAN decoder + KUKSA publisher) <-> KUKSA Databroker -> Qt App`
+- ## ✅ Sprint 5 points: 88/93 
 
-- ❌ Undone: 
+- ❌ Undone: Team Knowlegde Update/Status Point (5)
 ---
 
 ## ✅ Outcomes
 
 - **Delivered**:
+  - All hardware additions/changes completed. (Speedometer; Relay; SSD; Recharge terminal)
+  - Testing Spike/Small implementation of unit testing.
+  - End-to-end communication via CAN with KUKSA implementation.
+  - Processing CAN messages in ThreadX.
  
 - **Demos**:
-
+  - Coverage report - Testing
+  ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/first-code-coverage.png)
+  - Qt app receiving real values from CAN messages
+  - https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223
+  - End-to-end communication with KUKSA
+  ![Image](https://github.com/user-attachments/assets/93c0be02-b795-4251-90d5-cee29f532622)
+  - CAN messages benchmark
+  ![Image](https://github.com/user-attachments/assets/504d738f-c1b2-4f7c-8e9c-e903a6c60e4e)
+  - Demo of starting Relay 
+  - https://github.com/user-attachments/assets/51083775-6852-4c18-8703-7d6342156b04
 
 - **Docs updated**:
-
-
-- **Code**:
+  - KUKSA integration in here -> [README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/kuksa-implementation/src/can_to_kuksa/README.md)
+  - Cross-compile for KUKSA implementation in here -> [README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/cross-compile-stubs/src/cross-compiler/protobuf_gRPC_crosscompiling/README.md)
+  - Software Tests Guide in here -> [Software-tests-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Software-Tests-guide.md)
+  - Testing framework decision in here -> [Testing-Framework-Decision](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Testing-Framework-Decision.md)
 
 - **Tests**:
+  - Speed provider tests -> [here](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/test-knowledge/src/tests/unit/speedprovider_test.cpp)
   
 ---
 
 # 🔎 Retrospective
 - ## **Went well**:
-  - ###
-  - ### 
-
-- ## **To improve**: 
-  - ### 
-
-## 🔗 Useful Links
-- 
+  - ### Objetive completed - End-to-end communication with real Data!
+  - ### Bonus tasks:
+      - #### KUKSA implemented
+      - #### CAN benchmark test - 1000 packages/s without losses (estimated needs - 100-150 packages/s)
 
 ## TSF Useful: 
   EXPECT-L0-1 - "System architecture is defined and documented":

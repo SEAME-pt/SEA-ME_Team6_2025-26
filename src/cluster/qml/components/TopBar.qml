@@ -35,7 +35,7 @@ Item {
 
                 Text {
                     text: clock.currDate
-                    font.pixelSize: 14
+                    font.pixelSize: 10
                     color: "white"
                     anchors.centerIn: parent
                 }
