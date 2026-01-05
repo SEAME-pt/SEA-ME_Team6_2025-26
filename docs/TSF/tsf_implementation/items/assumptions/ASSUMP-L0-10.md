@@ -10,7 +10,14 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "Raspberry Pi 5"
+      - "Raspberry Pi 4"
+      - "STM32"
+      - "Hailo Hat"
 text: 'Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors,
   sensors) are procured and available before system architecture implementation begins.'
 ---

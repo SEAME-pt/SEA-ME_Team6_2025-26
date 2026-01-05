@@ -3,10 +3,21 @@ id: ASSUMP_L0_7
 header: 'Assumption: QT Crosscompilation should be achieved'
 level: '1.7'
 normative: true
+references:
+- id: EXPECT_L0_7
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_7/EXPECTATIONS-EXPECT_L0_7.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "GCC"
+      - "ARM64"
+      - "CMake"
+      - "cross-compil"
 text: 'GCC ARM64 cross-compiler, CMake, and Qt6 cross-compilation libraries are available
   and configured on the build host before cross-compilation activities begin.'
 ---

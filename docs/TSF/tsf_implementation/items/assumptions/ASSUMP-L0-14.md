@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    packages:
+      - "TSF"
+      - "TruDAG"
+      - "Trustable"
 text: 'The Trustable Software Framework (TSF) methodology documentation and reference
   implementations are publicly accessible online before TSF implementation begins.'
 ---

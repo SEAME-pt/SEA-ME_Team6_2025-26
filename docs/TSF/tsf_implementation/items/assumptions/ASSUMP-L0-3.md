@@ -10,7 +10,14 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_linux_environment
+  configuration:
+    required_tools:
+      - "Ubuntu"
+      - "Linux"
+      - "kernel"
+      - "driver"
 text: 'Assumption: The system and development tooling target a Linux-based integration
   environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules
   required for platform-specific components (e.g., motor controllers, Hailo AI Hat,

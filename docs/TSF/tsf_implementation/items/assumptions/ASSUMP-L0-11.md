@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_linux_environment
+  configuration:
+    required_tools:
+      - "systemd"
+      - "auto-start"
+      - "boot"
 text: 'Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display
   receiver) use systemd-based init systems that support service auto-start configuration
   before Qt application boot automation testing begins.'
