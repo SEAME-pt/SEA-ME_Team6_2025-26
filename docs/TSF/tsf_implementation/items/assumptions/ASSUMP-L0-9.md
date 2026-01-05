@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "STM32"
+      - "ThreadX"
+      - "ST-LINK"
 text: 'The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK
   or JTAG) before ThreadX firmware verification begins.'
 ---

@@ -10,7 +10,13 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-score: 0.6
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "CAN"
+      - "STM32"
+      - "MCP2515"
 text: 'CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed
   and functional on both Raspberry Pi 5 and STM32 before CAN communication testing
   begins.'
