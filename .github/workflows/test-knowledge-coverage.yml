@@ -28,7 +28,6 @@ jobs:
 
       - name: Run Python tests with coverage
         run: |
-          cd docs/test-knowledge
           coverage run -m pytest src/tests/unit/python
           coverage report
           coverage html -d coverage/python
