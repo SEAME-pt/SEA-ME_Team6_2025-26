@@ -23,10 +23,15 @@ jobs:
                     cmake \
                     g++ \
                     lcov \
-                    genhtml \
                     python3 \
                     python3-pip \
                     bash
+
+            - name: Check coverage tools
+              run: |
+                which lcov
+                lcov --version
+                which genhtml
 
             - name: Set up Python
               uses: actions/setup-python@v5
