@@ -6,19 +6,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-option(ENABLE_COVERAGE "Enable coverage reporting" ON)
+option(ENABLE_CPP_TESTS "Enable coverage reporting" ON)
+option(ENABLE_PYTHON_TESTS "Enable Python Unit Tests" ON)
 
-if(ENABLE_COVERAGE)
+# Coverage Flags
+# -----------------------------------------
+if(ENABLE_CPP_TESTS)
     add_compile_options(--coverage -O0 -g)
     add_link_options(--coverage)
 endif()
 
-# GTEST
-# ./SEA_ME_Team6_Tests
-
+# Testing
+# -----------------------------------------
 enable_testing()
 
 find_package(GTest REQUIRED)
+# Add here Qt6 Packages as they appear
 find_package(Qt6 REQUIRED COMPONENTS Core Test Network)
 
 include_directories(../cluster/src/backend)
@@ -26,10 +29,11 @@ include_directories(../cluster/src/backend)
 file(GLOB BACKEND_SOURCES ../cluster/src/backend/*.cpp)
 
 add_executable(SEA_ME_Team6_Tests
-    ${BACKEND_SOURCES}
-    unit/speedprovider_test.cpp
+${BACKEND_SOURCES}
+unit/cpp/speedprovider_test.cpp
 )
 
+# Add here Qt6 Packages as they appear
 target_link_libraries(SEA_ME_Team6_Tests
     gtest
     gtest_main
@@ -40,45 +44,16 @@ target_link_libraries(SEA_ME_Team6_Tests
     Qt6::Network
 )
 
-add_test(NAME speedprovider_test COMMAND SEA_ME_Team6_Tests)
+add_test(NAME cpp_unit_test COMMAND SEA_ME_Team6_Tests)
 
-# COVERAGE REPORT
-# make coverage
+# CMake Modules
+# -----------------------------------------
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-if(ENABLE_COVERAGE)
-    find_program(LCOV_PATH lcov)
-    find_program(GENHTML_PATH genhtml)
-
-    if(NOT LCOV_PATH OR NOT GENHTML_PATH)
-        message(FATAL_ERROR "lcov and/or genhtml not found")
+if (ENABLE_CPP_TESTS)
+    include(CoverageCpp)
+    if (ENABLE_PYTHON_TESTS)
+        include(CoveragePython)
     endif()
-
-    add_custom_target(coverage
-        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-        COMMAND ${LCOV_PATH} --capture
-            --directory .
-            --output-file coverage.info
-            --ignore-errors mismatch
-            --rc geninfo_unexecuted_blocks=1
-
-        COMMAND ${LCOV_PATH} --remove coverage.info
-            '/usr/*'
-            '*/tests/*'
-            '*/build/*_autogen/*'
-            --output-file coverage.filtered.info
-            --ignore-errors unused
-
-        COMMAND ${GENHTML_PATH} coverage.filtered.info
-                "--output-directory=coverage_report"
-                "--title=SEA:ME Team 6 – Coverage Report"
-                "--legend"
-                "--precision=2"
-
-        COMMAND xdg-open coverage_report/index.html || true
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Running tests and generating coverage report"
-    )
-
-
-    add_dependencies(coverage SEA_ME_Team6_Tests)
+    include(CoverageIndex)
 endif()

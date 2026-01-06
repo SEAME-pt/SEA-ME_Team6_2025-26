@@ -12,7 +12,7 @@
 
 .dotstop_extensions.backup
 .dotstop_extensions.backup/
-.dotstop_extensions
+.dotstop_extensionsx
 .dotstop_extensions/
 
 # Local testing
@@ -23,6 +23,11 @@ tests/build/
 tests/build
 HelloQt6
 HelloQt6Qml
+tests/unit/python/.venv
+tests/unit/python/__pycache__
+tests/unit/python/.pytest_cache
+tests/unit/python/.coverage
+
 
 build/
 build
