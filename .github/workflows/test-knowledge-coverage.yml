@@ -53,7 +53,7 @@ jobs:
               run: cmake --build src/tests/build
 
             - name: Run unified coverage target
-              run: cmake --build src/tests/build --target coverage
+              run: cmake --build src/tests/build --target python_coverage
 
             - name: Upload indexed coverage
               uses: actions/upload-artifact@v4
