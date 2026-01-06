@@ -45,15 +45,15 @@ jobs:
 
             - name: Configure CMake
               run: |
-                cmake -S docs/test-knowledge -B docs/test-knowledge/build \
+                cmake -S src/tests -B src/tests/build \
                   -DENABLE_CPP_TESTS=ON \
                   -DENABLE_PYTHON_TESTS=ON
 
             - name: Build all
-              run: cmake --build docs/test-knowledge/build
+              run: cmake --build src/tests/build
 
             - name: Run unified coverage target
-              run: cmake --build docs/test-knowledge/build --target coverage
+              run: cmake --build src/tests/build --target coverage
 
             - name: Upload indexed coverage
               uses: actions/upload-artifact@v4
