@@ -1,62 +1,40 @@
 name: Test Knowledge – Coverage Pipeline
 
 on:
-    push:
-        branches:
-            - "docs/test-knowledge"
-    pull_request:
-        branches:
-            - "docs/test-knowledge"
+  push:
+    branches:
+      - "docs/test-knowledge"
+  pull_request:
+    branches:
+      - "docs/test-knowledge"
 
 jobs:
-    test-knowledge:
-        runs-on: ubuntu-latest
+  test-knowledge:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Install system dependencies
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y \
-                    cmake \
-                    g++ \
-                    lcov \
-                    python3 \
-                    python3-pip \
-                    bash
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-            - name: Check coverage tools
-              run: |
-                which lcov
-                lcov --version
-                which genhtml
+      - name: Install Python testing tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest coverage
 
-            - name: Set up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version: "3.11"
+      - name: Run Python tests with coverage
+        run: |
+          cd docs/test-knowledge
+          coverage run -m pytest src/tests/unit/python
+          coverage report
+          coverage html -d coverage/python
 
-            - name: Install Python Testing Tools
-              run: |
-                python -m pip install --upgrade pip
-                pip install pytest coverage
-
-            - name: Configure CMake
-              run: |
-                cmake -S src/tests -B src/tests/build \
-                  -DENABLE_CPP_TESTS=OFF \
-                  -DENABLE_PYTHON_TESTS=ON
-
-            - name: Build all
-              run: cmake --build src/tests/build
-
-            - name: Run unified coverage target
-              run: cmake --build src/tests/build --target python_coverage
-
-            - name: Upload indexed coverage
-              uses: actions/upload-artifact@v4
-              with:
-                name: test-knowledge-indexed-coverage
-                path: docs/test-knowledge/coverage
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-knowledge-python-coverage
+          path: docs/test-knowledge/coverage
