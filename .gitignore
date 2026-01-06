@@ -23,10 +23,19 @@ tests/build/
 tests/build
 HelloQt6
 HelloQt6Qml
+tests/unit/python/.venv/
 tests/unit/python/.venv
+tests/unit/python/__pycache__/
 tests/unit/python/__pycache__
+tests/unit/python/.pytest_cache/
 tests/unit/python/.pytest_cache
 tests/unit/python/.coverage
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
 
 
 build/
