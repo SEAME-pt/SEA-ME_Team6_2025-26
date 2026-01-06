@@ -20,7 +20,13 @@ endif()
 # -----------------------------------------
 enable_testing()
 
-find_package(GTest REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.15.0.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 # Add here Qt6 Packages as they appear
 find_package(Qt6 REQUIRED COMPONENTS Core Test Network)
 
