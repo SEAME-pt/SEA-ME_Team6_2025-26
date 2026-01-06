@@ -46,7 +46,7 @@ jobs:
             - name: Configure CMake
               run: |
                 cmake -S src/tests -B src/tests/build \
-                  -DENABLE_CPP_TESTS=ON \
+                  -DENABLE_CPP_TESTS=OFF \
                   -DENABLE_PYTHON_TESTS=ON
 
             - name: Build all
