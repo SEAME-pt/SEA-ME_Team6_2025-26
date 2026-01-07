@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     // Read() is going to fill 'resp' with each incoming message
     // which may contain multiple updates
     while (stream->Read(&resp)) {
-        // Your proto: map<string, Datapoint> entries
+        // Our proto: map<string, Datapoint> entries
         const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint>& entries = resp.entries();
 
         for (::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint>::const_iterator it = entries.begin();
