@@ -241,7 +241,7 @@ $ ./SEA_ME_Team6_Tests
 $ ./SEA_ME_Team6_Tests --gtest_filter=ComponentName.*
 
 # List all available tests
-$ ./SEA_ME_Team6_Tests --gtest_list_filter
+$ ./SEA_ME_Team6_Tests --gtest_list_tests
 ```
 
 ### Running Python Tests:
