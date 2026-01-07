@@ -28,6 +28,7 @@
 #include "kuksa/val/v2/types.pb.h"
 
 #include "../../can_frames.h"
+#include "../inc/can_decode.hpp"
 
 using kuksa::val::v2::VAL;
 
@@ -79,24 +80,6 @@ static void publish_int32(VAL::Stub* stub,
     }
 }
 
-// CAN helpers (little-endian decoding)
-static inline std::uint16_t u16_le(const std::uint8_t* d)
-{
-    return static_cast<std::uint16_t>(d[0]) |
-           (static_cast<std::uint16_t>(d[1]) << 8);
-}
-
-//Same logic as before but casts to int16_t
-static inline std::int16_t i16_le(const std::uint8_t* d)
-{
-    return static_cast<std::int16_t>(u16_le(d));
-}
-
-static inline std::uint8_t u8(const std::uint8_t* d)
-{
-    return d[0];
-}
-
 // CAN socket setup
 static int open_can_socket()
 {
@@ -133,21 +116,33 @@ static int open_can_socket()
 static void handle_can_frame(const struct can_frame& frame,
                              VAL::Stub* stub)
 {
-    const std::uint32_t id  = frame.can_id & CAN_EFF_MASK;
+    const uint32_t id = frame.can_id & CAN_SFF_MASK; //Changed the mask to standard frame format
     const std::uint8_t  dlc = frame.can_dlc;
 
     switch (id) {
-        case 0x100: { //speedx10
-            if (dlc < 2) return;
-            const std::uint16_t raw = u16_le(frame.data);
-            const double speed = raw / 10.0;
+        case CAN_ID_WHEEL_SPEED: { //speedx10
+            if (dlc < 8) return;
+
+            const std::int16_t  rpm          = i16_le(&frame.data[0]);     // bytes 0-1
+            const std::uint32_t total_pulses = u32_le(&frame.data[2]);     // bytes 2-5
+            const std::uint16_t raw_speed    = u16_le(&frame.data[6]);     // bytes 6-7
+
+            const double speed = raw_speed / 10.0;
             publish_double(stub, "Vehicle.Speed", speed);
             break;
         }
-        case 0x111: { // tempx10
-            if (dlc < 2) return;
-            const std::int16_t raw = i16_le(frame.data);
-            const double temp = raw / 10.0;
+        case CAN_ID_ENVIRONMENT: { // tempx10
+            if (dlc < 8) return;
+
+            const std::int16_t raw_temp = i16_le(&frame.data[0]);
+            const std::uint8_t humidity = u8(&frame.data[2]);
+            const std::uint8_t reserved = u8(&frame.data[3]);
+            const std::uint32_t pressure = (static_cast<std::uint32_t>(frame.data[4]) << 16) |
+                                                (static_cast<std::uint32_t>(frame.data[5]) << 8)  |
+                                                 static_cast<std::uint32_t>(frame.data[6]);
+            const std::uint8_t status   = u8(&frame.data[7]);
+
+            const double temp = raw_temp / 10.0;
             publish_double(stub, "Vehicle.Exterior.AirTemperature", temp);
             break;
         }
