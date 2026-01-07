@@ -19,7 +19,7 @@ Below, I'm gonna list some Pros and Cons.
 
   - **Security & access control**
 
-    - Our display should never write vehicle state, should never see only a set of signals, and it can accidentally influence control paths. With Kuksa, this is a default behavior, with MQTT, it is our responsibility.
+    - Our display should never write vehicle state, should never see only a set of signals, and it cant accidentally influence control paths. With Kuksa, this is a default behavior, with MQTT, it is our responsibility.
 
 **CONS**
 
@@ -106,4 +106,4 @@ Below, I'm gonna list some Pros and Cons.
 
 Ideal solution:
 
-  Kuksa -> MQTT bride -> PI4(display)
+  Kuksa -> MQTT bridge -> PI4(display)
