@@ -27,6 +27,8 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
+#include "../../can_frames.h"
+
 using kuksa::val::v2::VAL;
 
 // Configuration
