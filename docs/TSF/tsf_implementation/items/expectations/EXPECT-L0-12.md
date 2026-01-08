@@ -1,14 +1,18 @@
 ---
 id: EXPECT-L0-12
-header: Wireless display operational
-text: The cluster display content streams wirelessly from the computation device to the display device.
-level: '1.12'
+header: "L0-12 The DCI display fullscreen will be out of the car "
+text: |
+  The DCI display fullscreen will be out of the car (wireless display) lauching Qt (first without autostart, then with autostart).
+level: 1.1
 normative: true
 references:
-- id: ASSERT-L0-12
-  path: ../assertions/ASSERT-L0-12.md
-  type: file
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint4.jpeg"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

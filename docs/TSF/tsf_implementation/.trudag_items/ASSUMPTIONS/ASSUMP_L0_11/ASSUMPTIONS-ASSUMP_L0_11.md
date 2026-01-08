@@ -1,31 +1,30 @@
 ---
 id: ASSUMP_L0_11
-header: 'Assumption: The Qt cluster UI shall **auto-start on boot** and display...'
+header: "Assumption: Development environment ready"
+text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
 level: '1.11'
 normative: true
 references:
-- id: EXPECT_L0_11
+- type: file
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_11/EXPECTATIONS-EXPECT_L0_11.md
-  type: file
+  id: EXPECT_L0_11
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
   type: validate_linux_environment
   configuration:
-    required_tools:
-      - "systemd"
-      - "auto-start"
-      - "boot"
-text: 'Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display
-  receiver) use systemd-based init systems that support service auto-start configuration
-  before Qt application boot automation testing begins.'
+    components:
+      - "Linux environment"
+      - "Development tools"
+      - "Test infrastructure"
 ---
-Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display receiver) use systemd-based init systems that support service auto-start configuration before Qt application boot automation testing begins.
 
-Acceptance criteria / notes:
-- Systemd is installed and operational on both Raspberry Pi 5 and Raspberry Pi 4.
-- Service file creation and enabling mechanisms are documented for both systems.
-- Display managers are configured for auto-login on both Rasp5 and Rasp4.
+The development environment meets all prerequisites for implementing and verifying this requirement.
 
-Rationale: Auto-start verification for `EXPECT-L0-11` assumes systemd availability on both Raspberry Pi 5 (Qt cluster host) and Raspberry Pi 4 (wireless display receiver). This assumption makes the dual-system init configuration dependency explicit.
+**Acceptance criteria / notes:**
+- Required components are available and configured in the test environment.
+- If a component is unavailable, a documented mitigation plan will be provided.
+- This assumption is validated by the `validate_linux_environment` validator.
+
+**Rationale:** Verification activities for `EXPECT-L0-11` depend on these prerequisites being met.

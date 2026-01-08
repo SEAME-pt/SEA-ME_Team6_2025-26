@@ -160,28 +160,29 @@ for md_file in trudag_items.rglob("*.md"):
     )
     
     # 2. Convert paths to be relative to repo root (trudag resolves from there)
-    # path: ../assertions/ASSERT-L0-1.md -> path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_1/ASSERTIONS-ASSERT_L0_1.md
+    # Handles references for all item types (assertions, assumptions, evidences, expectations)
     def convert_path(match):
         indent = match.group(1)
         category = match.group(2)
         item_id = match.group(3)
-        
+
         category_map = {
             'assertions': 'ASSERTIONS',
-            'assumptions': 'ASSUMPTIONS', 
+            'assumptions': 'ASSUMPTIONS',
             'evidences': 'EVIDENCES',
             'expectations': 'EXPECTATIONS'
         }
-        
+
         prefix = category_map.get(category, category.upper())
         item_id_underscore = item_id.replace('-', '_')
         # Path from repo root
         new_path = f"docs/TSF/tsf_implementation/.trudag_items/{prefix}/{item_id_underscore}/{prefix}-{item_id_underscore}.md"
-        
+
         return f"{indent}path: {new_path}"
-    
+
+    # Rewrite references for all item types, including quoted paths and YAML indentation
     content = re.sub(
-        r'(\s*)path:\s*\.\./([a-z]+)/([A-Z]+-[A-Z0-9]+-[0-9]+)\.md',
+        r'(\s*)path:\s*["\']?\.\./(assertions|assumptions|evidences|expectations)/([A-Z]+-[A-Z0-9]+-[0-9]+)\.md["\']?',
         convert_path,
         content
     )
@@ -339,11 +340,28 @@ else
 fi
 echo ""
 
+
 echo "=========================================="
 echo "✅ Setup complete!"
 echo "=========================================="
 echo ""
-echo "Next steps:"
-echo "  - Run 'trudag score' to calculate scores"
-echo "  - Check .trudag_items/ for generated files"
+
+# Step 7: Run trudag score
+echo "📊 Step 7: Running trudag score..."
+if trudag score; then
+    echo "✓ Score calculated!"
+else
+    echo "✗ Score failed - please review errors above"
+    exit 1
+fi
+echo ""
+
+# Step 8: Run trudag publish
+echo "🚀 Step 8: Running trudag publish..."
+if trudag publish; then
+    echo "✓ Publish successful!"
+else
+    echo "✗ Publish failed - please review errors above"
+    exit 1
+fi
 echo ""

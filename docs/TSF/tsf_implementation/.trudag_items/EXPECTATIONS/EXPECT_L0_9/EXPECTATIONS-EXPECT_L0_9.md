@@ -1,14 +1,24 @@
 ---
 id: EXPECT_L0_9
-header: Real-time OS operational
-text: The STM32 microcontroller runs the ThreadX real-time operating system for control tasks.
-level: '1.9'
+header: "L0-9 ThreadX should be used on the Microcontroller (STM"
+text: |
+  ThreadX should be used on the Microcontroller (STM32) as a RTOS, receiving signals from the speedometer and controlling the servos and DC motor.
+level: 1.1
 normative: true
 references:
-- id: ASSERT_L0_9
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_9/ASSERTIONS-ASSERT_L0_9.md
-  type: file
+  - type: "file"
+    path: "docs/demos/ThreadX_Running.gif"
+  - type: "file"
+    path: "docs/guides/AGL_and_ThreadX_benefits_Guide.md"
+  - type: "file"
+    path: "docs/guides/ThreadX_Installation_Guide.md"
+  - type: "file"
+    path: "docs/guides/ThreadXGuide.md"
+  - type: "file"
+    path: "docs/guides/CAN_test/app_threadx.h"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

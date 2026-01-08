@@ -1,14 +1,16 @@
 ---
 id: EXPECT-L0-15
-header: Agile methodology adopted
-text: The team follows Agile Scrum practices for iterative development and project management.
-level: '1.15'
+header: "L0-15 Agile: The team shall follow Agile (Scrum) methodo"
+text: |
+  Agile: The team shall follow Agile (Scrum) methodology for project management.
+level: 1.1
 normative: true
 references:
-- id: ASSERT-L0-15
-  path: ../assertions/ASSERT-L0-15.md
-  type: file
+  - type: "file"
+    path: "src/inital_program/jetracer/notebooks/road_following.ipynb"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

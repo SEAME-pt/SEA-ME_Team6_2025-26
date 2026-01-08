@@ -44,32 +44,32 @@ void TestCombined(void)
 {
     HAL_StatusTypeDef statusA, statusB;
     uint32_t startTime;
-    int servoDirection = 1;  // 1 = para max, -1 = para min
+    int servoDirection = 1;  // 1 = to max, -1 = to min
     uint16_t servoPos = SERVO_MID_PULSE;
-    uint16_t servoStep = 50;  // Incremento por iteração
+    uint16_t servoStep = 50;  // Increment per iteration
 
     printf("\r\n========================================\r\n");
-    printf("Teste COMBINADO: Rodas + Servo (10 segundos)\r\n");
+    printf("COMBINED TEST: Wheels + Servo (10 seconds)\r\n");
     printf("========================================\r\n");
 
-    /* Liga os dois motores para a frente */
-    printf("-> Ligando motores para a frente...\r\n");
+    /* Turn on both motors forward */
+    printf("-> Turning motors forward...\r\n");
     statusA = TB6612FNG_MotorRun(&motorDriver, MOTOR_CHA, 255);
     HAL_Delay(10);  // Delay entre comandos I2C
     statusB = TB6612FNG_MotorRun(&motorDriver, MOTOR_CHB, 255);
-    printf("   Motor A: %s, Motor B: %s\r\n",
-           (statusA == HAL_OK) ? "OK" : "ERRO",
-           (statusB == HAL_OK) ? "OK" : "ERRO");
+        printf("   Motor A: %s, Motor B: %s\r\n",
+            (statusA == HAL_OK) ? "OK" : "ERROR",
+            (statusB == HAL_OK) ? "OK" : "ERROR");
 
     startTime = HAL_GetTick();
 
-    /* Loop durante 10 segundos */
+    /* Loop for 10 seconds */
     while ((HAL_GetTick() - startTime) < 1200000)
     {
-        /* Actualiza posição do servo */
+        /* Update servo position */
         servoPos += servoDirection * servoStep;
 
-        /* Inverte direcção nos limites */
+        /* Reverse direction at the limits */
         if (servoPos >= SERVO_MAX_PULSE) {
             servoPos = SERVO_MAX_PULSE;
             servoDirection = -1;
@@ -80,17 +80,17 @@ void TestCombined(void)
 
         __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, servoPos);
 
-        /* Pequeno delay para movimento suave */
+        /* Small delay for smooth movement */
         HAL_Delay(50);
     }
 
-    /* Para tudo */
-    printf("-> 10 segundos terminados! A parar...\r\n");
+    /* Stop everything */
+    printf("-> 10 seconds finished! Stopping...\r\n");
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, SERVO_MID_PULSE);
     TB6612FNG_MotorBrake(&motorDriver, MOTOR_CHA);
     HAL_Delay(10);
     TB6612FNG_MotorBrake(&motorDriver, MOTOR_CHB);
 
-    printf("Teste combinado completo!\r\n");
+    printf("Combined test complete!\r\n");
 }
 ```

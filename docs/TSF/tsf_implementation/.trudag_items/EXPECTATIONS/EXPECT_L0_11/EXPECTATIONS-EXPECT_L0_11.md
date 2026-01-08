@@ -1,14 +1,24 @@
 ---
 id: EXPECT_L0_11
-header: Automatic startup configured
-text: The Qt cluster application automatically starts on system boot and displays fullscreen.
-level: '1.11'
+header: "L0-11 The Qt cluster UI shall **auto-start on boot** and"
+text: |
+  The Qt cluster UI shall **auto-start on boot** and display fullscreen on the car’s built-in display.
+level: 1.1
 normative: true
 references:
-- id: ASSERT_L0_11
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_11/ASSERTIONS-ASSERT_L0_11.md
-  type: file
+  - type: "file"
+    path: "docs/demos/Cluster-state-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-study.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint4.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-mockup-sprint3.jpeg"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

@@ -1,15 +1,13 @@
 ---
 id: EVID_L0_16
-header: CI/CD pipeline configured
-text: The repository contains GitHub Actions workflow files and guides for continuous integration and deployment.
-level: '1.16'
+header: "L0 Evidence: CI/CD: The project repository shall include a working GitHub"
+text: |
+  Evidence files for EXPECT-L0-16.
+level: 1.1
 normative: true
-references:
-- type: file
-  path: .github/workflows/daily-meeting.yml
-- type: file
-  path: docs/guides/github-actions-guide.md
-score: 1.0
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
-- name: Joao Jesus Silva
+

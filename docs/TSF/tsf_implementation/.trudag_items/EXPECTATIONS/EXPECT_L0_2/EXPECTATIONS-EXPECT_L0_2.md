@@ -1,14 +1,22 @@
 ---
 id: EXPECT_L0_2
-header: Hardware assembly complete
-text: The demonstrator car hardware is fully assembled with all components correctly connected and operational.
-level: '1.2'
+header: "L0-2 Hardware Assembly: Fully assemble the PiRacer robo"
+text: |
+  Hardware Assembly: Fully assemble the PiRacer robot, including the Raspberry Pi 5, Hailo AI Hat, DC motors, servo motor, and display interface (first with the old architecture. Then with the new one).
+level: 1.1
 normative: true
 references:
-- id: ASSERT_L0_2
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_2/ASSERTIONS-ASSERT_L0_2.md
-  type: file
+  - type: "file"
+    path: "docs/demos/assembled-car2.jpeg"
+  - type: "file"
+    path: "docs/demos/assembled-car1.jpeg"
+  - type: "file"
+    path: "src/inital_program/jetracer/docs/latrax/hardware_setup.md"
+  - type: "file"
+    path: "src/inital_program/jetracer/docs/tamiya/hardware_setup.md"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

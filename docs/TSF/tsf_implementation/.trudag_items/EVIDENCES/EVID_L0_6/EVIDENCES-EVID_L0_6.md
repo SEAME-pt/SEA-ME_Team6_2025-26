@@ -1,14 +1,18 @@
 ---
 id: EVID_L0_6
-header: Static GUI elements shown
-text: The repository contains mockup images and cluster display screenshots showing static graphical elements in the Qt interface.
-level: '1.6'
+header: "L0 Evidence: The Qt GUI shall display static graphical elements such as s"
+text: |
+  Evidence files for EXPECT-L0-6.
+level: 1.1
 normative: true
 references:
-- type: file
-  path: docs/guides/QML-guide.md
-- type: file
-  path: src/cluster/README.md
-score: 1.0
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint4.jpeg"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+

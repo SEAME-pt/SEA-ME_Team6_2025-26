@@ -1,14 +1,18 @@
 ---
 id: EVID_L0_12
-header: Wireless display demonstrated
-text: The repository contains VNC configuration guides and demonstration images showing wireless display streaming.
+header: "L0 Evidence: The DCI display fullscreen will be out of the car (wireless "
+text: |
+  Evidence files for EXPECT-L0-12.
+level: 1.1
 normative: true
-level: '1.12'
 references:
-- type: file
-  path: docs/guides/Power Consumption Analysis.md
-- type: file
-  path: docs/guides/AGL_Installation_Guide.md
-score: 1.0
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint4.jpeg"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+

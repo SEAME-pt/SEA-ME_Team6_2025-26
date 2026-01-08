@@ -1,34 +1,30 @@
 ---
 id: ASSUMP_L0_3
-header: 'Assumption: Target platform and drivers for software integration'
+header: "Assumption: Software dependencies available"
+text: "Assumption: All required software dependencies, libraries, and development tools are installed and accessible in the build and runtime environments."
 level: '1.3'
 normative: true
 references:
-- id: EXPECT_L0_3
+- type: file
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_3/EXPECTATIONS-EXPECT_L0_3.md
-  type: file
+  id: EXPECT_L0_3
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_software_dependencies
   configuration:
-    required_tools:
-      - "Ubuntu"
+    components:
+      - "Qt"
+      - "AGL"
       - "Linux"
-      - "kernel"
-      - "driver"
-text: 'Assumption: The system and development tooling target a Linux-based integration
-  environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules
-  required for platform-specific components (e.g., motor controllers, Hailo AI Hat,
-  camera interfaces) are available or will be provided by component owners prior to
-  verification.'
 ---
-Assumption: The system and development tooling target a Linux-based integration environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules required for platform-specific components (e.g., motor controllers, Hailo AI Hat, camera interfaces) are available or will be provided by component owners prior to verification.
 
-Acceptance criteria / notes:
-- A VM or physical host running Ubuntu 22.04 is available for integration tests.
-- Required kernel modules and device drivers are installed and documented in the corresponding EVID items.
-- If a driver is unavailable, an alternative (simulator or stub) will be provided and documented before verification begins.
+All required software dependencies, libraries, and development tools are installed and accessible in the build and runtime environments.
 
-Rationale: Many verification steps and evidence artifacts assume POSIX/Linux tooling (bash, apt, systemd, udev rules). Making this explicit avoids ambiguous environment dependency during testing.
+**Acceptance criteria / notes:**
+- Required components are available and configured in the test environment.
+- If a component is unavailable, a documented mitigation plan will be provided.
+- This assumption is validated by the `validate_software_dependencies` validator.
+
+**Rationale:** Verification activities for `EXPECT-L0-3` depend on these prerequisites being met.

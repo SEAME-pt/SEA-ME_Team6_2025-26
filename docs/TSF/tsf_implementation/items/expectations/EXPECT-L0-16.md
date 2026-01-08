@@ -1,14 +1,13 @@
 ---
 id: EXPECT-L0-16
-header: Continuous integration active
-text: The project repository includes automated CI/CD pipelines for building and testing code changes.
-level: '1.16'
+header: "L0-16 CI/CD: The project repository shall include a work"
+text: |
+  CI/CD: The project repository shall include a working GitHub Actions workflow for continuous integration (CI) and continuous delivering (CD).
+level: 1.1
 normative: true
-references:
-- id: ASSERT-L0-16
-  path: ../assertions/ASSERT-L0-16.md
-  type: file
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

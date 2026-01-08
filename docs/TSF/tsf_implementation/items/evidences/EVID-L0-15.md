@@ -1,16 +1,16 @@
 ---
 id: EVID-L0-15
-header: Agile practices documented
-text: The repository contains daily standup records, sprint planning documents, and retrospective reports.
-level: '1.15'
-normative: true
+header: "L0 Evidence: Agile: The team shall follow Agile (Scrum) methodology for p"
+text: |
+  Evidence files for EXPECT-L0-15.
+level: 1.1
+normative: false
 references:
-  path: docs/dailys/dailys_warmups.md
-  path: docs/sprints/sprint1.md
-  path: docs/sprints/sprint2.md
-  path: docs/sprints/sprint3.md
-  path: docs/sprints/sprint4.md
-  path: docs/sprints/sprint5.md
-score: 1.0
+  - type: "file"
+    path: "src/inital_program/jetracer/notebooks/road_following.ipynb"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+

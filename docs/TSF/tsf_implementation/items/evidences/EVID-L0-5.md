@@ -1,25 +1,24 @@
 ---
 id: EVID-L0-5
-header: Qt application demonstrated
-text: The repository contains screenshots and QML guide showing a basic Qt application running on the system.
-level: '1.5'
-normative: true
+header: "L0 Evidence: The system shall be capable of launching a basic Qt applicat"
+text: |
+  Evidence files for EXPECT-L0-5.
+level: 1.1
+normative: false
 references:
-  path: docs/demos/first_qt_app.jpeg
-  path: docs/demos/mockup1.jpeg
-  path: docs/demos/mockup2.jpeg
-  path: docs/demos/mockup3.jpeg
-  path: docs/demos/mockup4.jpeg
-  path: docs/demos/mockup5.jpeg
-  path: docs/demos/mockup6.jpeg
-  path: docs/demos/Cluster-display-sprint3.jpeg
-  path: docs/demos/Cluster-mockup-sprint3.jpeg
-  path: docs/demos/Cluster-study.jpeg
-  path: docs/guides/QML-guide.md
-  path: README.md
-score: 1.0
+  - type: "file"
+    path: "docs/demos/system-architecture-cross.png"
+  - type: "file"
+    path: "src/inital_program/jetracer/notebooks/basic_motion.ipynb"
+  - type: "file"
+    path: "src/cluster/src/backend/systemstatus.cpp"
+  - type: "file"
+    path: "src/cluster/src/backend/systemstatus.hpp"
+  - type: "file"
+    path: "src/cluster/build/Desktop_Qt_6_9_3-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 
-
- 

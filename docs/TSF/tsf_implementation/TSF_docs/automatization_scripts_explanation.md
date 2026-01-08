@@ -1,22 +1,164 @@
-# TSF Automation Scripts - Technical Documentation
+docs/TSF/tsf_implementation/
+
+# TSF Automation Scripts — Technical Documentation
+
+## 🚦 Automated Process (2025/26)
+
+**Central script:** `sync_tsf_requirements_table.py` (Layer 1 Manager)
+
+docs/TSF/tsf_implementation/
+├── scripts/
+│   ├── sync_tsf_manager.py          # 🎯 Main orchestrator script
+│   ├── modules/
+│   │   ├── __init__.py
+│   │   ├── detectors.py             # Detects changes (LO_requirements + sprints)
+│   │   ├── generators.py            # Creates EXPECT/ASSERT/EVID/ASSUMP
+│   │   ├── sync_evidence.py         # Syncs sprint → EVID
+│   │   ├── ai_generator.py          # 3 AI methods (manual/ollama/api)
+│   │   ├── validators.py            # Wrapper for validate_items_formatation.py
+│   │   └── trudag_runner.py         # DEPRECATED: Use setup_trudag_clean.sh instead
+│   └── config.yaml                  # Configuration
+├── backups/
+│   └── items_backup1.tar.gz         # Numbered backups
+└── validators/
+    └── validate_items_formatation.py  # Already exists ✅
+
+    PHASE 1 (first 40 min):
+
+✅ detectors.py - Detects changes
+✅ ai_generator.py - 3 AI methods
+✅ generators.py - Creates all 4 files (EXPECT/ASSERT/EVID/ASSUMP)
+✅ sync_tsf_manager.py - Main orchestrator
+✅ config.yaml - Configuration
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ sync_tsf_requirements_table.py (Layer 1 Manager)           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│ 1. DETECT changes in the table:                            │
+│    - New requirements (ID + Requirement filled)            │
+│    - Acceptance/Verification empty or incomplete           │
+│                                                             │
+│ 2. GENERATE with AI (if configured):                       │
+│    - Acceptance Criteria (based on Requirement)            │
+│    - Verification Method (based on category)               │
+│    ⚠️  If LLM not available: leaves empty                  │
+│                                                             │
+│ 3. SYNC Evidence (automatic):                              │
+│    - Reads EVID-L0-X.md from items/evidences/              │
+│    - Extracts all references (type: url)                   │
+│    - Updates Evidence column in the table                  │
+│                                                             │
+│ 4. WRITE updated table:                                    │
+│    - Preserves markdown formatting                         │
+│    - Keeps other columns intact                            │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Note:** AI generation only occurs if an external API (OpenAI, etc.) or manual Copilot Chat input is configured. Otherwise, Acceptance/Verification fields remain empty and the script generates a pending report.
+
+**Sync is unidirectional:** from the table to items/ and evidences. Never the other way around.
+
+---
+
+## 🚦 Official Pipeline for Layer 3 (.trudag_items/)
+
+**The only supported and canonical pipeline for generating and validating `.trudag_items/` is:**
+
+    ./scripts/setup_trudag_clean.sh
+
+Use this script for all local and CI/CD (GitHub Actions) automation. It:
+- Cleans generated files (preserves items/ as source of truth)
+- Generates the dependency graph
+- Initializes the trudag database
+- Copies and transforms all items from items/ to .trudag_items/ (with deduplication, reference correction, and ID/path fixes)
+- Applies logical links
+- Marks all items as reviewed
+- Runs trudag lint
+
+**Do not use `trudag_runner.py` or any other pipeline script.**
+`trudag_runner.py` is deprecated and kept only for historical reference.
+
+Update all documentation and automation to reference only `setup_trudag_clean.sh`.
+
+---
+
 
 **Project:** SEA-ME Team 6 2025-26  
 **Purpose:** Automated generation and synchronization of TSF items  
 **Created:** December 15, 2025  
-**Last Updated:** December 15, 2025
+**Last Updated:** December 17, 2025
 
 ---
 
 ## Overview
 
-This directory contains a modular automation system that detects new requirements in `LO_requirements.md`, generates corresponding TSF items (EXPECT/ASSERT/EVID/ASSUMP), synchronizes evidence from sprint files, and validates all items using TruDAG.
+This directory contains a modular automation system that detects new requirements in `tsf-requirements-table.md`, generates corresponding TSF items (EXPECT/ASSERT/EVID/ASSUMP), synchronizes evidence from sprint files, and validates all items using TruDAG.
 
-**Workflow:**
-1. **Detect** → New requirements without TSF items
-2. **Generate** → Create missing TSF items (template-based)
-3. **Sync** → Update evidence from sprints and table
-4. **Validate** → Run formatation validator + TruDAG score
-5. **Backup** → Sequential backups before modifications
+---
+
+## 🏗️ Three-Layer Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ LAYER 1: tsf-requirements-table.md (PRIMARY SOURCE OF TRUTH)   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ├─── Column "ID" + "Requirement"                              │
+│  │    └─→ MANUAL (human writes)                                 │
+│  │                                                             │
+│  ├─── Column "Acceptance Criteria" + "Verification Method"     │
+│  │    └─→ AI GENERATED (automatically when new Requirement)     │
+│  │                                                             │
+│  └─── Column "Evidence"                                        │
+│       └─→ AUTOMATIC (scan of sprints/*.md)                      │
+│           • detectors.py::scan_sprint_evidence()                │
+│           • Extracts links from EXPECT-L0-X                      │
+│           • Adds to the table automatically                      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ LAYER 2: items/ (SECONDARY SOURCE OF TRUTH)                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  • generator_items_second_source_of_truth.py generates/updates  │
+│  • Structure: expectations/ assertions/ evidences/ assumptions/ │
+│  • Format: EXPECT-L0-X.md, ASSERT-L0-X.md, etc.                │
+│  • ⚠️  NEVER edit manually!                                    │
+│  • ✅ CRUD operations: Create, Update, Delete, Sync             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ LAYER 3: .trudag_items/ (TRUDAG DATABASE)                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  • Regenerable with setup_trudag_clean.sh                       │
+│  • Internal TruDAG format (EXPECTATIONS/EXPECT_L0_X/)           │
+│  • Auto-generated: graph.dot, .dotstop.dot                      │
+│  • Commands: trudag manage, lint, score, publish, plot          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key Principles:**
+1. **Single Source of Truth:** `tsf-requirements-table.md` is the PRIMARY source
+2. **Automatic Propagation:** Changes flow down automatically (Layer 1 → 2 → 3)
+3. **Never Edit Manually:** `items/` and `.trudag_items/` are auto-generated
+4. **Unidirectional Evidence Sync:** Evidence flows from the table to items/ and evidences (never the other way around)
+
+---
+
+## Workflow
+
+1. **Detect** → New requirements or empty Acceptance/Verification (sync_tsf_requirements_table.py)
+2. **Generate** → Generates Acceptance/Verification with AI (if configured)
+3. **Sync** → Updates Evidence column by reading evidences from items/evidences/
+4. **Validate** → Format validation + TruDAG score
+5. **Backup** → Sequential backups before modifying
 
 ---
 
@@ -27,175 +169,42 @@ This directory contains a modular automation system that detects new requirement
 **Status:** ✅ Complete (400 lines)  
 **Purpose:** Detection and evidence extraction engine
 
-#### Implemented Functions:
+## Scripts
 
-| Function | Description | Returns |
-|----------|-------------|---------|
-| `parse_lo_requirements_table()` | Parse markdown table from LO_requirements.md | List of requirement dicts (id, requirement, acceptance, verification, evidence) |
-| `get_existing_tsf_items()` | Scan TSF directories for existing items | Dict mapping item type → list of existing IDs |
-| `detect_new_items()` | Detect requirements without TSF items | Dict mapping item type → list of missing requirement dicts |
-| `extract_evidence_from_table()` | Extract evidence from Evidence column | List of evidence refs (type, path) for specific req_id |
-| `scan_sprint_evidence()` | Scan sprint*.md for EXPECT references | Dict mapping req_id → list of evidence refs (type, path, sprint) |
-| `get_complete_evidence()` | Combine table + sprint evidence | Tuple of (table_evidence, sprint_evidence) |
-| `main()` | Test all detector functions | Prints comprehensive test results |
+### `sync_tsf_requirements_table.py` (new)
+Unified script that:
+1. Detects changes in the table (new requirements, empty Acceptance/Verification)
+2. Generates Acceptance/Verification with AI (if configured)
+3. Synchronizes evidences by reading items/evidences/
+4. Updates the table preserving formatting
 
-#### Configuration:
+### Deprecated scripts
+- `generator_items_second_source_of_truth.py` (removed)
+- `detectors.py` (removed)
+- `validate_items_formatation.py` (removed)
 
-```python
-PROJECT_ROOT = Path(__file__).resolve().parents[5]
-LO_REQUIREMENTS_PATH = docs/TSF/requirements/LO_requirements.md
-TSF_ITEMS_BASE = docs/TSF/tsf_implementation/
-SPRINTS_DIR = docs/sprints/
-
-ITEM_TYPES = ['expectations', 'assertions', 'evidences', 'assumptions']
-ITEM_PREFIXES = {'expectations': 'EXPECT', 'assertions': 'ASSERT', ...}
-```
-
-#### Evidence Extraction Patterns:
-
-**Pattern 1:** `path` — URL  
-Example: `` `docs/demos/car.jpeg` — https://github.com/... ``
-- Extracts both file path and URL as separate references
-
-**Pattern 2:** Standalone URLs  
-Example: `https://github.com/SEAME-pt/...`
-- Extracts any HTTP/HTTPS link
-
-**Pattern 3:** File paths in backticks  
-Example: `` `docs/guides/github-guidelines.md` ``
-- Extracts paths to .md, .jpg, .jpeg, .png, .pdf, .py, .sh files
-
-#### Sprint Evidence Scanning:
-
-- Searches for `EXPECT-L0-X` references in sprint*.md files
-- Extracts ±200 characters context around each reference
-- Finds URLs and file paths within context
-- Tags evidence with source sprint name
-
-#### Test Command:
+### How to use
 
 ```bash
-python3 docs/TSF/tsf_implementation/scripts/modules/detectors.py
+# Run full synchronization:
+python3 docs/TSF/tsf_implementation/scripts/sync_tsf_requirements_table.py
 ```
 
-**Test Output:**
-1. ✅ Parse requirements table (count + first/last items)
-2. ✅ Scan existing TSF items (count per type)
-3. ✅ Detect missing items (count + examples)
-4. ✅ Extract table evidence for L0-1
-5. ✅ Scan sprint evidence (all requirements)
-6. ✅ Complete evidence for L0-1 (table + sprint)
+---
+
+## Frequently Asked Questions
+
+**How does AI generation work?**
+It only works if you configure an external API (OpenAI, etc.) or use Copilot Chat/manual. Otherwise, Acceptance/Verification fields remain empty and the script generates a pending report.
+
+**Is the sync bidirectional?**
+No. Sync is always from the table to items/ and evidences.
 
 ---
 
-### 2. `modules/generators.py`
-
-**Status:** 🔄 In Progress  
-**Purpose:** Template-based TSF item generation
-
-#### Planned Functions:
-
-- `generate_expectation()` - Create EXPECT-L0-X.md files
-- `generate_assertion()` - Create ASSERT-L0-X.md files
-- `generate_evidence()` - Create EVID-L0-X.md files
-- `generate_assumption()` - Create ASSUMP-L0-X.md files
-
-#### Template Strategy:
-
-- Intelligent keyword detection from requirement text
-- Rule-based content generation (not Gen AI)
-- Proper YAML front-matter formatting
-- Reference linking between items
+**Last update:** December 17, 2025
 
 ---
 
-### 3. `sync_tsf_manager.py`
-
-**Status:** ⏸️ Pending  
-**Purpose:** Main orchestrator script
-
-#### Planned Features:
-
-- Coordinate detectors → generators → validators → TruDAG
-- Sequential backup system (items_backup1.tar.gz, items_backup2.tar.gz, ...)
-- Git safety branch creation
-- Automated workflow execution
-- Error handling and rollback
-
----
-
-### 4. Additional Modules (Future)
-
-#### `modules/sync_evidence.py`
-- Bidirectional evidence synchronization
-- Update Evidence column in LO_requirements.md
-- Update references in EVID-L0-X.md files
-
-#### `modules/validators.py`
-- Wrapper for validate_items_formatation.py
-- YAML syntax validation
-- Reference integrity checks
-
-#### `modules/trudag_runner.py`
-- Wrapper for setup_trudag_clean.sh
-- TruDAG score execution
-- Results parsing and reporting
-
----
-
-## Usage Workflow
-
-### Manual Testing (Current):
-
-```bash
-# Test detectors
-python3 docs/TSF/tsf_implementation/scripts/modules/detectors.py
-
-# Test generators (when implemented)
-python3 docs/TSF/tsf_implementation/scripts/modules/generators.py --test
-
-# Run full automation (when orchestrator ready)
-python3 docs/TSF/tsf_implementation/scripts/sync_tsf_manager.py
-```
-
-### Automated CI/CD (Future):
-
-Triggered by:
-- Push to development/main (if LO_requirements.md or sprints/*.md changed)
-- Manual workflow dispatch
-
-Action:
-- **On push:** Auto-generate and commit
-- **On PR:** Validation only (no commits)
-
----
-
-## Development Status
-
-| Component | Status | Lines | Completion |
-|-----------|--------|-------|------------|
-| `detectors.py` | ✅ Complete | 400 | 100% |
-| `generators.py` | 🔄 In Progress | - | 0% |
-| `sync_tsf_manager.py` | ⏸️ Pending | - | 0% |
-| `sync_evidence.py` | ⏸️ Pending | - | 0% |
-| `validators.py` | ⏸️ Pending | - | 0% |
-| `trudag_runner.py` | ⏸️ Pending | - | 0% |
-| GitHub Actions workflow | ⏸️ Pending | - | 0% |
-
-**Overall Progress:** 1/7 components (14%)
-
----
-
-## Notes
-
-- All scripts use **template-based generation** (not Gen AI API calls)
-- Full automation: NO interactive prompts during execution
-- Review happens AFTER generation completes
-- Backup system ensures safety (rollback capability)
-- Step-by-step development with validation between phases
-
----
-
-**Last Updated:** December 15, 2025  
 **Branch:** feature/TSF/automatize-tsf-in-github  
 **Related PR:** feature/TSF/integrate-tsf-in-github → development

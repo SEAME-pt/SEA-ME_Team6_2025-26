@@ -1,16 +1,15 @@
 ---
 id: ASSERT-L0-5
-header: Basic Qt application launches
-text: A basic Qt QML application successfully launches and displays on the Raspberry Pi 5 using the documented Qt 6 installation.
-level: '1.5'
+header: "Assertion for L0-5"
+text: |
+  Assertion supporting EXPECT-L0-5.
+level: 1.2
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-5.md
-- type: file
-  path: ../evidences/EVID-L0-5.md
-review_status: accepted
+  - type: "file"
+    path: "../expectations/EXPECT-L0-5.md"
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

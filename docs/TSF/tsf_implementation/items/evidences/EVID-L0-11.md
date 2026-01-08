@@ -1,12 +1,24 @@
 ---
 id: EVID-L0-11
-header: Auto-start configuration documented
-text: The repository contains system configuration files and demonstration images showing automatic Qt application startup.
-level: '1.11'
-normative: true
+header: "L0 Evidence: The Qt cluster UI shall **auto-start on boot** and display f"
+text: |
+  Evidence files for EXPECT-L0-11.
+level: 1.1
+normative: false
 references:
-  path: docs/demos/system-architecture-cross.png
-  path: docs/guides/AGL_Configuration_Guide.md
-score: 1.0
+  - type: "file"
+    path: "docs/demos/Cluster-state-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint3.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-study.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-display-sprint4.jpeg"
+  - type: "file"
+    path: "docs/demos/Cluster-mockup-sprint3.jpeg"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+

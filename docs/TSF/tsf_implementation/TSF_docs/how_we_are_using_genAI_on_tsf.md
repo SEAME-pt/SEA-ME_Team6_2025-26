@@ -25,7 +25,7 @@
 **Location**: `docs/TSF/tsf_implementation/scripts/`
 
 **What We Automated**:
-- ✅ Detection of new requirements in `LO_requirements.md`
+- ✅ Detection of new requirements in `tsf-requirements-table.md`
 - ✅ Generation of TSF items (EXPECT, ASSERT, EVID, ASSUMP)
 - ✅ Evidence synchronization from sprint files
 - ✅ TruDAG validation and scoring
@@ -118,14 +118,14 @@ def generate_with_copilot(prompt):
 
 ### Step 1: Detection
 ```python
-# detectors.py - Parse LO_requirements.md
+# detectors.py - Parse tsf-requirements-table.md
 new_items = detect_new_requirements()
 # Output: [{'id': 'L0-18', 'text': '...', 'evidence': '...'}]
 ```
 
 ### Step 2: Generation
 ```python
-# generators.py - Create TSF items
+# generator_items_second_source_of_truth.py - Create TSF items (with generators integrated)
 for item in new_items:
     generate_expectation(item)   # EXPECT-L0-18.md
     generate_assertion(item)     # ASSERT-L0-18.md
@@ -223,7 +223,7 @@ After Gen AI generation, always verify:
 
 ### When to Update Templates
 
-Update `generators.py` templates when:
+Update `generator_items_second_source_of_truth.py` templates when:
 1. New requirement patterns emerge (e.g., "security", "performance")
 2. Team identifies common generation errors
 3. TruDAG validation reveals structural issues
@@ -257,7 +257,7 @@ Track metrics:
 - ✅ Review generated TSF items before committing
 - ✅ Report template gaps or errors
 - ✅ Test automation with new requirements
-- ✅ Keep LO_requirements.md table updated
+- ✅ Keep tsf-requirements-table.md table updated
 
 **DON'T**:
 - ❌ Manually create TSF items (use script)

@@ -102,11 +102,10 @@ def sanitize_header(text: str, max_length: int = 60) -> str:
     # Take first sentence or clause
     text = re.split(r'[.;,]', text)[0].strip()
     
-    # Truncate if too long
-    if len(text) > max_length:
-        text = text[:max_length].rsplit(' ', 1)[0] + '...'
+    # Quote the entire header to avoid YAML issues
+    text = f"{text} - evidence"
     
-    return text.capitalize()
+    return text
 
 
 def create_yaml_frontmatter(data: Dict) -> str:
@@ -188,7 +187,7 @@ def generate_expectation(req_id: str, requirement: str, acceptance: str, categor
     level = f"1.{level_num}"
     
     # Create header
-    header = sanitize_header(requirement)
+    header = f"'{sanitize_header(requirement)}'"
     
     # Create expectation text (more specific than requirement)
     if category == 'hardware':
@@ -203,6 +202,9 @@ def generate_expectation(req_id: str, requirement: str, acceptance: str, categor
         text = f"The real-time system shall {sanitize_header(requirement, 100).lower()} with proper thread management and scheduling."
     else:
         text = f"The system shall {sanitize_header(requirement, 100).lower()} as specified in the requirement."
+    
+    # Quote text if it contains special chars
+    text = f"'{text}'"
     
     # References
     references = [
@@ -223,7 +225,7 @@ def generate_expectation(req_id: str, requirement: str, acceptance: str, categor
     frontmatter = create_yaml_frontmatter(frontmatter_data)
     
     # Body content
-    body = f"\n\nThis expectation is derived from requirement **{req_id}** in LO_requirements.md.\n"
+    body = f"\n\nThis expectation is derived from requirement **{req_id}** in tsf-requirements-table.md.\n"
     
     if acceptance:
         body += f"\n**Acceptance Criteria:**\n{acceptance}\n"
@@ -249,7 +251,7 @@ def generate_assertion(req_id: str, requirement: str, verification: str, categor
     level = f"1.{level_num}"
     
     # Create header
-    header = sanitize_header(requirement) + " is verified"
+    header = f"'{sanitize_header(requirement)} is verified'"
     
     # Create assertion text (testable/verifiable statement)
     if category == 'hardware':
@@ -312,7 +314,7 @@ def generate_evidence(req_id: str, requirement: str, evidence_refs: List[Dict]) 
     level = f"1.{level_num}"
     
     # Create header
-    header = sanitize_header(requirement) + " - evidence"
+    header = f"'{sanitize_header(requirement)}'"
     
     # Create evidence text
     if evidence_refs:
@@ -322,19 +324,27 @@ def generate_evidence(req_id: str, requirement: str, evidence_refs: List[Dict]) 
     
     # References - convert relative paths for evidence refs
     references = []
+    seen_paths = set()
     for ref in evidence_refs:
         ref_path = ref['path']
+        # Skip if already seen
+        if ref_path in seen_paths:
+            continue
+        seen_paths.add(ref_path)
+        
         # Don't modify URLs
         if ref['type'] == 'url':
-            references.append({'type': 'url', 'path': ref_path})
+            # Filter out invalid URLs
+            from urllib.parse import urlparse
+            parsed = urlparse(ref_path)
+            if (parsed.netloc and parsed.scheme in ['http', 'https'] and 
+                len(ref_path) > 20 and not ref_path.endswith('/') and 
+                'github.com' in parsed.netloc and len(parsed.path) > 10):
+                references.append({'type': 'url', 'path': ref_path})
         else:
-            # File paths need to be relative to evidences/ directory
-            # Adjust path: docs/X → ../../../../docs/X
-            if ref_path.startswith('docs/'):
-                adjusted_path = '../../../../' + ref_path
-            else:
-                adjusted_path = ref_path
-            references.append({'type': 'file', 'path': adjusted_path})
+            # Keep paths as relative to repo root, but only if file exists
+            if os.path.exists(PROJECT_ROOT / ref_path):
+                references.append({'type': 'file', 'path': ref_path})
     
     # Create front-matter
     frontmatter_data = {
@@ -342,9 +352,12 @@ def generate_evidence(req_id: str, requirement: str, evidence_refs: List[Dict]) 
         'header': header,
         'text': text,
         'level': level,
-        'normative': True,
+        'normative': True,  # Always true for evidence
         'references': references,
-        'reviewers': [DEFAULT_REVIEWER],
+        'reviewers': [{
+            'name': 'Joao Jesus Silva',
+            'email': 'joao.silva@seame.pt'
+        }],
         'score': 1.0 if evidence_refs else 0.0
     }
     
@@ -389,28 +402,28 @@ def generate_assumption(req_id: str, requirement: str, category: str) -> str:
     
     # Create header based on category
     if category == 'hardware':
-        header = "Assumption: Availability of hardware components"
+        header = "'Assumption: Availability of hardware components'"
         assumption_text = "The project team will provide the required hardware components and they will be operational in the integration environment during verification activities."
         validator_type = "validate_hardware_availability"
         components = extract_hardware_components(requirement)
     elif category == 'software':
-        header = "Assumption: Software dependencies available"
+        header = "'Assumption: Software dependencies available'"
         assumption_text = "All required software dependencies, libraries, and development tools are installed and accessible in the build and runtime environments."
         validator_type = "validate_software_dependencies"
         components = extract_software_components(requirement)
     elif category == 'realtime':
-        header = "Assumption: RTOS environment configured"
+        header = "'Assumption: RTOS environment configured'"
         assumption_text = "The real-time operating system (ThreadX) is properly installed, configured, and operational on the target microcontroller."
         validator_type = "validate_software_dependencies"
         components = ["ThreadX", "STM32 toolchain", "RTOS configuration"]
     else:
-        header = "Assumption: Development environment ready"
+        header = "'Assumption: Development environment ready'"
         assumption_text = "The development environment meets all prerequisites for implementing and verifying this requirement."
         validator_type = "validate_linux_environment"
         components = ["Linux environment", "Development tools", "Test infrastructure"]
     
     # Full text
-    text = f"Assumption: {assumption_text}"
+    text = f"'Assumption: {assumption_text}'"
     
     # References
     references = [

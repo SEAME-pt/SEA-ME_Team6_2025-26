@@ -1,14 +1,24 @@
 ---
 id: EXPECT_L0_13
-header: Version control established
-text: The project uses a GitHub repository with proper structure and version control practices.
-level: '1.13'
+header: "L0-13 Project & GitHub setup: The team shall set up a Gi"
+text: |
+  Project & GitHub setup: The team shall set up a GitHub repository hosting the project code, documentation, and2 version control history.
+level: 1.1
 normative: true
 references:
-- id: ASSERT_L0_13
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_13/ASSERTIONS-ASSERT_L0_13.md
-  type: file
+  - type: "file"
+    path: "docs/guides/github-guidelines.md"
+  - type: "file"
+    path: "docs/guides/github-actions-guide.md"
+  - type: "file"
+    path: "src/inital_program/jetcam/setup.py"
+  - type: "file"
+    path: "src/inital_program/jetracer/setup.py"
+  - type: "file"
+    path: "src/inital_program/jetracer/docs/software_setup.md"
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

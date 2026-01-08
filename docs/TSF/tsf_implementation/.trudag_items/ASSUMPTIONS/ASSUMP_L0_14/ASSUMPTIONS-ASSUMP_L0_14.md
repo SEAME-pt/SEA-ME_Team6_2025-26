@@ -1,35 +1,30 @@
 ---
 id: ASSUMP_L0_14
-header: 'Assumption: TSF & Documentation'
+header: "Assumption: Development environment ready"
+text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
 level: '1.14'
 normative: true
 references:
-- id: EXPECT_L0_14
+- type: file
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_14/EXPECTATIONS-EXPECT_L0_14.md
-  type: file
+  id: EXPECT_L0_14
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_software_dependencies
+  type: validate_linux_environment
   configuration:
-    packages:
-      - "TSF"
-      - "TruDAG"
-      - "Trustable"
-text: 'The Trustable Software Framework (TSF) methodology documentation and reference
-  implementations are publicly accessible online before TSF implementation begins.'
+    components:
+      - "Linux environment"
+      - "Development tools"
+      - "Test infrastructure"
 ---
-The Trustable Software Framework (TSF) methodology documentation and reference implementations are publicly accessible online before TSF implementation begins.
 
-Acceptance criteria / notes:
-- TruDAG documentation: https://codethinklabs.gitlab.io/trustable/trustable/
-- TSF methodology: https://codethinklabs.gitlab.io/trustable/trustable/methodology.html
-- Reference implementation: https://gitlab.com/CodethinkLabs/safety-monitor/safety-monitor/-/tree/main/trustable
-- Installation guide: https://codethinklabs.gitlab.io/trustable/trustable/trudag/install.html
-- Eclipse TSF project: https://projects.eclipse.org/projects/technology.tsf
-- Codethink TSF GitLab: https://gitlab.com/CodethinkLabs/trustable/trustable
-- TruDAG source docs: https://gitlab.com/CodethinkLabs/trustable/trustable/-/tree/main/docs/trudag
-- SCORE-JSON schema: https://score-json.github.io/json/main/generated/trustable_graph.html
+The development environment meets all prerequisites for implementing and verifying this requirement.
 
-Rationale: TSF implementation for `EXPECT-L0-14` depends on external documentation and examples being available for consultation and self-training. This assumption provides explicit URLs for rastreability and transparency.
+**Acceptance criteria / notes:**
+- Required components are available and configured in the test environment.
+- If a component is unavailable, a documented mitigation plan will be provided.
+- This assumption is validated by the `validate_linux_environment` validator.
+
+**Rationale:** Verification activities for `EXPECT-L0-14` depend on these prerequisites being met.

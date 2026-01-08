@@ -1,15 +1,24 @@
 ---
 id: EVID-L0-1
-header: Architecture documentation exists
-text: The repository contains system architecture diagrams, electrical schematics, and power consumption analysis documents.
-level: '1.1'
-normative: true
+header: "L0 Evidence: The system architecture shall be defined and documented to d"
+text: |
+  Evidence files for EXPECT-L0-1.
+level: 1.1
+normative: false
 references:
-  path: docs/demos/assembled-car1.jpeg
-  path: docs/demos/assembled-car2.jpeg
-  path: docs/demos/eletric-scheme.png
-  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
-  path: docs/guides/Power Consumption Analysis.md
-score: 1.0
+  - type: "file"
+    path: "docs/demos/system-architecture-cross.png"
+  - type: "file"
+    path: "src/cluster/src/backend/systemstatus.cpp"
+  - type: "file"
+    path: "src/cluster/src/backend/systemstatus.hpp"
+  - type: "file"
+    path: "src/cluster/build/Desktop_Qt_6_9_3-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake"
+  - type: "file"
+    path: "src/cluster/build/CMakeFiles/3.28.3/CMakeSystem.cmake"
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
-This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+

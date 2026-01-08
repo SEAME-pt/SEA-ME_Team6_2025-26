@@ -1,14 +1,13 @@
 ---
 id: EXPECT-L0-4
-header: Remote control functional
-text: The demonstrator car responds to remote control inputs for steering and throttle control.
-level: '1.4'
+header: "L0-4 Driveable Car with Remote Control/Driveable Car Mo"
+text: |
+  Driveable Car with Remote Control/Driveable Car Model (Hardware + Software): The PiRacer shall support remote control functionality to operate the motors (steering and propulsion).
+level: 1.1
 normative: true
-references:
-- id: ASSERT-L0-4
-  path: ../assertions/ASSERT-L0-4.md
-  type: file
+
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

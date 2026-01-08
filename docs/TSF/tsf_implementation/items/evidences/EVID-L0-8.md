@@ -1,19 +1,13 @@
 ---
 id: EVID-L0-8
-header: CAN communication documented
-text: The repository contains CAN configuration guides, test procedures, and demonstration images showing bidirectional communication.
-level: '1.8'
-normative: true
-references:
-  path: docs/demos/CANbus Scheme Updated.png
-  path: docs/guides/CAN-overview.md
-  path: docs/demos/CAN-layout-sprint3.jpeg
-  path: docs/guides/CAN-test-guide.md
-  path: docs/guides/CAN-explanation.md
-  path: docs/images/CANFrame.png
-  path: docs/images/CANsignal.png
-  path: docs/images/CANtopology.png
-  path: docs/images/CANtopology2.png
-  path: docs/images/Half-duplex-communication.png
-score: 1.0
+header: "L0 Evidence: Connect the Rasp5 to the STM 32 (bidirectional) using Can Pr"
+text: |
+  Evidence files for EXPECT-L0-8.
+level: 1.1
+normative: false
+
+reviewers:
+  - name: "TODO"
+    email: "TODO@example.com"
 ---
+

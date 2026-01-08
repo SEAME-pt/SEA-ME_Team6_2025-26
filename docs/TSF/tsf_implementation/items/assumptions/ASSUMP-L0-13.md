@@ -1,30 +1,30 @@
 ---
 id: ASSUMP-L0-13
-header: 'Assumption: Project & GitHub setup'
+header: "Assumption: Development environment ready"
+text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
 level: '1.13'
 normative: true
 references:
-- id: EXPECT-L0-13
+- type: file
   path: ../expectations/EXPECT-L0-13.md
-  type: file
+  id: EXPECT-L0-13
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_software_dependencies
+  type: validate_linux_environment
   configuration:
-    packages:
-      - "GitHub"
-      - "repository"
-      - "permissions"
-text: 'GitHub repository access and permissions are granted to all project team members
-  before project setup verification begins.'
+    components:
+      - "Linux environment"
+      - "Development tools"
+      - "Test infrastructure"
 ---
-GitHub repository access and permissions are granted to all project team members before project setup verification begins.
 
-Acceptance criteria / notes:
-- All team members have GitHub accounts.
-- Repository permissions (read, write, admin) are configured according to roles.
-- Branch protection rules are documented.
+The development environment meets all prerequisites for implementing and verifying this requirement.
 
-Rationale: Project setup verification for `EXPECT-L0-13` assumes that access control and team onboarding are handled externally to the technical verification process.
+**Acceptance criteria / notes:**
+- Required components are available and configured in the test environment.
+- If a component is unavailable, a documented mitigation plan will be provided.
+- This assumption is validated by the `validate_linux_environment` validator.
+
+**Rationale:** Verification activities for `EXPECT-L0-13` depend on these prerequisites being met.

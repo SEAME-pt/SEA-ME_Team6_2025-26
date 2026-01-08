@@ -1,29 +1,30 @@
 ---
 id: ASSUMP_L0_12
-header: 'Assumption: The DCI display fullscreen will be out of the car (wireless...'
+header: "Assumption: Development environment ready"
+text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
 level: '1.12'
 normative: true
+references:
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_12/EXPECTATIONS-EXPECT_L0_12.md
+  id: EXPECT_L0_12
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_hardware_availability
+  type: validate_linux_environment
   configuration:
     components:
-      - "Raspberry Pi 4"
-      - "WiFi"
-      - "VNC"
-      - "Wayland"
-text: 'Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC
-  server software (Wayland/VNC stack) are available and functional before wireless
-  display integration testing begins.'
+      - "Linux environment"
+      - "Development tools"
+      - "Test infrastructure"
 ---
-Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC server software (Wayland/VNC stack) are available and functional before wireless display integration testing begins.
 
-Acceptance criteria / notes:
-- Raspberry Pi 4 with WiFi module is procured and configured.
-- Wayland display server and VNC server (e.g., wayvnc) are installed on Raspberry Pi 5.
-- VNC client software is installed on Raspberry Pi 4 for receiving the stream.
-- Network configuration allows Rasp5-to-Rasp4 VNC communication over WiFi.
+The development environment meets all prerequisites for implementing and verifying this requirement.
 
-Rationale: Wireless display verification for `EXPECT-L0-12` depends on Raspberry Pi 4 hardware availability and VNC/Wayland software stack being operational. This assumption clarifies the Rasp5-to-Rasp4 streaming architecture.
+**Acceptance criteria / notes:**
+- Required components are available and configured in the test environment.
+- If a component is unavailable, a documented mitigation plan will be provided.
+- This assumption is validated by the `validate_linux_environment` validator.
+
+**Rationale:** Verification activities for `EXPECT-L0-12` depend on these prerequisites being met.
