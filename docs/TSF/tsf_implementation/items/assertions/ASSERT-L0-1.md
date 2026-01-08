@@ -1,15 +1,15 @@
 ---
 id: ASSERT-L0-1
-header: "Assertion for L0-1"
-text: |
-  Assertion supporting EXPECT-L0-1.
-level: 1.2
+header: Architecture documentation exists
+text: The repository contains system architecture documentation that describes the hardware components and software modules of the demonstrator car.
+level: '1.1'
 normative: true
 references:
-  - type: "file"
-    path: "../expectations/EXPECT-L0-1.md"
+- type: file
+  path: ../expectations/EXPECT-L0-1.md
+- type: file
+  path: ../evidences/EVID-L0-1.md
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

@@ -1,15 +1,16 @@
 ---
 id: ASSERT-L0-17
-header: "Assertion for L0-17"
-text: |
-  Assertion supporting EXPECT-L0-17.
-level: 1.2
+header: AI tools integrated
+text: The team uses AI-assisted development tools including GitHub Copilot and follows the documented guidelines for AI pair programming practices.
+level: '1.17'
 normative: true
 references:
-  - type: "file"
-    path: "../expectations/EXPECT-L0-17.md"
+- type: file
+  path: ../expectations/EXPECT-L0-17.md
+- type: file
+  path: ../evidences/EVID-L0-17.md
+review_status: accepted
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

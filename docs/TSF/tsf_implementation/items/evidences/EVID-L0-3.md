@@ -1,24 +1,15 @@
 ---
 id: EVID-L0-3
-header: "L0 Evidence: Software Setup: The system shall successfully boot the Raspb"
-text: |
-  Evidence files for EXPECT-L0-3.
-level: 1.1
-normative: false
+header: Software setup documented
+text: The repository contains installation guides and demonstration images showing the operational software environment.
+level: '1.3'
+normative: true
 references:
-  - type: "file"
-    path: "docs/demos/system-architecture-cross.png"
-  - type: "file"
-    path: "src/inital_program/jetcam/setup.py"
-  - type: "file"
-    path: "src/inital_program/jetracer/setup.py"
-  - type: "file"
-    path: "src/inital_program/jetracer/docs/software_setup.md"
-  - type: "file"
-    path: "src/inital_program/jetracer/docs/latrax/hardware_setup.md"
-
-reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- type: file
+  path: docs/guides/AGL_Installation_Guide.md
+- type: file
+  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
+score: 1.0
 ---
-
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+ 

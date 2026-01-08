@@ -1,30 +1,30 @@
 ---
 id: ASSUMP-L0-6
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: The Qt GUI shall display static graphical elements such as...'
 level: '1.6'
 normative: true
 references:
-- type: file
+- id: EXPECT-L0-6
   path: ../expectations/EXPECT-L0-6.md
-  id: EXPECT-L0-6
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_software_dependencies
   configuration:
-    components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+    packages:
+      - "font"
+      - "icon"
+      - "TrueType"
+text: 'Third-party font libraries and icon sets required by the Qt GUI are available
+  under compatible licenses before UI implementation begins.'
 ---
+Third-party font libraries and icon sets required by the Qt GUI are available under compatible licenses before UI implementation begins.
 
-The development environment meets all prerequisites for implementing and verifying this requirement.
+Acceptance criteria / notes:
+- External font files (e.g., TrueType, OpenType) are downloaded or accessible.
+- Icon sets (e.g., Font Awesome, Material Icons) are available with compatible licenses.
+- License terms allow redistribution and use in the project context.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_linux_environment` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-6` depend on these prerequisites being met.
+Rationale: Qt GUI implementation for `EXPECT-L0-6` depends on external font and icon libraries being legally available. This assumption clarifies that third-party asset procurement and licensing are prerequisites.

@@ -1,16 +1,14 @@
 ---
 id: EXPECT-L0-17
-header: "L0-17 Introduce in the project: AI - GENAI, ML, DL, NEUR"
-text: |
-  Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORKS, ETC".
-level: 1.1
+header: AI tools integrated
+text: The development process incorporates AI-assisted tools for code development and documentation.
+level: '1.17'
 normative: true
 references:
-  - type: "file"
-    path: "docs/guides/genAI-pair-programming-guidelines.md"
-
+- id: ASSERT-L0-17
+  path: ../assertions/ASSERT-L0-17.md
+  type: file
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

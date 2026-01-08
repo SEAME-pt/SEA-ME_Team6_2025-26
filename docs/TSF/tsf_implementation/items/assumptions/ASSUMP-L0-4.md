@@ -1,13 +1,12 @@
 ---
 id: ASSUMP-L0-4
-header: "Assumption: Availability of hardware components"
-text: "Assumption: The project team will provide the required hardware components and they will be operational in the integration environment during verification activities."
+header: 'Assumption: Driveable Car with Remote Control/Driveable Car Model...'
 level: '1.4'
 normative: true
 references:
-- type: file
+- id: EXPECT-L0-4
   path: ../expectations/EXPECT-L0-4.md
-  id: EXPECT-L0-4
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -15,14 +14,18 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-      - "motor"
+      - "joystick"
+      - "gamepad"
+      - "controller"
+text: 'The joystick or remote control hardware is available, functional, and compatible
+  with the target platform input subsystem before remote control integration testing
+  begins.'
 ---
+The joystick or remote control hardware is available, functional, and compatible with the target platform input subsystem before remote control integration testing begins.
 
-The project team will provide the required hardware components and they will be operational in the integration environment during verification activities.
+Acceptance criteria / notes:
+- Joystick device is recognized by the Linux input subsystem (e.g., /dev/input/js0).
+- Device drivers are installed and documented.
+- Input mapping configuration files are available or will be provided before testing.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_hardware_availability` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-4` depend on these prerequisites being met.
+Rationale: Remote control verification for `EXPECT-L0-4` depends on external input hardware availability. This assumption clarifies that hardware procurement and driver availability are prerequisites.

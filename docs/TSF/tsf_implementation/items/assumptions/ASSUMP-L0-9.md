@@ -1,13 +1,12 @@
 ---
 id: ASSUMP-L0-9
-header: "Assumption: Availability of hardware components"
-text: "Assumption: The project team will provide the required hardware components and they will be operational in the integration environment during verification activities."
+header: 'Assumption: ThreadX should be used on the Microcontroller (STM32) as a...'
 level: '1.9'
 normative: true
 references:
-- type: file
+- id: EXPECT-L0-9
   path: ../expectations/EXPECT-L0-9.md
-  id: EXPECT-L0-9
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -16,16 +15,16 @@ evidence:
   configuration:
     components:
       - "STM32"
-      - "motor"
-      - "servo"
-      - "microcontroller"
+      - "ThreadX"
+      - "ST-LINK"
+text: 'The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK
+  or JTAG) before ThreadX firmware verification begins.'
 ---
+The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK or JTAG) before ThreadX firmware verification begins.
 
-The project team will provide the required hardware components and they will be operational in the integration environment during verification activities.
+Acceptance criteria / notes:
+- ST-LINK debugger hardware is available and connected to the STM32.
+- STM32CubeProgrammer or OpenOCD is installed on the development host.
+- Firmware flashing and debugging procedures are documented.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_hardware_availability` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-9` depend on these prerequisites being met.
+Rationale: ThreadX verification for `EXPECT-L0-9` assumes that STM32 programming infrastructure (debugger, flashing tools) is already available and operational.
