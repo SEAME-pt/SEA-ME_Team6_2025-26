@@ -29,6 +29,7 @@
 
 #include "../../can_frames.h"
 #include "../inc/can_decode.hpp"
+#include "../inc/can_to_kuksa_publisher.hpp"
 
 using kuksa::val::v2::VAL;
 
@@ -123,11 +124,18 @@ static void handle_can_frame(const struct can_frame& frame,
         case CAN_ID_WHEEL_SPEED: { //speedx10
             if (dlc < 8) return;
 
-            const std::int16_t  rpm          = i16_le(&frame.data[0]);     // bytes 0-1
-            const std::uint32_t total_pulses = u32_le(&frame.data[2]);     // bytes 2-5
-            const std::uint16_t raw_speed    = u16_le(&frame.data[6]);     // bytes 6-7
+            const std::int16_t  rpm       = i16_le(&frame.data[0]);   // bytes 0-1
+            const std::uint32_t pulses    = u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
+            const std::uint8_t  direction = u8(&frame.data[6]);       // byte 6
+            const std::uint8_t  status    = u8(&frame.data[7]);       // byte 7
+            (void)pulses; (void)status;
 
-            const double speed = raw_speed / 10.0;
+            double rpm_signed = static_cast<double>(rpm);
+
+            const double rps = rpm_signed / 60.0;
+            const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
+            const double speed_kmh = speed_ms * 3.6;
+
             publish_double(stub, "Vehicle.Speed", speed);
             break;
         }
