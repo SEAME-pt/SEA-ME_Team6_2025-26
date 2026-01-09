@@ -27,14 +27,14 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
-#include "../../can_frames.h"
+#include "../inc/can_id.h"
 #include "../inc/can_decode.hpp"
 #include "../inc/can_to_kuksa_publisher.hpp"
 
 using kuksa::val::v2::VAL;
 
 // Configuration
-static const char* KUKSA_ADDR = "127.0.0.1:55555";
+static const char* KUKSA_ADDR = "0.0.0.0:55555";
 static const char* CAN_IFACE  = "can1"; //david to ruben: change if needed
 
 // KUKSA helpers
@@ -124,10 +124,10 @@ static void handle_can_frame(const struct can_frame& frame,
         case CAN_ID_WHEEL_SPEED: { //speedx10
             if (dlc < 8) return;
 
-            const std::int16_t  rpm       = i16_le(&frame.data[0]);   // bytes 0-1
-            const std::uint32_t pulses    = u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
-            const std::uint8_t  direction = u8(&frame.data[6]);       // byte 6
-            const std::uint8_t  status    = u8(&frame.data[7]);       // byte 7
+            const std::int16_t  rpm       = can_decode::i16_le(&frame.data[0]);   // bytes 0-1
+            const std::uint32_t pulses    = can_decode::u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
+            const std::uint8_t  direction = can_decode::u8(&frame.data[6]);       // byte 6
+            const std::uint8_t  status    = can_decode::u8(&frame.data[7]);       // byte 7
             (void)pulses; (void)status;
 
             double rpm_signed = static_cast<double>(rpm);
@@ -136,29 +136,28 @@ static void handle_can_frame(const struct can_frame& frame,
             const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
             const double speed_kmh = speed_ms * 3.6;
 
-            publish_double(stub, "Vehicle.Speed", speed);
+            publish_double(stub, "Vehicle.Speed", speed_ms);
             break;
         }
         case CAN_ID_ENVIRONMENT: { // tempx10
             if (dlc < 8) return;
 
-            const std::int16_t raw_temp = i16_le(&frame.data[0]);
-            const std::uint8_t humidity = u8(&frame.data[2]);
-            const std::uint8_t reserved = u8(&frame.data[3]);
+            const std::int16_t raw_temp = can_decode::i16_le(&frame.data[0]);
+            const std::uint8_t humidity = can_decode::u8(&frame.data[2]);
+            const std::uint8_t reserved = can_decode::u8(&frame.data[3]);
             const std::uint32_t pressure = (static_cast<std::uint32_t>(frame.data[4]) << 16) |
                                                 (static_cast<std::uint32_t>(frame.data[5]) << 8)  |
                                                  static_cast<std::uint32_t>(frame.data[6]);
-            const std::uint8_t status   = u8(&frame.data[7]);
-
+            const std::uint8_t status   = can_decode::u8(&frame.data[7]);
             const double temp = raw_temp / 10.0;
             publish_double(stub, "Vehicle.Exterior.AirTemperature", temp);
             break;
         }
-        case 0x101: { // heartbeat
+        case CAN_ID_HEARTBEAT_STM32: { // heartbeat
             if (dlc < 1) return;
 
-            const std::uint8_t hb_u8 = u8(frame.data);
-            publish_int32(stub, "Vehicle.SafetyCritical.Heartbeat", static_cast<std::int32_t>(hb_u8));
+            const std::uint8_t hb_u8 = can_decode::u8(&frame.data[0]);
+            publish_int32(stub, "Vehicle.ECU.SafetyCritical.Heartbeat", static_cast<std::int32_t>(hb_u8));
 
             break;
         }
