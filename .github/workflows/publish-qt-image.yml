@@ -34,8 +34,7 @@ jobs:
                 tags: |
                     ghcr.io/seame-pt/sea-me_team6_2025-26/qt:6.7.3
                     ghcr.io/seame-pt/sea-me_team6_2025-26/qt:latest
-                cache-from: type=regitry, ref=ghcr.io/seame-pt/sea-me_team6_2025-26/qt:buildcache
-                cache-to: type=regitry, ref=ghcr.io/seame-pt/sea-me_team6_2025-26/qt:buildcache ,mode=max
-
+                cache-from: type=registry, ref=ghcr.io/seame-pt/sea-me_team6_2025-26/qt:buildcache
+                cache-to: type=registry,ref=ghcr.io/seame-pt/qt-6.7.3:buildcache,mode=max
             - name: Image digest
               run: echo "Image published successfully!"
