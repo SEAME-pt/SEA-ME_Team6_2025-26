@@ -7,7 +7,7 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
-#include "../../can_frames.h"
+#include "../inc/can_id.h"
 
 using kuksa::val::v2::VAL;
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     std::vector<std::string> paths;
     paths.push_back("Vehicle.Speed");
     paths.push_back("Vehicle.Exterior.AirTemperature");
-    paths.push_back("Vehicle.SafetyCritical.Heartbeat");
+    paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
 
     // Build subscription request
     // Entries are the paths to subscribe to
