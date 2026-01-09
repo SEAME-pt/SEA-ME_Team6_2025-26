@@ -4,12 +4,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /build
 
+# Install all build dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     ninja-build \
     cmake \
     bash \
-    lcov \
     git \
     wget \
     python3 \
@@ -46,13 +46,11 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa-dev \
     libssl-dev \
     zlib1g-dev \
-    python3-pip \
-    ffmpeg \
-    dbus-x11 \
     && rm -rf /var/lib/apt/lists/*
 
+# Build Qt6 from source
 RUN set -e && \
-    mkdir -p qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
+    mkdir -p qt6/host qt6/src qt6/host-build && \
     cd qt6/src && \
     wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtbase-everywhere-src-6.7.3.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtshadertools-everywhere-src-6.7.3.tar.xz && \
@@ -63,11 +61,11 @@ RUN set -e && \
     tar xf ../src/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     cd qtbase-everywhere-src-6.7.3 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
-    -DQT_BUILD_EXAMPLES=OFF \
-    -DQT_BUILD_TESTS=OFF \
-    -DQT_FEATURE_xcb=ON \
-    -DQT_FEATURE_xlib=ON \
-    -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
+        -DQT_BUILD_EXAMPLES=OFF \
+        -DQT_BUILD_TESTS=OFF \
+        -DQT_FEATURE_xcb=ON \
+        -DQT_FEATURE_xlib=ON \
+        -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
     cd ../qtshadertools-everywhere-src-6.7.3 && \
@@ -78,34 +76,13 @@ RUN set -e && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
-    echo "Qt host build complete"
+    echo "Qt host build complete" && \
+    cd /build && \
+    rm -rf qt6/src qt6/host-build
 
-# Project build
-WORKDIR /app
-
-COPY src/tests/unit/python/requirements.txt .
-RUN pip install --break-system-packages -r requirements.txt
-
-COPY . .
-
+# Set environment variables
 ENV PATH=/build/qt6/host/bin:$PATH
 ENV QT_QPA_PLATFORM=xcb
 ENV QT_DEBUG_PLUGINS=0
 
-RUN cmake -S src/cluster -B build
-RUN cmake --build build
-RUN ctest --test-dir build --output-on-failure
-
-# BUILD: sudo docker build --no-cache -t seameteam6 -f src/environment/Dockerfile .
-
-# xhost +local:docker
-
-# sudo docker run -it --rm \
-#  -e DISPLAY=$DISPLAY \
-#  -e QT_QPA_PLATFORM=xcb \
-#  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-#  -v $HOME/.Xauthority:/root/.Xauthority:ro \
-#  --net=host \
-#  seameteam6 bash
-
-# xhost -local:docker
+WORKDIR /app
