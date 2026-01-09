@@ -13,7 +13,7 @@
 #include <QQmlContext>
 
 #include "backend/timeprovider.hpp"
-#include "backend/systemstatus.hpp"
+#include "backend/systemstatus.hpp" 
 #include "backend/speedprovider.hpp"
 #include "backend/temperatureprovider.hpp"
 #include "backend/ipcclient.hpp"
