@@ -17,16 +17,18 @@
 #include "backend/speedprovider.hpp"
 #include "backend/temperatureprovider.hpp"
 #include "backend/ipcclient.hpp"
+#include "backend/reader.hpp"
 
 void ipcConnections(QQmlApplicationEngine *engine)
 {
     auto speedProvider = new SpeedProvider;
     auto temperatureProvider = new TemperatureProvider;
     auto ipcClient = new IpcClient;
+    auto readerC = new Reader;
 
     QObject::connect(
-        ipcClient,
-        &IpcClient::speedReceived,
+        readerC,
+        &readerC::speedReceived,
         speedProvider,
         &SpeedProvider::setSpeed);
 
@@ -35,8 +37,8 @@ void ipcConnections(QQmlApplicationEngine *engine)
         speedProvider);
 
     QObject::connect(
-        ipcClient,
-        &IpcClient::temperatureReceived,
+        readerC,
+        &readerC::temperatureReceived,
         temperatureProvider,
         &TemperatureProvider::setTemperature);
 
