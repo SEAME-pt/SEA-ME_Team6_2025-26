@@ -76,7 +76,7 @@ RUN set -e && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
     cmake --install . && \
-    echo "Qt host build complete" && \
+    echo "Qt build complete" && \
     cd /build && \
     rm -rf qt6/src qt6/host-build
 
