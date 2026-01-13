@@ -10,7 +10,7 @@ BIN_DIR := bin
 SRC_DIR := src
 GEN_DIR := generated
 
-PUBLISHER_BIN := $(BIN_DIR)/kuksa_publisher
+PUBLISHER_BIN := $(BIN_DIR)/can_to_kuksa_publisher
 
 GEN_SRCS := \
   $(GEN_DIR)/kuksa/val/v2/types.pb.cc \
@@ -19,7 +19,7 @@ GEN_SRCS := \
   $(GEN_DIR)/kuksa/val/v2/val.grpc.pb.cc
 
 SRCS := \
-  $(SRC_DIR)/kuksa_publisher.cpp \
+  $(SRC_DIR)/can_to_kuksa_publisher.cpp \
   $(GEN_SRCS)
 
 READER_BIN := $(BIN_DIR)/kuksa_reader

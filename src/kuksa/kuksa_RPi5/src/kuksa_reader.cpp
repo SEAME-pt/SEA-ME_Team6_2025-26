@@ -11,8 +11,11 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
+#include "../inc/can_id.h"
+
 using kuksa::val::v2::VAL;
 
+// Create a stub object that binds to the channel
 static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port)
 {
     auto channel = grpc::CreateChannel(host_port, grpc::InsecureChannelCredentials());
@@ -21,11 +24,11 @@ static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port)
 
 static std::string value_to_string(const kuksa::val::v2::Value& v)
 {
-    // Your generated Value has oneof typed_value.
-    // We switch on the active field and print something readable.
+    // The generated 'Value' has oneof typed_value.
+    // Switch to the correct option to 
     switch (v.typed_value_case()) {
         case kuksa::val::v2::Value::kDouble:
-            return std::to_string(v.double_()); // note: double_() because "double" is keyword
+            return std::to_string(v.double_()); // note: double_() not "double"
         case kuksa::val::v2::Value::kFloat:
             return std::to_string(v.float_());
         case kuksa::val::v2::Value::kInt32:
@@ -46,7 +49,7 @@ static std::string value_to_string(const kuksa::val::v2::Value& v)
 }
 
 // Poll one path using GetValue and print it.
-// IMPORTANT: Your proto must have GetValue(GetValueRequest)->GetValueResponse.
+// IMPORTANT: the proto must have GetValue(GetValueRequest)->GetValueResponse.
 static bool get_and_print(VAL::Stub* stub, const std::string& path)
 {
     grpc::ClientContext ctx;
@@ -54,8 +57,8 @@ static bool get_and_print(VAL::Stub* stub, const std::string& path)
     kuksa::val::v2::GetValueRequest req;
     kuksa::val::v2::GetValueResponse resp;
 
-    // Your PublishValueRequest used signal_id + data_point.
-    // GetValueRequest typically also uses signal_id.
+    // PublishValueRequest used signal_id + data_point.
+    // GetValueRequest also uses signal_id.
     req.mutable_signal_id()->set_path(path);
 
     grpc::Status st = stub->GetValue(&ctx, req, &resp);
@@ -64,12 +67,13 @@ static bool get_and_print(VAL::Stub* stub, const std::string& path)
         return false;
     }
 
-    // Response typically contains data_point
+    // Response contains data_point
     if (!resp.has_data_point()) {
         std::cout << "[KUKSA] " << path << " = <no datapoint>\n";
         return true;
     }
 
+    // Confirm if is has a valid value
     const auto& dp = resp.data_point();
     if (!dp.has_value()) {
         std::cout << "[KUKSA] " << path << " = <no value>\n";
@@ -87,7 +91,7 @@ int main(int argc, char** argv)
     auto stub = create_val_stub(server);
     std::cout << "[KUKSA] Reader connected to " << server << "\n";
 
-    // Paths to read (use the ones you loaded via --vss)
+    // Paths to read (the ones loaded via --vss)
     std::vector<std::string> paths;
     paths.push_back("Vehicle.Speed");
     paths.push_back("Vehicle.Cabin.AirTemperature");

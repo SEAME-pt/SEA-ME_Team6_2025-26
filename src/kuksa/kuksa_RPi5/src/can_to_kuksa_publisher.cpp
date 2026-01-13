@@ -27,11 +27,15 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
+#include "../inc/can_id.h"
+#include "../inc/can_decode.hpp"
+#include "../inc/can_to_kuksa_publisher.hpp"
+
 using kuksa::val::v2::VAL;
 
 // Configuration
-static const char* KUKSA_ADDR = "127.0.0.1:55555";
-static const char* CAN_IFACE  = "can0"; //david to ruben: change if needed
+static const char* KUKSA_ADDR = "0.0.0.0:55555";
+static const char* CAN_IFACE  = "can1"; //david to ruben: change if needed
 
 // KUKSA helpers
 static std::unique_ptr<VAL::Stub> create_val_stub()
@@ -77,23 +81,6 @@ static void publish_int32(VAL::Stub* stub,
     }
 }
 
-// CAN helpers (little-endian decoding)
-static inline std::uint16_t u16_le(const std::uint8_t* d)
-{
-    return static_cast<std::uint16_t>(d[0]) |
-           (static_cast<std::uint16_t>(d[1]) << 8);
-}
-
-static inline std::int16_t i16_le(const std::uint8_t* d)
-{
-    return static_cast<std::int16_t>(u16_le(d));
-}
-
-static inline std::uint8_t u8(const std::uint8_t* d)
-{
-    return d[0];
-}
-
 // CAN socket setup
 static int open_can_socket()
 {
@@ -130,29 +117,47 @@ static int open_can_socket()
 static void handle_can_frame(const struct can_frame& frame,
                              VAL::Stub* stub)
 {
-    const std::uint32_t id  = frame.can_id & CAN_EFF_MASK;
+    const uint32_t id = frame.can_id & CAN_SFF_MASK; //Changed the mask to standard frame format
     const std::uint8_t  dlc = frame.can_dlc;
 
     switch (id) {
-        case 0x100: { //speedx10
-            if (dlc < 2) return;
-            const std::uint16_t raw = u16_le(frame.data);
-            const double speed = raw / 10.0;
-            publish_double(stub, "Vehicle.Speed", speed);
+        case CAN_ID_WHEEL_SPEED: { //speedx10
+            if (dlc < 8) return;
+
+            const std::int16_t  rpm       = can_decode::i16_le(&frame.data[0]);   // bytes 0-1
+            const std::uint32_t pulses    = can_decode::u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
+            const std::uint8_t  direction = can_decode::u8(&frame.data[6]);       // byte 6
+            const std::uint8_t  status    = can_decode::u8(&frame.data[7]);       // byte 7
+            (void)pulses; (void)status;
+
+            double rpm_signed = static_cast<double>(rpm);
+
+            const double rps = rpm_signed / 60.0;
+            const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
+            const double speed_kmh = speed_ms * 3.6;
+
+            publish_double(stub, "Vehicle.Speed", speed_ms);
             break;
         }
-        case 0x111: { // tempx10
-            if (dlc < 2) return;
-            const std::int16_t raw = i16_le(frame.data);
-            const double temp = raw / 10.0;
-            publish_double(stub, "Vehicle.Cabin.AirTemperature", temp);
+        case CAN_ID_ENVIRONMENT: { // tempx10
+            if (dlc < 8) return;
+
+            const std::int16_t raw_temp = can_decode::i16_le(&frame.data[0]);
+            const std::uint8_t humidity = can_decode::u8(&frame.data[2]);
+            const std::uint8_t reserved = can_decode::u8(&frame.data[3]);
+            const std::uint32_t pressure = (static_cast<std::uint32_t>(frame.data[4]) << 16) |
+                                                (static_cast<std::uint32_t>(frame.data[5]) << 8)  |
+                                                 static_cast<std::uint32_t>(frame.data[6]);
+            const std::uint8_t status   = can_decode::u8(&frame.data[7]);
+            const double temp = raw_temp / 10.0;
+            publish_double(stub, "Vehicle.Exterior.AirTemperature", temp);
             break;
         }
-        case 0x112: { // heartbeat
+        case CAN_ID_HEARTBEAT_STM32: { // heartbeat
             if (dlc < 1) return;
 
-            const std::uint8_t hb_u8 = u8(frame.data);
-            publish_int32(stub, "Vehicle.Test.Heartbeat", static_cast<std::int32_t>(hb_u8));
+            const std::uint8_t hb_u8 = can_decode::u8(&frame.data[0]);
+            publish_int32(stub, "Vehicle.ECU.SafetyCritical.Heartbeat", static_cast<std::int32_t>(hb_u8));
 
             break;
         }
