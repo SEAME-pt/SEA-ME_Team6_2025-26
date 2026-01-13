@@ -3,9 +3,9 @@
 // KUKSA publisher that reads CAN frames (SocketCAN) and publishes to KUKSA Databroker
 //
 // CAN IDs:
-//  - 0x100 : speedx10      (uint16, little-endian) -> Vehicle.Speed (double)
-//  - 0x111 : tempx10       (int16, little-endian)  -> Vehicle.Cabin.AirTemperature (double)
-//  - 0x112 : heartbeat     (uint8, little-endian) -> Vehicle.Test.Heartbeat (int8)
+//  - 0x403 : speedx10      (uint16, little-endian) -> Vehicle.Speed (double)
+//  - 0x420 : tempx10       (int16, little-endian)  -> Vehicle.Cabin.AirTemperature (double)
+//  - 0x701 : heartbeat     (uint8, little-endian) -> Vehicle.Test.Heartbeat (int8)
 //
 
 #include <chrono>
