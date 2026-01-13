@@ -36,7 +36,8 @@ READER_SRCS := \
   $(SRC_DIR)/kuksa_reader.cpp \
   $(GEN_SRCS)
 
-all: $(PUBLISHER_BIN) $(READER_BIN)
+# all: $(PUBLISHER_BIN) $(READER_BIN) not needed reader
+all: $(PUBLISHER_BIN)
 
 $(BIN_DIR):
 	@mkdir -p $(BIN_DIR)

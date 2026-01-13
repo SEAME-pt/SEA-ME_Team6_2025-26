@@ -3,6 +3,7 @@
 #include "../../inc/can_id.h"
 #include "../../inc/kuksa_client.hpp"
 #include "../../inc/can_to_kuksa_publisher.hpp"
+#include "../../inc/signals.hpp"
 
 
 void handleWheelSpeed(const can_frame& frame, KuksaClient& kuksa)
@@ -27,5 +28,5 @@ void handleWheelSpeed(const can_frame& frame, KuksaClient& kuksa)
     const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
     const double speed_kmh = speed_ms * 3.6;
 
-    kuksa.publishDouble("Vehicle.Speed", speed_ms);
+    kuksa.publishDouble(sig::VEHICLE_SPEED, speed_ms);
 }

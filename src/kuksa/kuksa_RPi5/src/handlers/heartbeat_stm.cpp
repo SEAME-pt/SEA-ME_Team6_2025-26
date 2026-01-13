@@ -3,6 +3,7 @@
 #include "../../inc/can_id.h"
 #include "../../inc/kuksa_client.hpp"
 #include "../../inc/can_to_kuksa_publisher.hpp"
+#include "../../inc/signals.hpp"
 
 void handleHeartbeat(const can_frame& frame, KuksaClient& kuksa)
 {
@@ -15,5 +16,5 @@ void handleHeartbeat(const can_frame& frame, KuksaClient& kuksa)
     const std::uint8_t hb = can_decode::u8(&frame.data[0]);
 
     // Publish as int32 (common to avoid int8 type mismatch in KUKSA Value oneof)
-    kuksa.publishInt32("Vehicle.ECU.SafetyCritical.Heartbeat", static_cast<std::int32_t>(hb));
+    kuksa.publishInt32(sig::ECU_SC_HEARTBEAT, static_cast<std::int32_t>(hb));
 }

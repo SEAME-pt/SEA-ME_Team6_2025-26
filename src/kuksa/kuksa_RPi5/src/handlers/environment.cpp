@@ -3,11 +3,12 @@
 #include "../../inc/can_id.h"
 #include "../../inc/kuksa_client.hpp"
 #include "../../inc/can_to_kuksa_publisher.hpp"
+#include "../../inc/signals.hpp"
 
 void handleEnvironment(const can_frame& frame, KuksaClient& kuksa)
 {
     // Expected payload (8 bytes):
-    // bytes 0-1: temperature_x10 (int16 LE) => temp = raw / 10.0 
+    // bytes 0-1: temperature_x100 (int16 LE) => temp = raw / 100.0 
     // byte  2 : humidity (uint8)
     // byte  3 : reserved
     // bytes 4-6: pressure (24-bit LE)
@@ -27,9 +28,8 @@ void handleEnvironment(const can_frame& frame, KuksaClient& kuksa)
     (void)pressure;
     (void)status;
 
-    // If it sends stm32 temp*10  -> /10.0.
-    // const double temp = static_cast<double>(raw_temp) / 10.0;
-    const double temp = raw_temp / 10.0;
+    // const double temp = static_cast<double>(raw_temp) / 100.0;
+    const double temp = raw_temp / 100.0;
 
-    kuksa.publishDouble("Vehicle.Exterior.AirTemperature", temp);
+    kuksa.publishDouble(sig::EXT_AIR_TEMPERATURE, temp);
 }
