@@ -28,11 +28,11 @@ class Reader: public QObject {
         void temperatureReceived(double temperature);
 
     private slots:
-        static create_val_stub(const std::string& host_port)
-        static value_to_string(const kuksa::val::v2::Value& v)
+        static create_val_stub(const std::string& host_port);
+        static value_to_string(const kuksa::val::v2::Value& v);
 
     private:
-        std::string _server = "172.20.10.3:5555"
+        std::string _server = "172.20.10.3:5555";
 }
 
 #endif /* READER_HPP */
