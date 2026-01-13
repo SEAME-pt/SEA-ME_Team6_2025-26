@@ -1,0 +1,6 @@
+../Core/Src/lps22hh.c:41:26:LPS22HH_WriteReg	32	static
+../Core/Src/lps22hh.c:52:26:LPS22HH_ReadReg	32	static
+../Core/Src/lps22hh.c:64:26:LPS22HH_ReadRegMulti	32	static
+../Core/Src/lps22hh.c:73:19:LPS22HH_Init	16	static
+../Core/Src/lps22hh.c:113:19:LPS22HH_ReadTemperature	24	static
+../Core/Src/lps22hh.c:141:19:LPS22HH_ReadPressure	24	static

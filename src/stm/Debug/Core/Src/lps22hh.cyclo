@@ -1,0 +1,6 @@
+../Core/Src/lps22hh.c:41:26:LPS22HH_WriteReg	1
+../Core/Src/lps22hh.c:52:26:LPS22HH_ReadReg	1
+../Core/Src/lps22hh.c:64:26:LPS22HH_ReadRegMulti	1
+../Core/Src/lps22hh.c:73:19:LPS22HH_Init	5
+../Core/Src/lps22hh.c:113:19:LPS22HH_ReadTemperature	2
+../Core/Src/lps22hh.c:141:19:LPS22HH_ReadPressure	3

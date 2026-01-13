@@ -1,0 +1,8 @@
+../Core/Src/mcp2515.c:23:6:MCP2515_Reset	1
+../Core/Src/mcp2515.c:37:9:MCP2515_ReadRegister	1
+../Core/Src/mcp2515.c:56:6:MCP2515_WriteRegister	1
+../Core/Src/mcp2515.c:72:6:MCP2515_BitModify	1
+../Core/Src/mcp2515.c:88:6:MCP2515_SetNormalMode	1
+../Core/Src/mcp2515.c:102:6:mcp_init	2
+../Core/Src/mcp2515.c:182:9:MCP2515_CheckReceive	1
+../Core/Src/mcp2515.c:191:9:MCP2515_ReadMessage	6

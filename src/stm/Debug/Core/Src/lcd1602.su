@@ -1,0 +1,11 @@
+../Core/Src/lcd1602.c:20:13:LCD_SendCommand	32	static
+../Core/Src/lcd1602.c:31:13:LCD_SendData	32	static
+../Core/Src/lcd1602.c:41:13:RGB_Init	24	static
+../Core/Src/lcd1602.c:80:6:LCD1602_Init	16	static
+../Core/Src/lcd1602.c:121:6:LCD1602_Clear	8	static
+../Core/Src/lcd1602.c:133:6:LCD1602_SetCursor	24	static
+../Core/Src/lcd1602.c:144:6:LCD1602_Print	16	static
+../Core/Src/lcd1602.c:158:6:LCD1602_SetRGB	32	static
+../Core/Src/lcd1602.c:175:6:LCD1602_UpdateLine1	64	static
+../Core/Src/lcd1602.c:190:6:LCD1602_UpdateLine2	64	static
+../Core/Src/lcd1602.c:214:6:LCD1602_UpdateDisplay	24	static

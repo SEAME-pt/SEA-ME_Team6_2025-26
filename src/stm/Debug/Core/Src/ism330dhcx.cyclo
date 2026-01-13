@@ -1,0 +1,6 @@
+../Core/Src/ism330dhcx.c:41:26:ISM330DHCX_WriteReg	1
+../Core/Src/ism330dhcx.c:52:26:ISM330DHCX_ReadReg	1
+../Core/Src/ism330dhcx.c:64:26:ISM330DHCX_ReadRegMulti	1
+../Core/Src/ism330dhcx.c:73:19:ISM330DHCX_Init	6
+../Core/Src/ism330dhcx.c:125:19:ISM330DHCX_ReadAccel	2
+../Core/Src/ism330dhcx.c:158:19:ISM330DHCX_ReadGyro	2
