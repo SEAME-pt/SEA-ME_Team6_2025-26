@@ -1,0 +1,6 @@
+../Core/Src/iis2mdc.c:41:26:IIS2MDC_WriteReg	32	static
+../Core/Src/iis2mdc.c:52:26:IIS2MDC_ReadReg	32	static
+../Core/Src/iis2mdc.c:64:26:IIS2MDC_ReadRegMulti	32	static
+../Core/Src/iis2mdc.c:73:19:IIS2MDC_Init	16	static
+../Core/Src/iis2mdc.c:138:19:IIS2MDC_ReadMag	32	static
+../Core/Src/iis2mdc.c:172:19:IIS2MDC_ReadTemp	24	static

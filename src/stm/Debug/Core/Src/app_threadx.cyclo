@@ -1,0 +1,13 @@
+../Core/Src/app_threadx.c:148:6:App_ThreadX_Init	9
+../Core/Src/app_threadx.c:279:6:MX_ThreadX_Init	1
+../Core/Src/app_threadx.c:319:16:calculate_crc8	4
+../Core/Src/app_threadx.c:340:16:validate_crc8	2
+../Core/Src/app_threadx.c:358:6:mcp_send_message	2
+../Core/Src/app_threadx.c:390:13:HeartBeat_Thread_Entry	1
+../Core/Src/app_threadx.c:455:13:Temperature_Thread_Entry	9
+../Core/Src/app_threadx.c:593:13:Speed_Thread_Entry	6
+../Core/Src/app_threadx.c:665:13:CAN_RX_Thread_Entry	48
+../Core/Src/app_threadx.c:1048:13:IMU_Thread_Entry	6
+../Core/Src/app_threadx.c:1186:13:ToF_Thread_Entry	23
+../Core/Src/app_threadx.c:1433:13:Battery_Thread_Entry	9
+../Core/Src/app_threadx.c:1525:6:thread_relay_entry	3

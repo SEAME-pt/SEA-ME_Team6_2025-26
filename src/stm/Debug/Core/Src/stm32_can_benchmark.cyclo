@@ -1,0 +1,13 @@
+../Core/Src/stm32_can_benchmark.c:66:13:DWT_Init	1
+../Core/Src/stm32_can_benchmark.c:77:24:DWT_GetMicros	1
+../Core/Src/stm32_can_benchmark.c:105:16:MCP2515_TxBufferFree	5
+../Core/Src/stm32_can_benchmark.c:117:26:MCP2515_SendFrameFast	8
+../Core/Src/stm32_can_benchmark.c:182:13:SendBenchControl	1
+../Core/Src/stm32_can_benchmark.c:192:13:SendBenchStats	1
+../Core/Src/stm32_can_benchmark.c:212:13:RunTestPrecise	6
+../Core/Src/stm32_can_benchmark.c:300:6:CAN_Benchmark_RunFull	8
+../Core/Src/stm32_can_benchmark.c:381:6:CAN_Benchmark_RunSingle	3
+../Core/Src/stm32_can_benchmark.c:402:13:Benchmark_Thread_Entry	3
+../Core/Src/stm32_can_benchmark.c:424:6:CAN_Benchmark_Init	2
+../Core/Src/stm32_can_benchmark.c:446:6:CAN_Benchmark_TriggerFull	1
+../Core/Src/stm32_can_benchmark.c:452:6:CAN_Benchmark_TriggerSingle	1
