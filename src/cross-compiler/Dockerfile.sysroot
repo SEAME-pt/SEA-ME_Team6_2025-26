@@ -1,0 +1,19 @@
+FROM souzitaaaa/qt-cross-base:bookworm
+
+WORKDIR /build
+
+# Create sysroot directory
+RUN mkdir -p sysroot sysroot/usr sysroot/opt
+
+# Copy and extract the Raspberry Pi sysroot
+COPY cross-compiler/rasp.tar.gz /build/rasp.tar.gz
+RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot && rm /build/rasp.tar.gz
+
+# Fix symbolic links in sysroot
+RUN python3 /usr/local/bin/sysroot-relativelinks.py /build/sysroot
+
+# Copy toolchain files
+COPY cross-compiler/toolchain.cmake /build/toolchain.cmake
+COPY cross-compiler/opencvToolchain.cmake /build/opencvToolchain.cmake
+
+WORKDIR /work

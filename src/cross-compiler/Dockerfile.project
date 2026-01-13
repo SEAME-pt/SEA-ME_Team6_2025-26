@@ -1,0 +1,12 @@
+# Stage 4: Final project builder
+FROM souzitaaaa/qt-cross-compiled:6.7.3-bookworm
+
+WORKDIR /build
+
+COPY cluster /build/project
+
+RUN { \
+    cd /build/project && \
+    /build/qt6/pi/bin/qt-cmake . && \
+    cmake --build .; \
+} 2>&1 | tee -a /build.log
