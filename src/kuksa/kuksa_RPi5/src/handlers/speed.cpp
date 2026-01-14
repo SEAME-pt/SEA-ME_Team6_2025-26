@@ -20,10 +20,9 @@ void handleWheelSpeed(const can_frame& frame, KuksaClient& kuksa)
     const std::uint32_t pulses    = can_decode::u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
     const std::uint8_t  direction = can_decode::u8(&frame.data[6]);       // byte 6
     const std::uint8_t  status    = can_decode::u8(&frame.data[7]);       // byte 7
-    (void)pulses; (void)status;
+    (void)pulses; (void)direction; (void)status;
 
     double rpm_signed = static_cast<double>(rpm);
-
     const double rps = rpm_signed / 60.0;
     const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
     const double speed_kmh = speed_ms * 3.6;

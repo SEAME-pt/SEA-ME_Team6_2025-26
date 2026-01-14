@@ -23,13 +23,16 @@ void handleEnvironment(const can_frame& frame, KuksaClient& kuksa)
     const std::uint32_t pressure  = can_decode::u24_le(&frame.data[4]);
     const std::uint8_t  status    = can_decode::u8(&frame.data[7]);
 
-    (void)humidity;
-    (void)reserved;
-    (void)pressure;
     (void)status;
+    (void)reserved;
+
+    const double temp_c = raw_temp / 100.0;
+    const double pressure_kpa = static_cast<double>(pressure) / 1000.0;
 
     // const double temp = static_cast<double>(raw_temp) / 100.0;
-    const double temp = raw_temp / 100.0;
 
-    kuksa.publishDouble(sig::EXT_AIR_TEMPERATURE, temp);
+    // publish to KUKSA - VSS patsh
+    kuksa.publishDouble(sig::EXT_AIR_TEMPERATURE, temp_c);
+    kuksa.publishFloat(sig::EXT_HUMIDITY, static_cast<float>(humidity));
+    kuksa.publishFloat(sig::EXT_ATMOS_PRESSURE_KPA, static_cast<float>(pressure_kpa));
 }
