@@ -29,6 +29,11 @@ PUBLISHER_SRCS := \
   $(HANDLERS_DIR)/speed.cpp \
   $(HANDLERS_DIR)/environment.cpp \
   $(HANDLERS_DIR)/heartbeat_stm.cpp \
+  $(HANDLERS_DIR)/tof_distance.cpp \
+  $(HANDLERS_DIR)/imu_gyro.cpp \
+  $(HANDLERS_DIR)/imu_accel.cpp \
+  $(HANDLERS_DIR)/emergency_stop.cpp \
+  $(HANDLERS_DIR)/battery.cpp \
   $(GEN_SRCS)
 
 # --- Reader sources ---
