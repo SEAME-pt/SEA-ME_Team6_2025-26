@@ -1,12 +1,12 @@
 #include "../../inc/handlers.hpp"
 #include "../../inc/can_decode.hpp"
 #include "../../inc/can_id.h"
-#include "../../inc/kuksa_client.hpp"
+#include "../../inc/interface_kuksa_client.hpp"
 #include "../../inc/can_to_kuksa_publisher.hpp"
 #include "../../inc/signals.hpp"
 
 
-void handleWheelSpeed(const can_frame& frame, KuksaClient& kuksa)
+void handleWheelSpeed(const can_frame& frame, IKuksaClient& kuksa)
 {
     // Expected payload (8 bytes):
     // bytes 0-1: rpm (int16 LE)

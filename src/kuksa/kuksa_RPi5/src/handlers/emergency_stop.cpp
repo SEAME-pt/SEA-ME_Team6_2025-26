@@ -1,9 +1,9 @@
 #include "../../inc/handlers.hpp"
 #include "../../inc/can_decode.hpp"
-#include "../../inc/kuksa_client.hpp"
+#include "../../inc/interface_kuksa_client.hpp"
 #include "../../inc/signals.hpp"
 
-void handleEmergencyStop(const can_frame& frame, KuksaClient& kuksa)
+void handleEmergencyStop(const can_frame& frame, IKuksaClient& kuksa)
 {
     if (frame.can_dlc < 8)
         return;

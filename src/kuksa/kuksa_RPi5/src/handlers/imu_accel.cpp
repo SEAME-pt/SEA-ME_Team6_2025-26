@@ -1,6 +1,6 @@
 #include "../../inc/handlers.hpp"
 #include "../../inc/can_decode.hpp"
-#include "../../inc/kuksa_client.hpp"
+#include "../../inc/interface_kuksa_client.hpp"
 #include "../../inc/signals.hpp"
 
 static float mg_to_ms2_f(std::int16_t mg)
@@ -10,7 +10,7 @@ static float mg_to_ms2_f(std::int16_t mg)
     return g * 9.80665f;
 }
 
-void handleImuAccel(const can_frame& frame, KuksaClient& kuksa)
+void handleImuAccel(const can_frame& frame, IKuksaClient& kuksa)
 {
     if (frame.can_dlc < 8)
         return;

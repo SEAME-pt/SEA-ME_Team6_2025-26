@@ -1,13 +1,13 @@
 #include "../../inc/handlers.hpp"
 #include "../../inc/can_decode.hpp"
-#include "../../inc/kuksa_client.hpp"
+#include "../../inc/interface_kuksa_client.hpp"
 #include "../../inc/signals.hpp"
 
 #ifndef TOF_WARNING_THRESHOLD_MM
 #define TOF_WARNING_THRESHOLD_MM 300
 #endif
 
-void handleToFDistance(const can_frame& frame, KuksaClient& kuksa)
+void handleToFDistance(const can_frame& frame, IKuksaClient& kuksa)
 {
     if (frame.can_dlc < 8)
         return;

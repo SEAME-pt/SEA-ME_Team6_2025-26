@@ -21,7 +21,7 @@ static const Entry kHandlers[] = {
 
 static const std::size_t kHandlersCount = sizeof(kHandlers) / sizeof(kHandlers[0]);
 
-void dispatch_can_frame(const can_frame& frame, KuksaClient& kuksa)
+void dispatch_can_frame(const can_frame& frame, IKuksaClient& kuksa)
 {
     const std::uint32_t id = frame.can_id & CAN_SFF_MASK;
 

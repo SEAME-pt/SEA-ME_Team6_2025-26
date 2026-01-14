@@ -1,6 +1,6 @@
 #include "../../inc/handlers.hpp"
 #include "../../inc/can_decode.hpp"
-#include "../../inc/kuksa_client.hpp"
+#include "../../inc/interface_kuksa_client.hpp"
 #include "../../inc/signals.hpp"
 
 static float dps01_to_rads_f(std::int16_t raw)
@@ -9,7 +9,7 @@ static float dps01_to_rads_f(std::int16_t raw)
     return dps * 0.017453292519943295f; // pi/180
 }
 
-void handleImuGyro(const can_frame& frame, KuksaClient& kuksa)
+void handleImuGyro(const can_frame& frame, IKuksaClient& kuksa)
 {
     if (frame.can_dlc < 8)
         return;
