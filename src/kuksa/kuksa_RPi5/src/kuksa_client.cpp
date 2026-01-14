@@ -59,3 +59,52 @@ void KuksaClient::publishInt32(const std::string& path, std::int32_t value)
                   << ") failed: " << st.error_message() << "\n";
     }
 }
+
+void KuksaClient::publishBool(const std::string& path, bool value)
+{
+    grpc::ClientContext ctx;
+    kuksa::val::v2::PublishValueRequest req;
+    kuksa::val::v2::PublishValueResponse resp;
+
+    req.mutable_signal_id()->set_path(path);
+    req.mutable_data_point()->mutable_value()->set_bool_(value);
+
+    grpc::Status st = impl_->stub->PublishValue(&ctx, req, &resp);
+    if (!st.ok()) {
+        std::cerr << "[KUKSA] PublishValue(" << path
+                  << ") failed: " << st.error_message() << "\n";
+    }
+}
+
+void KuksaClient::publishFloat(const std::string& path, float value)
+{
+    grpc::ClientContext ctx;
+    kuksa::val::v2::PublishValueRequest req;
+    kuksa::val::v2::PublishValueResponse resp;
+
+    req.mutable_signal_id()->set_path(path);
+    req.mutable_data_point()->mutable_value()->set_float_(value);
+
+    grpc::Status st = impl_->stub->PublishValue(&ctx, req, &resp);
+    if (!st.ok()) {
+        std::cerr << "[KUKSA] PublishValue(" << path
+                  << ") failed: " << st.error_message() << "\n";
+    }
+}
+
+void KuksaClient::publishUint32(const std::string& path, std::uint32_t value)
+{
+    grpc::ClientContext ctx;
+    kuksa::val::v2::PublishValueRequest req;
+    kuksa::val::v2::PublishValueResponse resp;
+
+    req.mutable_signal_id()->set_path(path);
+    req.mutable_data_point()->mutable_value()->set_uint32(value);
+
+    grpc::Status st = impl_->stub->PublishValue(&ctx, req, &resp);
+    if (!st.ok()) {
+        std::cerr << "[KUKSA] PublishValue(" << path
+                  << ") failed: " << st.error_message() << "\n";
+    }
+}
+
