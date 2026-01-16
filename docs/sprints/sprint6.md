@@ -8,9 +8,9 @@
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [x] Optimization of CAN Protocol (8)
   - [x] Manual Control Implementation (8)
-  - [] Communication with Remote Display (13 - 8 achieved)
+  - [ ] Communication with Remote Display (13 - 8 achieved)
   - [x] Continue KUKSA Implementation (8)
-  - [x][Task] BONUS: Redesign of Car Hardware Architecture
+  - [x] BONUS: Redesign of Car Hardware Architecture
 #142 (8)
 
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
@@ -29,7 +29,7 @@
 - ## Sprint 6 points: 79/84
 
 - ## Undone:
-- [] Communication with Remote Display (13 - 8 achieved)
+- ❌ Undone: Communication with Remote Display (13 - 8 achieved)
 . still missing cross-compilation to allow us to provide communication between kuksa and QT using real data.
 ---
 
@@ -48,6 +48,7 @@
 - **Demos**:
 
 - **Docs updated**:
+- MQTT session -> [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
 
 - **Tests**:
   
