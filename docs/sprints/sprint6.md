@@ -65,7 +65,7 @@
 ![Image](https://youtube.com/shorts/rN4BKjbAcKE)
 
 - Can frames protocol structs - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
-![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/jpjpcs-patch-1/docs/demos/can_frames_protocol_structs%20-%20sprint6.jpeg)
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/can_frames_protocol_structs%20-%20sprint6.jpeg)
 
 - stm-can transmission - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/stm_can_transmission%20-%20sprint6.jpg)
