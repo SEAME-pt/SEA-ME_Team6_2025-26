@@ -56,13 +56,13 @@
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_2%20-%20sprint6.jpg)
 
 - STM sensors - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
-![Image](https://youtube.com/shorts/vUMV0UnSf04)
+(https://youtube.com/shorts/vUMV0UnSf04)
 
 - stm sensors map scheme - EXPECT-L0-10 - "Implement new architecture"
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/STM_Ilustra.jpg)
 
 - Emergency brake with sensors - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
-![Image](https://youtube.com/shorts/rN4BKjbAcKE)
+(https://youtube.com/shorts/rN4BKjbAcKE)
 
 - Can frames protocol structs - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/can_frames_protocol_structs%20-%20sprint6.jpeg)
@@ -71,7 +71,7 @@
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/stm_can_transmission%20-%20sprint6.jpg)
 
 - kuksa -> Rasp4 reading data - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
-![Image](https://youtu.be/mMvbhmvh8Fg)
+(https://youtu.be/mMvbhmvh8Fg)
 
 -EmergencyStop demo
 https://www.youtube.com/shorts/rN4BKjbAcKE
