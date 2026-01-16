@@ -21,9 +21,12 @@ FetchContent_MakeAvailable(googletest)
 # -----------------------
 # Paths
 # -----------------------
-set(KUKSA_RPI5_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../kuksa_RPi5/src")
-set(KUKSA_RPI5_INC "${CMAKE_CURRENT_SOURCE_DIR}/../kuksa_RPi5/inc")
+set(KUKSA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../kuksa" CACHE PATH "Path to kuksa repo root")
 
+set(KUKSA_RPI5_SRC "${KUKSA_ROOT}/kuksa_RPi5/src")
+set(KUKSA_RPI5_INC "${KUKSA_ROOT}/kuksa_RPi5/inc")
+
+message(STATUS "KUKSA_ROOT     = ${KUKSA_ROOT}")
 message(STATUS "KUKSA_RPI5_SRC = ${KUKSA_RPI5_SRC}")
 message(STATUS "KUKSA_RPI5_INC = ${KUKSA_RPI5_INC}")
 
