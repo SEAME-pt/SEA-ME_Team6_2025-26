@@ -37,6 +37,8 @@ file(GLOB BACKEND_SOURCES ../cluster/src/backend/*.cpp)
 add_executable(SEA_ME_Team6_Tests
 ${BACKEND_SOURCES}
 unit/cpp/speedprovider_test.cpp
+unit/cpp/temperatureprovider_test.cpp
+unit/cpp/timeprovider_test.cpp
 )
 
 # Add here Qt6 Packages as they appear
