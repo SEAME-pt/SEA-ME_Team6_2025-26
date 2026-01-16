@@ -77,7 +77,11 @@
 - MQTT session -  EXPECT-L0-10 - "Implement new architecture." [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
 
 - **Tests**:
-  
+- QT unity tests - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report_QT%20-%20sprint%206.jpeg)
+
+- kuksa tests - - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report%20-%20sprint6.jpeg)
+
+
 ---
 
 # 🔎 Retrospective
