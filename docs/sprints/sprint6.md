@@ -74,7 +74,14 @@
 ![Image](https://youtu.be/mMvbhmvh8Fg)
 
 -EmergencyStop demo
-<iframe width="558" height="992" src="https://www.youtube.com/embed/rN4BKjbAcKE" title="Emergency stop" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+https://www.youtube.com/shorts/rN4BKjbAcKE
+
+-Sensors Demonstration
+https://www.youtube.com/shorts/vUMV0UnSf04
+
+-Kuksa reading in Rpi4 LCD
+https://www.youtube.com/watch?v=mMvbhmvh8Fg
+
 
 - **Docs updated**:
 - MQTT session -  EXPECT-L0-10 - "Implement new architecture." [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
