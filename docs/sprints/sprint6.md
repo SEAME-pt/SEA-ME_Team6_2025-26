@@ -64,17 +64,17 @@
 - Emergency brake with sensors - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
 ![Image](https://youtube.com/shorts/rN4BKjbAcKE)
 
-- Can frames protocol structs - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
+- Can frames protocol structs - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/can_frames_protocol_structs%20-%20sprint6.jpeg)
 
-- stm-can transmission - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
+- stm-can transmission - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/stm_can_transmission%20-%20sprint6.jpg)
 
 - kuksa -> Rasp4 reading data - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 ![Image](https://youtu.be/mMvbhmvh8Fg)
 
 - **Docs updated**:
-- MQTT session -> [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
+- MQTT session -  EXPECT-L0-10 - "Implement new architecture." [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
 
 - **Tests**:
   
@@ -85,6 +85,12 @@
   - ### Objetive completed - Improve end-to-end communication protocols!
   - ### Bonus tasks:
       - #### Redesign of Car Hardware Architecture
+      
+- ## **To improve**: 
+  - ### Better definition of issues - break big tasks into smaller ones!
+
+  ## 🔗 Useful Links
+- Sprint board/view: [Sprint 6](https://github.com/orgs/SEAME-pt/projects/89/views/13)
 
 ## TSF Useful: 
   EXPECT-L0-1 - "System architecture is defined and documented":
