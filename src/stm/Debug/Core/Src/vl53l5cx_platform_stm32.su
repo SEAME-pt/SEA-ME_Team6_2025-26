@@ -1,0 +1,4 @@
+../Core/Src/vl53l5cx_platform_stm32.c:14:6:VL53L5CX_SetXSHUT	16	static
+../Core/Src/vl53l5cx_platform_stm32.c:24:9:VL53L5CX_GetInterruptState	8	static
+../Core/Src/vl53l5cx_platform_stm32.c:33:6:VL53L5CX_PowerOn	8	static
+../Core/Src/vl53l5cx_platform_stm32.c:47:6:VL53L5CX_PowerOff	8	static
