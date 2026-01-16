@@ -46,8 +46,7 @@
   - Documentation and Team Knowledge Done: AGL, Tests, Can, Kuksa, Covesa, MQTT/Mosquito, UProtocol.
   
 - **Demos**:
-- car_architecture_old - EXPECT-L0-1 - "System architecture is defined and documented"
-![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_old%20-%20sprint6.jpeg)
+- car_architecture_old - EXPECT-L0-1 - "System architecture is defined and documented"![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_old%20-%20sprint6.jpeg)
 
 - car_architecture_new_1 - EXPECT-L0-10 - "Implement new architecture."
 ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_1%20-%20sprint6.jpg)
