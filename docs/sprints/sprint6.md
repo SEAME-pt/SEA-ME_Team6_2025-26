@@ -73,6 +73,9 @@
 - kuksa -> Rasp4 reading data - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 ![Image](https://youtu.be/mMvbhmvh8Fg)
 
+-EmergencyStop demo
+<iframe width="558" height="992" src="https://www.youtube.com/embed/rN4BKjbAcKE" title="Emergency stop" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 - **Docs updated**:
 - MQTT session -  EXPECT-L0-10 - "Implement new architecture." [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
 
@@ -80,6 +83,7 @@
 - QT unity tests - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report_QT%20-%20sprint%206.jpeg)
 
 - kuksa tests - - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report%20-%20sprint6.jpeg)
+
 
 
 ---
