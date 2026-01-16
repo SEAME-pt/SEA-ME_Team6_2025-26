@@ -28,6 +28,8 @@
         <file>src/backend/temperatureprovider.hpp</file>
         <file>src/backend/ipcclient.cpp</file>
         <file>src/backend/ipcclient.hpp</file>
+        <file>src/backend/reader.cpp</file>
+        <file>src/backend/reader.hpp</file>
 
         <!-- Icons  -->
         <file>assets/icons/battery-empty-solid-full.svg</file>

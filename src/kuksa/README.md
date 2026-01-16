@@ -111,7 +111,7 @@ Can be configured in:
 Example configuration:
 
 ```sh
-EXTRA_ARGS="--address 127.0.0.1 \
+EXTRA_ARGS="--address 0.0.0.0 \
             --port 55555 \
             --vss /etc/kuksa/vss.json \
             --insecure \
@@ -164,17 +164,12 @@ For now it is needed to run `./kuksa_publisher`, after it is going to be a syste
 
 ### Next Steps
 
-- Replace demo values with real CAN decoding
+- Replace demo values with real CAN decoding ☑️
 
-- Move publisher into a daemon/service
+- Move publisher into a daemon/service 
 
-- Add subscriptions instead of polling
+- Add subscriptions instead of polling ☑️
 
 - Integrate with Qt dashboard / VISS
 
-- Research on JWT / TLS
-
-
-
-
-
+- Research on JWT / TLS - optional

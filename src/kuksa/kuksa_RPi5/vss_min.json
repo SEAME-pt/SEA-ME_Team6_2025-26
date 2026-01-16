@@ -1,0 +1,765 @@
+{
+  "Vehicle": {
+    "description": "SEA:ME PiRacer Vehicle Signal Specification - Custom VSS for autonomous vehicle project",
+    "type": "branch",
+    "children": {
+      "VehicleIdentification": {
+        "description": "Attributes that identify a vehicle.",
+        "type": "branch",
+        "children": {
+          "Brand": {
+            "datatype": "string",
+            "description": "Vehicle brand or manufacturer.",
+            "type": "attribute",
+            "default": "SEA:ME"
+          },
+          "Model": {
+            "datatype": "string",
+            "description": "Vehicle model.",
+            "type": "attribute",
+            "default": "Team6"
+          },
+          "Year": {
+            "datatype": "uint16",
+            "description": "Model year of the vehicle.",
+            "type": "attribute",
+            "default": 2025
+          }
+        }
+      },
+      "VersionVSS": {
+        "description": "Supported Version of VSS.",
+        "type": "branch",
+        "children": {
+          "Major": {
+            "datatype": "uint32",
+            "default": 4,
+            "description": "Supported Version of VSS - Major version.",
+            "type": "attribute"
+          },
+          "Minor": {
+            "datatype": "uint32",
+            "default": 2,
+            "description": "Supported Version of VSS - Minor version.",
+            "type": "attribute"
+          },
+          "Patch": {
+            "datatype": "uint32",
+            "default": 0,
+            "description": "Supported Version of VSS - Patch version.",
+            "type": "attribute"
+          },
+          "Label": {
+            "datatype": "string",
+            "description": "Label to further describe the version.",
+            "type": "attribute",
+            "default": "seame-custom"
+          }
+        }
+      },
+
+      "Speed": {
+        "datatype": "double",
+        "description": "Vehicle speed measured by Hall effect sensor.",
+        "type": "sensor",
+        "unit": "km/h",
+        "min": 0,
+        "comment": "Hall effect speed sensor via STM32 B-U585I-IOT02A"
+      },
+      "AverageSpeed": {
+        "datatype": "float",
+        "description": "Average speed for the current trip.",
+        "type": "sensor",
+        "unit": "km/h"
+      },
+      "TraveledDistance": {
+        "datatype": "float",
+        "description": "Odometer reading, total distance traveled during the lifetime of the vehicle.",
+        "type": "sensor",
+        "unit": "km"
+      },
+      "TraveledDistanceSinceStart": {
+        "datatype": "float",
+        "description": "Distance traveled since start of current trip.",
+        "type": "sensor",
+        "unit": "km"
+      },
+      "IsMoving": {
+        "datatype": "boolean",
+        "description": "Indicates whether the vehicle is stationary or moving.",
+        "type": "sensor"
+      },
+
+      "Acceleration": {
+        "description": "Spatial acceleration from ISM330DHCX IMU. Axis definitions according to ISO 8855.",
+        "type": "branch",
+        "children": {
+          "Longitudinal": {
+            "datatype": "float",
+            "description": "Vehicle acceleration in X (longitudinal acceleration).",
+            "type": "sensor",
+            "unit": "m/s^2",
+            "comment": "ISM330DHCX accelerometer via STM32"
+          },
+          "Lateral": {
+            "datatype": "float",
+            "description": "Vehicle acceleration in Y (lateral acceleration).",
+            "type": "sensor",
+            "unit": "m/s^2",
+            "comment": "ISM330DHCX accelerometer via STM32"
+          },
+          "Vertical": {
+            "datatype": "float",
+            "description": "Vehicle acceleration in Z (vertical acceleration).",
+            "type": "sensor",
+            "unit": "m/s^2",
+            "comment": "ISM330DHCX accelerometer via STM32"
+          }
+        }
+      },
+
+      "AngularVelocity": {
+        "description": "Spatial rotation from ISM330DHCX IMU. Axis definitions according to ISO 8855.",
+        "type": "branch",
+        "children": {
+          "Roll": {
+            "datatype": "float",
+            "description": "Vehicle rotation rate along X (longitudinal).",
+            "type": "sensor",
+            "unit": "degrees/s",
+            "comment": "ISM330DHCX gyroscope via STM32"
+          },
+          "Pitch": {
+            "datatype": "float",
+            "description": "Vehicle rotation rate along Y (lateral).",
+            "type": "sensor",
+            "unit": "degrees/s",
+            "comment": "ISM330DHCX gyroscope via STM32"
+          },
+          "Yaw": {
+            "datatype": "float",
+            "description": "Vehicle rotation rate along Z (vertical).",
+            "type": "sensor",
+            "unit": "degrees/s",
+            "comment": "ISM330DHCX gyroscope via STM32"
+          }
+        }
+      },
+
+      "CurrentLocation": {
+        "description": "Vehicle heading from magnetometer (IIS2MDC).",
+        "type": "branch",
+        "children": {
+          "Heading": {
+            "datatype": "double",
+            "description": "Current heading relative to magnetic north. 0 = North, 90 = East, 180 = South, 270 = West.",
+            "max": 360,
+            "min": 0,
+            "type": "sensor",
+            "unit": "degrees",
+            "comment": "IIS2MDC magnetometer via STM32"
+          }
+        }
+      },
+
+      "Exterior": {
+        "description": "Information about exterior measured by vehicle sensors.",
+        "type": "branch",
+        "children": {
+          "AirTemperature": {
+            "datatype": "double",
+            "description": "Air temperature outside the vehicle.",
+            "type": "sensor",
+            "unit": "celsius",
+            "comment": "HTS221 temperature sensor via STM32"
+          },
+          "Humidity": {
+            "datatype": "float",
+            "description": "Relative humidity outside the vehicle. 0 = Dry, 100 = Air fully saturated.",
+            "max": 100,
+            "min": 0,
+            "type": "sensor",
+            "unit": "percent",
+            "comment": "HTS221 humidity sensor via STM32"
+          },
+          "LightIntensity": {
+            "datatype": "float",
+            "description": "Ambient light intensity outside the vehicle in lux.",
+            "type": "sensor",
+            "unit": "lux",
+            "min": 0,
+            "comment": "VEML6030 ambient light sensor via STM32"
+          },
+          "AtmosphericPressure": {
+            "datatype": "float",
+            "description": "Atmospheric pressure.",
+            "type": "sensor",
+            "unit": "kPa",
+            "comment": "LPS22HH pressure sensor via STM32"
+          }
+        }
+      },
+
+      "Chassis": {
+        "description": "All data concerning steering, suspension, wheels, and brakes.",
+        "type": "branch",
+        "children": {
+          "SteeringWheel": {
+            "description": "Steering wheel/servo signals.",
+            "type": "branch",
+            "children": {
+              "Angle": {
+                "datatype": "int16",
+                "description": "Steering wheel angle. Positive = degrees to the left. Negative = degrees to the right.",
+                "type": "actuator",
+                "unit": "degrees",
+                "min": -45,
+                "max": 45,
+                "comment": "WS-MG99SR servo motor position via STM32"
+              }
+            }
+          },
+          "Accelerator": {
+            "description": "Accelerator/throttle signals.",
+            "type": "branch",
+            "children": {
+              "PedalPosition": {
+                "datatype": "uint8",
+                "description": "Accelerator pedal position as percent. 0 = Not depressed. 100 = Fully depressed.",
+                "max": 100,
+                "min": 0,
+                "type": "actuator",
+                "unit": "percent",
+                "comment": "Maps to motor PWM duty cycle via TB6612FNG"
+              }
+            }
+          },
+          "Brake": {
+            "description": "Brake system signals.",
+            "type": "branch",
+            "children": {
+              "PedalPosition": {
+                "datatype": "uint8",
+                "description": "Brake pedal position as percent. 0 = Not depressed. 100 = Fully depressed.",
+                "max": 100,
+                "min": 0,
+                "type": "actuator",
+                "unit": "percent",
+                "comment": "Implemented via motor braking (TB6612FNG short brake)"
+              }
+            }
+          }
+        }
+      },
+
+      "ADAS": {
+        "description": "Advanced Driver Assistance Systems signals.",
+        "type": "branch",
+        "children": {
+          "ObstacleDetection": {
+            "description": "Obstacle detection system using ToF sensor.",
+            "type": "branch",
+            "children": {
+              "IsEnabled": {
+                "datatype": "boolean",
+                "description": "Indicates if obstacle detection is enabled.",
+                "type": "actuator"
+              },
+              "Front": {
+                "description": "Front obstacle detection zone.",
+                "type": "branch",
+                "children": {
+                  "IsWarning": {
+                    "datatype": "boolean",
+                    "description": "Indicates if an obstacle is detected in warning zone.",
+                    "type": "sensor"
+                  },
+                  "Distance": {
+                    "datatype": "float",
+                    "description": "Distance to nearest obstacle.",
+                    "type": "sensor",
+                    "unit": "mm",
+                    "min": 0,
+                    "max": 40000,
+                    "comment": "VL53L5CX ToF sensor (4x4 zone) via STM32"
+                  }
+                }
+              }
+            }
+          },
+          "ActiveAutonomyLevel": {
+            "allowed": [
+              "SAE_0",
+              "SAE_1",
+              "SAE_2"
+            ],
+            "datatype": "string",
+            "description": "Indicates the currently active level of autonomy according to SAE J3016 taxonomy.",
+            "type": "sensor",
+            "default": "SAE_0"
+          }
+        }
+      },
+
+      "Powertrain": {
+        "description": "Powertrain data for battery management and motor control.",
+        "type": "branch",
+        "children": {
+          "Type": {
+            "allowed": [
+              "ELECTRIC"
+            ],
+            "datatype": "string",
+            "description": "Defines the powertrain type of the vehicle.",
+            "type": "attribute",
+            "default": "ELECTRIC"
+          },
+          "ElectricMotor": {
+            "description": "Electric Motor specific data for DC motors.",
+            "type": "branch",
+            "children": {
+              "IsRunning": {
+                "datatype": "boolean",
+                "description": "Motor Running. True if motor is active.",
+                "type": "sensor"
+              },
+              "Speed": {
+                "datatype": "int32",
+                "description": "Motor rotational speed measured as rotations per minute. Negative values indicate reverse driving mode.",
+                "type": "sensor",
+                "unit": "rpm"
+              },
+              "Power": {
+                "datatype": "int16",
+                "description": "Current motor power output. Negative values indicate regenerative braking.",
+                "type": "sensor",
+                "unit": "W"
+              },
+              "Temperature": {
+                "datatype": "int16",
+                "description": "Motor/driver temperature.",
+                "type": "sensor",
+                "unit": "celsius",
+                "comment": "TB6612FNG driver thermal monitoring"
+              }
+            }
+          },
+          "Transmission": {
+            "description": "Transmission-specific data.",
+            "type": "branch",
+            "children": {
+              "CurrentGear": {
+                "datatype": "int8",
+                "description": "The current gear. 0=Neutral, 1=Forward, -1=Reverse.",
+                "type": "sensor"
+              },
+              "DriveType": {
+                "allowed": [
+                  "REAR_WHEEL_DRIVE"
+                ],
+                "datatype": "string",
+                "description": "Drive type.",
+                "type": "attribute",
+                "default": "REAR_WHEEL_DRIVE"
+              }
+            }
+          },
+          "TractionBattery": {
+            "description": "Battery Management data for 3S Li-ion battery pack.",
+            "type": "branch",
+            "children": {
+              "Id": {
+                "datatype": "string",
+                "description": "Battery Identification.",
+                "type": "attribute",
+                "default": "3S-LION-2200"
+              },
+              "NominalVoltage": {
+                "datatype": "uint16",
+                "description": "Nominal Voltage of the battery (3S = 11.1V).",
+                "type": "attribute",
+                "unit": "V",
+                "default": 11
+              },
+              "MaxVoltage": {
+                "datatype": "uint16",
+                "description": "Max allowed voltage of the battery (3S fully charged = 12.6V).",
+                "type": "attribute",
+                "unit": "V",
+                "default": 13
+              },
+              "GrossCapacity": {
+                "datatype": "uint16",
+                "description": "Gross capacity of the battery in mAh.",
+                "type": "attribute",
+                "unit": "mAh",
+                "default": 2200
+              },
+              "CurrentVoltage": {
+                "datatype": "float",
+                "description": "Current Voltage of the battery.",
+                "type": "sensor",
+                "unit": "V",
+                "comment": "INA219 current monitor via I2C"
+              },
+              "CurrentCurrent": {
+                "datatype": "float",
+                "description": "Current current flowing in/out of battery. Positive = discharging, Negative = charging.",
+                "type": "sensor",
+                "unit": "A",
+                "comment": "INA219 current monitor via I2C"
+              },
+              "CurrentPower": {
+                "datatype": "float",
+                "description": "Current electrical power consumption.",
+                "type": "sensor",
+                "unit": "W",
+                "comment": "INA219 current monitor via I2C"
+              },
+              "StateOfCharge": {
+                "description": "State of charge information.",
+                "type": "branch",
+                "children": {
+                  "Current": {
+                    "datatype": "float",
+                    "description": "Physical state of charge of the battery, relative to capacity.",
+                    "max": 100.0,
+                    "min": 0,
+                    "type": "sensor",
+                    "unit": "percent",
+                    "comment": "Estimated from voltage curve"
+                  },
+                  "Displayed": {
+                    "datatype": "float",
+                    "description": "State of charge displayed to the user.",
+                    "max": 100.0,
+                    "min": 0,
+                    "type": "sensor",
+                    "unit": "percent"
+                  }
+                }
+              },
+              "IsLevelLow": {
+                "datatype": "boolean",
+                "description": "Indicates if battery level is low (voltage < 10.5V for 3S).",
+                "type": "sensor",
+                "comment": "Triggers low battery alarm"
+              },
+              "IsCritical": {
+                "datatype": "boolean",
+                "description": "Indicates if battery level is critical (voltage < 9.9V for 3S).",
+                "type": "sensor",
+                "comment": "Triggers emergency shutdown"
+              },
+              "Range": {
+                "datatype": "uint32",
+                "description": "Estimated remaining range in meters using battery.",
+                "type": "sensor",
+                "unit": "m"
+              }
+            }
+          }
+        }
+      },
+
+      "LowVoltageBattery": {
+        "description": "Signals related to low voltage power rails (5V, 3.3V from step-down converters).",
+        "type": "branch",
+        "children": {
+          "Rail5V": {
+            "description": "5V power rail status (LM2596).",
+            "type": "branch",
+            "children": {
+              "CurrentVoltage": {
+                "datatype": "float",
+                "description": "Current voltage of the 5V rail.",
+                "type": "sensor",
+                "unit": "V"
+              },
+              "CurrentCurrent": {
+                "datatype": "float",
+                "description": "Current flowing through 5V rail.",
+                "type": "sensor",
+                "unit": "A"
+              }
+            }
+          },
+          "Rail3V3": {
+            "description": "3.3V power rail status (XL4015).",
+            "type": "branch",
+            "children": {
+              "CurrentVoltage": {
+                "datatype": "float",
+                "description": "Current voltage of the 3.3V rail.",
+                "type": "sensor",
+                "unit": "V"
+              },
+              "CurrentCurrent": {
+                "datatype": "float",
+                "description": "Current flowing through 3.3V rail.",
+                "type": "sensor",
+                "unit": "A"
+              }
+            }
+          }
+        }
+      },
+
+      "LowVoltageSystemState": {
+        "allowed": [
+          "UNDEFINED",
+          "OFF",
+          "ON",
+          "READY"
+        ],
+        "datatype": "string",
+        "description": "State of the vehicle power system.",
+        "type": "sensor"
+      },
+
+      "ECU": {
+        "description": "Electronic Control Unit status information.",
+        "type": "branch",
+        "children": {
+          "ApplicationDomain": {
+            "description": "Raspberry Pi 5 - High-level processing ECU (AGL).",
+            "type": "branch",
+            "children": {
+              "IsConnected": {
+                "datatype": "boolean",
+                "description": "Indicates if ECU is online and communicating.",
+                "type": "sensor"
+              },
+              "Heartbeat": {
+                "datatype": "uint32",
+                "description": "Heartbeat counter incrementing each cycle.",
+                "type": "sensor"
+              },
+              "Temperature": {
+                "datatype": "float",
+                "description": "ECU core temperature.",
+                "type": "sensor",
+                "unit": "celsius",
+                "comment": "Source: Raspberry Pi 5 CPU temperature"
+              },
+              "CPULoad": {
+                "datatype": "uint8",
+                "description": "CPU utilization percentage.",
+                "type": "sensor",
+                "unit": "percent",
+                "max": 100
+              },
+              "MemoryUsage": {
+                "datatype": "uint8",
+                "description": "Memory utilization percentage.",
+                "type": "sensor",
+                "unit": "percent",
+                "max": 100
+              }
+            }
+          },
+          "SafetyCritical": {
+            "description": "STM32 B-U585I-IOT02A - Safety-critical real-time ECU (ThreadX).",
+            "type": "branch",
+            "children": {
+              "IsConnected": {
+                "datatype": "boolean",
+                "description": "Indicates if ECU is online and communicating.",
+                "type": "sensor"
+              },
+              "Heartbeat": {
+                "datatype": "int32",
+                "description": "Heartbeat counter incrementing each cycle.",
+                "type": "sensor"
+              },
+              "Temperature": {
+                "datatype": "float",
+                "description": "ECU core temperature.",
+                "type": "sensor",
+                "unit": "celsius",
+                "comment": "Source: STM32 internal temperature sensor"
+              },
+              "ErrorCode": {
+                "datatype": "uint16",
+                "description": "Current error code. 0 = No error.",
+                "type": "sensor"
+              }
+            }
+          },
+          "Display": {
+            "description": "Raspberry Pi 4 - Dashboard display ECU.",
+            "type": "branch",
+            "children": {
+              "IsConnected": {
+                "datatype": "boolean",
+                "description": "Indicates if display ECU is online.",
+                "type": "sensor"
+              },
+              "Heartbeat": {
+                "datatype": "uint32",
+                "description": "Heartbeat counter incrementing each cycle.",
+                "type": "sensor"
+              }
+            }
+          }
+        }
+      },
+
+      "AIAccelerator": {
+        "description": "Hailo-8 AI accelerator status.",
+        "type": "branch",
+        "children": {
+          "IsConnected": {
+            "datatype": "boolean",
+            "description": "Indicates if Hailo-8 is detected and initialized.",
+            "type": "sensor"
+          },
+          "IsEnabled": {
+            "datatype": "boolean",
+            "description": "Indicates if Hailo-8 is enabled for inference.",
+            "type": "actuator"
+          },
+          "IsInferenceActive": {
+            "datatype": "boolean",
+            "description": "Indicates if inference is currently running.",
+            "type": "sensor"
+          },
+          "Temperature": {
+            "datatype": "float",
+            "description": "Hailo-8 chip temperature.",
+            "type": "sensor",
+            "unit": "celsius"
+          },
+          "Power": {
+            "datatype": "float",
+            "description": "Current power consumption of Hailo-8.",
+            "type": "sensor",
+            "unit": "W"
+          },
+          "InferenceRate": {
+            "datatype": "float",
+            "description": "Current inference rate in frames per second.",
+            "type": "sensor",
+            "unit": "fps"
+          },
+          "CurrentModel": {
+            "datatype": "string",
+            "description": "Name of the currently loaded AI model.",
+            "type": "sensor"
+          },
+          "Utilization": {
+            "datatype": "uint8",
+            "description": "AI accelerator utilization percentage.",
+            "type": "sensor",
+            "unit": "percent",
+            "max": 100
+          }
+        }
+      },
+
+      "Relay": {
+        "description": "Power relay control for vehicle subsystems.",
+        "type": "branch",
+        "children": {
+          "Main": {
+            "description": "Main power relay.",
+            "type": "branch",
+            "children": {
+              "IsOn": {
+                "datatype": "boolean",
+                "description": "Main relay state. True = Closed/On, False = Open/Off.",
+                "type": "actuator"
+              }
+            }
+          },
+          "Motor": {
+            "description": "Motor power relay.",
+            "type": "branch",
+            "children": {
+              "IsOn": {
+                "datatype": "boolean",
+                "description": "Motor relay state. True = Motors enabled, False = Motors disabled.",
+                "type": "actuator"
+              }
+            }
+          },
+          "Display": {
+            "description": "Display power relay.",
+            "type": "branch",
+            "children": {
+              "IsOn": {
+                "datatype": "boolean",
+                "description": "Display relay state.",
+                "type": "actuator"
+              }
+            }
+          },
+          "AIAccelerator": {
+            "description": "Hailo-8 power relay.",
+            "type": "branch",
+            "children": {
+              "IsOn": {
+                "datatype": "boolean",
+                "description": "Hailo-8 relay state.",
+                "type": "actuator"
+              }
+            }
+          }
+        }
+      },
+
+      "Communication": {
+        "description": "Communication bus status.",
+        "type": "branch",
+        "children": {
+          "CAN": {
+            "description": "CAN bus communication status.",
+            "type": "branch",
+            "children": {
+              "IsConnected": {
+                "datatype": "boolean",
+                "description": "CAN bus connection status.",
+                "type": "sensor"
+              },
+              "ErrorCount": {
+                "datatype": "uint16",
+                "description": "CAN bus error counter.",
+                "type": "sensor"
+              },
+              "BusLoad": {
+                "datatype": "uint8",
+                "description": "CAN bus utilization percentage.",
+                "type": "sensor",
+                "unit": "percent",
+                "max": 100
+              },
+              "MessageRate": {
+                "datatype": "uint16",
+                "description": "CAN messages per second.",
+                "type": "sensor",
+                "unit": "msg/s"
+              }
+            }
+          }
+        }
+      },
+
+      "Diagnostics": {
+        "description": "Diagnostics data.",
+        "type": "branch",
+        "children": {
+          "DTCCount": {
+            "datatype": "uint8",
+            "description": "Number of Diagnostic Trouble Codes (DTC).",
+            "type": "sensor"
+          },
+          "DTCList": {
+            "datatype": "string[]",
+            "description": "List of currently active DTCs.",
+            "type": "sensor"
+          }
+        }
+      }
+    }
+  }
+}
