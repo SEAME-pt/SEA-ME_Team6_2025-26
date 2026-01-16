@@ -32,7 +32,13 @@ find_package(Qt6 REQUIRED COMPONENTS Core Test Network)
 
 include_directories(../cluster/src/backend)
 
-file(GLOB BACKEND_SOURCES ../cluster/src/backend/*.cpp)
+# file(GLOB BACKEND_SOURCES ../cluster/src/backend/speedprovider.cpp)
+
+set(BACKEND_SOURCES
+    ../cluster/src/backend/speedprovider.cpp
+    ../cluster/src/backend/temperatureprovider.cpp
+    ../cluster/src/backend/timeprovider.cpp
+)
 
 add_executable(SEA_ME_Team6_Tests
 ${BACKEND_SOURCES}
