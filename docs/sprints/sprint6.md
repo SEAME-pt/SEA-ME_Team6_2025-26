@@ -73,6 +73,9 @@
 - kuksa -> Rasp4 reading data - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
 (https://youtu.be/mMvbhmvh8Fg)
 
+- qt crosscompiling
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/crosscompiling_scheme-sprint6.jpeg)
+
 - **Docs updated**:
 - MQTT session -  EXPECT-L0-10 - "Implement new architecture." [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
 
@@ -80,7 +83,6 @@
 - QT unity tests - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report_QT%20-%20sprint%206.jpeg)
 
 - kuksa tests - - EXPECT-L0-12 - "Wireless DCI display"[!Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/LCOV_coverage_report%20-%20sprint6.jpeg)
-
 
 
 ---
