@@ -43,9 +43,35 @@
   . `Speedometer <-> STM32 (ThreadX) Sensors <-> CAN Bus <-> Raspberry Pi 5 (AGL) - (CAN decoder + KUKSA publisher) <-> KUKSA Databroker -> Qt App`
   - Implementation of manual controls (joystick and keyboard) done from AGL through Can to STM32.
   - Implementation of unit testing on: STM32 (emergency stop tests, speedometer tests, TOF tests), QT (speed, temperature provider, system status) and Can (Can Message Handlers).
-  - Documentation and Team Knowlegde Done: AGL, Tests, Can, Kuksa, Covesa, MQTT/Mosquito, UProtocol.
+  - Documentation and Team Knowledge Done: AGL, Tests, Can, Kuksa, Covesa, MQTT/Mosquito, UProtocol.
   
 - **Demos**:
+- car_architecture_old - EXPECT-L0-1 - "System architecture is defined and documented"
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_old%20-%20sprint6.jpeg)
+
+- car_architecture_new_1 - EXPECT-L0-10 - "Implement new architecture."
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_1%20-%20sprint6.jpg)
+
+- car_architecture_new_2 - EXPECT-L0-10 - "Implement new architecture."
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_2%20-%20sprint6.jpg)
+
+- STM sensors - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
+![Image](https://youtube.com/shorts/vUMV0UnSf04)
+
+- stm sensors map scheme - EXPECT-L0-10 - "Implement new architecture"
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/STM_Ilustra.jpg)
+
+- Emergency brake with sensors - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
+![Image](https://youtube.com/shorts/rN4BKjbAcKE)
+
+- Can frames protocol structs - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/jpjpcs-patch-1/docs/demos/can_frames_protocol_structs%20-%20sprint6.jpeg)
+
+- stm-can transmission - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)
+![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/stm_can_transmission%20-%20sprint6.jpg)
+
+- kuksa -> Rasp4 reading data - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
+![Image](https://youtu.be/mMvbhmvh8Fg)
 
 - **Docs updated**:
 - MQTT session -> [README.md] (https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/MQTT_spike.md)
