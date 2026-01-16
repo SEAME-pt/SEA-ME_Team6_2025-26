@@ -1,0 +1,119 @@
+#include <gtest/gtest.h>
+#include <linux/can.h>
+
+#include "can_frame_builder.hpp"
+#include "../../kuksa_RPi5/inc/can_to_kuksa_publisher.hpp"
+#include "../../kuksa_RPi5/inc/handlers.hpp"
+#include "../../kuksa_RPi5/inc/can_encode.hpp"
+#include "../../kuksa_RPi5/inc/can_id.h"
+#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
+
+namespace sig {
+  static const char* VEHICLE_SPEED = "Vehicle.Speed";
+}
+
+#define WHEEL_DIAMETER 0.06675f
+
+// Ignore short DLC frames
+TEST(WheelSpeed, REQ_WHEEL_001_IgnoreShortDlc)
+{
+    can_frame f{};
+    f.can_id = CAN_ID_WHEEL_SPEED;
+    f.can_dlc = 7;
+
+    FakeKuksaClient k;
+    handleWheelSpeed(f, k);
+
+    EXPECT_TRUE(k.calls.empty());
+}
+
+// Publishes one double to Vehicle.Speed path
+TEST(WheelSpeed, REQ_WHEEL_002_PublishesOneDoubleToVehicleSpeedPath)
+{
+    can_frame f{};
+    f.can_id = CAN_ID_WHEEL_SPEED;
+    f.can_dlc = 8;
+
+    can_encode::i16_le(&f.data[0], 60); // 60 rpm
+
+    FakeKuksaClient k;
+    handleWheelSpeed(f, k);
+
+    ASSERT_EQ(k.calls.size(), 1u);
+    EXPECT_EQ(k.calls[0].type, PublishCall::kDouble);
+    EXPECT_EQ(k.calls[0].path, sig::VEHICLE_SPEED);
+}
+
+// Speed  publish a value known
+// Speed value is exactly -> wheel perimeter
+TEST(WheelSpeed, REQ_WHEEL_003_Rpm60EqualsWheelPerimeterMetersPerSecond)
+{
+    can_frame f{};
+    f.can_id = CAN_ID_WHEEL_SPEED;
+    f.can_dlc = 8;
+
+    can_encode::i16_le(&f.data[0], 60); // 1 rps
+
+    FakeKuksaClient k;
+    handleWheelSpeed(f, k);
+
+    ASSERT_EQ(k.calls.size(), 1u);
+
+    const double expected = WHEEL_PERIMETER; // because rps=1
+    EXPECT_NEAR(k.calls[0].d, expected, 1e-9);
+}
+
+// Publishes zero speed when rpm is zero
+TEST(WheelSpeed, REQ_WHEEL_004_RpmZeroPublishesZero)
+{
+    can_frame f{};
+    f.can_id = CAN_ID_WHEEL_SPEED;
+    f.can_dlc = 8;
+
+    can_encode::i16_le(&f.data[0], 0);
+
+    FakeKuksaClient k;
+    handleWheelSpeed(f, k);
+
+    ASSERT_EQ(k.calls.size(), 1u);
+    EXPECT_NEAR(k.calls[0].d, 0.0, 1e-12); // this expect_near is for floating-point tolerance
+}
+
+// Negative rpm results in negative speed
+TEST(WheelSpeed, REQ_WHEEL_005_NegativeRpmIsNegativeSpeed)
+{
+    can_frame f{};
+    f.can_id = CAN_ID_WHEEL_SPEED;
+    f.can_dlc = 8;
+
+    can_encode::i16_le(&f.data[0], -60); // -1 rps
+
+    FakeKuksaClient k;
+    handleWheelSpeed(f, k);
+
+    ASSERT_EQ(k.calls.size(), 1u);
+    EXPECT_NEAR(k.calls[0].d, -WHEEL_PERIMETER, 1e-9);
+}
+
+// Changing unused bytes does not affect output speed
+TEST(WheelSpeed, REQ_WHEEL_006_ChangingUnusedBytesDoesNotChangeOutput)
+{
+    can_frame f1{};
+    f1.can_id = CAN_ID_WHEEL_SPEED;
+    f1.can_dlc = 8;
+    can_encode::i16_le(&f1.data[0], 120); // 2 rps
+
+    can_frame f2 = f1;
+    f2.can_id = CAN_ID_WHEEL_SPEED;
+    // mutate "unused" bytes (2..7) heavily
+    for (int i = 2; i < 8; ++i)
+        f2.data[i] = static_cast<uint8_t>(0xA0 + i);
+
+    FakeKuksaClient k1, k2;
+    handleWheelSpeed(f1, k1);
+    handleWheelSpeed(f2, k2);
+
+    ASSERT_EQ(k1.calls.size(), 1u);
+    ASSERT_EQ(k2.calls.size(), 1u);
+    EXPECT_NEAR(k1.calls[0].d, k2.calls[0].d, 1e-12);
+}
