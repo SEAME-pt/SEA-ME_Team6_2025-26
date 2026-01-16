@@ -20,12 +20,14 @@ void handleWheelSpeed(const can_frame& frame, IKuksaClient& kuksa)
     const std::uint32_t pulses    = can_decode::u32_le(&frame.data[2]);   // bytes 2-5 (optional here)
     const std::uint8_t  direction = can_decode::u8(&frame.data[6]);       // byte 6
     const std::uint8_t  status    = can_decode::u8(&frame.data[7]);       // byte 7
-    (void)pulses; (void)direction; (void)status;
+    (void)direction; (void)status;
+
+    const std::int16_t rpm = can_decode::i16_le(&frame.data[0]);
 
     double rpm_signed = static_cast<double>(rpm);
     const double rps = rpm_signed / 60.0;
-    const double speed_ms  = rps * WHEEL_PERIMETER;  // wheel_perimeter in meters
-    const double speed_kmh = speed_ms * 3.6;
+    const double speed_mh  = (rps * WHEEL_PERIMETER) * 1000.0 * 3.6;
+    const double speed_kmh = speed_mh * 3.6;
 
-    kuksa.publishDouble(sig::VEHICLE_SPEED, speed_ms);
+    kuksa.publishDouble(sig::VEHICLE_SPEED, speed_mh);
 }

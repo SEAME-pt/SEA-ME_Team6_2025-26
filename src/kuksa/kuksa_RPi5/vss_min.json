@@ -62,7 +62,7 @@
         "datatype": "double",
         "description": "Vehicle speed measured by Hall effect sensor.",
         "type": "sensor",
-        "unit": "km/h",
+        "unit": "m/h",
         "min": 0,
         "comment": "Hall effect speed sensor via STM32 B-U585I-IOT02A"
       },
