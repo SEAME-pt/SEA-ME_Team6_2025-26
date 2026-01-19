@@ -1,0 +1,32 @@
+name: OTA Build & Deploy/Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make
+
+      - name: Package
+        run: |
+          mkdir ota
+          cp kuksa ota/
+          cp config.json ota/
+          tar -czf update.tar.gz ota/
+
+      - name: Hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
