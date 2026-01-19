@@ -1,6 +1,6 @@
 # 🏁 Sprint 7 — (19/01/2026 → 30/01/2026)
 
-> ## **Sprint Goal**: Advance car integration focusing on testing and development environment
+> ## **Sprint Goal**: Stabilize the system with automated testing and CI/CD pipeline
 ---
 
 ## 📌 Epics
