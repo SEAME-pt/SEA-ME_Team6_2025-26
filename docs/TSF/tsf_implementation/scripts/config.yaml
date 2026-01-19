@@ -24,22 +24,32 @@ paths:
 # AI CONFIGURATION
 # ============================================================================
 ai:
-  # Primary method: "copilot_cli" or "manual"
-  primary_method: "copilot_cli"
+  # Primary method: "manual" (Option G - Semi-automated with VSCode/Claude)
+  # Fallback: "copilot_cli" (Option C - gh copilot CLI)
+  primary_method: "manual"
 
   # Fallback methods in order of preference
-  fallbacks: ["manual"]
+  fallbacks: ["copilot_cli"]
 
-  # Copilot CLI settings
+  # Manual generation settings (Option G - Semi-automated)
+  manual:
+    # Opens file in VSCode and pauses for user to request AI generation
+    open_in_vscode: true
+    show_prompt_suggestion: true
+    wait_for_user_confirmation: true
+    # Suggested prompt template for Claude/Copilot
+    prompt_template: |
+      Generate content for TSF item {item_type}-L0-{id}:
+      - Requirement: {requirement}
+      - Acceptance Criteria: {acceptance_criteria}
+      - Fill the header, text, and references fields appropriately.
+      - Use the existing file structure, only fill empty fields.
+
+  # Copilot CLI settings (Option C - Fallback)
   copilot:
     timeout: 30  # seconds
     max_retries: 3
     retry_delay: 2  # seconds
-
-  # Manual generation settings
-  manual:
-    reviewer_name: "João Silva"
-    reviewer_email: "joao.silva@seame.pt"
 
 # ============================================================================
 # DETECTION CONFIGURATION
@@ -97,12 +107,19 @@ validation:
   level_pattern: "^\\d+\\.\\d+$"
 
   # Reference validation
-  reference_types: ["file", "url"]
+  reference_types:
+    - "file"
+    - "url"
 
   # Severity levels for issues
   severity:
-    error: ["missing_required_field", "invalid_level_format", "broken_file_reference"]
-    warning: ["missing_references", "inconsistent_naming"]
+    error:
+      - "missing_required_field"
+      - "invalid_level_format"
+      - "broken_file_reference"
+    warning:
+      - "missing_references"
+      - "inconsistent_naming"
 
   # Validation output
   output_format: "detailed"  # "summary" or "detailed"
@@ -113,23 +130,28 @@ validation:
 evidence_sync:
   # Sprint file patterns
   sprint_pattern: "sprint*.md"
+  sprint_files:
+    - "sprint1.md"
+    - "sprint2.md"
+    - "sprint3.md"
+    - "sprint4.md"
+    - "sprint5.md"
 
   # Sections to parse for evidence
   evidence_sections:
     - "Outcomes"
     - "Demos"
     - "Delivered"
+    - "TSF Useful"
 
-  # Link patterns
-  link_patterns:
-    - "\\[([^\\]]+)\\]\\(([^)]+)\\)"  # Markdown links
-    - "https?://[^\\s]+"  # Raw URLs
+  # Evidence patterns are defined in the Python script for better regex handling
+  # See EvidenceParser class in the main script
 
   # File existence checks
   check_file_existence: true
 
   # Update behavior
-  update_mode: "append"  # "append" or "replace"
+  update_mode: "append"
 
 # ============================================================================
 # TRUDAG CONFIGURATION
@@ -197,5 +219,4 @@ integration:
   notifications:
     enabled: false
     on_success: false
-    on_failure: true</content>
-<parameter name="filePath">/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/config.yaml
+    on_failure: true

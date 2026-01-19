@@ -89,6 +89,28 @@ docs/TSF/tsf_implementation/
 - **Cons:** Not automatable, time-consuming for multiple items.
 - **Status:** Kept as fallback for manual mode. No copy-paste required if AI (like Claude) can edit files directly via VSCode tools.
 
+
+
+
+
+### Option H: Manual Generation via VSCode
+3. O que é o MCP?
+O MCP (Model Context Protocol) é um protocolo que permite a ferramentas externas comunicarem diretamente com o Copilot/Claude. Deixa-me verificar se tens algum configurado:
+
+Searched for files matching **/.vscode/mcp*.json, no matches
+
+Searched for files matching **/mcp.json, no matches
+
+Read .vscode
+
+Não tens MCP configurado (nem pasta .vscode no projeto).
+
+O que é o MCP em termos simples:
+É um protocolo novo que permite scripts/ferramentas "falarem" diretamente com o Claude
+Exemplo: Um script Python poderia enviar "gera o conteúdo para EXPECT-L0-5" e receber a resposta automaticamente
+Mas: Requer configuração complexa e está em fase inicial - não vale a pena agora
+Conclusão para o MCP:
+Ignora por agora. A Opção G híbrida que vamos implementar é mais simples e funcional. No futuro, se o MCP amadurecer, podemos integrar.
 ---
 
 ## 4.2 Semi-Automated Workflow Considered
@@ -214,9 +236,20 @@ An alternative workflow was considered:
 
 ## 11. Current Implementation Status
 - **Documentation:** Complete, with all options and rationale documented.
-- **Chosen Approach:** Option C (gh copilot CLI) for long-term automation; starting with Option G (manual/VSCode) for immediate testing.
-- **Scripts:** `sync_tsf_manager.py` exists; `ai_generator.py` not yet created; planned for Phase 1.
+- **Chosen Approach:** **Option G (Semi-Automated/VSCode) as PRIMARY**, with Option C (gh copilot CLI) as FALLBACK.
+- **Scripts:** 
+  - `sync_tsf_manager.py` exists (to be replaced by unified script)
+  - New unified script: `open_check_sync_update_validate_run_publish_tsfrequirements.py` (in development)
 - **Validation:** YAML references fixed in all evidence files; ready for TruDAG integration.
-- **Next:** Implement Option G first (semi-automated), then transition to C if approved.
+- **Workflow:**
+  1. Script detects new requirements / empty fields in table
+  2. Script creates files with structure/template (EXPECT, ASSERT, EVID, ASSUMP)
+  3. Script pauses and shows suggested prompt for Claude/Copilot
+  4. User asks AI (via VSCode chat or Cmd+I) to generate content
+  5. AI edits files directly using VSCode tools (no copy-paste needed)
+  6. User confirms (presses Enter)
+  7. Script resumes → validates → runs TruDAG
+- **Fallback:** If user prefers, can use `gh copilot` CLI (Option C) for full automation.
+- **Next:** Create `tsf_config.yaml` and implement unified script.
 
 ---
