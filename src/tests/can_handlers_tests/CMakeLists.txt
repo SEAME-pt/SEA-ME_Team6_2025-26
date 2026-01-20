@@ -82,6 +82,8 @@ add_library(handlers_module STATIC
   "${KUKSA_RPI5_SRC}/handlers/speed.cpp"
   "${KUKSA_RPI5_SRC}/handlers/battery.cpp"
   "${KUKSA_RPI5_SRC}/handlers/heartbeat_stm.cpp"
+  "${KUKSA_RPI5_SRC}/handlers/tof_distance.cpp"
+  "${KUKSA_RPI5_SRC}/is_stm_connected.cpp"
 )
 
 target_include_directories(handlers_module PUBLIC
@@ -96,6 +98,7 @@ add_executable(handler_tests
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/speed_test.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/battery_test.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/heartbeat_stm_test.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/tests/tof_distance_test.cpp"
 )
 
 target_include_directories(handler_tests PRIVATE
