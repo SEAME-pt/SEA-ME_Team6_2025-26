@@ -1,0 +1,1 @@
+genhtml coverage_cpp.filtered.info --output-directory /home/dinoguei/Desktop/SEAME/SEA-ME_Team6_2025-26/src/tests/coverage/cpp --title 'SEA:ME Team 6 - C++ Coverage Report' --legend --precision=2

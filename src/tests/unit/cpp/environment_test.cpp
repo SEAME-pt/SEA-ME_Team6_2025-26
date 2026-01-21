@@ -3,10 +3,10 @@
 
 #include "can_frame_builder.hpp"
 
-#include "../../kuksa_RPi5/inc/handlers.hpp"
-#include "../../kuksa_RPi5/inc/can_encode.hpp"
-#include "../../kuksa_RPi5/inc/can_id.h"
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_encode.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
+#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
 
 namespace sig {
   static const char* EXT_AIR_TEMPERATURE = "Vehicle.Exterior.AirTemperature";

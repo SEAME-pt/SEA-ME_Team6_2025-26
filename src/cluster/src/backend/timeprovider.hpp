@@ -17,7 +17,7 @@ class TimeProvider: public QObject {
         void timeChanged();
         void dateChanged();
 
-    private slots:
+    public slots:
         void updateTime();
 
     private:
