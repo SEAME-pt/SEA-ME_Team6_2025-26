@@ -3,9 +3,9 @@
 #include <linux/can/raw.h>
 #include <cstdint>
 
-#include "../../kuksa_RPi5/inc/dispatch_frames.hpp"
-#include "../../kuksa_RPi5/inc/can_id.h"
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/dispatch_frames.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
+#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
 
 // ---------- Spy counters ----------
 static int g_speed   = 0;
