@@ -1,6 +1,18 @@
 #include <gtest/gtest.h>
-extern "C" {
-  #include <linux/can.h>
+#include <linux/can.h>
+#include <cstdint>
+
+#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/signals.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
+
+static const PublishCall* findInt32(const FakeKuksaClient& k, const std::string& path) {
+  for (size_t i = 0; i < k.calls.size(); ++i) {
+    if (k.calls[i].type == PublishCall::kInt32 && k.calls[i].path == path)
+      return &k.calls[i];
+  }
+  return 0;
 }
 
 #include "../../inc/handlers.hpp"
