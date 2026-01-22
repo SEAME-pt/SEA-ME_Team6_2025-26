@@ -81,6 +81,9 @@ add_library(handlers_module STATIC
   "${KUKSA_RPI5_SRC}/handlers/battery.cpp"
   "${KUKSA_RPI5_SRC}/handlers/heartbeat_stm.cpp"
   "${KUKSA_RPI5_SRC}/handlers/tof_distance.cpp"
+  "${KUKSA_RPI5_SRC}/handlers/imu_accel.cpp"
+  "${KUKSA_RPI5_SRC}/handlers/imu_gyro.cpp"
+  "${KUKSA_RPI5_SRC}/handlers/emergency_stop.cpp" 
   "${KUKSA_RPI5_SRC}/is_stm_connected.cpp"
 )
 target_include_directories(handlers_module PUBLIC
@@ -119,7 +122,7 @@ target_link_libraries(backend_module PUBLIC
 # All tests are in: tests/unit/cpp/
 # -----------------------
 
-# 1) Dispatch tests
+# 1 Dispatch tests
 add_executable(dispatch_tests
   "${CMAKE_SOURCE_DIR}/unit/cpp/dispatcher_test.cpp"
 )
@@ -135,7 +138,7 @@ target_link_libraries(dispatch_tests PRIVATE
 )
 gtest_discover_tests(dispatch_tests)
 
-# 2) Handler tests (CAN handlers)
+# 2 Handler tests (CAN handlers)
 add_executable(handlers_tests
   "${CMAKE_SOURCE_DIR}/unit/cpp/can_decode_test.cpp"
   "${CMAKE_SOURCE_DIR}/unit/cpp/environment_test.cpp"
@@ -144,7 +147,11 @@ add_executable(handlers_tests
   "${CMAKE_SOURCE_DIR}/unit/cpp/heartbeat_stm_test.cpp"
   "${CMAKE_SOURCE_DIR}/unit/cpp/tof_distance_test.cpp"
   "${CMAKE_SOURCE_DIR}/unit/cpp/is_stm_connected_test.cpp"
+  "${CMAKE_SOURCE_DIR}/unit/cpp/emergency_stop_test.cpp"
+  "${CMAKE_SOURCE_DIR}/unit/cpp/imu_accel_test.cpp"
+  "${CMAKE_SOURCE_DIR}/unit/cpp/imu_gyro_test.cpp"
 )
+
 target_include_directories(handlers_tests PRIVATE
   "${KUKSA_RPI5_INC}"
   "${KUKSA_RPI5_SRC}"
@@ -158,7 +165,11 @@ target_link_libraries(handlers_tests PRIVATE
 )
 gtest_discover_tests(handlers_tests)
 
-# 3) Backend provider tests (Qt)
+# -----------------------------
+# Cluster tests
+# -----------------------------
+
+# 3 Backend provider tests (Qt)
 add_executable(backend_tests
   ${BACKEND_SOURCES}
   "${CMAKE_SOURCE_DIR}/unit/cpp/speedprovider_test.cpp"
@@ -178,6 +189,30 @@ target_link_libraries(backend_tests PRIVATE
 )
 gtest_discover_tests(backend_tests)
 
+# -----------------------------
+# Integration tests
+# -----------------------------
+
+add_executable(integration_tests
+  "${CMAKE_SOURCE_DIR}/integration/dispatch_integration_test.cpp"
+)
+
+target_include_directories(integration_tests PRIVATE
+  "${KUKSA_RPI5_INC}"
+  "${KUKSA_RPI5_SRC}"
+  "${KUKSA_RPI5_SRC}/handlers"
+  "${CMAKE_SOURCE_DIR}/integration"
+)
+
+target_link_libraries(integration_tests PRIVATE
+  dispatch_module
+  handlers_module
+  GTest::gtest
+  GTest::gtest_main
+)
+
+gtest_discover_tests(integration_tests)
+
 # -----------------------
 # Coverage (per-target)
 # -----------------------
@@ -188,5 +223,6 @@ if(ENABLE_COVERAGE)
   enable_coverage(handlers_tests)
   enable_coverage(backend_module)
   enable_coverage(backend_tests)
+  enable_coverage(integration_tests)
 endif()
 

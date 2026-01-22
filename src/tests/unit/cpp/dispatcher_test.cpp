@@ -60,6 +60,12 @@ struct DispatchCase {
 
 class DispatchKnownIdsOnce : public ::testing::TestWithParam<DispatchCase> {};
 
+// Parameterized test for each known CAN ID
+// The INSTANTIATE_TEST_SUITE_P below provides the parameters and runs this test for each case.
+// Each case checks that the correct handler is called exactly once.
+// EXPECT_EQ assertions are used to verify the call counts.
+// If EXPECT_EQ fails, it indicates either the expected handler was not called
+// If EXPECT_EQ doesnt
 TEST_P(DispatchKnownIdsOnce, Dispatch_KnownIdsCallExactlyOneHandlerOnce)
 {
   reset_spies();
