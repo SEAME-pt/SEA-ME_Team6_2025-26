@@ -60,7 +60,7 @@ struct DispatchCase {
 
 class DispatchKnownIdsOnce : public ::testing::TestWithParam<DispatchCase> {};
 
-TEST_P(DispatchKnownIdsOnce, REQ_DISPATCH_002_KnownIdsCallExactlyOneHandlerOnce)
+TEST_P(DispatchKnownIdsOnce, Dispatch_KnownIdsCallExactlyOneHandlerOnce)
 {
   reset_spies();
   FakeKuksaClient k;
@@ -97,7 +97,7 @@ INSTANTIATE_TEST_SUITE_P(
   ::testing::ValuesIn(kCases)
 );
 
-TEST(Dispatch, REQ_DISPATCH_001_DispatchByStandardIdMask_IgnoresFlags)
+TEST(Dispatch, Dispatch_DispatchByStandardIdMask_IgnoresFlags)
 {
   reset_spies();
   FakeKuksaClient k;
@@ -120,7 +120,7 @@ TEST(Dispatch, REQ_DISPATCH_001_DispatchByStandardIdMask_IgnoresFlags)
   EXPECT_EQ(g_calls[H_ACCEL], 0);
 }
 
-TEST(Dispatch, REQ_DISPATCH_003_UnknownIdsAreIgnored)
+TEST(Dispatch, Dispatch_UnknownIdsAreIgnored)
 {
   reset_spies();
   FakeKuksaClient k;

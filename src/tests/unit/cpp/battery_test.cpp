@@ -15,7 +15,7 @@ static const PublishCall* findCall(const FakeKuksaClient& k, PublishCall::Type t
 }
 
 // Ignore short DLC frames
-TEST(Battery, REQ_BATT_001_IgnoreShortDLC)
+TEST(Battery, IgnoreShortDLC)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -28,7 +28,7 @@ TEST(Battery, REQ_BATT_001_IgnoreShortDLC)
 }
 
 // Publishes exactly 5 signals - voltage, current, soc, is_level_low, is_critical
-TEST(Battery, REQ_BATT_006_PublishesExactly5Signals)
+TEST(Battery, PublishesExactly5Signals)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -54,7 +54,7 @@ TEST(Battery, REQ_BATT_006_PublishesExactly5Signals)
 }
 
 // Voltage and current are scaled correctly
-TEST(Battery, REQ_BATT_002_VoltageAndCurrentScaling)
+TEST(Battery, VoltageAndCurrentScaling)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -79,7 +79,7 @@ TEST(Battery, REQ_BATT_002_VoltageAndCurrentScaling)
 }
 
 // SOC is published as float correctly
-TEST(Battery, REQ_BATT_003_PublishesSocAsFloat)
+TEST(Battery, PublishesSocAsFloat)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -101,7 +101,7 @@ TEST(Battery, REQ_BATT_003_PublishesSocAsFloat)
 }
 
 // Low is true if status bit 2 is set
-TEST(Battery, REQ_BATT_004_LowIsTrueIfStatusBit2Set)
+TEST(Battery, LowIsTrueIfStatusBit2Set)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -123,7 +123,7 @@ TEST(Battery, REQ_BATT_004_LowIsTrueIfStatusBit2Set)
 }
 
 // Low is true if soc below 20%
-TEST(Battery, REQ_BATT_004_LowIsTrueIfSocBelow20)
+TEST(Battery, LowIsTrueIfSocBelow20)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -145,7 +145,7 @@ TEST(Battery, REQ_BATT_004_LowIsTrueIfSocBelow20)
 }
 
 // Critical is true if status bit 0 is set
-TEST(Battery, REQ_BATT_005_CriticalIsTrueIfStatusBit0Set)
+TEST(Battery, CriticalIsTrueIfStatusBit0Set)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;
@@ -167,7 +167,7 @@ TEST(Battery, REQ_BATT_005_CriticalIsTrueIfStatusBit0Set)
 }
 
 // Critical is true if soc below 10%
-TEST(Battery, REQ_BATT_005_CriticalIsTrueIfSocBelow10)
+TEST(Battery, CriticalIsTrueIfSocBelow10)
 {
   can_frame f{};
   f.can_id = CAN_ID_BATTERY;

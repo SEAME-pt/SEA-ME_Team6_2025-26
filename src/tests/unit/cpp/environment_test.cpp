@@ -52,7 +52,7 @@ static can_frame makeEnvironmentFrame(std::int16_t temp_x100,
     return f;
 }
 
-TEST(Environment, REQ_ENV_001_IgnoreShortDLC) {
+TEST(Environment, IgnoreShortDLC) {
     FakeKuksaClient k;
     can_frame f = make_frame(CAN_ID_ENVIRONMENT, 7);
 
@@ -79,7 +79,7 @@ TEST(Environment, PublishesExactlyThreeSignalsOnValidFrame) {
     ASSERT_NE(findCall(k, PublishCall::kFloat,  sig::EXT_ATMOS_PRESSURE_KPA), (const PublishCall*)0);
 }
 
-TEST(Environment, REQ_ENV_003_ScalesAndPublishesCorrectValues) {
+TEST(Environment, ScalesAndPublishesCorrectValues) {
     FakeKuksaClient k;
 
     int16_t temp_x100 = 2534; // 25.34 C

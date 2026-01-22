@@ -16,7 +16,7 @@ namespace sig {
 #define WHEEL_DIAMETER 0.06675f
 
 // Ignore short DLC frames
-TEST(WheelSpeed, REQ_WHEEL_001_IgnoreShortDlc)
+TEST(WheelSpeed, IgnoreShortDlc)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -29,7 +29,7 @@ TEST(WheelSpeed, REQ_WHEEL_001_IgnoreShortDlc)
 }
 
 // Publishes one double to Vehicle.Speed path
-TEST(WheelSpeed, REQ_WHEEL_002_PublishesOneDoubleToVehicleSpeedPath)
+TEST(WheelSpeed, PublishesOneDoubleToVehicleSpeedPath)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -51,7 +51,7 @@ TEST(WheelSpeed, REQ_WHEEL_002_PublishesOneDoubleToVehicleSpeedPath)
 
 // Speed  publish a value known
 // Speed value is exactly -> wheel perimeter
-TEST(WheelSpeed, REQ_WHEEL_003_Rpm60EqualsWheelPerimeterMetersPerHour)
+TEST(WheelSpeed, Rpm60EqualsWheelPerimeterMetersPerHour)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -69,7 +69,7 @@ TEST(WheelSpeed, REQ_WHEEL_003_Rpm60EqualsWheelPerimeterMetersPerHour)
 }
 
 // Publishes zero speed when rpm is zero
-TEST(WheelSpeed, REQ_WHEEL_004_RpmZeroPublishesZero)
+TEST(WheelSpeed, RpmZeroPublishesZero)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -85,7 +85,7 @@ TEST(WheelSpeed, REQ_WHEEL_004_RpmZeroPublishesZero)
 }
 
 // Negative rpm results in negative speed
-TEST(WheelSpeed, REQ_WHEEL_005_NegativeRpmIsNegativeSpeed)
+TEST(WheelSpeed, NegativeRpmIsNegativeSpeed)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -101,7 +101,7 @@ TEST(WheelSpeed, REQ_WHEEL_005_NegativeRpmIsNegativeSpeed)
 }
 
 // Changing unused bytes does not affect output speed
-TEST(WheelSpeed, REQ_WHEEL_006_ChangingUnusedBytesDoesNotChangeOutput)
+TEST(WheelSpeed, ChangingUnusedBytesDoesNotChangeOutput)
 {
     can_frame f1{};
     f1.can_id = CAN_ID_WHEEL_SPEED;
@@ -123,7 +123,7 @@ TEST(WheelSpeed, REQ_WHEEL_006_ChangingUnusedBytesDoesNotChangeOutput)
     EXPECT_NEAR(k1.calls[0].d, k2.calls[0].d, 1e-12);
 }
 
-TEST(WheelSpeed, REQ_WHEEL_007_HighRpmValue)
+TEST(WheelSpeed, HighRpmValue)
 {
     can_frame f{};
     f.can_id = CAN_ID_WHEEL_SPEED;
@@ -146,7 +146,7 @@ TEST(WheelSpeed, REQ_WHEEL_007_HighRpmValue)
     EXPECT_EQ(k.calls[0].path, sig::VEHICLE_SPEED);
 }
 
-TEST(WheelSpeed, REQ_WHEEL_008_LowRpmValue)
+TEST(WheelSpeed, LowRpmValue)
 {
     can_frame f{};
     f.can_id  = CAN_ID_WHEEL_SPEED;
