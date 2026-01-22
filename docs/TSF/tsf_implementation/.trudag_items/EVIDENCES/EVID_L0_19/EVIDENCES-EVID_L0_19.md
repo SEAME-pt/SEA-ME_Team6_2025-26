@@ -1,24 +1,21 @@
 ---
 id: EVID_L0_19
-header: "L0 Evidence: Test requirement for TSF automation"
+header: "Evidence: TSF Automation Validation"
 text: |
-  Evidence files for EXPECT-L0-19.
-level: 1.1
+  Evidence demonstrating TSF automation testing functionality. Includes CI/CD workflow execution logs, validation script output, and GitHub Actions run results showing successful TSF item validation.
+level: "1.19"
 normative: true
 references:
-  - type: "file"
-    path: "docs/demos/CAN-test.gif"
-  - type: "file"
-    path: "docs/demos/CAN-test-EXPECT-L0-8.webm"
-  - type: "file"
-    path: "docs/guides/AGL_ Joystick installation and test.md"
-  - type: "file"
-    path: "docs/guides/AGL_ Joystick_installation_and_test.md"
-  - type: "file"
-    path: "docs/guides/CAN-test-guide.md"
-
+  - type: file
+    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/README.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/validate_items_formatation.yml
+score: 1.0
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
 

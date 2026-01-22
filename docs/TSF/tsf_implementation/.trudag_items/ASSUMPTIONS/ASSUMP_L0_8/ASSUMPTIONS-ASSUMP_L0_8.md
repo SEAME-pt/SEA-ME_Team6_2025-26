@@ -1,30 +1,31 @@
 ---
 id: ASSUMP_L0_8
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: Connect the Rasp5 to the STM 32 (bidirectional) using Can...'
 level: '1.8'
 normative: true
 references:
-- type: file
+- id: EXPECT_L0_8
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md
-  id: EXPECT_L0_8
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_hardware_availability
   configuration:
     components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+      - "CAN"
+      - "STM32"
+      - "MCP2515"
+text: 'CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed
+  and functional on both Raspberry Pi 5 and STM32 before CAN communication testing
+  begins.'
 ---
+CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed and functional on both Raspberry Pi 5 and STM32 before CAN communication testing begins.
 
-The development environment meets all prerequisites for implementing and verifying this requirement.
+Acceptance criteria / notes:
+- CAN interface is recognized by Linux (e.g., can0 device exists).
+- CAN bus wiring is correctly connected between Rasp5 and STM32.
+- CAN bus termination resistors are properly installed.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_linux_environment` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-8` depend on these prerequisites being met.
+Rationale: CAN communication verification for `EXPECT-L0-8` depends on physical CAN hardware availability and correct installation. This assumption makes hardware prerequisites explicit.

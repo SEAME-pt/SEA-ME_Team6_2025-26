@@ -1,30 +1,30 @@
 ---
 id: ASSUMP_L0_17
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: Introduce AI in the project'
 level: '1.17'
 normative: true
 references:
-- type: file
+- id: EXPECT_L0_17
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_17/EXPECTATIONS-EXPECT_L0_17.md
-  id: EXPECT_L0_17
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_hardware_availability
   configuration:
     components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+      - "Hailo Hat"
+      - "Raspberry Pi 5"
+      - "AI"
+text: 'The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry
+  Pi 5 before AI model deployment testing begins.'
 ---
+The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry Pi 5 before AI model deployment testing begins.
 
-The development environment meets all prerequisites for implementing and verifying this requirement.
+Acceptance criteria / notes:
+- Hailo AI Hat is physically installed on the Raspberry Pi 5.
+- Hailo runtime and drivers are installed and operational.
+- Pre-trained AI models (if required) are available or documented.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_linux_environment` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-17` depend on these prerequisites being met.
+Rationale: AI integration verification for `EXPECT-L0-17` depends on Hailo AI Hat hardware availability and driver installation, which are external dependencies.

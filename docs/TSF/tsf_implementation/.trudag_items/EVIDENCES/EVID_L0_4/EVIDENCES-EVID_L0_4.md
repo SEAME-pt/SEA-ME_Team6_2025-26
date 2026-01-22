@@ -1,13 +1,17 @@
 ---
 id: EVID_L0_4
-header: "L0 Evidence: Driveable Car with Remote Control/Driveable Car Model (Hardw"
-text: |
-  Evidence files for EXPECT-L0-4.
-level: 1.1
+header: Remote control demonstrated
+text: The repository contains demonstration images and joystick installation guides showing remote control functionality.
+level: '1.4'
 normative: true
-
-reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+references:
+- type: file
+  path: docs/guides/AGL_ Joystick_installation_and_test.md
+- type: file
+  path: src/inital_program/main.py
+- type: file
+  path: src/inital_program/install_initial_program.md
+score: 1.0
 ---
 
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

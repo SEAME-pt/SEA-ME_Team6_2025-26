@@ -1,15 +1,15 @@
 ---
 id: ASSERT_L0_13
-header: "Assertion for L0-13"
-text: |
-  Assertion supporting EXPECT-L0-13.
-level: 1.2
+header: GitHub repository configured
+text: The project GitHub repository is configured with appropriate structure, branch protection, and team access permissions as documented in the setup guide.
+level: '1.13'
 normative: true
 references:
-  - type: "file"
-    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_13/EXPECTATIONS-EXPECT_L0_13.md
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_13/EXPECTATIONS-EXPECT_L0_13.md
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_13/EVIDENCES-EVID_L0_13.md
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

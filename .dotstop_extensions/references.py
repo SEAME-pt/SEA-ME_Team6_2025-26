@@ -36,8 +36,11 @@ class FileReference(BaseReference):
 
 
 class UrlReference(BaseReference):
-    def __init__(self, path: str, **kwargs):
-        self._url = path
+    def __init__(self, url: str = None, path: str = None, **kwargs):
+        # Accept both 'url' and 'path' fields for flexibility
+        self._url = url or path
+        if not self._url:
+            raise ReferenceError("UrlReference requires either 'url' or 'path' field")
 
     @classmethod
     def type(cls) -> str:

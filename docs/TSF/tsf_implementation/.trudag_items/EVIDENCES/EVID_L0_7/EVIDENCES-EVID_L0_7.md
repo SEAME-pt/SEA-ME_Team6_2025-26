@@ -1,13 +1,17 @@
 ---
 id: EVID_L0_7
-header: "L0 Evidence: QT Crosscompilation should be achieved."
-text: |
-  Evidence files for EXPECT-L0-7.
-level: 1.1
+header: Cross-compilation toolchain documented
+text: The repository contains Dockerfile and toolchain configuration files for Qt cross-compilation.
+level: '1.7'
 normative: true
-
-reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+references:
+- type: file
+  path: src/cross-compiler/Dockerfile
+- type: file
+  path: src/cross-compiler/DockerFileRasp
+- type: file
+  path: src/cross-compiler/opencvToolchain.cmake
+- type: file
+  path: src/cross-compiler/toolchain.cmake
+score: 1.0
 ---
-

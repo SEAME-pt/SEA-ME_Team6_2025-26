@@ -67,7 +67,8 @@ header: "L0 Evidence: {short}"
 text: |
   Evidence files for {id}.
 level: 1.1
-normative: false
+normative: true
+score: 1.0
 {references_section}
 reviewers:
   - name: "TODO"

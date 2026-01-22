@@ -1,30 +1,30 @@
 ---
 id: ASSUMP_L0_16
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: CI/CD'
 level: '1.16'
 normative: true
 references:
-- type: file
+- id: EXPECT_L0_16
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_16/EXPECTATIONS-EXPECT_L0_16.md
-  id: EXPECT_L0_16
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_software_dependencies
   configuration:
-    components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+    packages:
+      - "GitHub Actions"
+      - "CI/CD"
+      - "workflow"
+text: 'GitHub Actions runner resources and execution quotas are available and sufficient
+  for CI/CD pipeline execution before CI/CD verification begins.'
 ---
+GitHub Actions runner resources and execution quotas are available and sufficient for CI/CD pipeline execution before CI/CD verification begins.
 
-The development environment meets all prerequisites for implementing and verifying this requirement.
+Acceptance criteria / notes:
+- GitHub Actions is enabled for the repository.
+- Execution minutes quota is sufficient for planned build/test workloads.
+- Self-hosted runners (if used) are configured and operational.
 
-**Acceptance criteria / notes:**
-- Required components are available and configured in the test environment.
-- If a component is unavailable, a documented mitigation plan will be provided.
-- This assumption is validated by the `validate_linux_environment` validator.
-
-**Rationale:** Verification activities for `EXPECT-L0-16` depend on these prerequisites being met.
+Rationale: CI/CD verification for `EXPECT-L0-16` assumes that GitHub Actions infrastructure and quota allocation are provided externally to the project.

@@ -1,13 +1,21 @@
 ---
 id: EVID_L0_20
-header: "L0 Evidence: Integrate AI for content generation"
+header: "Evidence: AI Content Generation Integration"
 text: |
-  Evidence files for EXPECT-L0-20.
-level: 1.1
+  Evidence demonstrating AI-assisted content generation in TSF workflow. Includes script execution logs showing Option G (VSCode/Claude) and Option C (gh copilot CLI) integration, generated TSF item samples, and documentation of the AI generation process.
+level: "1.20"
 normative: true
-
+references:
+  - type: file
+    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_20/EXPECTATIONS-EXPECT_L0_20.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/TSF_docs/genAI_on_tsf.md
+score: 1.0
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
 

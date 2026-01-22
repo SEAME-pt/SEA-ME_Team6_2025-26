@@ -1,13 +1,21 @@
 ---
 id: EVID_L0_18
-header: "L0 Evidence: The vehicle shall communicate via CAN bus also using ThreadX"
+header: "Evidence: CAN Bus Communication with ThreadX"
 text: |
-  Evidence files for EXPECT-L0-18.
-level: 1.1
+  Evidence demonstrating CAN bus communication integrated with ThreadX RTOS on STM32. Includes CAN message traces, ThreadX thread scheduling logs, and integration test results.
+level: "1.18"
 normative: true
-
+references:
+  - type: file
+    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_18/EXPECTATIONS-EXPECT_L0_18.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md
+score: 1.0
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
 

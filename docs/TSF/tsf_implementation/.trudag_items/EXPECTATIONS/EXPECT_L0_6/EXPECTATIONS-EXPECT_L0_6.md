@@ -1,18 +1,14 @@
 ---
 id: EXPECT_L0_6
-header: "L0-6 The Qt GUI shall display static graphical elements"
-text: |
-  The Qt GUI shall display static graphical elements such as shapes, text, or images to form a simple user interface.
-level: 1.1
+header: GUI displays static elements
+text: The Qt graphical user interface displays static visual elements that form a simple cluster dashboard.
+level: '1.6'
 normative: true
 references:
-  - type: "file"
-    path: "docs/demos/Cluster-display-sprint3.jpeg"
-  - type: "file"
-    path: "docs/demos/Cluster-display-sprint4.jpeg"
-
+- id: ASSERT_L0_6
+  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_6/ASSERTIONS-ASSERT_L0_6.md
+  type: file
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

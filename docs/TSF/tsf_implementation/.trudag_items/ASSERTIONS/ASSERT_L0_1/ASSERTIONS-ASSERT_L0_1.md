@@ -1,15 +1,15 @@
 ---
 id: ASSERT_L0_1
-header: "Assertion for L0-1"
-text: |
-  Assertion supporting EXPECT-L0-1.
-level: 1.2
+header: Architecture documentation exists
+text: The repository contains system architecture documentation that describes the hardware components and software modules of the demonstrator car.
+level: '1.1'
 normative: true
 references:
-  - type: "file"
-    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_1/EXPECTATIONS-EXPECT_L0_1.md
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_1/EXPECTATIONS-EXPECT_L0_1.md
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_1/EVIDENCES-EVID_L0_1.md
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

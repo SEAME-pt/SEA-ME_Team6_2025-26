@@ -1,13 +1,14 @@
 ---
 id: EXPECT_L0_14
-header: "L0-14 TSF & Documentation: The project shall apply the T"
-text: |
-  TSF & Documentation: The project shall apply the Trustable Software Framework (TSF) to define and trace requirements, architecture, and test cases.
-level: 1.1
+header: Requirements traceability established
+text: The project implements the Trustable Safety Framework for requirements definition and traceability.
+level: '1.14'
 normative: true
-
+references:
+- id: ASSERT_L0_14
+  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_14/ASSERTIONS-ASSERT_L0_14.md
+  type: file
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 ---
-

@@ -50,6 +50,7 @@ The PiRacer Warm-Up project aims to familiarize students with:
 | **L0-19** | Test requirement for TSF automation | Test the automated generation of TSF items | Manual inspection | EXPECT-L0-19 — No evidence yet |
 | **L0-20** | Integrate AI for content generation | Use AI to automatically generate TSF item content | AI-generated content validation | EXPECT-L0-20 — No evidence yet |
 | **L0-21** | Test the complete TSF automation workflow | Execute the full automation pipeline from requirement detection to validation | Workflow completion and file generation | EXPECT-L0-21 — No evidence yet |
+| **L0-22** | STM32 ThreadX safety-related startup: The STM32-based control system running ThreadX shall initialize and start publishing speed data over CAN within a deterministic and bounded time after power-on. **Justification:** AUTOSAR Classic–like ECUs and RTOS-based MCUs typically achieve startup times in the 10–100 ms range. Tier-1 suppliers (Bosch, Continental) commonly target <100 ms for availability of safety-relevant signals. ThreadX is designed for deterministic startup on MCUs. **References:** AUTOSAR Classic Platform concepts, Azure RTOS ThreadX documentation, Tier-1 automotive RTOS usage (Bosch/Continental). | The STM32 system starts speed data acquisition and CAN transmission within ≤ 100 ms after power-on. | Integration test with timestamp logging at RTOS startup and first CAN frame transmission. External measurement using logic analyzer / oscilloscope / CAN bus analyzer. | EXPECT-L0-22 — No evidence yet |
 
 ---
 

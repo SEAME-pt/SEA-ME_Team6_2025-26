@@ -303,8 +303,8 @@ class TableParser:
         for line in lines:
             line = line.strip()
             
-            # Detect table header
-            if '| ID |' in line or '|ID|' in line:
+            # Detect table header (handles bold markers like **ID**)
+            if '| ID |' in line or '|ID|' in line or '| **ID** |' in line or '|**ID**|' in line:
                 in_table = True
                 continue
             
@@ -326,12 +326,14 @@ class TableParser:
         # Split by | and clean up
         parts = [p.strip() for p in line.split('|')]
         # Remove empty first and last elements (from leading/trailing |)
-        parts = [p for p in parts if p or p == '']
+        # Line starts and ends with |, so parts[0] and parts[-1] are empty
+        if len(parts) >= 2:
+            parts = parts[1:-1]  # Slice to remove first and last empty elements
         
         if len(parts) < 5:
             return None
         
-        # Extract L0-X ID
+        # Extract L0-X ID (handles bold markers like **L0-1**)
         id_match = re.search(r'L0-\d+', parts[0])
         if not id_match:
             return None
@@ -714,6 +716,24 @@ class ContentValidator:
                 if 'TODO' in ref_str:
                     issues.append("TODO in references")
                     break
+        
+        # Check item-type-specific required fields
+        # EVID items must have score field
+        if item_type == 'EVID':
+            score = frontmatter.get('score')
+            if score is None:
+                issues.append("Missing required 'score:' field (EVID items need score)")
+        
+        # ASSUMP items must have evidence field with validator
+        if item_type == 'ASSUMP':
+            evidence = frontmatter.get('evidence')
+            if evidence is None:
+                issues.append("Missing required 'evidence:' field (ASSUMP items need validator)")
+            elif isinstance(evidence, dict):
+                if not evidence.get('type'):
+                    issues.append("Missing 'type' in evidence validator")
+                if not evidence.get('configuration'):
+                    issues.append("Missing 'configuration' in evidence validator")
         
         # Determine if needs regeneration
         needs_regeneration = len(issues) > 0
@@ -1132,23 +1152,46 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
             if isinstance(file_path, str):
                 file_path = Path(file_path)
             
-            # Find corresponding table row
+            # Find corresponding table row (if available)
             row = next((r for r in check_status.get('table_rows', []) 
                        if str(r.number) == str(item_id)), None)
             
+            # Extract requirement info from row or use defaults
             if row:
-                success = ai_generator.generate_content(
-                    item_type=item_type,
-                    item_id=str(item_id),
-                    requirement=row.requirement,
-                    acceptance_criteria=row.acceptance_criteria,
-                    file_path=file_path
-                )
+                requirement = row.requirement
+                acceptance_criteria = row.acceptance_criteria
+            else:
+                # If no table row, try to get info from existing EXPECT file
+                expect_path = item_manager.get_item_path('EXPECT', str(item_id))
+                requirement = f"L0-{item_id} requirement"
+                acceptance_criteria = ""
                 
-                if success:
-                    status['items_updated'].append(str(file_path))
-                else:
-                    status['skipped'].append(str(file_path))
+                if expect_path.exists():
+                    try:
+                        with open(expect_path, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+                        if yaml_match:
+                            frontmatter = yaml.safe_load(yaml_match.group(1))
+                            if frontmatter:
+                                requirement = frontmatter.get('header', requirement)
+                                acceptance_criteria = frontmatter.get('text', '')[:200]
+                    except Exception:
+                        pass
+            
+            # Call AI generator
+            success = ai_generator.generate_content(
+                item_type=item_type,
+                item_id=str(item_id),
+                requirement=requirement,
+                acceptance_criteria=acceptance_criteria,
+                file_path=file_path
+            )
+            
+            if success:
+                status['items_updated'].append(str(file_path))
+            else:
+                status['skipped'].append(str(file_path))
     else:
         print("   ✅ No items need AI generation")
     
@@ -1173,9 +1216,37 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     status = {
         'validation_passed': False,
         'trudag_success': False,
+        'score_summary': {},
         'errors': [],
         'warnings': []
     }
+    
+    # 0. Ensure required symlinks exist
+    print("\n🔗 Checking required symlinks...")
+    
+    # Symlink for .dotstop_extensions in tsf_implementation
+    dotstop_ext_symlink = config.tsf_implementation / ".dotstop_extensions"
+    dotstop_ext_target = config.repo_root / ".dotstop_extensions"
+    
+    if not dotstop_ext_symlink.exists() and dotstop_ext_target.exists():
+        try:
+            dotstop_ext_symlink.symlink_to("../../../.dotstop_extensions")
+            print("   ✅ Created .dotstop_extensions symlink")
+        except Exception as e:
+            print(f"   ⚠️  Could not create .dotstop_extensions symlink: {e}")
+    elif dotstop_ext_symlink.exists():
+        print("   ✓ .dotstop_extensions symlink exists")
+    
+    # Symlink for localplugins in repo root  
+    localplugins_symlink = config.repo_root / "localplugins"
+    if not localplugins_symlink.exists() and dotstop_ext_target.exists():
+        try:
+            localplugins_symlink.symlink_to(".dotstop_extensions")
+            print("   ✅ Created localplugins symlink")
+        except Exception as e:
+            print(f"   ⚠️  Could not create localplugins symlink: {e}")
+    elif localplugins_symlink.exists():
+        print("   ✓ localplugins symlink exists")
     
     # 1. Run validation
     print("\n🔍 Running item validation...")
@@ -1214,32 +1285,98 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     
     if trudag_script.exists():
         try:
-            result = subprocess.run(
+            print("   ⏳ Running TruDAG (this may take several minutes for 84 items)...")
+            print("   📺 Live output:")
+            print("   " + "-"*50)
+            
+            # Run without timeout, streaming output to user
+            process = subprocess.Popen(
                 ['bash', str(trudag_script)],
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 text=True,
-                timeout=120,
                 cwd=str(config.tsf_implementation)
             )
             
-            if result.returncode == 0:
+            # Stream output line by line
+            for line in process.stdout:
+                print(f"   {line.rstrip()}")
+            
+            process.wait()
+            
+            print("   " + "-"*50)
+            
+            if process.returncode == 0:
                 print("   ✅ TruDAG completed successfully")
                 status['trudag_success'] = True
             else:
-                print(f"   ⚠️  TruDAG returned warnings/errors:")
-                if result.stderr:
-                    print(result.stderr)
-                status['warnings'].append(result.stderr)
+                print(f"   ⚠️  TruDAG returned exit code: {process.returncode}")
+                status['warnings'].append(f"TruDAG exit code: {process.returncode}")
         except Exception as e:
             print(f"   ❌ TruDAG error: {e}")
             status['errors'].append(str(e))
     else:
         print(f"   ⚠️  TruDAG script not found: {trudag_script}")
     
+    # 3. Verify scores after TruDAG
+    if status['trudag_success']:
+        print("\n📊 Verifying scores...")
+        try:
+            result = subprocess.run(
+                ['trudag', 'score', '--validate'],
+                capture_output=True,
+                text=True,
+                cwd=str(config.tsf_implementation),
+                timeout=300
+            )
+            
+            # Parse score output
+            lines = result.stdout.strip().split('\n')
+            total_items = 0
+            items_at_1_0 = 0
+            items_below_1_0 = []
+            
+            for line in lines:
+                if ' = ' in line and any(prefix in line for prefix in ['ASSERTIONS', 'ASSUMPTIONS', 'EVIDENCES', 'EXPECTATIONS']):
+                    total_items += 1
+                    parts = line.strip().split(' = ')
+                    if len(parts) == 2:
+                        item_name = parts[0]
+                        try:
+                            score = float(parts[1])
+                            if score == 1.0:
+                                items_at_1_0 += 1
+                            else:
+                                items_below_1_0.append((item_name, score))
+                        except ValueError:
+                            pass
+            
+            status['score_summary'] = {
+                'total': total_items,
+                'at_1_0': items_at_1_0,
+                'below_1_0': items_below_1_0
+            }
+            
+            if items_at_1_0 == total_items:
+                print(f"   ✅ All {total_items} items have score 1.0")
+            else:
+                print(f"   ⚠️  {items_at_1_0}/{total_items} items at 1.0")
+                if items_below_1_0:
+                    print(f"   Items below 1.0:")
+                    for item, score in items_below_1_0[:5]:
+                        print(f"      • {item} = {score}")
+                    if len(items_below_1_0) > 5:
+                        print(f"      ... and {len(items_below_1_0) - 5} more")
+        except Exception as e:
+            print(f"   ⚠️  Could not verify scores: {e}")
+    
     print("\n" + "-"*70)
     print("✅ VALIDATE, RUN & PUBLISH Summary:")
     print(f"   • Validation: {'✅ Passed' if status['validation_passed'] else '❌ Failed'}")
     print(f"   • TruDAG: {'✅ Success' if status['trudag_success'] else '❌ Failed'}")
+    if status['score_summary']:
+        summary = status['score_summary']
+        print(f"   • Scores: {summary['at_1_0']}/{summary['total']} at 1.0")
     print(f"   • Errors: {len(status['errors'])}")
     print(f"   • Warnings: {len(status['warnings'])}")
     

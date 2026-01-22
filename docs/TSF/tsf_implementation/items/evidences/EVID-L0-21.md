@@ -1,24 +1,19 @@
 ---
 id: EVID-L0-21
-header: "L0 Evidence: Test the complete TSF automation workflow"
+header: "Evidence: Complete TSF Workflow Execution"
 text: |
-  Evidence files for EXPECT-L0-21.
-level: 1.1
-normative: false
+  Evidence demonstrating successful execution of the complete TSF automation workflow. Includes execution logs of open_check_sync_update_validate_run_publish_tsfrequirements.py with --all flag, showing all three phases (check, sync, validate) completing successfully.
+level: "1.21"
+normative: true
 references:
-  - type: "file"
-    path: "docs/demos/CAN-test.gif"
-  - type: "file"
-    path: "docs/demos/CAN-test-EXPECT-L0-8.webm"
-  - type: "file"
-    path: "docs/guides/AGL_ Joystick installation and test.md"
-  - type: "file"
-    path: "docs/guides/AGL_ Joystick_installation_and_test.md"
-  - type: "file"
-    path: "docs/guides/CAN-test-guide.md"
-
+  - type: file
+    path: ../expectations/EXPECT-L0-21.md
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
+score: 1.0
 reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
 

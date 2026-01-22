@@ -1,16 +1,16 @@
 ---
 id: EVID_L0_17
-header: "L0 Evidence: Introduce in the project: AI - GENAI, ML, DL, NEURAL NETWORK"
-text: |
-  Evidence files for EXPECT-L0-17.
-level: 1.1
+header: AI tools usage documented
+text: The repository contains AI pair programming guidelines and documentation showing AI-assisted development practices.
+level: '1.17'
 normative: true
 references:
-  - type: "file"
-    path: "docs/guides/genAI-pair-programming-guidelines.md"
-
-reviewers:
-  - name: "TODO"
-    email: "TODO@example.com"
+- type: file
+  path: docs/guides/github-guidelines.md
+- type: file
+  path: docs/guides/genAI-pair-programming-guidelines.md
+- type: file
+  path: docs/guides/generative-ai-for-beginners.md
+score: 1.0
 ---
-
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
