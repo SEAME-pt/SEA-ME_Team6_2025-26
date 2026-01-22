@@ -1,0 +1,27 @@
+FROM souzitaaaa/team6-base:bookworm
+
+WORKDIR /build
+
+# Toolchain
+RUN apt-get update && apt-get install -y \
+    gcc-12-aarch64-linux-gnu \
+    g++-12-aarch64-linux-gnu \
+    binutils-aarch64-linux-gnu \
+    libc6-arm64-cross \
+    libc6-dev-arm64-cross \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Toolchains
+COPY setup/toolchain.cmake /build/toolchain.cmake
+COPY setup/opencvToolchain.cmake /build/opencvToolchain.cmake
+
+# Sysroot
+RUN mkdir -p /build/sysroot
+COPY setup/rasp.tar.gz /build/
+
+# Extract with error checking
+RUN tar -xzf rasp.tar.gz -C /build/sysroot || \
+    (echo "ERROR: Failed to extract sysroot tarball" && exit 1)
+RUN rm rasp.tar.gz
+RUN python3 /usr/local/bin/sysroot-relativelinks.py /build/sysroot

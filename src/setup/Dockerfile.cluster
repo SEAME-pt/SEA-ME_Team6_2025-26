@@ -1,0 +1,14 @@
+# Stage 4: Final project builder
+FROM souzitaaaa/team6-cross-qt:bookworm
+
+WORKDIR /build
+
+COPY cluster /build/project
+
+RUN { \
+    cd /build/project && \
+    /build/qt6/host/bin/qt-cmake \
+    -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
+    -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake . && \
+    cmake --build .; \
+} 2>&1 | tee -a /build.log
