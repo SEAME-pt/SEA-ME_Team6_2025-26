@@ -4,9 +4,9 @@ extern "C" {
   #include <linux/can.h> // struct can_frame
 }
 
-#include "../../kuksa_RPi5/inc/handlers.hpp"
-#include "../../kuksa_RPi5/inc/signals.hpp"
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "handlers.hpp"
+#include "signals.hpp"
+#include "interface_kuksa_client.hpp"
 
 #ifndef TOF_WARNING_THRESHOLD_MM
 #define TOF_WARNING_THRESHOLD_MM 300

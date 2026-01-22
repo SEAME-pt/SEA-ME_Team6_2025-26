@@ -2,9 +2,9 @@
 #include <chrono>
 #include <string>
 
-#include "../../kuksa_RPi5/inc/is_stm_connected.hpp"
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
-#include "../../kuksa_RPi5/inc/signals.hpp"
+#include "is_stm_connected.hpp"
+#include "interface_kuksa_client.hpp"
+#include "signals.hpp"
 
 // Helper: find last published bool for a path
 static const PublishCall* findLastBool(const FakeKuksaClient& k, const std::string& path)

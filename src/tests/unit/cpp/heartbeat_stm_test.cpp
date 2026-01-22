@@ -2,26 +2,13 @@
 #include <linux/can.h>
 #include <cstdint>
 
-#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/signals.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
-
-static const PublishCall* findInt32(const FakeKuksaClient& k, const std::string& path) {
-  for (size_t i = 0; i < k.calls.size(); ++i) {
-    if (k.calls[i].type == PublishCall::kInt32 && k.calls[i].path == path)
-      return &k.calls[i];
-  }
-  return 0;
-}
-
-#include "../../inc/handlers.hpp"
-#include "../../inc/can_decode.hpp"
-#include "../../inc/can_id.h"
-#include "../../inc/interface_kuksa_client.hpp"
-#include "../../inc/can_to_kuksa_publisher.hpp"
-#include "../../inc/signals.hpp"
-#include "../../inc/is_stm_connected.hpp"
+#include "interface_kuksa_client.hpp"
+#include "handlers.hpp"
+#include "signals.hpp"
+#include "can_id.h"
+#include "can_to_kuksa_publisher.hpp"
+#include "signals.hpp"
+#include "is_stm_connected.hpp"
 
 #include <thread>
 #include <chrono>

@@ -4,12 +4,11 @@
 #include <cmath>
 
 #include "can_frame_builder.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/can_to_kuksa_publisher.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/can_encode.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
-#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
-
+#include "can_to_kuksa_publisher.hpp"
+#include "handlers.hpp"
+#include "can_encode.hpp"
+#include "can_id.h"
+#include "interface_kuksa_client.hpp"
 namespace sig {
   static const char* VEHICLE_SPEED = "Vehicle.Speed";
 }

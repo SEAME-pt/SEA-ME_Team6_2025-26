@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <cstdint>
-#include "../../../kuksa/kuksa_RPi5/inc/can_decode.hpp"
+#include "can_decode.hpp"
 
 TEST(CanDecode, REQ_DECODE_001_u8) {
   std::uint8_t b[1] = {0xAB};
