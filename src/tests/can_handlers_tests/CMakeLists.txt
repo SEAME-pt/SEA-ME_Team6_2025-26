@@ -99,6 +99,7 @@ add_executable(handler_tests
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/battery_test.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/heartbeat_stm_test.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/tof_distance_test.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/tests/is_stm_connected_test.cpp"
 )
 
 target_include_directories(handler_tests PRIVATE
