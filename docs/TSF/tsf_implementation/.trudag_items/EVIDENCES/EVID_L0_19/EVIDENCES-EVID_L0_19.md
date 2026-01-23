@@ -6,8 +6,6 @@ text: |
 level: "1.19"
 normative: true
 references:
-  - type: file
-    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md
   - type: url
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/README.md
   - type: url

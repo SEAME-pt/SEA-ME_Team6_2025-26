@@ -6,16 +6,17 @@ text: |
 level: "1.18"
 normative: true
 references:
-  - type: file
-    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_18/EXPECTATIONS-EXPECT_L0_18.md
   - type: url
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md
   - type: url
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md
-score: 1.0
+score: 0.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: accepted
+review_status: pending
 ---
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+
+**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
 

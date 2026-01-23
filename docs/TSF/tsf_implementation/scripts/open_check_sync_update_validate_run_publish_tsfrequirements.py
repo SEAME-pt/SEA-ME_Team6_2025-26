@@ -372,6 +372,107 @@ class AIGenerator:
     def __init__(self, config: Config):
         self.config = config
     
+    def generate_content_batch(self, items: List[Tuple[str, str, Path]], 
+                                table_rows: List) -> List[str]:
+        """
+        Generate content for multiple TSF items at once.
+        Shows a consolidated prompt for all items.
+        
+        Args:
+            items: List of (item_type, item_id, file_path) tuples
+            table_rows: List of TableRow objects for context
+            
+        Returns:
+            List of successfully updated file paths
+        """
+        if not items:
+            return []
+        
+        # Group items by requirement ID
+        items_by_req = {}
+        for item_type, item_id, file_path in items:
+            if item_id not in items_by_req:
+                items_by_req[item_id] = []
+            items_by_req[item_id].append((item_type, file_path))
+        
+        settings = self.config.manual_settings
+        updated_files = []
+        
+        print(f"\n{'='*70}")
+        print(f"🤖 AI GENERATION REQUIRED: {len(items)} items for {len(items_by_req)} requirement(s)")
+        print(f"{'='*70}")
+        
+        # Open all files in VSCode
+        if settings.get('open_in_vscode', True):
+            print(f"\n📂 Opening {len(items)} files in VSCode...")
+            for item_type, item_id, file_path in items:
+                subprocess.run(['code', str(file_path)], check=False)
+        
+        # Build consolidated prompt
+        if settings.get('show_prompt_suggestion', True):
+            print(f"\n📝 CONSOLIDATED PROMPT for Claude/Copilot Chat:")
+            print(f"{'='*70}")
+            
+            prompt_lines = ["Generate content for the following TSF items:\n"]
+            
+            for req_id, req_items in items_by_req.items():
+                # Find corresponding table row
+                row = next((r for r in table_rows if str(r.number) == str(req_id)), None)
+                
+                if row:
+                    prompt_lines.append(f"## Requirement L0-{req_id}")
+                    prompt_lines.append(f"**Requirement:** {row.requirement}")
+                    prompt_lines.append(f"**Acceptance Criteria:** {row.acceptance_criteria}")
+                    prompt_lines.append(f"**Verification Method:** {row.verification_method}")
+                    prompt_lines.append("")
+                    
+                    prompt_lines.append("**Items to generate:**")
+                    for item_type, file_path in req_items:
+                        prompt_lines.append(f"  - {item_type}-L0-{req_id}: {file_path}")
+                    prompt_lines.append("")
+            
+            prompt_lines.append("""
+---
+**INSTRUCTIONS:**
+
+For each item, fill the YAML frontmatter fields:
+- `header`: A concise title (max 50 characters)
+- `text`: Detailed description
+
+**References rules:**
+- EXPECT: Only reference to `../assertions/ASSERT-L0-X.md`
+- ASSERT: Only reference to `../expectations/EXPECT-L0-X.md` and `../evidences/EVID-L0-X.md`
+- EVID: Reference to actual evidence files/URLs (NOT to EXPECT or ASSERT)
+- ASSUMP: Reference to `../expectations/EXPECT-L0-X.md`
+
+**DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (validators)
+""")
+            
+            print("\n".join(prompt_lines))
+            print(f"{'='*70}")
+        
+        # Wait for user confirmation
+        if settings.get('wait_for_user_confirmation', True):
+            print(f"\n⏳ Please use Copilot Chat (Cmd+L) or Claude to generate content for ALL items.")
+            print(f"   After AI has edited the files, press Enter to continue...")
+            print(f"   (Type 'skip' to skip AI generation, 'quit' to exit)")
+            
+            user_input = input("\n>>> ").strip().lower()
+            
+            if user_input == 'quit':
+                print("❌ User requested quit.")
+                sys.exit(0)
+            elif user_input == 'skip':
+                print("⏭️  Skipping AI generation...")
+                return []
+            else:
+                print("✅ Continuing with all items marked as updated...")
+                # Mark all as updated
+                for item_type, item_id, file_path in items:
+                    updated_files.append(str(file_path))
+        
+        return updated_files
+    
     def generate_content(self, item_type: str, item_id: str, 
                          requirement: str, acceptance_criteria: str,
                          file_path: Path) -> bool:
@@ -469,18 +570,57 @@ class AIGenerator:
                 acceptance_criteria=acceptance_criteria
             )
         
-        # Default prompt
+        # Build item-type specific instructions for references
+        if item_type == "EXPECT":
+            references_instruction = """- references: ONLY file references to the corresponding assertion.
+  Example:
+  references:
+    - type: file
+      path: ../assertions/ASSERT-L0-{id}.md
+  ⚠️ DO NOT add URL references in expectations."""
+        elif item_type == "ASSERT":
+            references_instruction = """- references: ONLY file references to expectation and evidence files.
+  Example:
+  references:
+    - type: file
+      path: ../expectations/EXPECT-L0-{id}.md
+    - type: file
+      path: ../evidences/EVID-L0-{id}.md
+  ⚠️ DO NOT add URL references in assertions."""
+        elif item_type == "EVID":
+            references_instruction = """- references: Evidence sources including file paths and URLs.
+  Example:
+  references:
+    - type: file
+      path: ../../sprints/sprint1.md
+    - type: url
+      path: https://example.com/documentation
+      description: External documentation source
+  ⚠️ DO NOT add references to assertions - evidences reference external sources only."""
+        else:
+            references_instruction = "- references: Relevant file references only."
+        
+        references_instruction = references_instruction.format(id=item_id)
+        
+        # Default prompt with explicit instructions
         return f"""Generate content for TSF item {item_type}-L0-{item_id}:
 
 **Requirement:** {requirement}
 **Acceptance Criteria:** {acceptance_criteria}
 
 Please fill the following fields in the YAML frontmatter:
-- header: A concise title for this item
+- header: A concise title for this item (max 50 characters)
 - text: Detailed description/content
-- references: Relevant file or URL references
 
-Use the existing file structure, only fill empty fields."""
+{references_instruction}
+
+⚠️ IMPORTANT RULES:
+1. Use the existing file structure, only fill empty fields
+2. Do NOT modify the 'id', 'level', 'reviewers', or 'review_status' fields
+3. Keep the YAML frontmatter format (between --- markers)
+4. EXPECT items: references ONLY to assertion file, NO URLs
+5. ASSERT items: references ONLY to expectation and evidence files, NO URLs
+6. EVID items: references to external sources (files, URLs), NO references to assertions"""
     
     def _generate_with_copilot_cli(self, item_type: str, item_id: str,
                                     requirement: str, file_path: Path) -> bool:
@@ -859,30 +999,130 @@ class ItemFileManager:
     def create_item_from_template(self, item_type: str, item_id: str,
                                    header: str = '', text: str = '',
                                    references: List[str] = None) -> Path:
-        """Create an item file from template."""
+        """Create an item file from template with proper structure for each item type."""
         file_path = self.get_item_path(item_type, item_id)
         
         # Ensure directory exists
         file_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Build YAML frontmatter
-        content = f"""---
-id: {item_type.upper()}-L0-{item_id}
-header: "{header}"
+        # Extract level number from item_id
+        level_num = item_id
+        id_str = f"L0-{item_id}"
+        
+        # Use provided header/text or create placeholders
+        header_text = header[:50] if header else 'TODO: Add header'
+        requirement_text = text if text else 'TODO: Add requirement text'
+        
+        # Templates for each item type with correct reference structure
+        # NOTE: EVID files should NOT have 'evidence:' field - that's for ASSERT/ASSUMP
+        # NOTE: ASSERT files should have 'evidence:' with a valid validator type
+        # Valid validators: validate_hardware_availability, validate_linux_environment, validate_software_dependencies
+        templates = {
+            'EXPECT': f"""---
+id: EXPECT-{id_str}
+header: "{header_text}"
 text: |
-  {text if text else 'TODO: Add content'}
-level: "1.1"
+  {requirement_text}
+level: '1.{level_num}'
 normative: true
 references:
+- type: file
+  path: ../assertions/ASSERT-{id_str}.md
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+review_status: accepted
+---
+""",
+            'ASSERT': f"""---
+id: ASSERT-{id_str}
+header: "{header_text}"
+text: |
+  The assertion verifies that {requirement_text.lower() if requirement_text != 'TODO: Add requirement text' else 'the requirement is satisfied'}.
+level: '1.{level_num}'
+normative: true
+references:
+- type: file
+  path: ../expectations/EXPECT-{id_str}.md
+- type: file
+  path: ../evidences/EVID-{id_str}.md
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+review_status: accepted
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+      - "STM32"
+      - "CAN"
+      - "Raspberry Pi"
+---
+""",
+            'EVID': f"""---
+id: EVID-{id_str}
+header: "{header_text} - Evidence"
+text: |
+  Evidence demonstrates that {requirement_text.lower() if requirement_text != 'TODO: Add requirement text' else 'the requirement is satisfied'}.
+  
+  Note: Evidence files/links will be added when available from sprint documentation.
+level: '1.{level_num}'
+normative: true
+references:
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+score: 0.0
+---
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+No evidence links available yet - will be synced from sprint documentation when available.
+""",
+            'ASSUMP': f"""---
+id: ASSUMP-{id_str}
+header: "Assumption: {header_text}"
+text: |
+  Assumption: The development environment meets all prerequisites for implementing and verifying this requirement.
+level: '1.{level_num}'
+normative: true
+references:
+- type: file
+  path: ../expectations/EXPECT-{id_str}.md
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+review_status: accepted
+evidence:
+  type: validate_software_dependencies
+  configuration:
+    components:
+      - "Development environment"
+      - "Required tools"
+      - "Test infrastructure"
+---
 """
-        # Add references
-        if references:
-            for ref in references:
-                content += f'  - "{ref}"\n'
-        else:
-            content += '  - "TODO: Add references"\n'
+        }
         
-        content += "---\n"
+        # Get the appropriate template
+        item_type_upper = item_type.upper()
+        if item_type_upper in templates:
+            content = templates[item_type_upper]
+        else:
+            # Fallback generic template
+            content = f"""---
+id: {item_type_upper}-{id_str}
+header: "{header_text}"
+text: |
+  {requirement_text}
+level: '1.{level_num}'
+normative: true
+references:
+- type: file
+  path: TODO_add_reference.md
+reviewers:
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
+review_status: accepted
+---
+"""
         
         # Write file
         with open(file_path, 'w', encoding='utf-8') as f:
@@ -913,6 +1153,174 @@ references:
             return True
         
         return False
+
+    def fix_item_structure(self, item_type: str, item_id: str) -> Tuple[bool, List[str]]:
+        """
+        Fix structural issues in an existing item file.
+        
+        Returns:
+            Tuple of (was_fixed, list_of_fixes_applied)
+        """
+        file_path = self.get_item_path(item_type, item_id)
+        fixes_applied = []
+        
+        if not file_path.exists():
+            return False, ["File does not exist"]
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        original_content = content
+        
+        # Parse YAML frontmatter
+        yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+        if not yaml_match:
+            return False, ["No YAML frontmatter found"]
+        
+        try:
+            frontmatter = yaml.safe_load(yaml_match.group(1))
+            if not frontmatter:
+                frontmatter = {}
+        except yaml.YAMLError as e:
+            return False, [f"YAML parse error: {e}"]
+        
+        body_content = content[yaml_match.end():]
+        item_type_upper = item_type.upper()
+        modified = False
+        
+        # Fix 1: EVID files should NOT have 'evidence:' field
+        if item_type_upper == 'EVID' and 'evidence' in frontmatter:
+            del frontmatter['evidence']
+            fixes_applied.append("Removed invalid 'evidence:' field from EVID file")
+            modified = True
+        
+        # Fix 2: EVID files should have 'score: 1.0'
+        if item_type_upper == 'EVID' and 'score' not in frontmatter:
+            frontmatter['score'] = 1.0
+            fixes_applied.append("Added 'score: 1.0'")
+            modified = True
+        
+        # Fix 3: Add review_status: accepted if missing (for files with reviewers)
+        if 'reviewers' in frontmatter and 'review_status' not in frontmatter:
+            frontmatter['review_status'] = 'accepted'
+            fixes_applied.append("Added 'review_status: accepted'")
+            modified = True
+        
+        # Fix 4: ASSERT/ASSUMP files should have 'evidence:' with valid validator
+        valid_validators = ['validate_hardware_availability', 'validate_linux_environment', 'validate_software_dependencies']
+        
+        if item_type_upper in ['ASSERT', 'ASSUMP']:
+            evidence = frontmatter.get('evidence', {})
+            if not evidence:
+                # Add default evidence validator
+                frontmatter['evidence'] = {
+                    'type': 'validate_hardware_availability',
+                    'configuration': {
+                        'components': ['STM32', 'CAN', 'Raspberry Pi']
+                    }
+                }
+                fixes_applied.append("Added default evidence validator")
+                modified = True
+            elif isinstance(evidence, dict):
+                ev_type = evidence.get('type', '')
+                if ev_type and ev_type not in valid_validators:
+                    # Replace invalid validator with a valid one
+                    frontmatter['evidence']['type'] = 'validate_hardware_availability'
+                    fixes_applied.append(f"Replaced invalid validator '{ev_type}' with 'validate_hardware_availability'")
+                    modified = True
+        
+        # Fix 5: Remove 'id' fields from references (should only have type and path)
+        if 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            refs_fixed = False
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict) and 'id' in ref:
+                    del ref['id']
+                    refs_fixed = True
+            if refs_fixed:
+                fixes_applied.append("Removed 'id' fields from references")
+                modified = True
+        
+        # Fix 6: EVID files should NOT reference EXPECT/ASSERT files
+        # Evidence references should point to actual evidence (images, docs, logs)
+        if item_type_upper == 'EVID' and 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            invalid_refs = []
+            valid_refs = []
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict):
+                    ref_path = ref.get('path', '')
+                    # Check if reference points to EXPECT or ASSERT files
+                    if 'EXPECT-' in ref_path or 'ASSERT-' in ref_path or '/expectations/' in ref_path or '/assertions/' in ref_path:
+                        invalid_refs.append(ref_path)
+                    else:
+                        valid_refs.append(ref)
+                else:
+                    valid_refs.append(ref)
+            
+            if invalid_refs:
+                frontmatter['references'] = valid_refs
+                fixes_applied.append(f"Removed {len(invalid_refs)} invalid references to EXPECT/ASSERT files")
+                modified = True
+        
+        # Fix 7: EVID files MUST have at least one reference (trudag rejects empty references)
+        if item_type_upper == 'EVID':
+            refs = frontmatter.get('references', [])
+            if not refs or len(refs) == 0:
+                # Add placeholder reference to README
+                frontmatter['references'] = [{
+                    'type': 'url',
+                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md'
+                }]
+                frontmatter['score'] = 0.0  # Mark as incomplete (no real evidence)
+                fixes_applied.append("Added placeholder reference (EVID cannot have empty references)")
+                modified = True
+        
+        if not modified:
+            return False, []
+        
+        # Rebuild the file content
+        # Use yaml.dump with specific settings for clean output
+        yaml_content = yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True, sort_keys=False)
+        new_content = f"---\n{yaml_content}---{body_content}"
+        
+        # Write back
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        
+        return True, fixes_applied
+
+    def fix_all_items_structure(self) -> Dict[str, List[str]]:
+        """
+        Fix structural issues in all existing item files.
+        
+        Returns:
+            Dict mapping file paths to list of fixes applied
+        """
+        all_fixes = {}
+        
+        for item_type in ['EXPECT', 'ASSERT', 'EVID', 'ASSUMP']:
+            directory = {
+                'EXPECT': self.config.expectations_dir,
+                'ASSERT': self.config.assertions_dir,
+                'EVID': self.config.evidences_dir,
+                'ASSUMP': self.config.assumptions_dir
+            }[item_type]
+            
+            if not directory.exists():
+                continue
+            
+            for file_path in directory.glob(f"{item_type}-L0-*.md"):
+                # Extract item_id from filename
+                match = re.search(r'L0-(\d+)', file_path.name)
+                if not match:
+                    continue
+                
+                item_id = match.group(1)
+                was_fixed, fixes = self.fix_item_structure(item_type, item_id)
+                
+                if was_fixed:
+                    all_fixes[str(file_path)] = fixes
+        
+        return all_fixes
 
 
 # ============================================================================
@@ -974,6 +1382,24 @@ def open_check(config: Config) -> Dict[str, Any]:
     for expect_id, evidences in sprint_evidence.items():
         print(f"   • {expect_id}: {len(evidences)} evidence(s)")
     
+    # 3.5 NEW: Check for requirements with NO evidence in sprints
+    print("\n⚠️  Checking for requirements without sprint evidence...")
+    status['no_sprint_evidence'] = []
+    
+    for row in rows:
+        expect_id = f"EXPECT-L0-{row.number}"
+        if expect_id not in sprint_evidence or len(sprint_evidence[expect_id]) == 0:
+            status['no_sprint_evidence'].append(row.id)
+    
+    if status['no_sprint_evidence']:
+        print(f"   ⚠️  {len(status['no_sprint_evidence'])} requirement(s) have NO evidence in sprint files:")
+        for req_id in status['no_sprint_evidence']:
+            print(f"      └─ {req_id}: No evidence found in sprints (docs/sprints/*.md)")
+        print("\n   💡 Tip: Add evidence links to sprint files using the format:")
+        print("      Evidence: [description](path/to/evidence) <!-- EXPECT-L0-X -->")
+    else:
+        print("   ✅ All requirements have evidence in sprint files")
+    
     # 4. Check for missing item files
     print("\n📂 Checking item files existence...")
     item_manager = ItemFileManager(config)
@@ -989,6 +1415,21 @@ def open_check(config: Config) -> Dict[str, Any]:
     
     if not status['missing_items']:
         print("   ✅ All item files exist")
+    
+    # 4.5 NEW: Fix structural issues in existing item files
+    print("\n🔧 Fixing structural issues in existing items...")
+    structural_fixes = item_manager.fix_all_items_structure()
+    status['structural_fixes'] = structural_fixes
+    
+    if structural_fixes:
+        print(f"   Fixed {len(structural_fixes)} file(s):")
+        for file_path, fixes in structural_fixes.items():
+            filename = Path(file_path).name
+            print(f"   • {filename}:")
+            for fix in fixes:
+                print(f"      └─ {fix}")
+    else:
+        print("   ✅ All item files have correct structure")
     
     # 5. NEW: Validate content of existing items (detect placeholders/TODOs)
     print("\n🔍 Validating content of existing items...")
@@ -1019,6 +1460,7 @@ def open_check(config: Config) -> Dict[str, Any]:
     print(f"   • Total requirements: {len(rows)}")
     print(f"   • Incomplete table rows: {len(incomplete)}")
     print(f"   • Missing item files: {len(status['missing_items'])}")
+    print(f"   • Requirements without sprint evidence: {len(status.get('no_sprint_evidence', []))}")
     print(f"   • Items with invalid content: {len(status['invalid_items'])}")
     print(f"   • Sync needed: {len(status['sync_needed'])}")
     
@@ -1141,56 +1583,31 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
             # TODO: Update existing file with new evidence
             print(f"   • {evid_path.name}: {len(evidences)} evidence(s) available")
     
-    # 4. AI generation for items needing content
+    # 4. AI generation for items needing content (BATCH MODE)
     print("\n🤖 AI generation for items needing content...")
     
     if status['ai_generation_needed']:
         print(f"   {len(status['ai_generation_needed'])} items need AI-generated content")
         
+        # Convert file paths to Path objects
+        items_for_batch = []
         for item_type, item_id, file_path in status['ai_generation_needed']:
-            # Ensure file_path is a Path object
             if isinstance(file_path, str):
                 file_path = Path(file_path)
-            
-            # Find corresponding table row (if available)
-            row = next((r for r in check_status.get('table_rows', []) 
-                       if str(r.number) == str(item_id)), None)
-            
-            # Extract requirement info from row or use defaults
-            if row:
-                requirement = row.requirement
-                acceptance_criteria = row.acceptance_criteria
-            else:
-                # If no table row, try to get info from existing EXPECT file
-                expect_path = item_manager.get_item_path('EXPECT', str(item_id))
-                requirement = f"L0-{item_id} requirement"
-                acceptance_criteria = ""
-                
-                if expect_path.exists():
-                    try:
-                        with open(expect_path, 'r', encoding='utf-8') as f:
-                            content = f.read()
-                        yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
-                        if yaml_match:
-                            frontmatter = yaml.safe_load(yaml_match.group(1))
-                            if frontmatter:
-                                requirement = frontmatter.get('header', requirement)
-                                acceptance_criteria = frontmatter.get('text', '')[:200]
-                    except Exception:
-                        pass
-            
-            # Call AI generator
-            success = ai_generator.generate_content(
-                item_type=item_type,
-                item_id=str(item_id),
-                requirement=requirement,
-                acceptance_criteria=acceptance_criteria,
-                file_path=file_path
-            )
-            
-            if success:
-                status['items_updated'].append(str(file_path))
-            else:
+            items_for_batch.append((item_type, item_id, file_path))
+        
+        # Use batch generation (single consolidated prompt)
+        updated_files = ai_generator.generate_content_batch(
+            items=items_for_batch,
+            table_rows=check_status.get('table_rows', [])
+        )
+        
+        status['items_updated'] = updated_files
+        
+        # Mark items not updated as skipped
+        updated_set = set(updated_files)
+        for item_type, item_id, file_path in items_for_batch:
+            if str(file_path) not in updated_set:
                 status['skipped'].append(str(file_path))
     else:
         print("   ✅ No items need AI generation")

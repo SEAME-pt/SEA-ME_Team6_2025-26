@@ -6,8 +6,6 @@ text: |
 level: "1.20"
 normative: true
 references:
-  - type: file
-    path: ../expectations/EXPECT-L0-20.md
   - type: url
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
   - type: url

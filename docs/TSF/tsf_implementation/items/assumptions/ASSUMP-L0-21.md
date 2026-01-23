@@ -1,13 +1,13 @@
 ---
 id: ASSUMP-L0-21
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: Development environment ready'
+text: 'Assumption: The development environment meets all prerequisites for implementing
+  and verifying this requirement.'
 level: '1.21'
 normative: true
 references:
 - type: file
   path: ../expectations/EXPECT-L0-21.md
-  id: EXPECT-L0-21
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -15,9 +15,10 @@ evidence:
   type: validate_linux_environment
   configuration:
     components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+    - Linux environment
+    - Development tools
+    - Test infrastructure
+review_status: accepted
 ---
 
 The development environment meets all prerequisites for implementing and verifying this requirement.

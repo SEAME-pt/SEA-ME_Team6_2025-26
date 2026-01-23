@@ -8477,16 +8477,17 @@ _None_
 
 ---
 
-### EVIDENCES-EVID_L0_16 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_16 data-toc-label="EVIDENCES-EVID_L0_16" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
+### EVIDENCES-EVID_L0_16 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_16 data-toc-label="EVIDENCES-EVID_L0_16" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
-- name: Joao Jesus Silva
+
+**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
 {: .expanded-item-element }
 
 **Supported Requests:**
 
 | Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- |
-| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
 
 **Supporting Items:**
 
@@ -9023,15 +9024,17 @@ _None_
 
 ---
 
-### EVIDENCES-EVID_L0_18 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_18 data-toc-label="EVIDENCES-EVID_L0_18" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
+### EVIDENCES-EVID_L0_18 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_18 data-toc-label="EVIDENCES-EVID_L0_18" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 
+**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
 {: .expanded-item-element }
 
 **Supported Requests:**
 
 | Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- |
-| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
 
 **Supporting Items:**
 
@@ -9040,35 +9043,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_18/EXPECTATIONS-EXPECT_L0_18.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_18
-		header: "CAN Bus Communication with ThreadX RTOS"
-		text: |
-		  The vehicle shall communicate via CAN bus using ThreadX as the real-time operating system on the STM32 microcontroller. The CAN communication layer shall be integrated with ThreadX threads to ensure deterministic message handling and proper prioritization of automotive communication tasks.
-		level: "1.18"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_18/ASSERTIONS-ASSERT_L0_18.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_18/EVIDENCES-EVID_L0_18.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
 
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md`
 
@@ -9112,35 +9086,6 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_19
-		header: "TSF Automation Testing"
-		text: |
-		  The project shall implement automated testing for TSF (Technical Specification Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
-		level: "1.19"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_19/ASSERTIONS-ASSERT_L0_19.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_19/EVIDENCES-EVID_L0_19.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/tsf-validate.yml
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/README.md`
 
 	??? "Click to view reference"
@@ -9183,35 +9128,6 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_20/EXPECTATIONS-EXPECT_L0_20.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_20
-		header: "AI-Assisted Content Generation Integration"
-		text: |
-		  The project shall integrate AI-assisted tools for automated content generation in the TSF workflow. This includes using GitHub Copilot CLI and/or VSCode Copilot Chat to generate TSF item content (EXPECT, ASSERT, EVID, ASSUMP) based on requirements and acceptance criteria. The AI integration shall follow documented guidelines for pair programming with generative AI.
-		level: "1.20"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_20/ASSERTIONS-ASSERT_L0_20.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_20/EVIDENCES-EVID_L0_20.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md`
 
 	??? "Click to view reference"
@@ -9236,15 +9152,17 @@ _None_
 
 ---
 
-### EVIDENCES-EVID_L0_21 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_21 data-toc-label="EVIDENCES-EVID_L0_21" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
+### EVIDENCES-EVID_L0_21 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_21 data-toc-label="EVIDENCES-EVID_L0_21" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 
+**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
 {: .expanded-item-element }
 
 **Supported Requests:**
 
 | Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- |
-| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
 
 **Supporting Items:**
 
@@ -9254,40 +9172,307 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_21/EXPECTATIONS-EXPECT_L0_21.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_21
-		header: "Complete TSF Automation Workflow"
-		text: |
-		  The project shall implement a complete TSF automation workflow that includes: detection of new requirements, automatic generation of TSF items (EXPECT, ASSERT, EVID, ASSUMP), validation of item structure, evidence synchronization from sprint files, and TruDAG graph generation. The workflow shall be executable via a single unified script.
-		level: "1.21"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_21/ASSERTIONS-ASSERT_L0_21.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_21/EVIDENCES-EVID_L0_21.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py`
 
 	??? "Click to view reference"
 
 		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_22 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_22 data-toc-label="EVIDENCES-EVID_L0_22" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects repository artifacts, sprint reports and timing measurements that demonstrate the STM32 ThreadX startup requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_22](ASSERTIONS.md#assertions-assert_l0_22) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_23 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_23 data-toc-label="EVIDENCES-EVID_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_23](ASSERTIONS.md#assertions-assert_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_24 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_24 data-toc-label="EVIDENCES-EVID_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects integration test results, CAN traffic logs, and timing correlation data that demonstrate the combined startup requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during system integration phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_24](ASSERTIONS.md#assertions-assert_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_25 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_25 data-toc-label="EVIDENCES-EVID_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings, startup logs, and timing measurements that demonstrate the instrument cluster UI availability requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_25](ASSERTIONS.md#assertions-assert_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_26 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_26 data-toc-label="EVIDENCES-EVID_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects end-to-end integration test results, video recordings, and system logs that demonstrate all startup time requirements are met.
+
+**Evidence Status:** Pending - end-to-end integration test to be performed during final system integration phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_26](ASSERTIONS.md#assertions-assert_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_27 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_27 data-toc-label="EVIDENCES-EVID_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings, distance measurements, and test logs that demonstrate the emergency braking stopping distance requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during ADAS testing phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_28 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_28 data-toc-label="EVIDENCES-EVID_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met.
+
+**Evidence Status:** Pending - temperature comparison test to be performed during sensor integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_29 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_29 data-toc-label="EVIDENCES-EVID_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during driver presence validation testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
 
 
 

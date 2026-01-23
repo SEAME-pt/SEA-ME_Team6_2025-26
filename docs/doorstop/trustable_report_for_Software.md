@@ -40,12 +40,20 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSERTIONS-ASSERT_L0_13](ASSERTIONS.md#assertions-assert_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_14](ASSERTIONS.md#assertions-assert_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_15](ASSERTIONS.md#assertions-assert_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_17](ASSERTIONS.md#assertions-assert_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_19](ASSERTIONS.md#assertions-assert_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_20](ASSERTIONS.md#assertions-assert_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_22](ASSERTIONS.md#assertions-assert_l0_22) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_23](ASSERTIONS.md#assertions-assert_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_24](ASSERTIONS.md#assertions-assert_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_25](ASSERTIONS.md#assertions-assert_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_26](ASSERTIONS.md#assertions-assert_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for ASSUMPTIONS ## {: data-toc-label="ASSUMPTIONS"}
 
@@ -72,6 +80,14 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSUMPTIONS-ASSUMP_L0_19](ASSUMPTIONS.md#assumptions-assump_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | The development environment meets all prerequisites for implementing and verifying this requirement. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_20](ASSUMPTIONS.md#assumptions-assump_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | The development environment meets all prerequisites for implementing and verifying this requirement. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_21](ASSUMPTIONS.md#assumptions-assump_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | The development environment meets all prerequisites for implementing and verifying this requirement. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_22](ASSUMPTIONS.md#assumptions-assump_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_23](ASSUMPTIONS.md#assumptions-assump_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_24](ASSUMPTIONS.md#assumptions-assump_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_25](ASSUMPTIONS.md#assumptions-assump_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_26](ASSUMPTIONS.md#assumptions-assump_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_27](ASSUMPTIONS.md#assumptions-assump_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_28](ASSUMPTIONS.md#assumptions-assump_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_29](ASSUMPTIONS.md#assumptions-assump_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EVIDENCES ## {: data-toc-label="EVIDENCES"}
 
@@ -92,12 +108,20 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EVIDENCES-EVID_L0_13](EVIDENCES.md#evidences-evid_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_14](EVIDENCES.md#evidences-evid_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_15](EVIDENCES.md#evidences-evid_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EVIDENCES-EVID_L0_16](EVIDENCES.md#evidences-evid_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. - name: Joao Jesus Silva | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_16](EVIDENCES.md#evidences-evid_l0_16) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_17](EVIDENCES.md#evidences-evid_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EVIDENCES-EVID_L0_18](EVIDENCES.md#evidences-evid_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_18](EVIDENCES.md#evidences-evid_l0_18) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_19](EVIDENCES.md#evidences-evid_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_20](EVIDENCES.md#evidences-evid_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EVIDENCES-EVID_L0_21](EVIDENCES.md#evidences-evid_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_21](EVIDENCES.md#evidences-evid_l0_21) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_22](EVIDENCES.md#evidences-evid_l0_22) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects repository artifacts, sprint reports and timing measurements that demonstrate the STM32 ThreadX startup requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_23](EVIDENCES.md#evidences-evid_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_24](EVIDENCES.md#evidences-evid_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects integration test results, CAN traffic logs, and timing correlation data that demonstrate the combined startup requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_25](EVIDENCES.md#evidences-evid_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings, startup logs, and timing measurements that demonstrate the instrument cluster UI availability requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_26](EVIDENCES.md#evidences-evid_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects end-to-end integration test results, video recordings, and system logs that demonstrate all startup time requirements are met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_27](EVIDENCES.md#evidences-evid_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings, distance measurements, and test logs that demonstrate the emergency braking stopping distance requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_28](EVIDENCES.md#evidences-evid_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_29](EVIDENCES.md#evidences-evid_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EXPECTATIONS ## {: data-toc-label="EXPECTATIONS"}
 
@@ -118,12 +142,20 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EXPECTATIONS-EXPECT_L0_13](EXPECTATIONS.md#expectations-expect_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_14](EXPECTATIONS.md#expectations-expect_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_15](EXPECTATIONS.md#expectations-expect_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_16](EXPECTATIONS.md#expectations-expect_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_16](EXPECTATIONS.md#expectations-expect_l0_16) {class="tsf-score" style="background-color:hsl(60.0, 100%, 47%)"} |  | 0.50 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_17](EXPECTATIONS.md#expectations-expect_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_18](EXPECTATIONS.md#expectations-expect_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_18](EXPECTATIONS.md#expectations-expect_l0_18) {class="tsf-score" style="background-color:hsl(60.0, 100%, 47%)"} |  | 0.50 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_19](EXPECTATIONS.md#expectations-expect_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_20](EXPECTATIONS.md#expectations-expect_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_21](EXPECTATIONS.md#expectations-expect_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_21](EXPECTATIONS.md#expectations-expect_l0_21) {class="tsf-score" style="background-color:hsl(60.0, 100%, 47%)"} |  | 0.50 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_22](EXPECTATIONS.md#expectations-expect_l0_22) {class="tsf-score" style="background-color:hsl(60.0, 100%, 47%)"} |  | 0.50 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_23](EXPECTATIONS.md#expectations-expect_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_24](EXPECTATIONS.md#expectations-expect_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_25](EXPECTATIONS.md#expectations-expect_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_26](EXPECTATIONS.md#expectations-expect_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_27](EXPECTATIONS.md#expectations-expect_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_28](EXPECTATIONS.md#expectations-expect_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_29](EXPECTATIONS.md#expectations-expect_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 
 ---
@@ -131,6 +163,6 @@ The contribution to the score of a parent item by a suspiciously linked child is
 _Generated for: Software_
 
 * _Repository root: /Volumes/Important_Docs/42/SEA-ME_Team6_2025-26_
-* _Commit SHA: d9dec7b76ad264011edee7ed5775a99da746fc83_
-* _Commit date/time: 2026-01-19 17:20:43 UTC_
-* _Commit tag: d9dec7b_
+* _Commit SHA: d24702486839df685645890a01b5e48c7cb48815_
+* _Commit date/time: 2026-01-22 11:10:25 UTC_
+* _Commit tag: d247024_
