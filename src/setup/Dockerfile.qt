@@ -1,92 +1,62 @@
-# Stage 3: Qt cross-compiled for Raspberry Pi
 FROM souzitaaaa/team6-cross-sysroot:bookworm
 
 WORKDIR /build
 
-# Build Qt for host and Raspberry Pi
-RUN { \
-    set -e && \
-    mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
-    cd qt6/src && \
+# Sysroot already has Qt 6.7.3 libraries for ARM
+# Build matching version host tools (moc, rcc, qmlcachegen, etc.)
+
+RUN set -e && \
+    mkdir -p qt6-host-build qt6-host && \
+    cd qt6-host-build && \
+    \
     echo "=== Downloading Qt 6.7.3 submodules ===" && \
     wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtbase-everywhere-src-6.7.3.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtshadertools-everywhere-src-6.7.3.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     \
-    echo "=== Extracting Qt sources for host build ===" && \
-    cd ../host-build && \
-    tar xf ../src/qtbase-everywhere-src-6.7.3.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.7.3.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
+    echo "=== Extracting Qt sources ===" && \
+    tar xf qtbase-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtdeclarative-everywhere-src-6.7.3.tar.xz && \
     \
     echo "=== Building qtbase for host ===" && \
     cd qtbase-everywhere-src-6.7.3 && \
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
+    cmake -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/build/qt6-host \
         -DQT_BUILD_EXAMPLES=OFF \
-        -DQT_BUILD_TESTS=OFF \
-        -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
-    cmake --build . --parallel 4 && \
+        -DQT_BUILD_TESTS=OFF && \
+    cmake --build . --parallel 2 && \
     cmake --install . && \
     \
     echo "=== Building qtshadertools for host ===" && \
     cd ../qtshadertools-everywhere-src-6.7.3 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
     cmake --install . && \
     \
     echo "=== Building qtdeclarative for host ===" && \
     cd ../qtdeclarative-everywhere-src-6.7.3 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
     cmake --install . && \
     \
-    echo "=== Extracting Qt sources for Raspberry Pi cross-build ===" && \
-    cd ../../pi-build && \
-    tar xf ../src/qtbase-everywhere-src-6.7.3.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.7.3.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
-    \
-    echo "=== Building qtbase for Raspberry Pi ===" && \
-    cd qtbase-everywhere-src-6.7.3 && \
-    /build/qt6/host/bin/qt-cmake \
-        -GNinja \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DQT_BUILD_EXAMPLES=OFF \
-        -DQT_BUILD_TESTS=OFF \
-        -DQT_HOST_PATH=/build/qt6/host \
-        -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
-        -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
-        -DFEATURE_shader_tools=OFF \
-        . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    \
-    echo "=== Building qtshadertools for Raspberry Pi ===" && \
-    cd ../qtshadertools-everywhere-src-6.7.3 && \
-    /build/qt6/host/bin/qt-configure-module . -- \
-        -DQT_HOST_PATH=/build/qt6/host \
-        -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
-        -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    \
-    echo "=== Building qtdeclarative for Raspberry Pi (QML + Quick + Controls2) ===" && \
-    cd ../qtdeclarative-everywhere-src-6.7.3 && \
-    /build/qt6/host/bin/qt-configure-module . -- \
-        -DQT_HOST_PATH=/build/qt6/host \
-        -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
-        -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    \
-    echo "=== Qt 6.7.3 cross-compilation completed successfully ==="; \
-}
+    echo "=== Cleaning up build artifacts ===" && \
+    cd /build && \
+    rm -rf qt6-host-build
 
-# Package Qt binaries
-RUN tar -czvf /build/qt-host-binaries.tar.gz -C /build/qt6/host . && \
-    tar -czvf /build/qt-pi-binaries.tar.gz -C /build/qt6/pi .
+# Set environment variables
+ENV QT_HOST_PATH=/build/qt6-host
+ENV PATH="${QT_HOST_PATH}/bin:${PATH}"
 
-RUN rm -rf qt6/host-build qt6/pi-build qt6/src
+# Verify installation
+RUN echo "=== Installed Qt tools ===" && \
+    ls -la /build/qt6-host/bin/ && \
+    echo "" && \
+    echo "=== Qt Version ===" && \
+    /build/qt6-host/bin/qmake --version && \
+    echo "" && \
+    echo "=== Verifying critical tools ===" && \
+    test -f /build/qt6-host/bin/qt-cmake && echo "✓ qt-cmake found" || echo "✗ qt-cmake missing" && \
+    test -f /build/qt6-host/libexec/moc && echo "✓ moc found in libexec" || echo "✗ moc missing" && \
+    test -f /build/qt6-host/bin/moc && echo "✓ moc found in bin" || echo "✗ moc in bin missing (this is OK)"

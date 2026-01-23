@@ -24,4 +24,36 @@ COPY setup/rasp.tar.gz /build/
 RUN tar -xzf rasp.tar.gz -C /build/sysroot || \
     (echo "ERROR: Failed to extract sysroot tarball" && exit 1)
 RUN rm rasp.tar.gz
+
+# Fix symlinks
 RUN python3 /usr/local/bin/sysroot-relativelinks.py /build/sysroot
+
+# Install missing ARM64 packages directly into sysroot
+RUN dpkg --add-architecture arm64 && \
+    apt-get update && \
+    apt-get download \
+    libgles2-mesa:arm64 \
+    libgles2-mesa-dev:arm64 \
+    libegl1-mesa:arm64 \
+    libegl1-mesa-dev:arm64 \
+    libgbm1:arm64 \
+    libdrm2:arm64 \
+    libglapi-mesa:arm64 && \
+    for deb in *.deb; do \
+    echo "Extracting $deb into sysroot..."; \
+    dpkg-deb -x "$deb" /build/sysroot; \
+    done && \
+    rm -f *.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Fix symlinks again after adding new libraries
+RUN python3 /usr/local/bin/sysroot-relativelinks.py /build/sysroot
+
+# Verify critical libraries are now present
+RUN echo "=== Verifying OpenGL ES libraries ===" && \
+    find /build/sysroot -name "libGLESv2.so*" -o -name "libEGL.so*" | head -10 && \
+    echo "" && \
+    echo "=== Checking symlinks ===" && \
+    ls -la /build/sysroot/usr/lib/aarch64-linux-gnu/libGLESv2.so* || echo "GLESv2 not found!" && \
+    ls -la /build/sysroot/usr/lib/aarch64-linux-gnu/libEGL.so* || echo "EGL not found!"

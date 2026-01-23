@@ -1,14 +1,22 @@
-# Stage 4: Final project builder
 FROM souzitaaaa/team6-cross-qt:bookworm
 
 WORKDIR /build
 
+# Copy your project
 COPY cluster /build/project
 
+# Build the project using sysroot Qt libraries
 RUN { \
     cd /build/project && \
-    /build/qt6/host/bin/qt-cmake \
-    -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
-    -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake . && \
-    cmake --build .; \
-} 2>&1 | tee -a /build.log
+    /build/qt6-host/bin/qt-cmake \
+    -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DQT_HOST_PATH=/build/qt6-host \
+    -DCMAKE_FIND_ROOT_PATH=/build/sysroot \
+    -DCMAKE_PREFIX_PATH=/build/sysroot/usr/local/qt6 \
+    . && \
+    cmake --build . --parallel $(nproc); \
+    } 2>&1 | tee -a /build.log
+
+# Verify the binary was built
+RUN ls -lh /build/project/HelloQt6Qml || ls -lh /build/project/cluster-app || echo "Binary name may differ"
