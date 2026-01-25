@@ -1,0 +1,276 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The target system is: Linux -  - aarch64
+      The host system is: Linux - 6.6.87.2-microsoft-standard-WSL2 - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+      Compiler: /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ 
+      Build flags: -O2;-pipe;-g;-feliminate-unused-debug-types
+      Id flags:  
+      
+      The output was:
+      1
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find Scrt1.o: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find crti.o: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find crtbeginS.o: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lstdc++: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lm: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lgcc_s: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lgcc: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lc: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lgcc_s: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find -lgcc: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find crtendS.o: No such file or directory
+      /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/ld: cannot find crtn.o: No such file or directory
+      collect2: error: ld returned 1 exit status
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ 
+      Build flags: -O2;-pipe;-g;-feliminate-unused-debug-types
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.o"
+      
+      The CXX compiler identification is GNU, found in:
+        /workspace/cluster/build-arm/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.o
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:62 (try_compile)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-GOAXsh"
+      binary: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-GOAXsh"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-O2 -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now"
+      CMAKE_SYSROOT: "/opt/agl-sdk/sysroots/aarch64-agl-linux"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-GOAXsh'
+        
+        Run Build Command(s): /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/ninja -v cmTC_b683b
+        [1/2] /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux   -O2 -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux    -v -o CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -c /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp
+        Using built-in specs.
+        COLLECT_GCC=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++
+        Target: aarch64-agl-linux
+        Configured with: ../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/configure --build=x86_64-linux --host=x86_64-aglsdk-linux --target=aarch64-agl-linux --prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --exec_prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --bindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --sbindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --libexecdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux --datadir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share --sysconfdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/etc --sharedstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/com --localstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/var --libdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux --includedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --oldincludedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --infodir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/info --mandir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/man --disable-silent-rules --disable-dependency-tracking --with-libtool-sysroot=/host --with-gnu-ld --enable-shared --enable-languages=c,c++ --enable-threads=posix --enable-multilib --enable-default-pie --enable-c99 --enable-long-long --enable-symvers=gnu --enable-libstdcxx-pch --program-prefix=aarch64-agl-linux- --without-local-prefix --disable-install-libiberty --disable-libssp --enable-libitm --enable-lto --disable-bootstrap --with-system-zlib --with-linker-hash-style=gnu --enable-linker-build-id --with-ppl=no --with-cloog=no --enable-checking=release --enable-cheaders=c_global --without-isl --with-gxx-include-dir=/not/exist/usr/include/c++/13.4.0 --with-build-time-tools=/host-native/usr/aarch64-agl-linux/bin --with-sysroot=/not/exist --with-build-sysroot=/host --with-plugin-ld=ld --enable-poison-system-directories --disable-static --enable-nls --with-glibc-version=2.28 --enable-initfini-array --enable-__cxa_atexit
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.4.0 (GCC) 
+        COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/'
+         /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/cc1plus -quiet -v -isysroot /opt/agl-sdk/sysroots/aarch64-agl-linux -D_GNU_SOURCE /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_b683b.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mlittle-endian -mabi=lp64 -g -O2 -version -feliminate-unused-debug-types -o /tmp/ccsKbO0f.s
+        GNU C++17 (GCC) version 13.4.0 (aarch64-agl-linux)
+        	compiled by GNU C version 13.4.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version none
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/local/include"
+        ignoring nonexistent directory "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/../../../../../aarch64-agl-linux/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0
+         /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux
+         /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward
+         /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include
+         /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include
+         /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed
+         /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/
+        End of search list.
+        Compiler executable checksum: 6fdcd37318138f077e2d3cbfec6572ff
+        COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/'
+         /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/as -v --gdwarf-5 -EL -mabi=lp64 -o CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccsKbO0f.s
+        GNU assembler version 2.42.0 (aarch64-agl-linux) using BFD version (GNU Binutils) 2.42.0.20240723
+        COMPILER_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/
+        LIBRARY_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/
+        COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.'
+        [2/2] : && /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -O2 -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now -v CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_b683b   && :
+        Using built-in specs.
+        COLLECT_GCC=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++
+        COLLECT_LTO_WRAPPER=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/lto-wrapper
+        Target: aarch64-agl-linux
+        Configured with: ../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/configure --build=x86_64-linux --host=x86_64-aglsdk-linux --target=aarch64-agl-linux --prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --exec_prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --bindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --sbindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --libexecdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux --datadir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share --sysconfdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/etc --sharedstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/com --localstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/var --libdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux --includedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --oldincludedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --infodir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/info --mandir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/man --disable-silent-rules --disable-dependency-tracking --with-libtool-sysroot=/host --with-gnu-ld --enable-shared --enable-languages=c,c++ --enable-threads=posix --enable-multilib --enable-default-pie --enable-c99 --enable-long-long --enable-symvers=gnu --enable-libstdcxx-pch --program-prefix=aarch64-agl-linux- --without-local-prefix --disable-install-libiberty --disable-libssp --enable-libitm --enable-lto --disable-bootstrap --with-system-zlib --with-linker-hash-style=gnu --enable-linker-build-id --with-ppl=no --with-cloog=no --enable-checking=release --enable-cheaders=c_global --without-isl --with-gxx-include-dir=/not/exist/usr/include/c++/13.4.0 --with-build-time-tools=/host-native/usr/aarch64-agl-linux/bin --with-sysroot=/not/exist --with-build-sysroot=/host --with-plugin-ld=ld --enable-poison-system-directories --disable-static --enable-nls --with-glibc-version=2.28 --enable-initfini-array --enable-__cxa_atexit
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 13.4.0 (GCC) 
+        COMPILER_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/
+        LIBRARY_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/
+        COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'cmTC_b683b' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'cmTC_b683b.'
+         /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/collect2 -plugin /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/liblto_plugin.so -plugin-opt=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccobHvhF.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --build-id --eh-frame-hdr --hash-style=gnu -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux -pie -o cmTC_b683b /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/Scrt1.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crti.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtbeginS.o -L/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib -L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib -O1 --hash-style=gnu --as-needed -z relro -z now CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtendS.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crtn.o
+        COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'cmTC_b683b' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'cmTC_b683b.'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:132 (message)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0]
+          add: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux]
+          add: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward]
+          add: [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include]
+          add: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include]
+          add: [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed]
+          add: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/]
+        end of search list found
+        collapse include dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0]
+        collapse include dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux]
+        collapse include dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward]
+        collapse include dir [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include] ==> [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include]
+        collapse include dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include]
+        collapse include dir [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed] ==> [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed]
+        collapse include dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include]
+        implicit include dirs: [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward;/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include;/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:164 (message)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(aarch64-agl-linux-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: '/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-GOAXsh']
+        ignore line: []
+        ignore line: [Run Build Command(s): /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/ninja -v cmTC_b683b]
+        ignore line: [[1/2] /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux   -O2 -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux    -v -o CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -c /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++]
+        ignore line: [Target: aarch64-agl-linux]
+        ignore line: [Configured with: ../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/configure --build=x86_64-linux --host=x86_64-aglsdk-linux --target=aarch64-agl-linux --prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --exec_prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --bindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --sbindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --libexecdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux --datadir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share --sysconfdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/etc --sharedstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/com --localstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/var --libdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux --includedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --oldincludedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --infodir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/info --mandir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/man --disable-silent-rules --disable-dependency-tracking --with-libtool-sysroot=/host --with-gnu-ld --enable-shared --enable-languages=c,c++ --enable-threads=posix --enable-multilib --enable-default-pie --enable-c99 --enable-long-long --enable-symvers=gnu --enable-libstdcxx-pch --program-prefix=aarch64-agl-linux- --without-local-prefix --disable-install-libiberty --disable-libssp --enable-libitm --enable-lto --disable-bootstrap --with-system-zlib --with-linker-hash-style=gnu --enable-linker-build-id --with-ppl=no --with-cloog=no --enable-checking=release --enable-cheaders=c_global --without-isl --with-gxx-include-dir=/not/exist/usr/include/c++/13.4.0 --with-build-time-tools=/host-native/usr/aarch64-agl-linux/bin --with-sysroot=/not/exist --with-build-sysroot=/host --with-plugin-ld=ld --enable-poison-system-directories --disable-static --enable-nls --with-glibc-version=2.28 --enable-initfini-array --enable-__cxa_atexit]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.4.0 (GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/']
+        ignore line: [ /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/cc1plus -quiet -v -isysroot /opt/agl-sdk/sysroots/aarch64-agl-linux -D_GNU_SOURCE /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_b683b.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mlittle-endian -mabi=lp64 -g -O2 -version -feliminate-unused-debug-types -o /tmp/ccsKbO0f.s]
+        ignore line: [GNU C++17 (GCC) version 13.4.0 (aarch64-agl-linux)]
+        ignore line: [	compiled by GNU C version 13.4.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version none]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/local/include"]
+        ignore line: [ignoring nonexistent directory "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/../../../../../aarch64-agl-linux/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0]
+        ignore line: [ /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/aarch64-agl-linux]
+        ignore line: [ /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/c++/13.4.0/backward]
+        ignore line: [ /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include]
+        ignore line: [ /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/include]
+        ignore line: [ /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/include-fixed]
+        ignore line: [ /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/include/]
+        ignore line: [End of search list.]
+        ignore line: [Compiler executable checksum: 6fdcd37318138f077e2d3cbfec6572ff]
+        ignore line: [COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/']
+        ignore line: [ /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/as -v --gdwarf-5 -EL -mabi=lp64 -o CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccsKbO0f.s]
+        ignore line: [GNU assembler version 2.42.0 (aarch64-agl-linux) using BFD version (GNU Binutils) 2.42.0.20240723]
+        ignore line: [COMPILER_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/]
+        ignore line: [LIBRARY_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [[2/2] : && /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -O2 -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl -O1 -Wl --hash-style=gnu -Wl --as-needed  -Wl -z relro -z now -v CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_b683b   && :]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++]
+        ignore line: [COLLECT_LTO_WRAPPER=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/lto-wrapper]
+        ignore line: [Target: aarch64-agl-linux]
+        ignore line: [Configured with: ../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/configure --build=x86_64-linux --host=x86_64-aglsdk-linux --target=aarch64-agl-linux --prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --exec_prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr --bindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --sbindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux --libexecdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux --datadir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share --sysconfdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/etc --sharedstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/com --localstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/var --libdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux --includedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --oldincludedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/include --infodir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/info --mandir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-aglsdk-linux/usr/share/man --disable-silent-rules --disable-dependency-tracking --with-libtool-sysroot=/host --with-gnu-ld --enable-shared --enable-languages=c,c++ --enable-threads=posix --enable-multilib --enable-default-pie --enable-c99 --enable-long-long --enable-symvers=gnu --enable-libstdcxx-pch --program-prefix=aarch64-agl-linux- --without-local-prefix --disable-install-libiberty --disable-libssp --enable-libitm --enable-lto --disable-bootstrap --with-system-zlib --with-linker-hash-style=gnu --enable-linker-build-id --with-ppl=no --with-cloog=no --enable-checking=release --enable-cheaders=c_global --without-isl --with-gxx-include-dir=/not/exist/usr/include/c++/13.4.0 --with-build-time-tools=/host-native/usr/aarch64-agl-linux/bin --with-sysroot=/not/exist --with-build-sysroot=/host --with-plugin-ld=ld --enable-poison-system-directories --disable-static --enable-nls --with-glibc-version=2.28 --enable-initfini-array --enable-__cxa_atexit]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 13.4.0 (GCC) ]
+        ignore line: [COMPILER_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/]
+        ignore line: [LIBRARY_PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0/:/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-O2' '-g' '-feliminate-unused-debug-types' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux' '-v' '-o' 'cmTC_b683b' '-shared-libgcc' '-mlittle-endian' '-mabi=lp64' '-dumpdir' 'cmTC_b683b.']
+        link line: [ /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/collect2 -plugin /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/liblto_plugin.so -plugin-opt=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccobHvhF.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --build-id --eh-frame-hdr --hash-style=gnu -dynamic-linker /lib/ld-linux-aarch64.so.1 -X -EL -maarch64linux -pie -o cmTC_b683b /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/Scrt1.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crti.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtbeginS.o -L/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib -L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0 -L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib -O1 --hash-style=gnu --as-needed -z relro -z now CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtendS.o /opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crtn.o]
+          arg [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/libexec/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccobHvhF.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib/ld-linux-aarch64.so.1] ==> ignore
+          arg [-X] ==> ignore
+          arg [-EL] ==> ignore
+          arg [-maarch64linux] ==> ignore
+          arg [-pie] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_b683b] ==> ignore
+          arg [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/Scrt1.o] ==> obj [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/Scrt1.o]
+          arg [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crti.o] ==> obj [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crti.o]
+          arg [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtbeginS.o] ==> obj [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtbeginS.o]
+          arg [-L/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0] ==> dir [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0]
+          arg [-L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0] ==> dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0]
+          arg [-L/opt/agl-sdk/sysroots/aarch64-agl-linux/lib] ==> dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib]
+          arg [-L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0] ==> dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0]
+          arg [-L/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib] ==> dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib]
+          arg [-O1] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-zrelro] ==> ignore
+          arg [-znow] ==> ignore
+          arg [CMakeFiles/cmTC_b683b.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtendS.o] ==> obj [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtendS.o]
+          arg [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crtn.o] ==> obj [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crtn.o]
+        collapse library dir [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0] ==> [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0]
+        collapse library dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0]
+        collapse library dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib]
+        collapse library dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0]
+        collapse library dir [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib] ==> [/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib]
+        implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+        implicit objs: [/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/Scrt1.o;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crti.o;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtbeginS.o;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0/crtendS.o;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/crtn.o]
+        implicit dirs: [/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/aarch64-agl-linux/gcc/aarch64-agl-linux/13.4.0;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib/aarch64-agl-linux/13.4.0;/opt/agl-sdk/sysroots/aarch64-agl-linux/lib;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/aarch64-agl-linux/13.4.0;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib]
+        implicit fwks: []
+      
+      
+...

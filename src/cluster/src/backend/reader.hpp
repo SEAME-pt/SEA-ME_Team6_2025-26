@@ -17,22 +17,22 @@
 
 using kuksa::val::v2::VAL;
 
-class Reader: public QObject {
+class Reader : public QObject
+{
     Q_OBJECT
 
-    public:
-        explicit Reader(QObject *parent = nullptr);
+public:
+    explicit Reader(QObject *parent = nullptr);
 
-    signals:
-        void speedReceived(double speed);
-        void temperatureReceived(double temperature);
+signals:
+    void speedReceived(double speed);
+    void temperatureReceived(double temperature);
 
-    private slots:
-        static create_val_stub(const std::string& host_port)
-        static value_to_string(const kuksa::val::v2::Value& v)
+private:
+    std::string _server = "172.20.10.3:5555";
 
-    private:
-        std::string _server = "172.20.10.3:5555"
-}
+    static std::unique_ptr<VAL::Stub> create_val_stub(const std::string &host_port);
+    static std::string value_to_string(const kuksa::val::v2::Value &v);
+};
 
 #endif /* READER_HPP */

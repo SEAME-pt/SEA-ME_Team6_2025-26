@@ -17,7 +17,7 @@ QT_VERSION="6.7.3"
 # Image Names
     # Cross-Compilation
 IMAGE_BASE="${DOCKER_REGISTRY}/team6-base:${BASE_TAG}"
-IMAGE_SYSROOT="${DOCKER_REGISTRY}/team6-cross-sysroot:${BASE_TAG}"
+IMAGE_AGL_SDK="${DOCKER_REGISTRY}/team6-agl-sdk:${BASE_TAG}"
 IMAGE_QT="${DOCKER_REGISTRY}/team6-cross-qt:${BASE_TAG}"
 IMAGE_CLUSTER="team6-cross-cluster:arm64"
     # Development & Testing
@@ -64,6 +64,20 @@ check_file() {
     fi
 }
 
+    # Find AGL SDK installer in setup/sdk-agl folder
+find_sdk_installer() {
+    local sdk_installer=$(find ./setup/sdk-agl -maxdepth 1 -name "poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-*.sh" 2>/dev/null | head -1)
+    
+    if [ -z "$sdk_installer" ]; then
+        print_error "AGL SDK installer not found in ./setup/sdk-agl directory"
+        print_error "Expected: ./setup/sdk-agl/poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-*.sh"
+        return 1
+    fi
+    
+    # Return the relative path for Docker COPY
+    echo "$sdk_installer"
+}
+
     # Check if image exists on Docker Hub
 check_remote_image() {
     local image=$1
@@ -103,6 +117,7 @@ get_or_build_image() {
     local image_name=$2
     local context=${3:-.}
     local description=$4
+    local sdk_installer=${5:-}
 
     # Check if image exists locally
     if image_exists "$image_name" && [ "$CLEAN" = false ]; then
@@ -137,7 +152,7 @@ get_or_build_image() {
         fi
     fi
     
-    build_image "$dockerfile" "$image_name" "$context" "$description"
+    build_image "$dockerfile" "$image_name" "$context" "$description" "$sdk_installer"
 }
 
     # Build an image
@@ -146,18 +161,30 @@ build_image() {
     local image_name=$2
     local context=${3:-.}
     local description=$4
+    local sdk_installer=${5:-}
 
     print_header "Building: $description"
     print_info "Dockerfile: $dockerfile"
     print_info "Image:      $image_name"
     print_info "Context:    $context"
-
-    if docker build $SKIP_CACHE -f "$dockerfile" -t "$image_name" "$context"; then
-        print_success "Successfully built: $image_name"
-        return 0
+    
+    if [ -n "$sdk_installer" ]; then
+        print_info "SDK Installer: $sdk_installer"
+        if docker build $SKIP_CACHE -f "$dockerfile" --build-arg SDK_INSTALLER="$sdk_installer" -t "$image_name" "$context"; then
+            print_success "Successfully built: $image_name"
+            return 0
+        else
+            print_error "Failed to build: $image_name"
+            return 1
+        fi
     else
-        print_error "Failed to build: $image_name"
-        return 1
+        if docker build $SKIP_CACHE -f "$dockerfile" -t "$image_name" "$context"; then
+            print_success "Successfully built: $image_name"
+            return 0
+        else
+            print_error "Failed to build: $image_name"
+            return 1
+        fi
     fi
 }
 
@@ -179,7 +206,7 @@ extract_artifacts() {
     fi
     
     print_info "Extracting Qt binaries..."
-    if docker cp tmpbuild:/build/qt-pi-binaries.tar.gz "$output_dir/qt-pi-binaries.tar.gz" 2>/dev/null; then
+    if docker cp tmpbuild:/output/qt-pi-binaries.tar.gz "$output_dir/qt-pi-binaries.tar.gz" 2>/dev/null; then
         print_success "Qt binaries extracted: qt-pi-binaries.tar.gz"
     else
         print_warning "qt-pi-binaries.tar.gz not found"
@@ -199,7 +226,7 @@ usage() {
     cat << EOF
 Usage: $0 [OPTIONS] [TARGETS]
 
-Build Docker images for Qt cross-compilation and development.
+Build Docker images for Qt cross-compilation using AGL SDK.
 
 OPTIONS:
     -h, --help          Show this help message
@@ -216,7 +243,7 @@ OPTIONS:
 
 TARGETS (build specific images):
     base                Build base image
-    sysroot             Build sysroot image
+    agl-sdk             Build AGL SDK image (replaces sysroot)
     qt                  Build Qt cross-compiled image
     dev                 Build development image
     cluster             Build cluster application
@@ -226,11 +253,15 @@ EXAMPLES:
     $0                          # Build all images (interactive)
     $0 --pull                   # Pull all images from Docker Hub
     $0 --pull --no-interactive  # Pull without prompts (fail if not on Hub)
-    $0 base sysroot             # Build only base and sysroot
+    $0 base agl-sdk qt          # Build base, AGL SDK, and Qt
     $0 --clean all              # Clean and rebuild all images
     $0 --force-build all        # Force rebuild all images
     $0 cluster --extract        # Build cluster and extract artifacts
     $0 --pull --push            # Pull images, then push (useful for mirrors)
+
+REQUIREMENTS:
+    - AGL SDK installer must be in the setup/sdk-agl folder:
+      ./setup/sdk-agl/poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-*.sh
 EOF
 }
 
@@ -293,7 +324,7 @@ while [[ $# -gt 0 ]]; do
             INTERACTIVE=false
             shift
             ;;
-        base|sysroot|qt|dev|cluster|all)
+        base|agl-sdk|qt|dev|cluster|all)
             TARGETS+=("$1")
             shift
             ;;
@@ -312,11 +343,27 @@ fi
 
 check_docker
 
+# Find AGL SDK installer before checking files
+SDK_INSTALLER=""
+if [ "$PREFER_PULL" = false ] || [ "$INTERACTIVE" = true ]; then
+    # Check if we'll need the SDK installer (not just pulling)
+    for target in "${TARGETS[@]}"; do
+        if [[ "$target" == "agl-sdk" ]] || [[ "$target" == "all" ]] || [[ "$target" == "qt" ]] || [[ "$target" == "cluster" ]]; then
+            if [ "$PREFER_PULL" = false ]; then
+                print_info "Looking for AGL SDK installer..."
+                SDK_INSTALLER=$(find_sdk_installer) || exit 1
+                print_success "Found SDK installer: $SDK_INSTALLER"
+                break
+            fi
+        fi
+    done
+fi
+
 # Check required files (only if we're going to build)
 if [ "$PREFER_PULL" = false ] || [ "$INTERACTIVE" = true ]; then
     print_info "Checking required files..."
     check_file "setup/Dockerfile.base"
-    check_file "setup/Dockerfile.sysroot"
+    check_file "setup/Dockerfile.agl-sdk"
     check_file "setup/Dockerfile.qt"
     check_file "setup/Dockerfile.cluster"
 
@@ -331,7 +378,7 @@ fi
 if [ "$CLEAN" = true ]; then
     print_header "Cleaning existing images"
     docker rmi -f "$IMAGE_BASE" 2>/dev/null || true
-    docker rmi -f "$IMAGE_SYSROOT" 2>/dev/null || true
+    docker rmi -f "$IMAGE_AGL_SDK" 2>/dev/null || true
     docker rmi -f "$IMAGE_QT" 2>/dev/null || true
     docker rmi -f "$IMAGE_DEV" 2>/dev/null || true
     docker rmi -f "$IMAGE_CLUSTER" 2>/dev/null || true
@@ -342,7 +389,7 @@ START_TIME=$(date +%s)
 
 # Determine what to build
 BUILD_BASE=false
-BUILD_SYSROOT=false
+BUILD_AGL_SDK=false
 BUILD_QT=false
 BUILD_DEV=false
 BUILD_CLUSTER=false
@@ -352,7 +399,7 @@ if [ "$DEV_ONLY" = true ]; then
     BUILD_DEV=true
 elif [ "$CROSS_ONLY" = true ]; then
     BUILD_BASE=true
-    BUILD_SYSROOT=true
+    BUILD_AGL_SDK=true
     BUILD_QT=true
     BUILD_CLUSTER=true
 else
@@ -360,7 +407,7 @@ else
         case $target in
             all)
                 BUILD_BASE=true
-                BUILD_SYSROOT=true
+                BUILD_AGL_SDK=true
                 BUILD_QT=true
                 BUILD_DEV=true
                 BUILD_CLUSTER=true
@@ -368,13 +415,13 @@ else
             base)
                 BUILD_BASE=true
                 ;;
-            sysroot)
+            agl-sdk)
                 BUILD_BASE=true
-                BUILD_SYSROOT=true
+                BUILD_AGL_SDK=true
                 ;;
             qt)
                 BUILD_BASE=true
-                BUILD_SYSROOT=true
+                BUILD_AGL_SDK=true
                 BUILD_QT=true
                 ;;
             dev)
@@ -383,7 +430,7 @@ else
                 ;;
             cluster)
                 BUILD_BASE=true
-                BUILD_SYSROOT=true
+                BUILD_AGL_SDK=true
                 BUILD_QT=true
                 BUILD_CLUSTER=true
                 ;;
@@ -393,26 +440,23 @@ fi
 
 # Build/Pull base image
 if [ "$BUILD_BASE" = true ]; then
-    get_or_build_image "setup/Dockerfile.base" "$IMAGE_BASE" "." "Base Build Tools" || exit 1
+    get_or_build_image "setup/Dockerfile.base" "$IMAGE_BASE" "." "Base Build Tools" "" || exit 1
 fi
 
-# Build/Pull sysroot image
-if [ "$BUILD_SYSROOT" = true ]; then
-    if [ "$PREFER_PULL" = false ] && [ "$INTERACTIVE" = false ]; then
-        check_file "setup/rasp.tar.gz"
-    fi
-    get_or_build_image "setup/Dockerfile.sysroot" "$IMAGE_SYSROOT" "." "ARM Sysroot" || exit 1
+# Build/Pull AGL SDK image (replaces sysroot)
+if [ "$BUILD_AGL_SDK" = true ]; then
+    get_or_build_image "setup/Dockerfile.agl-sdk" "$IMAGE_AGL_SDK" "." "AGL SDK Cross-Compilation" "$SDK_INSTALLER" || exit 1
 fi
 
 # Build/Pull Qt cross-compiled image
 if [ "$BUILD_QT" = true ]; then
-    get_or_build_image "setup/Dockerfile.qt" "$IMAGE_QT" "." "Qt 6.7.3 Cross-Compilation" || exit 1
+    get_or_build_image "setup/Dockerfile.qt" "$IMAGE_QT" "." "Qt 6.7.3 Cross-Compilation" "" || exit 1
 fi
 
 # Build/Pull development image
 if [ "$BUILD_DEV" = true ]; then
     if [ -f "setup/Dockerfile.dev" ]; then
-        get_or_build_image "setup/Dockerfile.dev" "$IMAGE_DEV" "." "Development Environment" || exit 1
+        get_or_build_image "setup/Dockerfile.dev" "$IMAGE_DEV" "." "Development Environment" "" || exit 1
     else
         print_warning "setup/Dockerfile.dev not found, skipping development build"
     fi
@@ -420,7 +464,7 @@ fi
 
 # Build/Pull cluster application
 if [ "$BUILD_CLUSTER" = true ]; then
-    get_or_build_image "setup/Dockerfile.cluster" "$IMAGE_CLUSTER" "." "Cluster Application" || exit 1
+    get_or_build_image "setup/Dockerfile.cluster" "$IMAGE_CLUSTER" "." "Cluster Application" "" || exit 1
 fi
 
 # Calculate total build time
@@ -436,8 +480,8 @@ echo "Available images:"
 if [ "$BUILD_BASE" = true ]; then
     echo "  ✓ $IMAGE_BASE"
 fi
-if [ "$BUILD_SYSROOT" = true ]; then
-    echo "  ✓ $IMAGE_SYSROOT"
+if [ "$BUILD_AGL_SDK" = true ]; then
+    echo "  ✓ $IMAGE_AGL_SDK"
 fi
 if [ "$BUILD_QT" = true ]; then
     echo "  ✓ $IMAGE_QT"
@@ -467,8 +511,8 @@ if [ "$PUSH" = true ]; then
     if [ "$BUILD_BASE" = true ]; then
         docker push "$IMAGE_BASE"
     fi
-    if [ "$BUILD_SYSROOT" = true ]; then
-        docker push "$IMAGE_SYSROOT"
+    if [ "$BUILD_AGL_SDK" = true ]; then
+        docker push "$IMAGE_AGL_SDK"
     fi
     if [ "$BUILD_QT" = true ]; then
         docker push "$IMAGE_QT"
@@ -483,7 +527,7 @@ fi
 # Final message
 if [ "$EXTRACT" = true ]; then
     print_header "Deployment Instructions"
-    echo "On your Raspberry Pi:"
+    echo "On your Raspberry Pi 5:"
     echo "  1. Copy artifacts to the Pi:"
     echo "     scp -r $OUTPUT_DIR pi@raspberrypi:~/"
     echo ""

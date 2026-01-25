@@ -1,0 +1,16 @@
+# Dockerfile.cluster
+# Usa a imagem com Qt6 cross-compiled
+FROM team6-cross-qt:latest
+WORKDIR /app
+# Copiar código fonte
+COPY src/ ./src/
+COPY include/ ./include/
+COPY CMakeLists.txt ./
+# Build com toolchain do AGL SDK
+RUN /usr/local/bin/agl-env bash -c '\
+    mkdir -p build && cd build && \
+    cmake .. \
+    -DCMAKE_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release && \
+    make -j$(nproc)'
+# Output: binário ARM em /app/build/

@@ -1,0 +1,253 @@
+# Dockerfile.agl-sdk
+# SDK completo: Toolchain + Qt6 + gRPC/Protobuf
+# Build time: ~5 min (apenas instalação)
+#
+# Uso:
+#   docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
+#
+# Requisito: O ficheiro SDK deve estar no mesmo directório:
+#   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
+
+FROM souzitaaaa/team6-base:bookworm
+
+ARG SDK_VERSION=20.0.2
+ARG SDK_INSTALLER=poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-${SDK_VERSION}.sh
+ARG SDK_INSTALL_DIR=/opt/agl-sdk
+
+# ============================================================================
+# INSTALAÇÃO DO SDK
+# ============================================================================
+
+COPY ${SDK_INSTALLER} /tmp/sdk-installer.sh
+
+RUN chmod +x /tmp/sdk-installer.sh && \
+    /tmp/sdk-installer.sh -y -d ${SDK_INSTALL_DIR} && \
+    rm /tmp/sdk-installer.sh
+
+# ============================================================================
+# SCRIPT WRAPPER PARA ENVIRONMENT
+# ============================================================================
+
+RUN printf '#!/bin/bash\n\
+source /opt/agl-sdk/environment-setup-aarch64-agl-linux\n\
+exec "$@"\n' > /usr/local/bin/agl-env && \
+    chmod +x /usr/local/bin/agl-env
+
+# ============================================================================
+# CMAKE TOOLCHAIN FILE (Toolchain + Qt6 + gRPC/Protobuf)
+# ============================================================================
+
+RUN printf '\
+# ===========================================================================\n\
+# AGL SDK Toolchain for Cross-Compilation\n\
+# Inclui: Toolchain ARM + Qt6 + gRPC/Protobuf\n\
+# Projeto: SEA:ME\n\
+# ===========================================================================\n\
+\n\
+set(CMAKE_SYSTEM_NAME Linux)\n\
+set(CMAKE_SYSTEM_PROCESSOR aarch64)\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# SDK Paths\n\
+# ---------------------------------------------------------------------------\n\
+set(AGL_SDK_PATH "/opt/agl-sdk")\n\
+set(AGL_SYSROOT "${AGL_SDK_PATH}/sysroots/aarch64-agl-linux")\n\
+set(AGL_HOST_TOOLS "${AGL_SDK_PATH}/sysroots/x86_64-aglsdk-linux")\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# Sysroot & Compilers\n\
+# ---------------------------------------------------------------------------\n\
+set(CMAKE_SYSROOT ${AGL_SYSROOT})\n\
+set(CMAKE_FIND_ROOT_PATH ${AGL_SYSROOT})\n\
+\n\
+set(CMAKE_C_COMPILER ${AGL_HOST_TOOLS}/usr/bin/aarch64-agl-linux/aarch64-agl-linux-gcc)\n\
+set(CMAKE_CXX_COMPILER ${AGL_HOST_TOOLS}/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++)\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# Compiler/Linker Flags\n\
+# ---------------------------------------------------------------------------\n\
+set(CMAKE_C_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")\n\
+set(CMAKE_CXX_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")\n\
+set(CMAKE_EXE_LINKER_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")\n\
+set(CMAKE_SHARED_LINKER_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# Search Paths\n\
+# ---------------------------------------------------------------------------\n\
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)\n\
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)\n\
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)\n\
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# Qt6 Configuration\n\
+# ---------------------------------------------------------------------------\n\
+set(QT_HOST_PATH "${AGL_HOST_TOOLS}/usr")\n\
+set(QT_HOST_PATH_CMAKE_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake")\n\
+\n\
+# Qt6 módulos principais\n\
+set(Qt6_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6")\n\
+set(Qt6Core_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Core")\n\
+set(Qt6Gui_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Gui")\n\
+set(Qt6Widgets_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Widgets")\n\
+set(Qt6Qml_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Qml")\n\
+set(Qt6Quick_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Quick")\n\
+set(Qt6Network_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Network")\n\
+\n\
+# Qt6 módulos adicionais (do teu local.conf)\n\
+set(Qt6SerialPort_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6SerialPort")\n\
+set(Qt6Mqtt_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Mqtt")\n\
+set(Qt6Multimedia_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Multimedia")\n\
+set(Qt6WebSockets_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6WebSockets")\n\
+set(Qt6WebChannel_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6WebChannel")\n\
+set(Qt6Sensors_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Sensors")\n\
+set(Qt6Svg_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Svg")\n\
+set(Qt6Charts_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Charts")\n\
+set(Qt63D_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt63D")\n\
+set(Qt6Positioning_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Positioning")\n\
+set(Qt6Location_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Location")\n\
+set(Qt6Connectivity_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Connectivity")\n\
+set(Qt6NetworkAuth_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6NetworkAuth")\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# Protobuf / gRPC\n\
+# ---------------------------------------------------------------------------\n\
+set(Protobuf_PROTOC_EXECUTABLE "${AGL_HOST_TOOLS}/usr/bin/protoc")\n\
+set(gRPC_CPP_PLUGIN_EXECUTABLE "${AGL_HOST_TOOLS}/usr/bin/grpc_cpp_plugin")\n\
+\n\
+# ---------------------------------------------------------------------------\n\
+# pkg-config\n\
+# ---------------------------------------------------------------------------\n\
+set(ENV{PKG_CONFIG_PATH} "${AGL_SYSROOT}/usr/lib/pkgconfig:${AGL_SYSROOT}/usr/share/pkgconfig")\n\
+set(ENV{PKG_CONFIG_SYSROOT_DIR} "${AGL_SYSROOT}")\n\
+' > /opt/agl-toolchain.cmake
+
+# ============================================================================
+# SCRIPT HELPER PARA BUILD DE PROJECTOS QT6
+# ============================================================================
+
+RUN printf '#!/bin/bash\n\
+# ===========================================================================\n\
+# qt6-build.sh - Helper para compilar projectos Qt6\n\
+# Uso: qt6-build.sh [directório-do-projecto] [build-type]\n\
+# ===========================================================================\n\
+\n\
+source /opt/agl-sdk/environment-setup-aarch64-agl-linux\n\
+\n\
+PROJECT_DIR="${1:-.}"\n\
+BUILD_TYPE="${2:-Release}"\n\
+BUILD_DIR="${PROJECT_DIR}/build-arm"\n\
+\n\
+echo "========================================"\n\
+echo "Cross-compiling Qt6 project for ARM"\n\
+echo "Project: ${PROJECT_DIR}"\n\
+echo "Build type: ${BUILD_TYPE}"\n\
+echo "Output: ${BUILD_DIR}"\n\
+echo "========================================"\n\
+echo ""\n\
+\n\
+mkdir -p "${BUILD_DIR}"\n\
+cd "${BUILD_DIR}"\n\
+\n\
+cmake "${PROJECT_DIR}" \\\n\
+    -DCMAKE_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake \\\n\
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \\\n\
+    -GNinja\n\
+\n\
+ninja -j$(nproc)\n\
+\n\
+echo ""\n\
+echo "========================================"\n\
+echo "Build completo!"\n\
+echo "Binários em: ${BUILD_DIR}"\n\
+echo "========================================"\n\
+' > /usr/local/bin/qt6-build.sh && \
+    chmod +x /usr/local/bin/qt6-build.sh
+
+# ============================================================================
+# SCRIPT HELPER PARA GERAR STUBS PROTOBUF/GRPC
+# ============================================================================
+
+RUN printf '#!/bin/bash\n\
+# ===========================================================================\n\
+# proto-gen.sh - Gerar stubs C++ para Protobuf/gRPC\n\
+# Uso: proto-gen.sh <proto-file> [output-dir]\n\
+# ===========================================================================\n\
+\n\
+source /opt/agl-sdk/environment-setup-aarch64-agl-linux\n\
+\n\
+PROTO_FILE="$1"\n\
+OUTPUT_DIR="${2:-./generated}"\n\
+\n\
+if [ -z "$PROTO_FILE" ]; then\n\
+    echo "Uso: proto-gen.sh <proto-file> [output-dir]"\n\
+    exit 1\n\
+fi\n\
+\n\
+mkdir -p "${OUTPUT_DIR}"\n\
+\n\
+echo "Generating C++ stubs from: ${PROTO_FILE}"\n\
+echo "Output directory: ${OUTPUT_DIR}"\n\
+echo ""\n\
+\n\
+# Protobuf stubs\n\
+protoc -I$(dirname ${PROTO_FILE}) \\\n\
+    --cpp_out=${OUTPUT_DIR} \\\n\
+    ${PROTO_FILE}\n\
+\n\
+# gRPC stubs\n\
+protoc -I$(dirname ${PROTO_FILE}) \\\n\
+    --grpc_out=${OUTPUT_DIR} \\\n\
+    --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \\\n\
+    ${PROTO_FILE}\n\
+\n\
+echo ""\n\
+echo "Generated files:"\n\
+ls -la ${OUTPUT_DIR}/\n\
+' > /usr/local/bin/proto-gen.sh && \
+    chmod +x /usr/local/bin/proto-gen.sh
+
+# ============================================================================
+# VERIFICAÇÃO DA INSTALAÇÃO
+# ============================================================================
+
+RUN /usr/local/bin/agl-env bash -c '\
+    echo "===========================================================" && \
+    echo "AGL SDK ${SDK_VERSION} - Verification" && \
+    echo "===========================================================" && \
+    echo "" && \
+    echo ">>> Toolchain:" && \
+    echo "CC:  $CC" && \
+    echo "CXX: $CXX" && \
+    $CC --version | head -1 && \
+    echo "" && \
+    echo ">>> Protobuf:" && \
+    which protoc && protoc --version && \
+    echo "" && \
+    echo ">>> gRPC:" && \
+    which grpc_cpp_plugin && \
+    echo "" && \
+    echo ">>> Qt6 Libraries:" && \
+    ls /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/libQt6Core.so* 2>/dev/null && \
+    echo "" && \
+    echo ">>> Qt6 Modules disponíveis:" && \
+    ls /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/ 2>/dev/null | grep -i "^Qt6" | head -15 && \
+    echo "" && \
+    echo "===========================================================" && \
+    echo "SDK pronto para cross-compilation!" && \
+    echo "==========================================================="'
+
+# ============================================================================
+# ENVIRONMENT VARIABLES
+# ============================================================================
+
+ENV AGL_SDK_PATH=${SDK_INSTALL_DIR}
+ENV AGL_SDK_VERSION=${SDK_VERSION}
+ENV AGL_ENV_SCRIPT=${SDK_INSTALL_DIR}/environment-setup-aarch64-agl-linux
+ENV AGL_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
+ENV QT_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/agl-env"]
+CMD ["bash"]

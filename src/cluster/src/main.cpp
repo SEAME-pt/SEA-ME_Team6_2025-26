@@ -28,7 +28,7 @@ void ipcConnections(QQmlApplicationEngine *engine)
 
     QObject::connect(
         readerC,
-        &readerC::speedReceived,
+        &Reader::speedReceived,
         speedProvider,
         &SpeedProvider::setSpeed);
 
@@ -38,7 +38,7 @@ void ipcConnections(QQmlApplicationEngine *engine)
 
     QObject::connect(
         readerC,
-        &readerC::temperatureReceived,
+        &Reader::temperatureReceived,
         temperatureProvider,
         &TemperatureProvider::setTemperature);
 

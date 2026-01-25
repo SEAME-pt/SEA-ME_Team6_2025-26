@@ -1,0 +1,107 @@
+FROM souzitaaaa/team6-agl-sdk:bookworm
+
+WORKDIR /build
+
+# Build Qt 6.7.3 host tools (moc, rcc, qmlcachegen, etc.)
+RUN set -e && \
+    mkdir -p qt6-host-build qt6-host && \
+    cd qt6-host-build && \
+    \
+    echo "=== Downloading Qt 6.7.3 submodules ===" && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtbase-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
+    \
+    echo "=== Extracting Qt sources ===" && \
+    tar xf qtbase-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtdeclarative-everywhere-src-6.7.3.tar.xz && \
+    \
+    echo "=== Building qtbase for host ===" && \
+    cd qtbase-everywhere-src-6.7.3 && \
+    cmake -GNinja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/build/qt6-host \
+    -DQT_BUILD_EXAMPLES=OFF \
+    -DQT_BUILD_TESTS=OFF && \
+    cmake --build . --parallel 2 && \
+    cmake --install . && \
+    \
+    echo "=== Building qtshadertools for host ===" && \
+    cd ../qtshadertools-everywhere-src-6.7.3 && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
+    cmake --install . && \
+    \
+    echo "=== Building qtdeclarative for host ===" && \
+    cd ../qtdeclarative-everywhere-src-6.7.3 && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
+    cmake --install . && \
+    \
+    echo "=== Cleaning up build artifacts ===" && \
+    cd /build && \
+    rm -rf qt6-host-build
+
+# Now build Qt for ARM using AGL SDK
+RUN set -e && \
+    mkdir -p qt6-arm-build && \
+    cd qt6-arm-build && \
+    \
+    echo "=== Downloading Qt 6.7.3 for ARM cross-compilation ===" && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtbase-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/6.7.3/submodules/qtdeclarative-everywhere-src-6.7.3.tar.xz && \
+    \
+    echo "=== Extracting Qt sources ===" && \
+    tar xf qtbase-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtshadertools-everywhere-src-6.7.3.tar.xz && \
+    tar xf qtdeclarative-everywhere-src-6.7.3.tar.xz && \
+    \
+    echo "=== Building qtbase for ARM ===" && \
+    cd qtbase-everywhere-src-6.7.3 && \
+    bash -c 'source /opt/agl-sdk/environment-setup-aarch64-agl-linux && \
+    /build/qt6-host/bin/qt-cmake \
+    -DCMAKE_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/build/sysroot/usr/local/qt6 \
+    -DQT_HOST_PATH=/build/qt6-host \
+    -DQT_BUILD_EXAMPLES=OFF \
+    -DQT_BUILD_TESTS=OFF . && \
+    cmake --build . --parallel 2 && \
+    cmake --install .' && \
+    \
+    echo "=== Building qtshadertools for ARM ===" && \
+    cd ../qtshadertools-everywhere-src-6.7.3 && \
+    bash -c 'source /opt/agl-sdk/environment-setup-aarch64-agl-linux && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
+    cmake --install .' && \
+    \
+    echo "=== Building qtdeclarative for ARM ===" && \
+    cd ../qtdeclarative-everywhere-src-6.7.3 && \
+    bash -c 'source /opt/agl-sdk/environment-setup-aarch64-agl-linux && \
+    /build/qt6-host/bin/qt-configure-module . && \
+    cmake --build . --parallel 2 && \
+    cmake --install .' && \
+    \
+    echo "=== Cleaning up ===" && \
+    cd /build && \
+    rm -rf qt6-arm-build
+
+# Create sysroot tar for distribution
+RUN tar -czf /build/qt-pi-binaries.tar.gz -C /build/sysroot/usr/local qt6/
+
+# Set environment for downstream images
+ENV QT_HOST_PATH=/build/qt6-host
+ENV PATH="${QT_HOST_PATH}/bin:${PATH}"
+
+# Verify installation
+RUN echo "=== Qt 6.7.3 Host Tools ===" && \
+    ls -la /build/qt6-host/bin/ && \
+    echo "" && \
+    echo "=== Qt Version ===" && \
+    /build/qt6-host/bin/qmake --version && \
+    echo "" && \
+    echo "=== ARM Qt Installation ===" && \
+    find /build/sysroot/usr/local/qt6 -name "libQt6*.so*" | head -10
