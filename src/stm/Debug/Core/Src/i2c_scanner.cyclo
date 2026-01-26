@@ -1,0 +1,2 @@
+../Core/Src/i2c_scanner.c:20:6:I2C_Scan	24
+../Core/Src/i2c_scanner.c:94:6:I2C_ScanAllBuses	1

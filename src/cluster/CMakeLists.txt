@@ -20,6 +20,9 @@ add_executable(HelloQt6Qml
     src/backend/timeprovider.cpp
     src/backend/systemstatus.cpp
     src/backend/speedprovider.cpp
+    src/backend/temperatureprovider.cpp
+    src/backend/ipcclient.cpp
+    src/backend/reader.cpp
     qml.qrc
 )
 

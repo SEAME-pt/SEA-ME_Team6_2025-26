@@ -10,7 +10,17 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
-    Rectangle {
+
+    Text {
+        text: "Speed: " + speedProvider.currSpeed + "\n" +
+              "Temperature: " + temperatureProvider.currTemperature
+        font.pixelSize: 20
+        color: "white"
+        anchors.centerIn: parent
+    }
+
+
+    /*Rectangle {
         anchors.centerIn: parent
         width: 60
         height: 60
@@ -28,5 +38,5 @@ Item {
         shadowOpacity: 0.8
         shadowVerticalOffset: 6
         shadowBlur: 1
-    }
+    }*/
 }

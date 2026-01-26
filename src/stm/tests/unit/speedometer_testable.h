@@ -1,0 +1,29 @@
+/**
+  * Header testável do speedometer
+  */
+
+#ifndef SPEEDOMETER_TESTABLE_H_
+#define SPEEDOMETER_TESTABLE_H_
+
+#include <stdio.h>
+#include <stdint.h>
+#include "main.h"
+
+// Speedometer constants
+#define PI 3.14159265
+#define WHEEL_DIAMETER 0.06675f  // Em metros (66.75mm)
+#define ENCODER_HOLES 18         // Furos no disco do encoder
+
+// External variables
+extern volatile uint32_t pulse_count;
+extern float current_speed_kmh;
+extern float current_rpm;
+
+// Function prototypes
+void Speedometer_Init(void);
+void Speedometer_CountPulse(void);
+void Speedometer_CalculateSpeed(void);
+float Speedometer_GetSpeed(void);
+float Speedometer_GetRPM(void);
+
+#endif /* SPEEDOMETER_TESTABLE_H_ */

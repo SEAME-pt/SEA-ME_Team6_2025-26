@@ -1,0 +1,5 @@
+../Core/Src/veml6030.c:43:26:VEML6030_WriteReg	1
+../Core/Src/veml6030.c:58:26:VEML6030_ReadReg	2
+../Core/Src/veml6030.c:76:19:VEML6030_Init	3
+../Core/Src/veml6030.c:110:19:VEML6030_ReadALS	2
+../Core/Src/veml6030.c:135:19:VEML6030_ReadWhite	1

@@ -15,15 +15,11 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: priority
+  - type: input
+    id: estimate
     attributes:
-      label: Priority
-      options:
-        - P0 (Critical)
-        - P1 (High)
-        - P2 (Medium)
-        - P3 (Low)
+      label: Estimate
+      placeholder: "Estimate"
     validations:
       required: true
 

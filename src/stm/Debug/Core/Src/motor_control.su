@@ -1,0 +1,9 @@
+../Core/Src/motor_control.c:29:26:Motor_SendCommand	32	static
+../Core/Src/motor_control.c:51:26:Motor_SendSimpleCommand	32	static
+../Core/Src/motor_control.c:73:19:Motor_Init	16	static
+../Core/Src/motor_control.c:90:19:Motor_Stop	16	static
+../Core/Src/motor_control.c:111:19:Motor_Forward	24	static
+../Core/Src/motor_control.c:138:19:Motor_Backward	24	static
+../Core/Src/motor_control.c:167:19:Motor_SetSpeed	16	static
+../Core/Src/motor_control.c:182:19:Motor_SetStandby	16	static
+../Core/Src/motor_control.c:198:6:Motor_HardwareTest	24	static
