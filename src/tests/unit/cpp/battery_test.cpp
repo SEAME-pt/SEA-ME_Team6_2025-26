@@ -2,11 +2,11 @@
 #include <linux/can.h>
 #include <cstdint>
 
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
-#include "../../kuksa_RPi5/inc/handlers.hpp"
-#include "../../kuksa_RPi5/inc/signals.hpp"
-#include "../../kuksa_RPi5/inc/can_encode.hpp"
-#include "../../kuksa_RPi5/inc/can_id.h"
+#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/signals.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_encode.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
 
 static const PublishCall* findCall(const FakeKuksaClient& k, PublishCall::Type t, const std::string& path) {
   for (size_t i = 0; i < k.calls.size(); ++i)

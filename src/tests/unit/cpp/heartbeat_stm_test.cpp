@@ -2,10 +2,10 @@
 #include <linux/can.h>
 #include <cstdint>
 
-#include "../../kuksa_RPi5/inc/interface_kuksa_client.hpp"
-#include "../../kuksa_RPi5/inc/handlers.hpp"
-#include "../../kuksa_RPi5/inc/signals.hpp"
-#include "../../kuksa_RPi5/inc/can_id.h"
+#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/handlers.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/signals.hpp"
+#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
 
 static const PublishCall* findInt32(const FakeKuksaClient& k, const std::string& path) {
   for (size_t i = 0; i < k.calls.size(); ++i) {
