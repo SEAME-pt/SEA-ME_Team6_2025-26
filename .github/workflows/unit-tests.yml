@@ -2,8 +2,11 @@ name: unit-tests
 
 on:
   pull_request:
-    branches:
-      - development
+    branches: [development]
+
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   tests:
@@ -15,47 +18,40 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Build test image
-        run: |
-          docker build -t seame-tests -f src/tests/Dockerfile .
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Configure + Build + Run tests (ctest)
+      - name: Pull test image
+        run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
+
+      - name: Configure + Build + Run tests
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
             -w /work/src/tests \
-            seame-tests \
+            ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
               rm -rf build && \
               cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
               cmake --build build && \
               ctest --test-dir build --output-on-failure
             '
-      - name: Generate coverage HTML (lcov + genhtml)
+
+      # OPTIONAL coverage report (HTML)
+      - name: Generate coverage HTML
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
             -w /work/src/tests \
-            seame-tests \
+            ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
-            # capture all coverage from build dir
-            lcov --directory build --capture --output-file coverage.info && \
+              rm -rf coverage_html coverage.info coverage_filtered.info && \
+              lcov --directory build --capture --output-file coverage.info && \
+              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" --output-file coverage_filtered.info && \
+              genhtml coverage_filtered.info --output-directory coverage_html
+            '
 
-
-            # filter out noise: system headers, dependencies, and tests themselves
-            lcov --remove coverage.info \
-            "/usr/*" \
-            "*/_deps/*" \
-            "*/src/tests/*" \
-            --output-file coverage_filtered.info && \
-
-
-            # generate HTML report
-            genhtml coverage_filtered.info --output-directory coverage_html
-          '
-
-
-      - name: Upload coverage report (HTML)
+      - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage_html
