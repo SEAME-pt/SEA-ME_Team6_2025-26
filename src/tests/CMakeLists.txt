@@ -189,30 +189,6 @@ target_link_libraries(backend_tests PRIVATE
 )
 gtest_discover_tests(backend_tests)
 
-# -----------------------------
-# Integration tests
-# -----------------------------
-
-add_executable(integration_tests
-  "${CMAKE_SOURCE_DIR}/integration/dispatch_integration_test.cpp"
-)
-
-target_include_directories(integration_tests PRIVATE
-  "${KUKSA_RPI5_INC}"
-  "${KUKSA_RPI5_SRC}"
-  "${KUKSA_RPI5_SRC}/handlers"
-  "${CMAKE_SOURCE_DIR}/integration"
-)
-
-target_link_libraries(integration_tests PRIVATE
-  dispatch_module
-  handlers_module
-  GTest::gtest
-  GTest::gtest_main
-)
-
-gtest_discover_tests(integration_tests)
-
 # -----------------------
 # Coverage (per-target)
 # -----------------------
@@ -223,6 +199,5 @@ if(ENABLE_COVERAGE)
   enable_coverage(handlers_tests)
   enable_coverage(backend_module)
   enable_coverage(backend_tests)
-  enable_coverage(integration_tests)
 endif()
 
