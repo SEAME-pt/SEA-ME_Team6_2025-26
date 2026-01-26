@@ -6,6 +6,9 @@ HOST_ROOT := $(abspath $(CURDIR)/..)
 CONTAINER_ROOT := /work
 CONTAINER_TESTS := /work/tests
 
+docker-build:
+	docker build -t $(IMAGE) -f ./Dockerfile .
+
 test: 
 	@./scripts/run_tests_docker.sh
 
