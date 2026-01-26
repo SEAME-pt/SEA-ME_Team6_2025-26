@@ -3,7 +3,7 @@ name: publish-qt-image
 on:
   push:
     paths:
-      - 'src/setup/'
+      - 'src/setup/*'
       - '.github/workflows/test-publish.yml'
   workflow_dispatch:
 
