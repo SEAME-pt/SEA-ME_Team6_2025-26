@@ -1,0 +1,62 @@
+name: unit-tests
+
+on:
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build test image
+        run: |
+          docker build -t seame-tests -f src/tests/Dockerfile .
+
+      - name: Configure + Build + Run tests (ctest)
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            -w /work/src/tests \
+            seame-tests \
+            bash -lc '
+              rm -rf build && \
+              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
+              cmake --build build && \
+              ctest --test-dir build --output-on-failure
+            '
+      - name: Generate coverage HTML (lcov + genhtml)
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            -w /work/src/tests \
+            seame-tests \
+            bash -lc '
+            # capture all coverage from build dir
+            lcov --directory build --capture --output-file coverage.info && \
+
+
+            # filter out noise: system headers, dependencies, and tests themselves
+            lcov --remove coverage.info \
+            "/usr/*" \
+            "*/_deps/*" \
+            "*/src/tests/*" \
+            --output-file coverage_filtered.info && \
+
+
+            # generate HTML report
+            genhtml coverage_filtered.info --output-directory coverage_html
+          '
+
+
+      - name: Upload coverage report (HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_html
+          path: src/tests/coverage_html
