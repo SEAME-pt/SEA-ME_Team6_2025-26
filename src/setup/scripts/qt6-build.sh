@@ -24,6 +24,7 @@ cd "${BUILD_DIR}"
 cmake "${PROJECT_DIR}" \
     -DCMAKE_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+    --debug-find-pkg=Qt6CoreTools \
     -GNinja
 
 ninja -j$(nproc)

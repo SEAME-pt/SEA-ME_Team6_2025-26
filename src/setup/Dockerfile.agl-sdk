@@ -3,7 +3,7 @@
 # Build time: ~5 min (apenas instalação)
 #
 # Uso:
-#   docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
+#   DOCKER_BUILDKIT=1 docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
 #
 # Requisito: O ficheiro SDK deve estar no mesmo directório:
 #   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
@@ -15,12 +15,14 @@ ARG SDK_INSTALLER=poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspb
 ARG SDK_INSTALL_DIR=/opt/agl-sdk
 
 # ============================================================================
-# INSTALAÇÃO DO SDK
+# INSTALAÇÃO DO SDK (using bind mount to avoid corruption)
 # ============================================================================
 
-COPY ${SDK_INSTALLER} /tmp/sdk-installer.sh
-
-RUN chmod +x /tmp/sdk-installer.sh && \
+RUN --mount=type=bind,source=${SDK_INSTALLER},target=/mnt/sdk-installer.sh \
+    echo "Copying SDK installer from mount..." && \
+    cp /mnt/sdk-installer.sh /tmp/sdk-installer.sh && \
+    echo "Installing SDK..." && \
+    chmod +x /tmp/sdk-installer.sh && \
     /tmp/sdk-installer.sh -y -d ${SDK_INSTALL_DIR} && \
     rm /tmp/sdk-installer.sh
 

@@ -48,6 +48,7 @@ set(QT_HOST_PATH_CMAKE_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake")
 # Qt6 módulos principais
 set(Qt6_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6")
 set(Qt6Core_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Core")
+set(Qt6CoreTools_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Core")
 set(Qt6Gui_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Gui")
 set(Qt6Widgets_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Widgets")
 set(Qt6Qml_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Qml")
