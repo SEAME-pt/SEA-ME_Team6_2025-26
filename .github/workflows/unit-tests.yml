@@ -47,7 +47,7 @@ jobs:
             bash -lc '
               rm -rf coverage_html coverage.info coverage_filtered.info && \
               lcov --directory build --capture --output-file coverage.info && \
-              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" --output-file coverage_filtered.info && \
+              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" --output-file coverage_filtered.info && \
               genhtml coverage_filtered.info --output-directory coverage_html
             '
 
