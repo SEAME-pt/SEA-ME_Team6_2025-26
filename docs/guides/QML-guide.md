@@ -512,3 +512,9 @@ Text {
 - https://doc.qt.io/qt-6/qml-qtquick-layouts-rowlayout.html
 - https://doc.qt.io/qt-6/qml-qtquick-layouts-columnlayout.html
 - https://doc.qt.io/qt-6/qml-qtquick-text.html
+
+---
+
+> **Document Version:** 1.0  
+  **Last Updated:** 12th November 2025  
+  **Contributor:** souzitaaaa

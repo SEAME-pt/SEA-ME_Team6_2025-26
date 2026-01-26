@@ -1,0 +1,5 @@
+../Core/Src/speedometer.c:30:6:Speedometer_Init	8	static
+../Core/Src/speedometer.c:46:6:Speedometer_CountPulse	16	static
+../Core/Src/speedometer.c:63:6:Speedometer_CalculateSpeed	24	static
+../Core/Src/speedometer.c:83:7:Speedometer_GetSpeed	4	static
+../Core/Src/speedometer.c:92:7:Speedometer_GetRPM	4	static

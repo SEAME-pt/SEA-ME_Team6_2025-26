@@ -1,0 +1,26 @@
+I have a C++ code file. Please analyze it and generate structured documentation for each function with the following:
+
+1. Brief description
+2. Parameters (name, type, description)
+3. Return value (type, description)
+4. Signals emitted (if Qt code)
+
+Format rules:
+- Use @brief:, @param:, @return:, and @signals: with a colon followed by the description.
+- Parameters must include name, type, and description.
+- Return must include type and description.
+- Signals must show the name and when it is emitted.
+- Keep the formatting consistent, like this example:
+
+/**
+ * @brief: Brief description of the function.
+ *
+ * @param paramName: (Type) Description of the parameter.
+ * @return: ReturnType Description of the return value.
+ * @signals: signalName() Description of when the signal is emitted (if applicable).
+ */
+
+Code example:
+```cpp
+
+```

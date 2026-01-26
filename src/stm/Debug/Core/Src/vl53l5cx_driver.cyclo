@@ -1,0 +1,10 @@
+../Core/Src/vl53l5cx_driver.c:22:19:VL53L5CX_Init	9
+../Core/Src/vl53l5cx_driver.c:98:19:VL53L5CX_ConfigureInterrupt	1
+../Core/Src/vl53l5cx_driver.c:110:19:VL53L5CX_StartRanging	3
+../Core/Src/vl53l5cx_driver.c:133:19:VL53L5CX_StopRanging	3
+../Core/Src/vl53l5cx_driver.c:156:19:VL53L5CX_GetDataReady	3
+../Core/Src/vl53l5cx_driver.c:177:19:VL53L5CX_GetResults	3
+../Core/Src/vl53l5cx_driver.c:199:19:VL53L5CX_ReadDistanceData4x4	3
+../Core/Src/vl53l5cx_driver.c:229:19:VL53L5CX_ReadDistance	3
+../Core/Src/vl53l5cx_driver.c:257:19:VL53L5CX_ClearInterrupt	1
+../Core/Src/vl53l5cx_driver.c:269:19:VL53L5CX_TestSensor	22

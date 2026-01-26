@@ -53,7 +53,7 @@ Item {
     // Filled Arc
     Shape {
         id: fillArc
-        visible: false
+        visible: true
         anchors.fill: parent
         antialiasing: true
         layer.enabled: true
@@ -78,7 +78,7 @@ Item {
         }
     }
 
-    MultiEffect {
+    /*MultiEffect {
         source: fillArc
         anchors.fill: fillArc
         shadowEnabled: true
@@ -87,7 +87,7 @@ Item {
             blurEnabled: true
             blurMax: 8
             blur: 1.0
-    }
+    }*/
 
 
     // Value label

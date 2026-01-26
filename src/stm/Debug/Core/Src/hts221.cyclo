@@ -1,0 +1,6 @@
+../Core/Src/hts221.c:16:26:HTS221_WriteReg	1
+../Core/Src/hts221.c:21:26:HTS221_ReadReg	1
+../Core/Src/hts221.c:26:26:HTS221_ReadRegMulti	1
+../Core/Src/hts221.c:34:19:HTS221_Init	3
+../Core/Src/hts221.c:92:19:HTS221_ReadHumidity	4
+../Core/Src/hts221.c:116:19:HTS221_ReadTemperature	2
