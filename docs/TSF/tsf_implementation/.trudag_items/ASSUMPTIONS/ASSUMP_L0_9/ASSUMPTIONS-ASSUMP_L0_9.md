@@ -4,7 +4,8 @@ header: 'Assumption: ThreadX should be used on the Microcontroller (STM32) as a.
 level: '1.9'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_9/EXPECTATIONS-EXPECT_L0_9.md
+- id: EXPECT_L0_9
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_9/EXPECTATIONS-EXPECT_L0_9.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-    - STM32
-    - ThreadX
-    - ST-LINK
-text: The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK
-  or JTAG) before ThreadX firmware verification begins.
-review_status: accepted
+      - "STM32"
+      - "ThreadX"
+      - "ST-LINK"
+text: 'The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK
+  or JTAG) before ThreadX firmware verification begins.'
 ---
 The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK or JTAG) before ThreadX firmware verification begins.
 

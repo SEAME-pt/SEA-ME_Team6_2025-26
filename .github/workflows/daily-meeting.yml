@@ -1,8 +1,8 @@
 name: Build Daily Doc
 
-on: []
- # issues:
-  #  types: [opened, edited, labeled, reopened]
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
 
 permissions:
   issues: write

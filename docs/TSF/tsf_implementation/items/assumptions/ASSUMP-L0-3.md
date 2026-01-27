@@ -4,7 +4,8 @@ header: 'Assumption: Target platform and drivers for software integration'
 level: '1.3'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-3.md
+- id: EXPECT-L0-3
+  path: ../expectations/EXPECT-L0-3.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,16 +14,15 @@ evidence:
   type: validate_linux_environment
   configuration:
     required_tools:
-    - Ubuntu
-    - Linux
-    - kernel
-    - driver
+      - "Ubuntu"
+      - "Linux"
+      - "kernel"
+      - "driver"
 text: 'Assumption: The system and development tooling target a Linux-based integration
   environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules
   required for platform-specific components (e.g., motor controllers, Hailo AI Hat,
   camera interfaces) are available or will be provided by component owners prior to
   verification.'
-review_status: accepted
 ---
 Assumption: The system and development tooling target a Linux-based integration environment (Ubuntu 22.04 LTS or compatible). Device drivers and kernel modules required for platform-specific components (e.g., motor controllers, Hailo AI Hat, camera interfaces) are available or will be provided by component owners prior to verification.
 

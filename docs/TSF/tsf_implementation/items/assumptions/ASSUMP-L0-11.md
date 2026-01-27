@@ -4,7 +4,8 @@ header: 'Assumption: The Qt cluster UI shall **auto-start on boot** and display.
 level: '1.11'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-11.md
+- id: EXPECT-L0-11
+  path: ../expectations/EXPECT-L0-11.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,13 +14,12 @@ evidence:
   type: validate_linux_environment
   configuration:
     required_tools:
-    - systemd
-    - auto-start
-    - boot
-text: Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display
+      - "systemd"
+      - "auto-start"
+      - "boot"
+text: 'Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display
   receiver) use systemd-based init systems that support service auto-start configuration
-  before Qt application boot automation testing begins.
-review_status: accepted
+  before Qt application boot automation testing begins.'
 ---
 Both Raspberry Pi 5 (in-car Qt cluster host) and Raspberry Pi 4 (wireless display receiver) use systemd-based init systems that support service auto-start configuration before Qt application boot automation testing begins.
 

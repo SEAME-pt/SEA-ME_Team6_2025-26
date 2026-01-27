@@ -4,7 +4,8 @@ header: 'Assumption: The system shall be capable of launching a basic Qt...'
 level: '1.5'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-5.md
+- id: EXPECT-L0-5
+  path: ../expectations/EXPECT-L0-5.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,13 +14,12 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-    - Qt
-    - Qt6
-    - QtCore
-    - QtGui
-text: Qt runtime libraries and dependencies are installed and available on the target
-  platform before Qt application deployment begins.
-review_status: accepted
+      - "Qt"
+      - "Qt6"
+      - "QtCore"
+      - "QtGui"
+text: 'Qt runtime libraries and dependencies are installed and available on the target
+  platform before Qt application deployment begins.'
 ---
 Qt runtime libraries and dependencies are installed and available on the target platform before Qt application deployment begins.
 

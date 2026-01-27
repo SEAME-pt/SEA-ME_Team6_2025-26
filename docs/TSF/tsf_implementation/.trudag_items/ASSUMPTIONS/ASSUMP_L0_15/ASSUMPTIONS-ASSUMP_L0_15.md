@@ -4,7 +4,8 @@ header: 'Assumption: Agile'
 level: '1.15'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md
+- id: EXPECT_L0_15
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-    - Agile
-    - Scrum
-    - sprint
-text: GitHub Projects and Agile/Scrum methodology documentation are accessible for
-  self-training before agile process adoption begins.
-review_status: accepted
+      - "Agile"
+      - "Scrum"
+      - "sprint"
+text: 'GitHub Projects and Agile/Scrum methodology documentation are accessible for
+  self-training before agile process adoption begins.'
 ---
 GitHub Projects and Agile/Scrum methodology documentation are accessible for self-training before agile process adoption begins.
 
