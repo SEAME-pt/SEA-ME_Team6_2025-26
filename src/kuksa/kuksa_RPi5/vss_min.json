@@ -224,7 +224,7 @@
             "type": "branch",
             "children": {
               "PedalPosition": {
-                "datatype": "uint8",
+                "datatype": "uint32",
                 "description": "Accelerator pedal position as percent. 0 = Not depressed. 100 = Fully depressed.",
                 "max": 100,
                 "min": 0,

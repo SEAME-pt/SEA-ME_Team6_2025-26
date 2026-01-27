@@ -1,8 +1,8 @@
 name: Taskly (comment -> edit -> download)
 
-on:
-  issue_comment:
-    types: [created, edited]
+on: []
+  #issue_comment:
+  #  types: [created, edited]
 
 permissions:
   contents: read

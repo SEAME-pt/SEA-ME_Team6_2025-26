@@ -9,7 +9,12 @@ references:
   path: .github/workflows/daily-meeting.yml
 - type: file
   path: docs/guides/github-actions-guide.md
-score: 1.0
+score: 0.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: pending
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
-- name: Joao Jesus Silva
+
+**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
