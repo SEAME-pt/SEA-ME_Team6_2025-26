@@ -39,16 +39,26 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+# Add library search paths
+list(APPEND CMAKE_PREFIX_PATH
+    "${AGL_SYSROOT}/usr/lib/cmake"
+    "${AGL_HOST_TOOLS}/usr/lib/cmake"
+)
+
 # ---------------------------------------------------------------------------
 # Qt6 Configuration
 # ---------------------------------------------------------------------------
 set(QT_HOST_PATH "${AGL_HOST_TOOLS}/usr")
 set(QT_HOST_PATH_CMAKE_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake")
 
-# Qt6 módulos principais
+# Qt6 Host Tools (for cross-compilation)
+set(Qt6CoreTools_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake/Qt6CoreTools")
+set(Qt6GuiTools_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake/Qt6GuiTools")
+set(Qt6WidgetsTools_DIR "${AGL_HOST_TOOLS}/usr/lib/cmake/Qt6WidgetsTools")
+
+# Qt6 módulos principais (target)
 set(Qt6_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6")
 set(Qt6Core_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Core")
-set(Qt6CoreTools_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Core")
 set(Qt6Gui_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Gui")
 set(Qt6Widgets_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Widgets")
 set(Qt6Qml_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Qml")
@@ -72,10 +82,29 @@ set(Qt6Connectivity_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Connectivity")
 set(Qt6NetworkAuth_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6NetworkAuth")
 
 # ---------------------------------------------------------------------------
-# Protobuf / gRPC
+# gRPC / Protobuf Configuration
 # ---------------------------------------------------------------------------
+# Set library directories
+set(gRPC_DIR "${AGL_SYSROOT}/usr/lib/cmake/grpc")
+set(Protobuf_DIR "${AGL_SYSROOT}/usr/lib/cmake/protobuf")
+set(absl_DIR "${AGL_SYSROOT}/usr/lib/cmake/absl")
+
+# Protobuf / gRPC executables (host tools)
 set(Protobuf_PROTOC_EXECUTABLE "${AGL_HOST_TOOLS}/usr/bin/protoc")
 set(gRPC_CPP_PLUGIN_EXECUTABLE "${AGL_HOST_TOOLS}/usr/bin/grpc_cpp_plugin")
+
+# Direct library paths (fallback if CMake config doesn't work)
+set(GRPC_LIBRARIES
+    ${AGL_SYSROOT}/usr/lib/libgrpc++.so
+    ${AGL_SYSROOT}/usr/lib/libgrpc.so
+    ${AGL_SYSROOT}/usr/lib/libgpr.so
+    ${AGL_SYSROOT}/usr/lib/libprotobuf.so
+    ${AGL_SYSROOT}/usr/lib/libabsl_cord.so
+    ${AGL_SYSROOT}/usr/lib/libabsl_strings.so
+    ${AGL_SYSROOT}/usr/lib/libabsl_base.so
+    ${AGL_SYSROOT}/usr/lib/libabsl_synchronization.so
+    ${AGL_SYSROOT}/usr/lib/libabsl_time.so
+)
 
 # ---------------------------------------------------------------------------
 # pkg-config

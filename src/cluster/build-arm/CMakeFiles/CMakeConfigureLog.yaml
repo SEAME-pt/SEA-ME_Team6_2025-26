@@ -580,3 +580,76 @@ events:
         
       exitCode: 0
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/FindEGL.cmake:127 (check_cxx_source_compiles)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/FindGLESv2.cmake:13 (find_package)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake:33 (_qt_internal_find_third_party_dependencies)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake:53 (include)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/Qt6Config.cmake:179 (find_package)"
+      - "CMakeLists.txt:27 (find_package)"
+    checks:
+      - "Performing Test HAVE_EGL"
+    directories:
+      source: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-Cfb5Oc"
+      binary: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-Cfb5Oc"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now"
+      CMAKE_MODULE_PATH: "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/3rdparty/kwin"
+      CMAKE_SYSROOT: "/opt/agl-sdk/sysroots/aarch64-agl-linux"
+    buildResult:
+      variable: "HAVE_EGL"
+      cached: true
+      stdout: |
+        Change Dir: '/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-Cfb5Oc'
+        
+        Run Build Command(s): /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/ninja -v cmTC_2d1c9
+        [1/2] /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -DHAVE_EGL  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux  -std=gnu++17 -o CMakeFiles/cmTC_2d1c9.dir/src.cxx.o -c /workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-Cfb5Oc/src.cxx
+        [2/2] : && /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now CMakeFiles/cmTC_2d1c9.dir/src.cxx.o -o cmTC_2d1c9  /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/libEGL.so && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/FindGLESv2.cmake:27 (check_cxx_source_compiles)"
+      - "/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake:33 (_qt_internal_find_third_party_dependencies)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake:53 (include)"
+      - "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/Qt6Config.cmake:179 (find_package)"
+      - "CMakeLists.txt:27 (find_package)"
+    checks:
+      - "Performing Test HAVE_GLESv2"
+    directories:
+      source: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-KhIFsJ"
+      binary: "/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-KhIFsJ"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "--sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now"
+      CMAKE_MODULE_PATH: "/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6/3rdparty/kwin"
+      CMAKE_SYSROOT: "/opt/agl-sdk/sysroots/aarch64-agl-linux"
+    buildResult:
+      variable: "HAVE_GLESv2"
+      cached: true
+      stdout: |
+        Change Dir: '/workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-KhIFsJ'
+        
+        Run Build Command(s): /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/ninja -v cmTC_9325f
+        [1/2] /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -DHAVE_GLESv2  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux  -std=gnu++17 -o CMakeFiles/cmTC_9325f.dir/src.cxx.o -c /workspace/cluster/build-arm/CMakeFiles/CMakeScratch/TryCompile-KhIFsJ/src.cxx
+        [2/2] : && /opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++ --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux --sysroot=/opt/agl-sdk/sysroots/aarch64-agl-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed  -Wl,-z,relro,-z,now CMakeFiles/cmTC_9325f.dir/src.cxx.o -o cmTC_9325f  /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/libGLESv2.so  /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/libEGL.so && :
+        
+      exitCode: 0
+...

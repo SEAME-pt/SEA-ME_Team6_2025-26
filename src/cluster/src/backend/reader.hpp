@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 #include <grpcpp/grpcpp.h>
-#include "../../../kuksa/kuksa_RPi4_display/generated/kuksa/val/v2/val.grpc.pb.h"
-#include "../../../kuksa/kuksa_RPi4_display/generated/kuksa/val/v2/types.pb.h"
-#include "../../../kuksa/kuksa_RPi4_display/inc/can_id.h"
+#include "kuksa/val.grpc.pb.h"
+#include "kuksa/types.pb.h"
+#include "kuksa/can_id.h"
 
 using kuksa::val::v2::VAL;
 
@@ -29,7 +29,7 @@ signals:
     void temperatureReceived(double temperature);
 
 private:
-    std::string _server = "172.20.10.3:5555";
+    std::string _server = "10.21.220.191:5555";
 
     static std::unique_ptr<VAL::Stub> create_val_stub(const std::string &host_port);
     static std::string value_to_string(const kuksa::val::v2::Value &v);
