@@ -1,17 +1,11 @@
 ---
 id: ASSUMP_L0_12
-header: "Assumption: Wireless DCI Display Hardware Available"
-level: "1.12"
+header: 'Assumption: The DCI display fullscreen will be out of the car (wireless...'
+level: '1.12'
 normative: true
-references:
-  - type: file
-    path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_12/EXPECTATIONS-EXPECT_L0_12.md
-  - type: file
-    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_12/EVIDENCES-EVID_L0_12.md
 reviewers:
-  - name: Joao Jesus Silva
-    email: joao.silva@seame.pt
-review_status: accepted
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 evidence:
   type: validate_hardware_availability
   configuration:
@@ -19,9 +13,10 @@ evidence:
       - "Raspberry Pi 4"
       - "WiFi"
       - "VNC"
-      - "wireless display"
-text: |
-  Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC server software (Wayland/VNC stack) are available and functional before wireless display integration testing begins.
+      - "Wayland"
+text: 'Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC
+  server software (Wayland/VNC stack) are available and functional before wireless
+  display integration testing begins.'
 ---
 Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC server software (Wayland/VNC stack) are available and functional before wireless display integration testing begins.
 

@@ -80,26 +80,26 @@ EXPECT-L0-1 - "System architecture is defined and documented":
 **SOFTWARE**
 
 EXPECT-L0-3 - "Software Setup capable of running Qt applications":
-  - AGL guide - [agl-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md)
+  - AGL guide - [agl-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/AGL_Installation_Guide.md)
   
 **QT:**
 
 EXPECT-L0-7 - "QT Crosscompilation should be achieved":
-  - Crosscompilation guide - [crosscompiling-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cross-compiler)
+  - Crosscompilation guide - [crosscompiling-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/fix-qt-app-minor-changes/src/cross-compiler)
 
 EXPECT-L0-3 - "Software Setup capable of running Qt applications":
 EXPECT-L0-5 - "Launch basic Qt on built-in display":
-  - Cluster (Qt app) guide - [cluster-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+  - Cluster (Qt app) guide - [cluster-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/development/src/cluster)
 
 **CAN:** 
 
 EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
-- CAN guide - [can-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-overview.md)
+- CAN guide - [can-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/CAN-overview.md)
   
 **TSF** (Trustable software framework): 
 
 EXPECT-L0-14 - "TSF & Documentation":
-  - TSF guide - [tsf-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/WhatsTSF.md)
+  - TSF guide - [tsf-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/TSF/WhatsTSF.md)
 
 
 

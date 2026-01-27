@@ -4,7 +4,8 @@ header: 'Assumption: Introduce AI in the project'
 level: '1.17'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-17.md
+- id: EXPECT-L0-17
+  path: ../expectations/EXPECT-L0-17.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-    - Hailo Hat
-    - Raspberry Pi 5
-    - AI
-text: The Hailo AI Hat hardware is available, functional, and compatible with the
-  Raspberry Pi 5 before AI model deployment testing begins.
-review_status: accepted
+      - "Hailo Hat"
+      - "Raspberry Pi 5"
+      - "AI"
+text: 'The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry
+  Pi 5 before AI model deployment testing begins.'
 ---
 The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry Pi 5 before AI model deployment testing begins.
 

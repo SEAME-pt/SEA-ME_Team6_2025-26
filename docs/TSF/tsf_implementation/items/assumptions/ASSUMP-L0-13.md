@@ -4,7 +4,8 @@ header: 'Assumption: Project & GitHub setup'
 level: '1.13'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-13.md
+- id: EXPECT-L0-13
+  path: ../expectations/EXPECT-L0-13.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-    - GitHub
-    - repository
-    - permissions
-text: GitHub repository access and permissions are granted to all project team members
-  before project setup verification begins.
-review_status: accepted
+      - "GitHub"
+      - "repository"
+      - "permissions"
+text: 'GitHub repository access and permissions are granted to all project team members
+  before project setup verification begins.'
 ---
 GitHub repository access and permissions are granted to all project team members before project setup verification begins.
 

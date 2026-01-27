@@ -4,7 +4,8 @@ header: 'Assumption: Hardware Assembly'
 level: '1.2'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-2.md
+- id: EXPECT-L0-2
+  path: ../expectations/EXPECT-L0-2.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,16 +14,15 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-    - Expansion Board
-    - Raspberry Pi 5
-    - Raspberry Pi 4
-    - DC motors
-    - servo motor
-    - chassis
-text: The required hardware components (Expansion Board, Raspberry Pi 5, Raspberry
+      - "Expansion Board"
+      - "Raspberry Pi 5"
+      - "Raspberry Pi 4"
+      - "DC motors"
+      - "servo motor"
+      - "chassis"
+text: 'The required hardware components (Expansion Board, Raspberry Pi 5, Raspberry
   Pi 4, DC motors, servo motor, display interfaces, chassis) are procured and available
-  before hardware assembly activities begin.
-review_status: accepted
+  before hardware assembly activities begin.'
 ---
 The required hardware components (Expansion Board, Raspberry Pi 5, Raspberry Pi 4, DC motors, servo motor, display interfaces, chassis) are procured and available before hardware assembly activities begin.
 

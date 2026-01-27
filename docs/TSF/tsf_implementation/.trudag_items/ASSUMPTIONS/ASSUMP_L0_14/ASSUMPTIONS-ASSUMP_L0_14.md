@@ -4,7 +4,8 @@ header: 'Assumption: TSF & Documentation'
 level: '1.14'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_14/EXPECTATIONS-EXPECT_L0_14.md
+- id: EXPECT_L0_14
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_14/EXPECTATIONS-EXPECT_L0_14.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-    - TSF
-    - TruDAG
-    - Trustable
-text: The Trustable Software Framework (TSF) methodology documentation and reference
-  implementations are publicly accessible online before TSF implementation begins.
-review_status: accepted
+      - "TSF"
+      - "TruDAG"
+      - "Trustable"
+text: 'The Trustable Software Framework (TSF) methodology documentation and reference
+  implementations are publicly accessible online before TSF implementation begins.'
 ---
 The Trustable Software Framework (TSF) methodology documentation and reference implementations are publicly accessible online before TSF implementation begins.
 

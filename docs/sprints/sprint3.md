@@ -49,8 +49,6 @@
 EXPECT-L0-1 - "System architecture is defined and documented":
 EXPECT-L0-10 - "Implement new architecture.":
   - Validation of energy supply for Raspberry Pi 5
-  - ![Rasp energy validation sprint1](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint1.jpeg)
-  - ![Rasp energy validation sprint2](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg)
   - ![Rasp energy validation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg)
 
 **QT**
@@ -58,9 +56,8 @@ EXPECT-L0-10 - "Implement new architecture.":
 EXPECT-L0-6 - "The Qt GUI shall display static graphical elements":
   - Cluster updates
   - ![Atual state cluster](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint3.jpeg)
-  - ![Cluster mockup](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpeg)
+  - ![Cluster mockup](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-mockup-sprint3.jpe
   - ![Cluster study](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-study.jpeg)
-  - [UI Design README](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/ui_design/README.md)
 
   **CAN**
   

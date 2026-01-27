@@ -4,7 +4,8 @@ header: 'Assumption: Connect the Rasp5 to the STM 32 (bidirectional) using Can..
 level: '1.8'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md
+- id: EXPECT_L0_8
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,13 +14,12 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-    - CAN
-    - STM32
-    - MCP2515
-text: CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed
+      - "CAN"
+      - "STM32"
+      - "MCP2515"
+text: 'CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed
   and functional on both Raspberry Pi 5 and STM32 before CAN communication testing
-  begins.
-review_status: accepted
+  begins.'
 ---
 CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed and functional on both Raspberry Pi 5 and STM32 before CAN communication testing begins.
 

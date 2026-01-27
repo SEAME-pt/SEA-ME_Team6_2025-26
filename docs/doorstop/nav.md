@@ -1,6 +1,0 @@
-- [Compliance report](trustable_report_for_Software.md)
-- [Dashboard](dashboard.md)
-* [ASSERTIONS](ASSERTIONS.md)
-* [ASSUMPTIONS](ASSUMPTIONS.md)
-* [EVIDENCES](EVIDENCES.md)
-* [EXPECTATIONS](EXPECTATIONS.md)

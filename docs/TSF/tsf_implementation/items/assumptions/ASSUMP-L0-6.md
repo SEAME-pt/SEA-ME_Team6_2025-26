@@ -4,7 +4,8 @@ header: 'Assumption: The Qt GUI shall display static graphical elements such as.
 level: '1.6'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-6.md
+- id: EXPECT-L0-6
+  path: ../expectations/EXPECT-L0-6.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -13,12 +14,11 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-    - font
-    - icon
-    - TrueType
-text: Third-party font libraries and icon sets required by the Qt GUI are available
-  under compatible licenses before UI implementation begins.
-review_status: accepted
+      - "font"
+      - "icon"
+      - "TrueType"
+text: 'Third-party font libraries and icon sets required by the Qt GUI are available
+  under compatible licenses before UI implementation begins.'
 ---
 Third-party font libraries and icon sets required by the Qt GUI are available under compatible licenses before UI implementation begins.
 

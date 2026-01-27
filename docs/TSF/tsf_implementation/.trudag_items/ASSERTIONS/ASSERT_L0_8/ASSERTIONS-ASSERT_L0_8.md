@@ -1,8 +1,7 @@
 ---
 id: ASSERT_L0_8
 header: CAN messages exchanged
-text: The Raspberry Pi 5 successfully sends and receives CAN messages to and from
-  the STM32 microcontroller using the configured CAN interface.
+text: The Raspberry Pi 5 successfully sends and receives CAN messages to and from the STM32 microcontroller using the configured CAN interface.
 level: '1.8'
 normative: true
 references:
@@ -13,12 +12,4 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
-review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---
