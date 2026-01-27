@@ -1,3 +1,5 @@
+# Ignore team4examples folder
+team4examples/
 .env
 .DS_Store
 **/.DS_Store
@@ -26,3 +28,6 @@ HelloQt6Qml
 
 build/
 build
+
+# Chat exports
+chat-session-*.json

@@ -4,8 +4,7 @@ header: 'Assumption: Implement and test the changing from the old architecture..
 level: '1.10'
 normative: true
 references:
-- id: EXPECT-L0-10
-  path: ../expectations/EXPECT-L0-10.md
+- path: ../expectations/EXPECT-L0-10.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -14,12 +13,13 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-      - "Raspberry Pi 5"
-      - "Raspberry Pi 4"
-      - "STM32"
-      - "Hailo Hat"
-text: 'Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors,
-  sensors) are procured and available before system architecture implementation begins.'
+    - Raspberry Pi 5
+    - Raspberry Pi 4
+    - STM32
+    - Hailo Hat
+text: Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors,
+  sensors) are procured and available before system architecture implementation begins.
+review_status: accepted
 ---
 Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors, sensors) are procured and available before system architecture implementation begins.
 
