@@ -1,0 +1,36 @@
+name: OTA Build & Deploy/Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build kuksa_RPi5
+        run: |
+          cd src/kuksa/kuksa_RPi5
+          make
+          
+      - name: Package OTA
+        run: |
+          mkdir -p ota
+          cp src/kuksa/kuksa_RPi5/kuksa ota/
+          cp src/kuksa/kuksa_RPi5/vss_min.json ota/
+          tar -czf update.tar.gz ota/
+          
+      - name: Hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
+            
