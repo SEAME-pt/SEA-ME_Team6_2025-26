@@ -55,6 +55,12 @@ cd "$REPO_ROOT"
 [ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
 ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
 echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
+
+# Create symlink for .dotstop_extensions in tsf_implementation so trudag finds validators
+cd "$TSF_IMPL"
+[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
+ln -s "../../../.dotstop_extensions" ".dotstop_extensions"
+echo "✓ Created .dotstop_extensions symlink for validators"
 echo ""
 
 # Step 3: Create items in trudag DB
@@ -160,28 +166,29 @@ for md_file in trudag_items.rglob("*.md"):
     )
     
     # 2. Convert paths to be relative to repo root (trudag resolves from there)
-    # path: ../assertions/ASSERT-L0-1.md -> path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_1/ASSERTIONS-ASSERT_L0_1.md
+    # Handles references for all item types (assertions, assumptions, evidences, expectations)
     def convert_path(match):
         indent = match.group(1)
         category = match.group(2)
         item_id = match.group(3)
-        
+
         category_map = {
             'assertions': 'ASSERTIONS',
-            'assumptions': 'ASSUMPTIONS', 
+            'assumptions': 'ASSUMPTIONS',
             'evidences': 'EVIDENCES',
             'expectations': 'EXPECTATIONS'
         }
-        
+
         prefix = category_map.get(category, category.upper())
         item_id_underscore = item_id.replace('-', '_')
         # Path from repo root
         new_path = f"docs/TSF/tsf_implementation/.trudag_items/{prefix}/{item_id_underscore}/{prefix}-{item_id_underscore}.md"
-        
+
         return f"{indent}path: {new_path}"
-    
+
+    # Rewrite references for all item types, including quoted paths and YAML indentation
     content = re.sub(
-        r'(\s*)path:\s*\.\./([a-z]+)/([A-Z]+-[A-Z0-9]+-[0-9]+)\.md',
+        r'(\s*)path:\s*["\']?\.\./(assertions|assumptions|evidences|expectations)/([A-Z]+-[A-Z0-9]+-[0-9]+)\.md["\']?',
         convert_path,
         content
     )
@@ -301,6 +308,7 @@ echo ""
 # Step 5: Mark all items as reviewed (for SME assessment)
 echo "✅ Step 5: Marking items as reviewed..."
 reviewed=0
+failed_review=0
 
 # Use .trudag_items created by trudag in tsf_implementation
 TRUDAG_ITEMS_GENERATED="$TSF_IMPL/.trudag_items"
@@ -311,6 +319,7 @@ for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
     fi
     
     PREFIX=$(basename "$prefix_dir")
+    echo "  Marking $PREFIX items..."
     
     for item_dir in "$prefix_dir"/*; do
         if [ ! -d "$item_dir" ]; then
@@ -318,20 +327,30 @@ for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
         fi
         
         item_id=$(basename "$item_dir")
+        full_id="$PREFIX-$item_id"
         
-        if trudag manage set-item "$PREFIX-$item_id" 2>/dev/null; then
+        # Suppress trudag noise, mark item and its links as reviewed
+        if trudag manage set-item "$full_id" --links 2>/dev/null; then
+            echo "    ✓ $full_id"
             reviewed=$((reviewed + 1))
+        else
+            echo "    ✗ $full_id (failed)"
+            failed_review=$((failed_review + 1))
         fi
     done
 done
 
-echo "✓ Marked $reviewed items as reviewed"
+echo "✓ Marked $reviewed items as reviewed, $failed_review failed"
 echo ""
 
 # Step 6: Run lint
 echo "🔍 Step 6: Running trudag lint..."
 cd "$REPO_ROOT"
-if trudag manage lint; then
+# Run lint and capture output, filter warnings but show important ones
+lint_output=$(trudag manage lint 2>&1)
+lint_exit=$?
+echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
+if [ $lint_exit -eq 0 ]; then
     echo "✓ Lint passed!"
 else
     echo "✗ Lint failed - please review errors above"
@@ -339,11 +358,56 @@ else
 fi
 echo ""
 
+
 echo "=========================================="
 echo "✅ Setup complete!"
 echo "=========================================="
 echo ""
-echo "Next steps:"
-echo "  - Run 'trudag score' to calculate scores"
-echo "  - Check .trudag_items/ for generated files"
+
+# Step 7: Run trudag score
+echo "📊 Step 7: Running trudag score..."
+score_output=$(trudag score 2>&1)
+score_exit=$?
+
+# Show scores (filter noise but keep score lines)
+echo "$score_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format"
+
+if [ $score_exit -eq 0 ]; then
+    # Calculate and show summary
+    total_items=$(echo "$score_output" | grep "=" | wc -l)
+    perfect_score=$(echo "$score_output" | grep "= 1.0" | wc -l)
+    zero_score=$(echo "$score_output" | grep "= 0.0" | wc -l)
+    partial_score=$(echo "$score_output" | grep "= 0.5" | wc -l)
+    
+    echo ""
+    echo "📈 Score Summary:"
+    echo "   • Total items scored: $total_items"
+    echo "   • Perfect score (1.0): $perfect_score"
+    echo "   • Partial score (0.5): $partial_score"
+    echo "   • Zero score (0.0): $zero_score"
+    echo "✓ Score calculated!"
+else
+    echo "✗ Score failed - please review errors above"
+    exit 1
+fi
+echo ""
+
+# Step 8: Run trudag publish
+echo "🚀 Step 8: Running trudag publish..."
+publish_output=$(trudag publish 2>&1)
+publish_exit=$?
+
+# Filter noise from publish output
+echo "$publish_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:"
+
+if [ $publish_exit -eq 0 ]; then
+    echo ""
+    echo "📁 Published reports to:"
+    echo "   • $REPO_ROOT/docs/doorstop/"
+    ls -la "$REPO_ROOT/docs/doorstop/" 2>/dev/null | grep "\.md" | awk '{print "   • " $NF}'
+    echo "✓ Publish successful!"
+else
+    echo "✗ Publish failed - please review errors above"
+    exit 1
+fi
 echo ""

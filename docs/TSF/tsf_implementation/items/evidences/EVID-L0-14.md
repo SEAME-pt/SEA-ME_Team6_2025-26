@@ -6,7 +6,7 @@ level: '1.14'
 normative: true
 references:
 - type: file
-  path: docs/TSF/WhatsTSF.md
+  path: docs/TSF/tsf_implementation/TSF_docs/WhatsTSF.md
 score: 1.0
 ---
     
