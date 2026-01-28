@@ -1,78 +1,116 @@
 #include "reader.hpp"
 
-Reader::Reader(QObject *parent) : QObject(parent)
+// ============================================================================
+// ReaderWorker Implementation (runs in background thread)
+// ============================================================================
+
+ReaderWorker::ReaderWorker(const std::string &server)
+    : QObject(nullptr), _server(server), _shouldStop(false)
 {
-    qDebug() << "[Reader] Constructor called";
+    qDebug() << "[ReaderWorker] Created for server:" << QString::fromStdString(server);
+}
 
-    auto stub = create_val_stub(this->_server);
-    qDebug() << "[Reader] Connected to " << this->_server << "\n";
+ReaderWorker::~ReaderWorker()
+{
+    _shouldStop = true;
+    qDebug() << "[ReaderWorker] Destroyed";
+}
 
-    std::vector<std::string> paths;
-    paths.push_back("Vehicle.Speed");
-    paths.push_back("Vehicle.Exterior.AirTemperature");
-    paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
+void ReaderWorker::startReading()
+{
+    qDebug() << "[ReaderWorker] Starting to read from Kuksa...";
+    
+    try {
+        // Create stub
+        auto stub = create_val_stub(_server);
+        qDebug() << "[ReaderWorker] Connected to" << QString::fromStdString(_server);
+        emit connected();
 
-    kuksa::val::v2::SubscribeRequest req;
-    for (size_t i = 0; i < paths.size(); ++i)
-    {
-        req.add_signal_paths(paths[i]);
-    }
+        // Setup subscription request
+        std::vector<std::string> paths;
+        paths.push_back("Vehicle.Speed");
+        paths.push_back("Vehicle.Exterior.AirTemperature");
+        paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
 
-    grpc::ClientContext ctx;
-    kuksa::val::v2::SubscribeResponse resp;
-
-    std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse>> stream(
-        stub->Subscribe(&ctx, req));
-
-    while (stream->Read(&resp))
-    {
-        // Our proto: map<string, Datapoint> entries
-        const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint> &entries = resp.entries();
-
-        for (::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint>::const_iterator it = entries.begin();
-             it != entries.end(); ++it)
+        kuksa::val::v2::SubscribeRequest req;
+        for (size_t i = 0; i < paths.size(); ++i)
         {
-            const std::string &path = it->first;
-            const kuksa::val::v2::Datapoint &dp = it->second;
-            if (!dp.has_value())
+            req.add_signal_paths(paths[i]);
+        }
+
+        // Create context and stream
+        grpc::ClientContext ctx;
+        kuksa::val::v2::SubscribeResponse resp;
+
+        std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse>> stream(
+            stub->Subscribe(&ctx, req));
+
+        // Read messages in loop (this runs in background thread)
+        while (!_shouldStop && stream->Read(&resp))
+        {
+            // Process the response
+            const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint> &entries = resp.entries();
+
+            for (auto it = entries.begin(); it != entries.end(); ++it)
             {
-                qDebug() << "[READER] " << path.c_str() << " = <no value>\n";
-                continue;
-            }
-            if (path == "Vehicle.Speed")
-            {
-                emit speedReceived(dp.value().double_());
-            }
-            else if (path == "Vehicle.Exterior.AirTemperature")
-            {
-                emit temperatureReceived(dp.value().double_());
+                const std::string &path = it->first;
+                const kuksa::val::v2::Datapoint &dp = it->second;
+                
+                if (!dp.has_value())
+                {
+                    qDebug() << "[ReaderWorker]" << QString::fromStdString(path) << "= <no value>";
+                    continue;
+                }
+                
+                // Emit signals to main thread
+                if (path == "Vehicle.Speed")
+                {
+                    double speed = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Speed:" << speed;
+                    emit speedReceived(speed);
+                }
+                else if (path == "Vehicle.Exterior.AirTemperature")
+                {
+                    double temp = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Temperature:" << temp;
+                    emit temperatureReceived(temp);
+                }
             }
         }
 
-        qDebug() << "----\n";
-    }
-
-    grpc::Status st = stream->Finish();
-    if (!st.ok())
-    {
-        qDebug() << "[KUKSA] Subscribe stream ended with error: " << st.error_message().c_str() << "\n";
-    }
-    else
-    {
-        qDebug() << "[KUKSA] Subscribe stream ended cleanly.\n";
+        // Stream ended
+        grpc::Status st = stream->Finish();
+        if (!st.ok())
+        {
+            QString errorMsg = QString::fromStdString(st.error_message());
+            qDebug() << "[ReaderWorker] Subscribe stream ended with error:" << errorMsg;
+            emit connectionError(errorMsg);
+        }
+        else
+        {
+            qDebug() << "[ReaderWorker] Subscribe stream ended cleanly";
+        }
+        
+    } catch (const std::exception &e) {
+        QString errorMsg = QString("Exception: %1").arg(e.what());
+        qDebug() << "[ReaderWorker]" << errorMsg;
+        emit connectionError(errorMsg);
     }
 }
 
-// Create a stub object that binds to the channel
-// the stub is like the wrapper that allows to call remote methods
-std::unique_ptr<VAL::Stub> Reader::create_val_stub(const std::string &host_port)
+void ReaderWorker::stopReading()
+{
+    qDebug() << "[ReaderWorker] Stop requested";
+    _shouldStop = true;
+}
+
+std::unique_ptr<VAL::Stub> ReaderWorker::create_val_stub(const std::string &host_port)
 {
     auto channel = grpc::CreateChannel(host_port, grpc::InsecureChannelCredentials());
     return VAL::NewStub(channel);
 }
 
-// Helper to convert Value to string for printing
-std::string Reader::value_to_string(const kuksa::val::v2::Value &v)
+std::string ReaderWorker::value_to_string(const kuksa::val::v2::Value &v)
 {
     switch (v.typed_value_case())
     {
@@ -95,4 +133,57 @@ std::string Reader::value_to_string(const kuksa::val::v2::Value &v)
     default:
         return "<unset>";
     }
+}
+
+// ============================================================================
+// Reader Implementation (runs in main thread)
+// ============================================================================
+
+Reader::Reader(QObject *parent) : QObject(parent)
+{
+    qDebug() << "[Reader] Constructor called - setting up background thread";
+
+    // Create worker thread
+    _workerThread = new QThread(this);
+    _worker = new ReaderWorker(_server);
+    
+    // Move worker to thread
+    _worker->moveToThread(_workerThread);
+
+    // Connect signals from worker to this object (forwarding to main thread)
+    connect(_worker, &ReaderWorker::speedReceived, 
+            this, &Reader::speedReceived);
+    connect(_worker, &ReaderWorker::temperatureReceived, 
+            this, &Reader::temperatureReceived);
+    connect(_worker, &ReaderWorker::connectionError, 
+            this, &Reader::connectionError);
+    connect(_worker, &ReaderWorker::connected, 
+            this, &Reader::connected);
+
+    // Start reading when thread starts
+    connect(_workerThread, &QThread::started, 
+            _worker, &ReaderWorker::startReading);
+    
+    // Cleanup when thread finishes
+    connect(_workerThread, &QThread::finished, 
+            _worker, &QObject::deleteLater);
+
+    // Start the thread
+    _workerThread->start();
+    
+    qDebug() << "[Reader] Background thread started";
+}
+
+Reader::~Reader()
+{
+    qDebug() << "[Reader] Destructor called - stopping background thread";
+    
+    // Stop the worker
+    _worker->stopReading();
+    
+    // Stop thread and wait
+    _workerThread->quit();
+    _workerThread->wait(5000); // Wait up to 5 seconds
+    
+    qDebug() << "[Reader] Background thread stopped";
 }

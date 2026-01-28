@@ -1,0 +1,20 @@
+FROM team6-agl-sdk:latest
+
+# Install development tools
+RUN apt-get update && apt-get install -y \
+    qtcreator \
+    qt6-base-dev \
+    cmake \
+    ninja-build \
+    gdb \
+    git \
+    vim \
+    nano \
+    x11-apps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up environment
+ENV QT_QPA_PLATFORM=xcb
+ENV DISPLAY=:0
+
+WORKDIR /workspace
