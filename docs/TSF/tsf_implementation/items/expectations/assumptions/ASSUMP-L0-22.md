@@ -1,26 +1,28 @@
 ---
 id: ASSUMP-L0-22
-header: 'Assumption: STM32 ThreadX development environment ready'
-text: 'Assumption: The STM32 development environment with ThreadX RTOS is properly
-  configured, including the CAN peripheral setup and timing measurement capabilities.
-  The hardware is functioning correctly and power supply is stable for consistent
-  startup measurements.
-
-  '
-level: '1.22'
+header: 'Assumption: STM32 ThreadX safety-related startup capabilities'
+level: '1.1'
 normative: true
 references:
-- type: file
+- id: EXPECT-L0-22
+  type: file
   path: ../expectations/EXPECT-L0-22.md
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
 evidence:
-  type: validate_linux_environment
+  type: validate_stm32_threadx_startup
   configuration:
     components:
-    - STM32 development environment
-    - ThreadX RTOS
-    - CAN peripheral
-review_status: accepted
+      - "STM32 microcontroller"
+      - "ThreadX RTOS"
+      - "Safety-related startup code"
+      - "Critical component initialization"
+text: 'Assumption: The STM32 microcontroller and ThreadX RTOS are capable of performing a safety-related startup sequence, and the development team has the necessary expertise and tools to implement and verify this functionality.'
 ---
+Assumption: The STM32 microcontroller and ThreadX RTOS are capable of performing a safety-related startup sequence, and the development team has the necessary expertise and tools to implement and verify this functionality.
+
+Acceptance criteria / notes:
+- The STM32 hardware supports ThreadX RTOS with safety-critical features.
+- Development tools for STM32 and ThreadX are available and functional.
+- Team members have access to documentation and training for safety-related programming on STM32 with ThreadX.
+- If any capabilities are limited, a mitigation plan (alternative RTOS or simplified startup) will be documented.
+
+Rationale: The safety-related startup requirement assumes that the chosen hardware and software stack can meet safety standards; this assumption ensures prerequisites are met for implementing EXPECT-L0-22.

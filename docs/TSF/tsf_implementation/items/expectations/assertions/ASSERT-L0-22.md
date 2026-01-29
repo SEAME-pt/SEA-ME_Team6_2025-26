@@ -1,24 +1,13 @@
 ---
 id: ASSERT-L0-22
-header: "STM32 ThreadX Deterministic Startup Verification"
+header: "STM32 ThreadX safety-related startup: The STM32-based system shall perform a safe startup sequence using ThreadX RTOS"
 text: |
-  The STM32-based control system running ThreadX has been verified to initialize and start publishing speed data over CAN within the specified deterministic time bound. Startup timing measurements confirm that speed data acquisition and CAN transmission begin within ≤ 100 ms after power-on, meeting AUTOSAR-like ECU startup requirements.
-level: '1.22'
+  The STM32 microcontroller implements a safety-related startup sequence utilizing the ThreadX Real-Time Operating System (RTOS), where all critical components, threads, and peripherals are initialized in the correct order, preventing unsafe states and ensuring system reliability during boot-up.
+level: "1.1"
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-22.md
-- type: file
-  path: ../evidences/EVID-L0-22.md
-reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
-review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-      - "STM32"
-      - "CAN"
-      - "Raspberry Pi"
+  - type: file
+    path: ../expectations/EXPECT-L0-22.md
+  - type: file
+    path: ../evidences/EVID-L0-22.md
 ---
