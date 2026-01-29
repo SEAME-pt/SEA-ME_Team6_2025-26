@@ -83,7 +83,8 @@ add_library(handlers_module STATIC
   "${KUKSA_RPI5_SRC}/handlers/tof_distance.cpp"
   "${KUKSA_RPI5_SRC}/handlers/imu_accel.cpp"
   "${KUKSA_RPI5_SRC}/handlers/imu_gyro.cpp"
-  "${KUKSA_RPI5_SRC}/handlers/emergency_stop.cpp" 
+  "${KUKSA_RPI5_SRC}/handlers/emergency_stop.cpp"
+  "${KUKSA_RPI5_SRC}/handlers/joystick.cpp"
   "${KUKSA_RPI5_SRC}/is_stm_connected.cpp"
 )
 target_include_directories(handlers_module PUBLIC
