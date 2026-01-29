@@ -7,6 +7,7 @@
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
 
+#include "../inc/signals.hpp"
 #include "../inc/can_id.h"
 
 using kuksa::val::v2::VAL;
@@ -52,17 +53,9 @@ int main(int argc, char** argv)
     std::cout << "[KUKSA] Reader connected to " << server << "\n";
 
     // Paths to subscribe (the ones loaded via --vss)
-    std::vector<std::string> paths;
-    paths.push_back("Vehicle.Speed");
-    paths.push_back("Vehicle.Exterior.AirTemperature");
-    paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
-
-    // Build subscription request
-    // Entries are the paths to subscribe to
     kuksa::val::v2::SubscribeRequest req;
-    for (size_t i = 0; i < paths.size(); ++i) {
-        req.add_signal_paths(paths[i]);
-    }
+    for (const auto& path : sig::all_paths())
+        req.add_signal_paths(path);
 
     grpc::ClientContext ctx;
 

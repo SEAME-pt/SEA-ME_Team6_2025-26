@@ -56,6 +56,10 @@
   - ![Cluster flow](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Flow.jpg)
   - ![Cluster current-layout](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Cluster-display-sprint4.jpeg)
 
+  - EXPECT-L0-17 - "Introduce AI in the project":
+    - [Generative AI PDF](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+    - [External AI Reference](https://github.com/fprezado/generative-ai-for-beginners)
+
 - **Code/Tests**:
   - EXPECT-L0-10 - "Implement new architecture.":
   - EXPECT-L0-11 - "QT cluster UI **auto-start on boot** on display":
@@ -63,6 +67,14 @@
   - [Motors stress test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
   - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)":
   - [CAN test](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+
+  - EXPECT-L0-19 - "Test TSF automation":
+    - [TSF Manager Script](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/sync_tsf_manager.py)
+    - [AI Generator](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py)
+
+  - EXPECT-L0-20 - "AI integration for TSF":
+    - [AI Generator](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py)
+    - [GenAI on TSF Doc](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/genAI_on_tsf.md)
 
 ---
 

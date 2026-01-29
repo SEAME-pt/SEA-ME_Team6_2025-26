@@ -12,6 +12,7 @@
 
 #include "../inc/kuksa_client.hpp"
 #include "../inc/dispatch_frames.hpp"
+#include "../inc/is_stm_connected.hpp"
 
 static int open_can_socket(const std::string& ifname)
 {
@@ -86,6 +87,9 @@ int main(int argc, char** argv)
 
             // 4) Dispatch to correct handler
             dispatch_can_frame(frame, kuksa);
+
+            // 5) Update connection status based on heartbeat
+            updateIsConnected(kuksa);
         }
     } catch (const std::exception& e) {
         std::cerr << "[ERROR] " << e.what() << "\n";
