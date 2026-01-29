@@ -1,7 +1,7 @@
 ---
 id: ASSUMP-L0-22
 header: 'Assumption: STM32 ThreadX safety-related startup capabilities'
-level: '1.1'
+level: '1.22'
 normative: true
 references:
 - id: EXPECT-L0-22
