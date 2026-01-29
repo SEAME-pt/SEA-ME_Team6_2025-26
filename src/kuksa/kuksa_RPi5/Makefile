@@ -35,6 +35,7 @@ PUBLISHER_SRCS := \
   $(HANDLERS_DIR)/imu_accel.cpp \
   $(HANDLERS_DIR)/emergency_stop.cpp \
   $(HANDLERS_DIR)/battery.cpp \
+  $(HANDLERS_DIR)/joystick.cpp \
   $(GEN_SRCS)
 
 # --- Reader sources ---
