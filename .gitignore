@@ -1,8 +1,4 @@
-# Ignore team4examples folder
-team4examples/
-.env
-.DS_Store
-**/.DS_Store
+to_delete
 
 # VSCode Settings
 .vscode/
