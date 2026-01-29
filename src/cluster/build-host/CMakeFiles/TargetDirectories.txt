@@ -1,5 +1,0 @@
-/workspace/cluster/build-host/CMakeFiles/HelloQt6Qml.dir
-/workspace/cluster/build-host/CMakeFiles/edit_cache.dir
-/workspace/cluster/build-host/CMakeFiles/rebuild_cache.dir
-/workspace/cluster/build-host/CMakeFiles/HelloQt6Qml_autogen_timestamp_deps.dir
-/workspace/cluster/build-host/CMakeFiles/HelloQt6Qml_autogen.dir

@@ -30,10 +30,14 @@ COPY scripts/proto-gen.sh /usr/local/bin/proto-gen.sh
 COPY scripts/verify-sdk.sh /usr/local/bin/verify-sdk.sh
 
 # Make scripts executable
-RUN chmod +x /usr/local/bin/agl-env \
-             /usr/local/bin/qt6-build.sh \
-             /usr/local/bin/proto-gen.sh \
-             /usr/local/bin/verify-sdk.sh
+RUN sed -i 's/\r$//' /usr/local/bin/agl-env \
+    /usr/local/bin/qt6-build.sh \
+    /usr/local/bin/proto-gen.sh \
+    /usr/local/bin/verify-sdk.sh && \
+    chmod +x /usr/local/bin/agl-env \
+    /usr/local/bin/qt6-build.sh \
+    /usr/local/bin/proto-gen.sh \
+    /usr/local/bin/verify-sdk.sh
 
 RUN /usr/local/bin/verify-sdk.sh
 

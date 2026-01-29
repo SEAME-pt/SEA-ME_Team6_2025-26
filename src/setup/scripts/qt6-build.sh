@@ -4,10 +4,15 @@
 # Use: qt6-build.sh [directory] [build-type]
 # ===========================================================================
 
+set -e
+
 source /opt/agl-sdk/environment-setup-aarch64-agl-linux
 
 PROJECT_DIR="${1:-.}"
 BUILD_TYPE="${2:-Release}"
+
+# Convert project dir to absolute path
+PROJECT_DIR="$(realpath "${PROJECT_DIR}")"
 BUILD_DIR="${PROJECT_DIR}/build-arm"
 
 echo "========================================"

@@ -99,14 +99,9 @@ if docker image inspect "${AGL_SDK_IMAGE}" &> /dev/null; then
 else
     print_warning "AGL SDK image '${AGL_SDK_IMAGE}' not found"
     print_info "Building AGL SDK image..."
-    
-    if [ ! -f "Dockerfile.agl-sdk" ]; then
-        print_error "Dockerfile.agl-sdk not found in current directory"
-        exit 1
-    fi
-    
+        
     # Check if SDK installer exists
-    SDK_INSTALLER=$(ls poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-*.sh 2>/dev/null | head -n 1)
+    SDK_INSTALLER=$(ls setup/poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-*.sh 2>/dev/null | head -n 1)
     if [ -z "$SDK_INSTALLER" ]; then
         print_error "SDK installer not found. Please download the AGL SDK installer first."
         exit 1
@@ -115,7 +110,7 @@ else
     print_info "Using SDK installer: ${SDK_INSTALLER}"
     
     # Build the image
-    if DOCKER_BUILDKIT=1 docker build -f Dockerfile.agl-sdk -t "${AGL_SDK_IMAGE}" .; then
+    if DOCKER_BUILDKIT=1 docker build -f setup/Dockerfile.agl-sdk -t "setup/${AGL_SDK_IMAGE}" .; then
         print_success "Successfully built '${AGL_SDK_IMAGE}'"
     else
         print_error "Failed to build AGL SDK image"
