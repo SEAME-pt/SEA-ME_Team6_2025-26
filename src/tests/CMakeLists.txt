@@ -134,6 +134,7 @@ target_include_directories(dispatch_tests PRIVATE
 )
 target_link_libraries(dispatch_tests PRIVATE
   dispatch_module
+  handlers_module
   GTest::gtest
   GTest::gtest_main
 )
