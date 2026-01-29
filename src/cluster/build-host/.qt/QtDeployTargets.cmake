@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_HelloQt6Qml_FILE /workspace/cluster/build-host/HelloQt6Qml)
+set(__QT_DEPLOY_TARGET_HelloQt6Qml_TYPE EXECUTABLE)

@@ -1,16 +1,16 @@
 #!/bin/bash
 # ===========================================================================
-# proto-gen.sh - Gerar stubs C++ para Protobuf/gRPC
-# Uso: proto-gen.sh <proto-file> [output-dir]
+# proto-gen.sh - Gen C++ stubs for Protobuf/gRPC
+# Use: proto-gen.sh <proto-file> [output-dir]
 # ===========================================================================
 
 source /opt/agl-sdk/environment-setup-aarch64-agl-linux
 
-PROTO_FILE="$1"
+PROTO_FILE="$1"U: 
 OUTPUT_DIR="${2:-./generated}"
 
 if [ -z "$PROTO_FILE" ]; then
-    echo "Uso: proto-gen.sh <proto-file> [output-dir]"
+    echo "Use: proto-gen.sh <proto-file> [output-dir]"
     exit 1
 fi
 

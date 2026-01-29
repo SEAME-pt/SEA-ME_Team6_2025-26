@@ -1,6 +1,6 @@
 #!/bin/bash
 # ===========================================================================
-# verify-sdk.sh - Verificar instalação do AGL SDK
+# verify-sdk.sh - Verification of the AGL SDK
 # ===========================================================================
 
 source /opt/agl-sdk/environment-setup-aarch64-agl-linux
@@ -35,5 +35,5 @@ ls /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/ 2>/dev/null | grep -i 
 echo ""
 
 echo "==========================================================="
-echo "SDK pronto para cross-compilation!"
+echo "SDK ready cross-compilation!"
 echo "==========================================================="

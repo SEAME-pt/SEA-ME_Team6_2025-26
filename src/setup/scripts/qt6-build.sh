@@ -1,7 +1,7 @@
 #!/bin/bash
 # ===========================================================================
-# qt6-build.sh - Helper para compilar projectos Qt6
-# Uso: qt6-build.sh [directório-do-projecto] [build-type]
+# qt6-build.sh - Helper to compile the Qt cluster
+# Use: qt6-build.sh [directory] [build-type]
 # ===========================================================================
 
 source /opt/agl-sdk/environment-setup-aarch64-agl-linux
@@ -30,6 +30,6 @@ ninja -j$(nproc)
 
 echo ""
 echo "========================================"
-echo "Build completo!"
-echo "Binários em: ${BUILD_DIR}"
+echo "Build Completed!"
+echo "Binary in: ${BUILD_DIR}"
 echo "========================================"

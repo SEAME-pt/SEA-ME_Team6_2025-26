@@ -1,4 +1,4 @@
-# Stage 1: Base image with common build tools
+# Base image with common build tools
 FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
 ARG PROTOBUF_TAG=v25.0

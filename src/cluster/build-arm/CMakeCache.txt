@@ -268,17 +268,11 @@ QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH:STRING=
 //Additional directories where find(Qt6 ...) components are searched
 QT_ADDITIONAL_PACKAGES_PREFIX_PATH:STRING=
 
-//The directory containing a CMake configuration file for Qt6CoreTools.
-Qt6CoreTools_DIR:PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/cmake/Qt6CoreTools
-
 //The directory containing a CMake configuration file for Qt6DBusTools.
 Qt6DBusTools_DIR:PATH=/opt/agl-sdk/sysroots/x86_64-aglsdk-linux/usr/lib/cmake/Qt6DBusTools
 
 //The directory containing a CMake configuration file for Qt6DBus.
 Qt6DBus_DIR:PATH=/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6DBus
-
-//The directory containing a CMake configuration file for Qt6HostInfo.
-Qt6HostInfo_DIR:PATH=Qt6HostInfo_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for Qt6OpenGL.
 Qt6OpenGL_DIR:PATH=/opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/Qt6OpenGL

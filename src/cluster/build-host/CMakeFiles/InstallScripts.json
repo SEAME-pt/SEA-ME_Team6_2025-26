@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/workspace/cluster/build-host/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
