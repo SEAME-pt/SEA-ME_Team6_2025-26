@@ -1322,6 +1322,90 @@ review_status: accepted
         
         return all_fixes
 
+    def find_orphan_items(self, table_rows: List[TableRow]) -> List[Tuple[str, str, Path]]:
+        """
+        Find item files that exist but don't have corresponding requirements in the table.
+        
+        Returns:
+            List of tuples: (item_type, item_id, file_path)
+        """
+        orphans = []
+        
+        # Get all requirement IDs from table
+        table_ids = set(str(row.number) for row in table_rows)
+        
+        for item_type in ['EXPECT', 'ASSERT', 'EVID', 'ASSUMP']:
+            directory = {
+                'EXPECT': self.config.expectations_dir,
+                'ASSERT': self.config.assertions_dir,
+                'EVID': self.config.evidences_dir,
+                'ASSUMP': self.config.assumptions_dir
+            }[item_type]
+            
+            if not directory.exists():
+                continue
+            
+            for file_path in directory.glob(f"{item_type}-L0-*.md"):
+                # Extract item_id from filename
+                match = re.search(r'L0-(\d+)', file_path.name)
+                if not match:
+                    continue
+                
+                item_id = match.group(1)
+                
+                # Check if this ID exists in the table
+                if item_id not in table_ids:
+                    orphans.append((item_type, item_id, file_path))
+        
+        return orphans
+
+    def remove_orphan_items(self, orphans: List[Tuple[str, str, Path]], 
+                           dry_run: bool = True) -> List[Path]:
+        """
+        Remove orphan item files.
+        
+        Args:
+            orphans: List of (item_type, item_id, file_path) tuples
+            dry_run: If True, only show what would be removed without actually removing
+        
+        Returns:
+            List of files that were removed (or would be removed in dry_run)
+        """
+        removed_files = []
+        
+        if not orphans:
+            return removed_files
+        
+        print(f"\n🗑️  Found {len(orphans)} orphan item file(s) (no corresponding requirement in table):")
+        print("-" * 60)
+        
+        for item_type, item_id, file_path in orphans:
+            print(f"   • {file_path.name} ({file_path.parent.name})")
+        
+        print("-" * 60)
+        
+        if dry_run:
+            print("   📋 DRY RUN: These files would be removed")
+            removed_files = [file_path for _, _, file_path in orphans]
+        else:
+            print("   ⚠️  These files will be permanently deleted!")
+            
+            # Ask for confirmation
+            confirm = input("\n   Are you sure you want to remove these orphan files? [y/N]: ").strip().lower()
+            
+            if confirm == 'y':
+                for item_type, item_id, file_path in orphans:
+                    try:
+                        file_path.unlink()
+                        print(f"   ✅ Removed: {file_path.name}")
+                        removed_files.append(file_path)
+                    except Exception as e:
+                        print(f"   ❌ Failed to remove {file_path.name}: {e}")
+            else:
+                print("   ⏭️  Orphan removal cancelled by user")
+        
+        return removed_files
+
 
 # ============================================================================
 # MAIN FUNCTIONS
@@ -1440,6 +1524,18 @@ def open_check(config: Config) -> Dict[str, Any]:
     items_needing_regen = content_validator.get_items_needing_regeneration()
     status['invalid_items'] = items_needing_regen
     
+    # 5.5 NEW: Check for orphan item files (files without corresponding requirements)
+    print("\n🗑️  Checking for orphan item files...")
+    orphan_items = item_manager.find_orphan_items(rows)
+    status['orphan_items'] = orphan_items
+    
+    if orphan_items:
+        print(f"   ⚠️  Found {len(orphan_items)} orphan item file(s):")
+        for item_type, item_id, file_path in orphan_items:
+            print(f"      └─ {file_path.name} (no L0-{item_id} in table)")
+    else:
+        print("   ✅ No orphan item files found")
+    
     # 6. Identify sync needs (sprint evidence → table → EVID files)
     print("\n🔄 Identifying sync needs...")
     for row in rows:
@@ -1462,6 +1558,7 @@ def open_check(config: Config) -> Dict[str, Any]:
     print(f"   • Missing item files: {len(status['missing_items'])}")
     print(f"   • Requirements without sprint evidence: {len(status.get('no_sprint_evidence', []))}")
     print(f"   • Items with invalid content: {len(status['invalid_items'])}")
+    print(f"   • Orphan item files: {len(status.get('orphan_items', []))}")
     print(f"   • Sync needed: {len(status['sync_needed'])}")
     
     return status
@@ -1487,11 +1584,47 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
         'items_updated': [],
         'items_regenerated': [],
         'ai_generation_needed': [],
-        'skipped': []
+        'skipped': [],
+        'orphans_removed': []
     }
     
     item_manager = ItemFileManager(config)
     ai_generator = AIGenerator(config)
+    
+    # 0. Handle orphan item files (files without corresponding requirements) - ASK USER FIRST
+    orphan_items = check_status.get('orphan_items', [])
+    
+    if orphan_items:
+        print("\n🗑️  Found orphan item files (no corresponding requirement in table):")
+        print("-" * 60)
+        
+        for item_type, item_id, file_path in orphan_items:
+            print(f"   • {file_path.name} (L0-{item_id})")
+        
+        print("-" * 60)
+        print("\n🔧 Options for orphan files:")
+        print("   [r] Remove ALL orphan files")
+        print("   [d] Dry run - show what would be removed")
+        print("   [s] Skip all - don't remove any")
+        print("   [q] Quit")
+        
+        choice = input("\n>>> Choose option [r/d/s/q]: ").strip().lower()
+        
+        if choice == 'q':
+            print("❌ User requested quit.")
+            sys.exit(0)
+        elif choice == 'r':
+            # Remove all orphan files
+            print("\n🗑️  Removing ALL orphan files...")
+            removed_files = item_manager.remove_orphan_items(orphan_items, dry_run=False)
+            status['orphans_removed'] = [str(f) for f in removed_files]
+        elif choice == 'd':
+            # Dry run
+            print("\n📋 DRY RUN: Showing what would be removed...")
+            item_manager.remove_orphan_items(orphan_items, dry_run=True)
+            print("   ℹ️  No files were actually removed")
+        else:  # 's' or anything else
+            print("   ⏭️  Skipping orphan removal")
     
     # 1. Handle invalid items (placeholders/TODOs) - ASK USER FIRST
     invalid_items = check_status.get('invalid_items', [])
@@ -1617,6 +1750,7 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
     print(f"   • Items created: {len(status['items_created'])}")
     print(f"   • Items regenerated: {len(status['items_regenerated'])}")
     print(f"   • Items updated (AI): {len(status['items_updated'])}")
+    print(f"   • Orphan files removed: {len(status['orphans_removed'])}")
     print(f"   • Skipped: {len(status['skipped'])}")
     
     return status
