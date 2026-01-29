@@ -13,7 +13,7 @@ ReaderWorker::ReaderWorker(const std::string &server)
 ReaderWorker::~ReaderWorker()
 {
     _shouldStop = true;
-    qDebug() << "[ReaderWorker] Destroyed";
+    qDebug() << "[ReaderWorker] Destroyed!";
 }
 
 void ReaderWorker::startReading()

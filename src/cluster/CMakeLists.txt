@@ -45,21 +45,14 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS
 # GRPC/PROTOBUF CONFIGURATION
 # ============================================================================
 if(NOT IS_CROSS_COMPILE)
-    # Native build: Debian packages install to /usr/include
-    message(STATUS "Using gRPC/Protobuf from system packages")
-    set(PROTOBUF_INCLUDE_DIRS "/usr/include")
-    set(GRPC_INCLUDE_DIRS "/usr/include")
-    
-    # Verify headers exist
-    if(NOT EXISTS "${PROTOBUF_INCLUDE_DIRS}/google/protobuf/message.h")
-        message(FATAL_ERROR "Protobuf headers not found at ${PROTOBUF_INCLUDE_DIRS}")
-    endif()
-    if(NOT EXISTS "${GRPC_INCLUDE_DIRS}/grpcpp/grpcpp.h")
-        message(FATAL_ERROR "gRPC headers not found at ${GRPC_INCLUDE_DIRS}")
-    endif()
-    
-    message(STATUS "Protobuf includes: ${PROTOBUF_INCLUDE_DIRS}")
-    message(STATUS "gRPC includes: ${GRPC_INCLUDE_DIRS}")
+    message(STATUS "Using gRPC/Protobuf from system packages (CMake CONFIG)")
+
+    find_package(Protobuf CONFIG REQUIRED)
+    find_package(gRPC CONFIG REQUIRED)
+
+    message(STATUS "Protobuf version: ${Protobuf_VERSION}")
+    message(STATUS "gRPC version: ${gRPC_VERSION}")
+
 else()
     # Cross-compile: try pkg-config first, fallback to manual
     find_package(PkgConfig)
@@ -67,11 +60,12 @@ else()
         pkg_check_modules(PROTOBUF QUIET protobuf)
         pkg_check_modules(GRPC QUIET grpc++)
     endif()
-    
+
     if(NOT PROTOBUF_FOUND)
         message(STATUS "Using manual library specification for Protobuf/gRPC")
     endif()
 endif()
+
 
 # ============================================================================
 # CROSS-COMPILATION SPECIFIC FLAGS
@@ -111,20 +105,6 @@ target_include_directories(HelloQt6Qml PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/backend
 )
-
-# Add protobuf/grpc include directories
-if(NOT IS_CROSS_COMPILE)
-    # Native build: use pkg-config results
-    target_include_directories(HelloQt6Qml PRIVATE 
-        ${PROTOBUF_INCLUDE_DIRS}
-        ${GRPC_INCLUDE_DIRS}
-    )
-else()
-    # Cross-compile: only if found via pkg-config
-    if(PROTOBUF_FOUND)
-        target_include_directories(HelloQt6Qml PRIVATE ${PROTOBUF_INCLUDE_DIRS})
-    endif()
-endif()
 
 # ============================================================================
 # LINK LIBRARIES - QT6
@@ -240,12 +220,13 @@ if(IS_CROSS_COMPILE)
         absl_vlog_config_internal
     )
 else()
-    # Native development: use simpler linking via pkg-config or find_package
+    # Native development: use CMake imported targets
     target_link_libraries(HelloQt6Qml PRIVATE
-        grpc++
-        protobuf
+        gRPC::grpc++
+        protobuf::libprotobuf
     )
 endif()
+
 
 # ============================================================================
 # CROSS-COMPILATION LINKER FLAGS

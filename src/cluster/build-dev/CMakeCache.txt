@@ -294,11 +294,23 @@ OPENGL_opengl_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libOpenGL.so
 //Path to a file.
 OPENGL_xmesa_INCLUDE_DIR:PATH=OPENGL_xmesa_INCLUDE_DIR-NOTFOUND
 
+//Path to a library.
+OPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
+
+//Path to a file.
+OPENSSL_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+OPENSSL_SSL_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
 
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
+//The directory containing a CMake configuration file for Protobuf.
+Protobuf_DIR:PATH=/usr/local/lib/cmake/protobuf
 
 //Additional directories where find(Qt6 ...) host Qt components
 // are searched
@@ -366,6 +378,30 @@ XKB_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 XKB_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libxkbcommon.so
+
+//Path to a file.
+ZLIB_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+ZLIB_LIBRARY_DEBUG:FILEPATH=ZLIB_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+ZLIB_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libz.so
+
+//The directory containing a CMake configuration file for absl.
+absl_DIR:PATH=/usr/local/lib/cmake/absl
+
+//The directory containing a CMake configuration file for c-ares.
+c-ares_DIR:PATH=c-ares_DIR-NOTFOUND
+
+//Path to a file.
+c-ares_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+c-ares_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libcares.so
+
+//The directory containing a CMake configuration file for gRPC.
+gRPC_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/grpc
 
 //Path to a library.
 pkgcfg_lib_PKG_XKB_xkbcommon:FILEPATH=/usr/lib/x86_64-linux-gnu/libxkbcommon.so
@@ -577,6 +613,27 @@ pkgcfg_lib_PROTOBUF_utf8_range:FILEPATH=/usr/local/lib/libutf8_range.a
 //Path to a library.
 pkgcfg_lib_PROTOBUF_utf8_validity:FILEPATH=/usr/local/lib/libutf8_validity.a
 
+//Path to a library.
+pkgcfg_lib_RE2_re2:FILEPATH=/usr/lib/x86_64-linux-gnu/libre2.so
+
+//Path to a library.
+pkgcfg_lib__OPENSSL_crypto:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
+
+//Path to a library.
+pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
+//CMake built-in FindProtobuf.cmake module compatible
+protobuf_MODULE_COMPATIBLE:BOOL=OFF
+
+//Enable for verbose output
+protobuf_VERBOSE:BOOL=OFF
+
+//The directory containing a CMake configuration file for re2.
+re2_DIR:PATH=re2_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for utf8_range.
+utf8_range_DIR:PATH=/usr/local/lib/cmake/utf8_range
+
 
 ########################
 # INTERNAL cache entries
@@ -751,6 +808,8 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][ ][v()]
+//Details about finding OpenSSL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][ ][v3.0.18()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding Threads
@@ -761,6 +820,10 @@ FIND_PACKAGE_MESSAGE_DETAILS_WrapAtomic:INTERNAL=[1][v()]
 FIND_PACKAGE_MESSAGE_DETAILS_WrapOpenGL:INTERNAL=[ON][v()]
 //Details about finding XKB
 FIND_PACKAGE_MESSAGE_DETAILS_XKB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libxkbcommon.so][/usr/include][v1.5.0(0.5.0)]
+//Details about finding ZLIB
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libz.so][/usr/include][ ][v1.2.13()]
+//Details about finding c-ares
+FIND_PACKAGE_MESSAGE_DETAILS_c-ares:INTERNAL=[/usr/include][/usr/lib/x86_64-linux-gnu/libcares.so][v1.18.1()]
 GRPC_CFLAGS:INTERNAL=
 GRPC_CFLAGS_I:INTERNAL=
 GRPC_CFLAGS_OTHER:INTERNAL=
@@ -814,6 +877,12 @@ OPENGL_glx_LIBRARY-ADVANCED:INTERNAL=1
 OPENGL_opengl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_xmesa_INCLUDE_DIR
 OPENGL_xmesa_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_CRYPTO_LIBRARY
+OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_INCLUDE_DIR
+OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_SSL_LIBRARY
+OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
@@ -1605,12 +1674,92 @@ QT_FEATURE_xmlstreamwriter:INTERNAL=ON
 QT_FEATURE_xrender:INTERNAL=OFF
 //Qt feature: zstd (from target Qt6::Core)
 QT_FEATURE_zstd:INTERNAL=OFF
+RE2_CFLAGS:INTERNAL=-pthread;-I/usr/include
+RE2_CFLAGS_I:INTERNAL=
+RE2_CFLAGS_OTHER:INTERNAL=-pthread
+RE2_FOUND:INTERNAL=1
+RE2_INCLUDEDIR:INTERNAL=/usr/include
+RE2_INCLUDE_DIRS:INTERNAL=/usr/include
+RE2_LDFLAGS:INTERNAL=-pthread;-L/usr/lib/x86_64-linux-gnu;-lre2
+RE2_LDFLAGS_OTHER:INTERNAL=-pthread
+RE2_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+RE2_LIBRARIES:INTERNAL=re2
+RE2_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+RE2_LIBS:INTERNAL=
+RE2_LIBS_L:INTERNAL=
+RE2_LIBS_OTHER:INTERNAL=
+RE2_LIBS_PATHS:INTERNAL=
+RE2_MODULE_NAME:INTERNAL=re2
+RE2_PREFIX:INTERNAL=
+RE2_STATIC_CFLAGS:INTERNAL=-pthread;-I/usr/include
+RE2_STATIC_CFLAGS_I:INTERNAL=
+RE2_STATIC_CFLAGS_OTHER:INTERNAL=-pthread
+RE2_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+RE2_STATIC_LDFLAGS:INTERNAL=-pthread;-L/usr/lib/x86_64-linux-gnu;-lre2
+RE2_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+RE2_STATIC_LIBDIR:INTERNAL=
+RE2_STATIC_LIBRARIES:INTERNAL=re2
+RE2_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+RE2_STATIC_LIBS:INTERNAL=
+RE2_STATIC_LIBS_L:INTERNAL=
+RE2_STATIC_LIBS_OTHER:INTERNAL=
+RE2_STATIC_LIBS_PATHS:INTERNAL=
+RE2_VERSION:INTERNAL=0.0.0
+RE2_re2_INCLUDEDIR:INTERNAL=
+RE2_re2_LIBDIR:INTERNAL=
+RE2_re2_PREFIX:INTERNAL=
+RE2_re2_VERSION:INTERNAL=
+//ADVANCED property for variable: ZLIB_INCLUDE_DIR
+ZLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ZLIB_LIBRARY_DEBUG
+ZLIB_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ZLIB_LIBRARY_RELEASE
+ZLIB_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //CMAKE_INSTALL_PREFIX during last run
 _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/usr/local
+_OPENSSL_CFLAGS:INTERNAL=-I/usr/include
+_OPENSSL_CFLAGS_I:INTERNAL=
+_OPENSSL_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_FOUND:INTERNAL=1
+_OPENSSL_INCLUDEDIR:INTERNAL=/usr/include
+_OPENSSL_INCLUDE_DIRS:INTERNAL=/usr/include
+_OPENSSL_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lssl;-lcrypto
+_OPENSSL_LDFLAGS_OTHER:INTERNAL=
+_OPENSSL_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+_OPENSSL_LIBRARIES:INTERNAL=ssl;crypto
+_OPENSSL_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+_OPENSSL_LIBS:INTERNAL=
+_OPENSSL_LIBS_L:INTERNAL=
+_OPENSSL_LIBS_OTHER:INTERNAL=
+_OPENSSL_LIBS_PATHS:INTERNAL=
+_OPENSSL_MODULE_NAME:INTERNAL=openssl
+_OPENSSL_PREFIX:INTERNAL=/usr
+_OPENSSL_STATIC_CFLAGS:INTERNAL=-I/usr/include
+_OPENSSL_STATIC_CFLAGS_I:INTERNAL=
+_OPENSSL_STATIC_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+_OPENSSL_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lssl;-L/usr/lib/x86_64-linux-gnu;-ldl;-pthread;-lcrypto;-ldl;-pthread
+_OPENSSL_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread
+_OPENSSL_STATIC_LIBDIR:INTERNAL=
+_OPENSSL_STATIC_LIBRARIES:INTERNAL=ssl;dl;crypto;dl
+_OPENSSL_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+_OPENSSL_STATIC_LIBS:INTERNAL=
+_OPENSSL_STATIC_LIBS_L:INTERNAL=
+_OPENSSL_STATIC_LIBS_OTHER:INTERNAL=
+_OPENSSL_STATIC_LIBS_PATHS:INTERNAL=
+_OPENSSL_VERSION:INTERNAL=3.0.18
+_OPENSSL_openssl_INCLUDEDIR:INTERNAL=
+_OPENSSL_openssl_LIBDIR:INTERNAL=
+_OPENSSL_openssl_PREFIX:INTERNAL=
+_OPENSSL_openssl_VERSION:INTERNAL=
 __pkg_config_arguments_PKG_XKB:INTERNAL=QUIET;xkbcommon
 __pkg_config_arguments_PROTOBUF:INTERNAL=REQUIRED;protobuf
+__pkg_config_arguments_RE2:INTERNAL=QUIET;re2
+__pkg_config_arguments__OPENSSL:INTERNAL=QUIET;openssl
 __pkg_config_checked_PKG_XKB:INTERNAL=1
 __pkg_config_checked_PROTOBUF:INTERNAL=1
+__pkg_config_checked_RE2:INTERNAL=1
+__pkg_config_checked__OPENSSL:INTERNAL=1
 __qt_qml_macros_module_base_dir:INTERNAL=/opt/qt6/lib/cmake/Qt6Qml
 //ADVANCED property for variable: pkgcfg_lib_PKG_XKB_xkbcommon
 pkgcfg_lib_PKG_XKB_xkbcommon-ADVANCED:INTERNAL=1
@@ -1752,5 +1901,15 @@ pkgcfg_lib_PROTOBUF_rt-ADVANCED:INTERNAL=1
 pkgcfg_lib_PROTOBUF_utf8_range-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PROTOBUF_utf8_validity
 pkgcfg_lib_PROTOBUF_utf8_validity-ADVANCED:INTERNAL=1
-prefix_result:INTERNAL=/usr/local/lib
+//ADVANCED property for variable: pkgcfg_lib_RE2_re2
+pkgcfg_lib_RE2_re2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib__OPENSSL_crypto
+pkgcfg_lib__OPENSSL_crypto-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib__OPENSSL_ssl
+pkgcfg_lib__OPENSSL_ssl-ADVANCED:INTERNAL=1
+prefix_result:INTERNAL=/usr/lib/x86_64-linux-gnu
+//ADVANCED property for variable: protobuf_MODULE_COMPATIBLE
+protobuf_MODULE_COMPATIBLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: protobuf_VERBOSE
+protobuf_VERBOSE-ADVANCED:INTERNAL=1
 
