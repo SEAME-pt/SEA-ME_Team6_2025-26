@@ -1,13 +1,13 @@
 ---
 id: ASSUMP_L0_18
-header: "Assumption: Development environment ready"
-text: "Assumption: The development environment meets all prerequisites for implementing and verifying this requirement."
+header: 'Assumption: Development environment ready'
+text: 'Assumption: The development environment meets all prerequisites for implementing
+  and verifying this requirement.'
 level: '1.18'
 normative: true
 references:
 - type: file
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_18/EXPECTATIONS-EXPECT_L0_18.md
-  id: EXPECT_L0_18
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -15,9 +15,10 @@ evidence:
   type: validate_linux_environment
   configuration:
     components:
-      - "Linux environment"
-      - "Development tools"
-      - "Test infrastructure"
+    - Linux environment
+    - Development tools
+    - Test infrastructure
+review_status: accepted
 ---
 
 The development environment meets all prerequisites for implementing and verifying this requirement.

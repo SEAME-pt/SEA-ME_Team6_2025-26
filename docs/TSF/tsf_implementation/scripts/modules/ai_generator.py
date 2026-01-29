@@ -73,26 +73,22 @@ class AIGenerator:
     def _generate_manual_placeholder(self, item_type: str, requirement_text: str, context: Dict[str, Any] = None) -> str:
         """Generate placeholder content for manual editing."""
         id_str = context.get('id', 'L0-X') if context else 'L0-X'
+        # Extract level number from ID (e.g., 'L0-22' -> '22')
+        level_num = id_str.split('-')[-1] if '-' in id_str else 'X'
 
         templates = {
             'EXPECT': f"""---
 id: EXPECT-{id_str}
 header: {requirement_text[:50]}...
 text: The system shall {requirement_text.lower()}.
-level: 1.1
+level: '1.{level_num}'
 normative: true
 references:
 - id: ASSERT-{id_str}
   type: file
   path: ../assertions/ASSERT-{id_str}.md
-- id: EVID-{id_str}
-  type: file
-  path: ../evidences/EVID-{id_str}.md
-- id: ASSUMP-{id_str}
-  type: file
-  path: ../assumptions/ASSUMP-{id_str}.md
 reviewers:
-- name: João Silva
+- name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
 
@@ -102,7 +98,7 @@ The system shall {requirement_text.lower()} to ensure proper functionality.""",
 id: ASSERT-{id_str}
 header: {requirement_text[:50]} is implemented
 text: The {item_type.lower()} shall verify that {requirement_text.lower()}.
-level: 1.1
+level: '1.{level_num}'
 normative: true
 references:
 - id: EXPECT-{id_str}
@@ -111,11 +107,8 @@ references:
 - id: EVID-{id_str}
   type: file
   path: ../evidences/EVID-{id_str}.md
-- id: ASSUMP-{id_str}
-  type: file
-  path: ../assumptions/ASSUMP-{id_str}.md
 reviewers:
-- name: João Silva
+- name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
 
@@ -125,7 +118,7 @@ The implementation shall correctly {requirement_text.lower()}.""",
 id: EVID-{id_str}
 header: {requirement_text[:50]} verification
 text: Evidence demonstrates {requirement_text.lower()}.
-level: 1.1
+level: '1.{level_num}'
 normative: true
 references:
 - id: EXPECT-{id_str}
@@ -134,9 +127,6 @@ references:
 - id: ASSERT-{id_str}
   type: file
   path: ../assertions/ASSERT-{id_str}.md
-- id: ASSUMP-{id_str}
-  type: file
-  path: ../assumptions/ASSUMP-{id_str}.md
 evidence:
   type: "test_execution"
   configuration:
@@ -149,7 +139,7 @@ Test logs and validation results confirm {requirement_text.lower()}.""",
 id: ASSUMP-{id_str}
 header: {requirement_text[:50]} environment
 text: The system assumes {requirement_text.lower()[:50]}...
-level: 1.0
+level: '1.{level_num}'
 normative: false
 references:
 - id: EXPECT-{id_str}
@@ -158,11 +148,8 @@ references:
 - id: ASSERT-{id_str}
   type: file
   path: ../assertions/ASSERT-{id_str}.md
-- id: EVID-{id_str}
-  type: file
-  path: ../evidences/EVID-{id_str}.md
 reviewers:
-- name: João Silva
+- name: Joao Jesus Silva
   email: joao.silva@seame.pt
 ---
 

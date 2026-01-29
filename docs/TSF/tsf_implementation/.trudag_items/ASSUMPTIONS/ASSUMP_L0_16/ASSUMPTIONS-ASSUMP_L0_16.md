@@ -4,8 +4,7 @@ header: 'Assumption: CI/CD'
 level: '1.16'
 normative: true
 references:
-- id: EXPECT_L0_16
-  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_16/EXPECTATIONS-EXPECT_L0_16.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_16/EXPECTATIONS-EXPECT_L0_16.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -14,11 +13,12 @@ evidence:
   type: validate_software_dependencies
   configuration:
     packages:
-      - "GitHub Actions"
-      - "CI/CD"
-      - "workflow"
-text: 'GitHub Actions runner resources and execution quotas are available and sufficient
-  for CI/CD pipeline execution before CI/CD verification begins.'
+    - GitHub Actions
+    - CI/CD
+    - workflow
+text: GitHub Actions runner resources and execution quotas are available and sufficient
+  for CI/CD pipeline execution before CI/CD verification begins.
+review_status: accepted
 ---
 GitHub Actions runner resources and execution quotas are available and sufficient for CI/CD pipeline execution before CI/CD verification begins.
 
