@@ -1,9 +1,5 @@
 #include "reader.hpp"
 
-// ============================================================================
-// ReaderWorker Implementation (runs in background thread)
-// ============================================================================
-
 ReaderWorker::ReaderWorker(const std::string &server)
     : QObject(nullptr), _server(server), _shouldStop(false)
 {
@@ -31,6 +27,10 @@ void ReaderWorker::startReading()
         paths.push_back("Vehicle.Speed");
         paths.push_back("Vehicle.Exterior.AirTemperature");
         paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
+        paths.push_back("Vehicle.ADAS.ObstacleDetection.Front.Distance");
+        paths.push_back("Vehicle.Powertrain.TractionBattery.CurrentVoltage");
+        //paths.push_back("Vehicle.TraveledDistance");
+        paths.push_back("Vehicle.Powertrain.ElectricMotor.Speed");
 
         kuksa::val::v2::SubscribeRequest req;
         for (size_t i = 0; i < paths.size(); ++i)
@@ -66,14 +66,35 @@ void ReaderWorker::startReading()
                 if (path == "Vehicle.Speed")
                 {
                     double speed = dp.value().double_();
-                    qDebug() << "[ReaderWorker] Speed:" << speed;
+                    qDebug() << "[ReaderWorker] Speed:" << speed << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
                     emit speedReceived(speed);
                 }
                 else if (path == "Vehicle.Exterior.AirTemperature")
                 {
                     double temp = dp.value().double_();
-                    qDebug() << "[ReaderWorker] Temperature:" << temp;
+                    qDebug() << "[ReaderWorker] Temperature:" << temp << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
                     emit temperatureReceived(temp);
+                } 
+                else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") 
+                {
+                    double frontDistance = dp.value().float_();
+                    qDebug() << "[ReaderWorker] Front Distance:" << frontDistance << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit frontDistanceReceived(frontDistance);
+                } else if (path == "Vehicle.Powertrain.TractionBattery.CurrentVoltage") {
+                    double voltage = dp.value().float_();
+                    qDebug() << "[ReaderWorker] Voltage:" << voltage << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit voltageReceived(voltage);
+                }
+                else if (path == "Vehicle.Powertrain.ElectricMotor.Speed") 
+                {
+                    double wheelSpeed = static_cast<double>(dp.value().int32());
+                    qDebug() << "[ReaderWorker] Wheel Speed:" << wheelSpeed << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit wheelSpeedReceived(wheelSpeed);
                 }
             }
         }
@@ -151,10 +172,14 @@ Reader::Reader(QObject *parent) : QObject(parent)
     _worker->moveToThread(_workerThread);
 
     // Connect signals from worker to this object (forwarding to main thread)
-    connect(_worker, &ReaderWorker::speedReceived, 
-            this, &Reader::speedReceived);
-    connect(_worker, &ReaderWorker::temperatureReceived, 
-            this, &Reader::temperatureReceived);
+    connect(_worker, &ReaderWorker::speedReceived, this, &Reader::speedReceived);
+    connect(_worker, &ReaderWorker::temperatureReceived, this, &Reader::temperatureReceived);
+    connect(_worker, &ReaderWorker::distanceReceived, this, &Reader::distanceReceived);
+    connect(_worker, &ReaderWorker::frontDistanceReceived, this, &Reader::frontDistanceReceived);
+    connect(_worker, &ReaderWorker::wheelSpeedReceived, this, &Reader::wheelSpeedReceived);
+    connect(_worker, &ReaderWorker::voltageReceived, this, &Reader::voltageReceived);
+
+
     connect(_worker, &ReaderWorker::connectionError, 
             this, &Reader::connectionError);
     connect(_worker, &ReaderWorker::connected, 

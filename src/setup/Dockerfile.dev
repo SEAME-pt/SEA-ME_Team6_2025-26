@@ -16,22 +16,23 @@ RUN apt-get update && apt-get install -y \
     libxcb-randr0-dev libxcb-xtest0-dev libxcb-xinerama0-dev \
     libxcb-shape0-dev libxcb-xkb-dev libxcb-render0-dev \
     libxcb-cursor-dev libxcb-icccm4-dev libxcb-sync-dev \
+    libc-ares-dev \
     gdb valgrind clang-format \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-RUN apt-get update && apt-get install -y \
-    libgrpc++-dev \
-    libgrpc-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && ldconfig
+RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
 
 RUN apt-get update && apt-get install -y \
-    libprotobuf-dev \
-    protobuf-compiler \
-    libgrpc++-dev \
-    pkg-config
+    libgrpc++-dev=1.47.* \
+    libgrpc-dev=1.47.* \
+    protobuf-compiler=3.21.* \
+    libprotobuf-dev=3.21.* \
+    protobuf-compiler-grpc=1.47.* \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt-mark hold libgrpc++-dev libgrpc-dev protobuf-compiler libprotobuf-dev protobuf-compiler-grpc
 
 RUN mkdir -p qt6/src qt6/host-build && \
     cd qt6/src && \

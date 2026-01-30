@@ -20,7 +20,11 @@
 src/cluster/CMakeLists.txt.user
 src/cluster/build/
 src/cluster/build-arm/
-src/cluster/build-arm/
+src/cluster/build-arm
+src/cluster/build-dev/
+src/cluster/build-dev
+src/cluster/build-host/
+src/cluster/build-host
 src/cluster/build
 src/deploy/
 src/deploy

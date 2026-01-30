@@ -1,8 +1,6 @@
 /**
  * @author souzitaaaa
  * @email diogo.nogueirasousa123@gmail.com
- * @create date 2025-12-16 14:45:29
- * @modify date 2025-12-16 14:46:01
  * @desc Class that contains temperature functions and exposition to QML
  */
 

@@ -30,6 +30,10 @@ public slots:
 signals:
     void speedReceived(double speed);
     void temperatureReceived(double temperature);
+    void distanceReceived(double distance);
+    void frontDistanceReceived(double frontDistance);
+    void wheelSpeedReceived(double wheelSpeed);
+    void voltageReceived(double voltage);
     void connectionError(QString error);
     void connected();
 
@@ -53,6 +57,10 @@ public:
 signals:
     void speedReceived(double speed);
     void temperatureReceived(double temperature);
+    void distanceReceived(double distance);
+    void frontDistanceReceived(double frontDistance);
+    void wheelSpeedReceived(double wheelSpeed);
+    void voltageReceived(double voltage);
     void connectionError(QString error);
     void connected();
 
