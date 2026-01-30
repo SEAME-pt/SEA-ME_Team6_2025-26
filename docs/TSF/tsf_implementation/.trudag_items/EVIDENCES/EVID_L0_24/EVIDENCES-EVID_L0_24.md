@@ -21,7 +21,7 @@ score: 0.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: accepted
+review_status: pending
 ---
 This evidence item collects integration test results, CAN traffic logs, and timing correlation data that demonstrate the combined startup requirement is met.
 

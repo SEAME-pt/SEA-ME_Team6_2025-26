@@ -861,143 +861,416 @@ _None_
 		````
 
 
-- `src/inital_program/main.py`
+- `src/kuksa/kuksa_RPi5/src/car_control/joystick_control.py`
 
 	??? "Click to view reference"
 
 		````py
+		#!/usr/bin/env python3
 		"""
-		main.py — Nvidia JetRacer car control using a joystick
+		Joystick CAN Control - Tudo-em-um
+		Controla o veículo via CAN usando joystick SHANWAN ou testes manuais
 		
-		This script performs the following steps:
-		1. Initializes the car and the joystick.
-		2. Continuously reads joystick axes.
-		3. Applies throttle and steering values to the car.
-		4. Prints the current values to the console for debugging.
-		5. Ensures safe shutdown of the car on exit.
+		Configuração:
+		  - CAN Interface: can1
+		  - Joystick: /dev/input/event4 (SHANWAN Android Gamepad)
+		  - CAN ID: 0x500
+		  - Bitrate: 500kbps
+		
+		Uso:
+		  sudo python3 joystick_control.py
 		"""
 		
-		from jetracer.nvidia_racecar import NvidiaRacecar
-		import pygame
+		import can
+		import struct
 		import time
+		import sys
+		import select
+		import termios
+		import tty
 		
-		car = NvidiaRacecar() # Create an instance of the JetRacer car
-		
-		pygame.init()  # Initialize the main pygame module
-		pygame.joystick.init()  # Initialize the joystick module
-		
-		# Check if any joystick is connected to the Raspberry Pi
-		if pygame.joystick.get_count() == 0:
-		    print("No joystick connected!")
-		    exit(1)  # Exit the program if no joystick is detected
-		
-		# Select the first connected joystick and initialize it
-		joystick = pygame.joystick.Joystick(0)
-		joystick.init()
-		
-		car.throttle_gain = 1  # Gain factor for throttle (acceleration)
-		car.steering_gain = 1  # Gain factor for steering (direction)
-		car.steering_offset = 0  # Steering servo offset adjustment
-		
+		# Tentar importar evdev (só necessário para modo joystick)
 		try:
-		    while True:
-		        # Update pygame events (required for reading joystick input)
-		        pygame.event.pump()
+		    import evdev
+		    from evdev import ecodes
+		    EVDEV_AVAILABLE = True
+		except ImportError:
+		    EVDEV_AVAILABLE = False
 		
-		        # axis 1: throttle (forward/backward)
-		        # axis 2: steering (left/right)
-		        throttle_axis = joystick.get_axis(1)
-		        steering_axis = joystick.get_axis(2)
+		# Configuração
+		CAN_INTERFACE = 'can1'
+		JOYSTICK_DEVICE = '/dev/input/event4'
+		CAN_ID_JOYSTICK = 0x500
 		
-		        # Apply throttle value, multiplying by the gain
-		        # Note: joystick axis usually ranges from -1 (up) to 1 (down)
-		        car.throttle = throttle_axis * car.throttle_gain
+		class Colors:
+		    RED = '\033[0;31m'
+		    GREEN = '\033[0;32m'
+		    BLUE = '\033[0;34m'
+		    YELLOW = '\033[1;33m'
+		    CYAN = '\033[0;36m'
+		    BOLD = '\033[1m'
+		    NC = '\033[0m'
 		
-		        # Apply steering value, multiplying by the gain
-		        car.steering = steering_axis * car.steering_gain
+		class VehicleController:
+		    def __init__(self, can_interface=CAN_INTERFACE):
+		        self.can_interface = can_interface
+		        self.steering = 0
+		        self.throttle = 0
 		
-		        # Print current values to the console for debugging
-		        print(f"Throttle: {car.throttle:.2f}, Steering: {car.steering:.2f}")
+		        # Inicializar CAN bus
+		        try:
+		            self.can_bus = can.interface.Bus(
+		                channel=can_interface,
+		                bustype='socketcan',
+		                bitrate=500000
+		            )
+		            print(f"{Colors.GREEN}✓ CAN {can_interface} inicializado (500kbps){Colors.NC}")
+		        except Exception as e:
+		            print(f"{Colors.RED}✗ Erro ao inicializar CAN: {e}{Colors.NC}")
+		            print(f"\nExecute antes:")
+		            print(f"  sudo ip link set {can_interface} type can bitrate 500000")
+		            print(f"  sudo ip link set {can_interface} up")
+		            sys.exit(1)
 		
-		        # Small delay to avoid overloading the CPU
-		        time.sleep(0.05)
+		    def send_command(self, steering, throttle):
+		        """Envia comando de controlo via CAN"""
+		        # Limitar valores
+		        steering = max(-100, min(100, steering))
+		        throttle = max(-100, min(100, throttle))
 		
-		# Handle user interruption (Ctrl+C)
-		except KeyboardInterrupt:
-		    print("\nExiting...")
+		        # Empacotar como int16 little-endian
+		        data = struct.pack('&lt;hh', steering, throttle)
 		
-		# Safe shutdown
-		finally:
-		    # Set throttle and steering to zero to safely stop the car
-		    car.throttle = 0
-		    car.steering = 0
+		        # Criar e enviar mensagem
+		        msg = can.Message(
+		            arbitration_id=CAN_ID_JOYSTICK,
+		            data=data,
+		            is_extended_id=False
+		        )
 		
-		    # Quit joystick and pygame modules
-		    pygame.joystick.quit()
-		    pygame.quit()
+		        try:
+		            self.can_bus.send(msg)
+		            return True
+		        except can.CanError as e:
+		            print(f"{Colors.RED}Erro CAN: {e}{Colors.NC}")
+		            return False
 		
+		    def print_status(self, steering, throttle):
+		        """Imprime status formatado"""
+		        def make_bar(value, width=15):
+		            center = width // 2
+		            if value &gt; 0:
+		                filled = int((value / 100.0) * center)
+		                return ' ' * center + '█' * filled + ' ' * (center - filled)
+		            else:
+		                filled = int((abs(value) / 100.0) * center)
+		                return ' ' * (center - filled) + '█' * filled + ' ' * center
 		
+		        steer_bar = make_bar(steering)
+		        throt_bar = make_bar(throttle)
+		
+		        print(f"\r{Colors.CYAN}Steering[{steer_bar}]{steering:4d}  "
+		              f"Throttle[{throt_bar}]{throttle:4d}{Colors.NC}  ",
+		              end='', flush=True)
+		
+		    def stop(self):
+		        """Para o veículo"""
+		        self.send_command(0, 0)
+		        print(f"\n{Colors.YELLOW}→ STOP enviado{Colors.NC}")
+		
+		    def cleanup(self):
+		        """Limpar recursos"""
+		        self.stop()
+		        self.can_bus.shutdown()
+		        print(f"{Colors.GREEN}✓ CAN fechado{Colors.NC}")
+		
+		# =============================================================================
+		# MODO 1: JOYSTICK REAL
+		# =============================================================================
+		
+		def modo_joystick(controller):
+		    """Controlo com joystick real"""
+		
+		    if not EVDEV_AVAILABLE:
+		        print(f"{Colors.RED}✗ Biblioteca 'evdev' não instalada!{Colors.NC}")
+		        print("Instale com: pip3 install evdev")
+		        return
+		
+		    # Encontrar joystick
+		    try:
+		        joystick = evdev.InputDevice(JOYSTICK_DEVICE)
+		        print(f"{Colors.GREEN}✓ Joystick: {joystick.name}{Colors.NC}")
+		        print(f"  Device: {JOYSTICK_DEVICE}")
+		    except Exception as e:
+		        print(f"{Colors.RED}✗ Joystick não encontrado em {JOYSTICK_DEVICE}{Colors.NC}")
+		        print("\nDispositivos disponíveis:")
+		        for path in evdev.list_devices():
+		            dev = evdev.InputDevice(path)
+		            print(f"  {path}: {dev.name}")
+		        return
+		
+		    print(f"\n{Colors.BOLD}=== CONTROLO POR JOYSTICK ==={Colors.NC}")
+		    print("Controles:")
+		    print("  Stick Direito (horizontal) → Steering")
+		    print("  Stick Esquerdo (vertical)   → Throttle")
+		    print("  Ctrl+C para sair\n")
+		
+		    dead_zone = 5
+		    steering = 0
+		    throttle = 0
+		
+		    def normalize_axis(raw_value, invert=False):
+		        """Normaliza eixo do SHANWAN (0..255, centro=127) para -100..100
+		        SHANWAN usa 8-bit unsigned:
+		          - Mínimo: 0
+		          - Centro: 127
+		          - Máximo: 255
+		        """
+		        normalized = int(((raw_value - 127) / 127.0) * 100)
+		        if abs(normalized) &lt; dead_zone:
+		            normalized = 0
+		        if invert:
+		            normalized = -normalized
+		        return max(-100, min(100, normalized))
+		
+		    try:
+		        for event in joystick.read_loop():
+		            if event.type == ecodes.EV_ABS:
+		
+		                # Eixo X (esquerda/direita) - Steering
+		                if event.code == ecodes.ABS_Z:
+		                    steering = normalize_axis(event.value)
+		                    controller.send_command(steering, throttle)
+		                    controller.print_status(steering, throttle)
+		
+		                # Eixo Y (cima/baixo) - Throttle
+		                elif event.code == ecodes.ABS_Y:
+		                    throttle = normalize_axis(event.value, invert=True)
+		                    controller.send_command(steering, throttle)
+		                    controller.print_status(steering, throttle)
+		
+		    except KeyboardInterrupt:
+		        print(f"\n{Colors.GREEN}✓ Joystick desconectado{Colors.NC}")
+		
+		# =============================================================================
+		# MODO 2: TESTES AUTOMÁTICOS
+		# =============================================================================
+		
+		def modo_testes(controller):
+		    """Executa sequência de testes automáticos"""
+		
+		    print(f"\n{Colors.BOLD}=== TESTES AUTOMÁTICOS ==={Colors.NC}\n")
+		
+		    # Teste 1: Neutro
+		    print(f"{Colors.YELLOW}[1/5] Posição neutra...{Colors.NC}")
+		    controller.send_command(0, 0)
+		    controller.print_status(0, 0)
+		    time.sleep(2)
+		
+		    # Teste 2: Steering
+		    print(f"\n{Colors.YELLOW}[2/5] Teste de steering...{Colors.NC}")
+		    for angle in [-100, -50, 0, 50, 100, 0]:
+		        print(f"\n  → Steering: {angle}")
+		        controller.send_command(angle, 0)
+		        controller.print_status(angle, 0)
+		        time.sleep(1)
+		
+		    # Teste 3: Throttle
+		    print(f"\n{Colors.YELLOW}[3/5] Teste de throttle...{Colors.NC}")
+		    for speed in [25, 50, 0, -25, 0]:
+		        print(f"\n  → Throttle: {speed}")
+		        controller.send_command(0, speed)
+		        controller.print_status(0, speed)
+		        time.sleep(2)
+		
+		    # Teste 4: Curvas
+		    print(f"\n{Colors.YELLOW}[4/5] Teste de curvas...{Colors.NC}")
+		    curvas = [
+		        (-50, 50, "Frente + Esquerda"),
+		        (50, 50, "Frente + Direita"),
+		        (-50, -50, "Trás + Esquerda"),
+		        (50, -50, "Trás + Direita"),
+		    ]
+		    for steer, throt, desc in curvas:
+		        print(f"\n  → {desc}")
+		        controller.send_command(steer, throt)
+		        controller.print_status(steer, throt)
+		        time.sleep(2)
+		
+		    # Teste 5: Padrão em 8
+		    print(f"\n{Colors.YELLOW}[5/5] Padrão em '8'...{Colors.NC}")
+		    for angle in [-100, -50, 0, 50, 100, 50, 0, -50, -100]:
+		        controller.send_command(angle, 40)
+		        controller.print_status(angle, 40)
+		        time.sleep(0.5)
+		
+		    # Finalizar
+		    controller.stop()
+		    print(f"\n\n{Colors.GREEN}✓ Testes concluídos!{Colors.NC}")
+		
+		# =============================================================================
+		# MODO 3: CONTROLO INTERATIVO (TECLADO)
+		# =============================================================================
+		
+		def modo_interativo(controller):
+		    """Controlo via teclado (WASD)"""
+		
+		    print(f"\n{Colors.BOLD}=== MODO INTERATIVO (WASD) ==={Colors.NC}")
+		    print("Controles:")
+		    print("  W/S - Throttle (frente/trás)")
+		    print("  A/D - Steering (esquerda/direita)")
+		    print("  Espaço - STOP")
+		    print("  Q - Sair\n")
+		
+		    steering = 0
+		    throttle = 0
+		    step = 10
+		
+		    # Configurar terminal
+		    old_settings = termios.tcgetattr(sys.stdin)
+		    try:
+		        tty.setcbreak(sys.stdin.fileno())
+		
+		        while True:
+		            # Ler tecla
+		            if select.select([sys.stdin], [], [], 0.1)[0]:
+		                key = sys.stdin.read(1).lower()
+		
+		                if key == 'w':
+		                    throttle = min(100, throttle + step)
+		                elif key == 's':
+		                    throttle = max(-100, throttle - step)
+		                elif key == 'a':
+		                    steering = max(-100, steering - step)
+		                elif key == 'd':
+		                    steering = min(100, steering + step)
+		                elif key == ' ':
+		                    steering = 0
+		                    throttle = 0
+		                elif key == 'q':
+		                    break
+		                else:
+		                    continue
+		
+		                controller.send_command(steering, throttle)
+		                controller.print_status(steering, throttle)
+		
+		    finally:
+		        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+		        print(f"\n{Colors.GREEN}✓ Modo interativo encerrado{Colors.NC}")
+		
+		# =============================================================================
+		# MODO 4: EMERGENCY STOP
+		# =============================================================================
+		
+		def modo_emergency_stop(controller):
+		    """Para tudo imediatamente"""
+		    print(f"\n{Colors.RED}{Colors.BOLD}🛑 EMERGENCY STOP 🛑{Colors.NC}")
+		    for _ in range(3):
+		        controller.send_command(0, 0)
+		    print(f"{Colors.GREEN}✓ Comando STOP enviado 3x{Colors.NC}")
+		    time.sleep(0.5)
+		
+		# =============================================================================
+		# MENU PRINCIPAL
+		# =============================================================================
+		
+		def menu_principal():
+		    """Menu principal"""
+		
+		    print("\n" + "="*60)
+		    print(f"{Colors.BOLD}      JOYSTICK CAN CONTROL - Team6 Project{Colors.NC}")
+		    print("="*60)
+		    print(f"CAN Interface: {Colors.CYAN}{CAN_INTERFACE}{Colors.NC}")
+		    print(f"Joystick:      {Colors.CYAN}{JOYSTICK_DEVICE}{Colors.NC} (SHANWAN)")
+		    print(f"CAN ID:        {Colors.CYAN}0x{CAN_ID_JOYSTICK:03X}{Colors.NC}")
+		    print("="*60)
+		    print("\nEscolhe um modo:")
+		    print(f"  {Colors.GREEN}1{Colors.NC}) Joystick Real (SHANWAN Android Gamepad)")
+		    print(f"  {Colors.YELLOW}2{Colors.NC}) Testes Automáticos")
+		    print(f"  {Colors.CYAN}3{Colors.NC}) Modo Interativo (Teclado WASD)")
+		    print(f"  {Colors.RED}4{Colors.NC}) EMERGENCY STOP")
+		    print(f"  {Colors.BLUE}5{Colors.NC}) Monitor CAN")
+		    print("  9) Sair")
+		    print("")
+		
+		def modo_monitor(controller):
+		    """Monitor de mensagens CAN"""
+		    print(f"\n{Colors.BLUE}Monitorando CAN (Ctrl+C para sair)...{Colors.NC}\n")
+		
+		    try:
+		        while True:
+		            msg = controller.can_bus.recv(timeout=1.0)
+		            if msg and msg.arbitration_id == CAN_ID_JOYSTICK:
+		                if len(msg.data) &gt;= 4:
+		                    steering, throttle = struct.unpack('&lt;hh', msg.data[:4])
+		                    print(f"{Colors.CYAN}[0x{msg.arbitration_id:03X}]{Colors.NC} "
+		                          f"Steering={steering:4d}, Throttle={throttle:4d} "
+		                          f"Data: {msg.data.hex().upper()}")
+		    except KeyboardInterrupt:
+		        print(f"\n{Colors.GREEN}Monitor encerrado{Colors.NC}")
+		
+		def main():
+		    """Loop principal"""
+		
+		    # Criar controller
+		    controller = VehicleController(CAN_INTERFACE)
+		
+		    try:
+		        while True:
+		            menu_principal()
+		
+		            try:
+		                opcao = input(f"{Colors.BOLD}Opção: {Colors.NC}").strip()
 		````
 
 
-- `src/inital_program/install_initial_program.md`
+- `src/kuksa/kuksa_RPi5/src/handlers/joystick.cpp`
 
 	??? "Click to view reference"
 
-		````md
-		# Initial Program - Documentation
+		````cpp
+		#include "../../inc/handlers.hpp"
+		#include "../../inc/can_decode.hpp"
+		#include "../../inc/interface_kuksa_client.hpp"
+		#include "../../inc/signals.hpp"
 		
-		## 1. About
-		This project integrates external libraries for installing PiRacer, focusing on NVIDIA boards.
-		We use these libraries as a foundation for initial configurations, testing electronic components, and as a reference for applying reverse engineering to understand how motors and communication protocols, such as I²C, work.
-		
-		## 2. Install
-		
-		To access the device remotely, see this SSH connection tutorial:
-		- [How to Connect to a Remote Server via SSH (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-use-ssh-to-connect-to-a-remote-server)
-		
-		Install the main dependencies with:
-		
-		```bash
-		pip install torch jetson-utils jetracer numpy opencv-python pandas matplotlib flask pygame
-		```
-		
-		Check the official repositories for specific installation instructions:
-		
-		- [PyTorch](https://github.com/pytorch/pytorch) – Library for GPU-accelerated computing and deep learning.
-		- [jetson-utils](https://github.com/dusty-nv/jetson-utils) – Utilities for image and video processing optimized for Jetson.
-		- [jetracer](https://github.com/NVIDIA-AI-IOT/jetracer) – Framework for autonomous car control with NVIDIA Jetson.
-		- [pandas](https://github.com/pandas-dev/pandas) – Data structures and statistical analysis in Python.
-		- [matplotlib](https://github.com/matplotlib/matplotlib) – Graphical visualization and chart generation in Python.
-		- [flask](https://github.com/pallets/flask) – Microframework for building web applications.
-		- [opencv-python](https://github.com/opencv/opencv-python) – Image processing and computer vision.
-		- [pygame](https://github.com/pygame/pygame) – Library for game development and multimedia interfaces.
+		#include &lt;algorithm&gt;
+		#include &lt;cstdint&gt;
 		
 		
+		// Limit values to specified range
+		static inline int clamp_int(int v, int lo, int hi) {
+		    return std::max(lo, std::min(hi, v));
+		}
 		
-		## 3. Created main.py
+		static inline std::uint8_t clamp_u8(int v) {
+		    return static_cast&lt;std::uint8_t&gt;(clamp_int(v, 0, 100));
+		}
 		
-		The `main.py` file was created as the main entry point of the project. It uses the following libraries:
+		void handleJoystick(const can_frame& frame, IKuksaClient& kuksa)
+		{
+		    // Python sends '&lt;hh' =&gt; 4 bytes
+		    if (frame.can_dlc &lt; 4)
+		        return;
 		
-		- `jetracer` ([NVIDIA-AI-IOT/jetracer](https://github.com/NVIDIA-AI-IOT/jetracer)): Autonomous vehicle control.
-		- `pygame` ([pygame/pygame](https://github.com/pygame/pygame)): Joystick reading and control interface.
-		- `time`: Time control and delays.
-		- Other libraries may be added as needed.
+		    const std::int16_t steering_cmd  = can_decode::i16_le(&frame.data[0]);
+		    const std::int16_t throttle_cmd  = can_decode::i16_le(&frame.data[2]);
 		
-		## 4. Created run.py and added to crontab -e
+		    // Map steering -100..100 to -45..45 degrees
+		    // angle = steering * 45 / 100
+		    const int angle_deg = clamp_int((steering_cmd * 45) / 100, -45, 45);
 		
-		The `run.py` file was created for project automation. For automatic execution, add to `crontab -e`:
-		```bash
-		* * * * * /usr/bin/flock -n /tmp/run.lock /path/to/your/script.sh &gt;&gt; /path/to/your/log.txt 2&gt;&1
-		```
+		    // Map throttle -100..100:
+		    const int accel_pct = clamp_int(throttle_cmd, 0, 100);
 		
-		This line in crontab does the following:
+		    // Publish to KUKSA
+		    // SteeringWheel.Angle is int16 but in KUKSA we dont have publishInt16
+		    kuksa.publishInt32(sig::CHASSIS_STEER_ANGLE, angle_deg);
 		
-		Runs the script /path/to/your/script.sh every minute, but does not start a new execution if the previous one is still running.
-		All output and errors from the script are appended to /path/to/your/log.txt.
-		
-		The trick is flock -n /tmp/run.lock, which creates a “lock” to prevent multiple simultaneous executions.
-		
+		    // Accelerator pedal is uint8 but we dont have publishUint8
+		    kuksa.publishUint32(sig::CHASSIS_ACCEL_PEDAL, accel_pct);
+		}
 		````
 
 
@@ -1552,6 +1825,11 @@ _None_
 		- https://doc.qt.io/qt-6/qml-qtquick-layouts-columnlayout.html
 		- https://doc.qt.io/qt-6/qml-qtquick-text.html
 		
+		---
+		
+		&gt; **Document Version:** 1.0  
+		  **Last Updated:** 12th November 2025  
+		  **Contributor:** souzitaaaa
 		````
 
 
@@ -2164,6 +2442,11 @@ _None_
 		- https://doc.qt.io/qt-6/qml-qtquick-layouts-columnlayout.html
 		- https://doc.qt.io/qt-6/qml-qtquick-text.html
 		
+		---
+		
+		&gt; **Document Version:** 1.0  
+		  **Last Updated:** 12th November 2025  
+		  **Contributor:** souzitaaaa
 		````
 
 
@@ -2173,6 +2456,8 @@ _None_
 
 		````md
 		# 🚀 Instrument Cluster
+		
+		&gt; **Disclaimer:** This document was created with the assistance of AI technology. The AI provided information and suggestions based on the references, which were then reviewed and edited for clarity and relevance. While the AI aided in generating content, the final document reflects our thoughts and decisions.
 		
 		## 📚 Index
 		  - [👋 Introduction](#sec-intro)
@@ -3058,8 +3343,12 @@ _None_
 		 - https://www.qt.io
 		 - https://cmake.org  
 		 - https://packages.ubuntu.com
-		 
 		
+		---
+		
+		&gt; **Document Version:** 1.0  
+		  **Last Updated:** 2nd December 2025  
+		  **Contributor:** souzitaaaa
 		
 		````
 
@@ -8393,57 +8682,70 @@ _None_
 		- #### **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
 		  - [ ] Team Knowlegde Update/Status Point (5)
 		- #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-		  - [ ] Update Project Board (3)
+		  - [x] Update Project Board (3)
 		- #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-		  - [ ] Integrate Speedometer with Hardware (3)
-		  - [ ] Integrate Relay for Motor Driver (3)
-		  - [ ] Mount and test SSD through USB device (3)
-		  - [ ] Integrate Recharge Terminal (3)
+		  - [x] Integrate Speedometer with Hardware (3)
+		  - [x] Integrate Relay for Motor Driver (3)
+		  - [x] Mount and test SSD through USB device (3)
+		  - [x] Integrate Recharge Terminal (3)
 		- #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-		  - [ ] Test real data displaying in QT (8)
-		  - [ ] Design and Establish CAN Protocol (13)
-		  - [ ] Initialize Data Processing with ThreadX (13)
-		  - [ ] Integrate Data from Multiple Sensors (5)
+		  - [x] Test real data displaying in QT (8)
+		  - [x] Design and Establish CAN Protocol (13)
+		  - [x] Initialize Data Processing with ThreadX (13)
+		  - [x] Integrate Data from Multiple Sensors (5)
 		- #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
-		  - [ ] UPROTOCOL, COVESA and KUKSA documentation (13)
+		  - [x] UPROTOCOL, COVESA and KUKSA documentation (13)
 		- #### **Epic** - Testing and Validate Software - [103](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/103)
-		  - [ ] Test Knowledge (Integration and Unit) (21) 
+		  - [x] Test Knowledge (Integration and Unit) (21) 
 		---
 		
 		## 📈 Actual Progress
 		
-		- ## ✅ Running... 🎉
-		- ## ✅ Sprint 5 points: 0/93 (🔥🔥Ambitious!!🔥🔥)
+		- ## ✅ Goal Completed! Implemention of end-to-end data flow
+		- `STM32 (ThreadX) &lt;-&gt; CAN Bus &lt;-&gt; Raspberry Pi 5 (AGL) - (CAN decoder + KUKSA publisher) &lt;-&gt; KUKSA Databroker -&gt; Qt App`
+		- ## ✅ Sprint 5 points: 88/93 
 		
-		- ❌ Undone: 
+		- ❌ Undone: Team Knowlegde Update/Status Point (5)
 		---
 		
 		## ✅ Outcomes
 		
 		- **Delivered**:
+		  - All hardware additions/changes completed. (Speedometer; Relay; SSD; Recharge terminal)
+		  - Testing Spike/Small implementation of unit testing.
+		  - End-to-end communication via CAN with KUKSA implementation.
+		  - Processing CAN messages in ThreadX.
 		 
 		- **Demos**:
-		
+		  - Coverage report - Testing
+		  ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/first-code-coverage.png)
+		  - Qt app receiving real values from CAN messages
+		  - https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223
+		  - End-to-end communication with KUKSA
+		  ![Image](https://github.com/user-attachments/assets/93c0be02-b795-4251-90d5-cee29f532622)
+		  - https://drive.google.com/file/d/1IAODelnUotcU6ZGGdhF4OY6deZO966iM/view?usp=sharing
+		  - CAN messages benchmark
+		  ![Image](https://github.com/user-attachments/assets/504d738f-c1b2-4f7c-8e9c-e903a6c60e4e)
+		  - Demo of starting Relay 
+		  - https://github.com/user-attachments/assets/51083775-6852-4c18-8703-7d6342156b04
 		
 		- **Docs updated**:
-		
-		
-		- **Code**:
+		  - KUKSA integration in here -&gt; [README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/kuksa-implementation/src/can_to_kuksa/README.md)
+		  - Cross-compile for KUKSA implementation in here -&gt; [README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/cross-compile-stubs/src/cross-compiler/protobuf_gRPC_crosscompiling/README.md)
+		  - Software Tests Guide in here -&gt; [Software-tests-guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Software-Tests-guide.md)
+		  - Testing framework decision in here -&gt; [Testing-Framework-Decision](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Testing-Framework-Decision.md)
 		
 		- **Tests**:
+		  - Speed provider tests -&gt; [here](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/test-knowledge/src/tests/unit/speedprovider_test.cpp)
 		  
 		---
 		
 		# 🔎 Retrospective
 		- ## **Went well**:
-		  - ###
-		  - ### 
-		
-		- ## **To improve**: 
-		  - ### 
-		
-		## 🔗 Useful Links
-		- 
+		  - ### Objetive completed - End-to-end communication with real Data!
+		  - ### Bonus tasks:
+		      - #### KUKSA implemented
+		      - #### CAN benchmark test - 1000 packages/s without losses (estimated needs - 100-150 packages/s)
 		
 		## TSF Useful: 
 		  EXPECT-L0-1 - "System architecture is defined and documented":
@@ -8479,7 +8781,6 @@ _None_
 
 ### EVIDENCES-EVID_L0_16 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_16 data-toc-label="EVIDENCES-EVID_L0_16" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
-- name: Joao Jesus Silva
 {: .expanded-item-element }
 
 **Supported Requests:**
@@ -8503,9 +8804,9 @@ _None_
 		````yaml
 		name: Build Daily Doc
 		
-		on:
-		  issues:
-		    types: [opened, edited, labeled, reopened]
+		on: []
+		 # issues:
+		  #  types: [opened, edited, labeled, reopened]
 		
 		permissions:
 		  issues: write
@@ -9024,7 +9325,7 @@ _None_
 ---
 
 ### EVIDENCES-EVID_L0_18 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_18 data-toc-label="EVIDENCES-EVID_L0_18" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
-
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 {: .expanded-item-element }
 
 **Supported Requests:**
@@ -9040,35 +9341,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_18/EXPECTATIONS-EXPECT_L0_18.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_18
-		header: "CAN Bus Communication with ThreadX RTOS"
-		text: |
-		  The vehicle shall communicate via CAN bus using ThreadX as the real-time operating system on the STM32 microcontroller. The CAN communication layer shall be integrated with ThreadX threads to ensure deterministic message handling and proper prioritization of automotive communication tasks.
-		level: "1.18"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_18/ASSERTIONS-ASSERT_L0_18.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_18/EVIDENCES-EVID_L0_18.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
 
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md`
 
@@ -9112,35 +9384,6 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_19
-		header: "TSF Automation Testing"
-		text: |
-		  The project shall implement automated testing for TSF (Technical Specification Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
-		level: "1.19"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_19/ASSERTIONS-ASSERT_L0_19.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_19/EVIDENCES-EVID_L0_19.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/tsf-validate.yml
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/README.md`
 
 	??? "Click to view reference"
@@ -9183,35 +9426,6 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_20/EXPECTATIONS-EXPECT_L0_20.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_20
-		header: "AI-Assisted Content Generation Integration"
-		text: |
-		  The project shall integrate AI-assisted tools for automated content generation in the TSF workflow. This includes using GitHub Copilot CLI and/or VSCode Copilot Chat to generate TSF item content (EXPECT, ASSERT, EVID, ASSUMP) based on requirements and acceptance criteria. The AI integration shall follow documented guidelines for pair programming with generative AI.
-		level: "1.20"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_20/ASSERTIONS-ASSERT_L0_20.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_20/EVIDENCES-EVID_L0_20.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md`
 
 	??? "Click to view reference"
@@ -9237,7 +9451,7 @@ _None_
 ---
 
 ### EVIDENCES-EVID_L0_21 | Reviewed: ✔ | Score: 1.0 ### {: #evidences-evid_l0_21 data-toc-label="EVIDENCES-EVID_L0_21" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
-
+This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 {: .expanded-item-element }
 
 **Supported Requests:**
@@ -9254,40 +9468,305 @@ _None_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_21/EXPECTATIONS-EXPECT_L0_21.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_21
-		header: "Complete TSF Automation Workflow"
-		text: |
-		  The project shall implement a complete TSF automation workflow that includes: detection of new requirements, automatic generation of TSF items (EXPECT, ASSERT, EVID, ASSUMP), validation of item structure, evidence synchronization from sprint files, and TruDAG graph generation. The workflow shall be executable via a single unified script.
-		level: "1.21"
-		normative: true
-		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_21/ASSERTIONS-ASSERT_L0_21.md
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_21/EVIDENCES-EVID_L0_21.md
-		  - type: url
-		    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
-		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		
-		
-		````
-
-
 - `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py`
 
 	??? "Click to view reference"
 
 		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_22 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_22 data-toc-label="EVIDENCES-EVID_L0_22" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects repository artifacts, sprint reports and timing measurements that demonstrate the STM32 ThreadX startup requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+_None_
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_23 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_23 data-toc-label="EVIDENCES-EVID_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_23](ASSERTIONS.md#assertions-assert_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_24 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_24 data-toc-label="EVIDENCES-EVID_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects integration test results, CAN traffic logs, and timing correlation data that demonstrate the combined startup requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during system integration phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_24](ASSERTIONS.md#assertions-assert_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_25 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_25 data-toc-label="EVIDENCES-EVID_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings, startup logs, and timing measurements that demonstrate the instrument cluster UI availability requirement is met.
+
+**Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_25](ASSERTIONS.md#assertions-assert_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_26 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_26 data-toc-label="EVIDENCES-EVID_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects end-to-end integration test results, video recordings, and system logs that demonstrate all startup time requirements are met.
+
+**Evidence Status:** Pending - end-to-end integration test to be performed during final system integration phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_26](ASSERTIONS.md#assertions-assert_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_27 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_27 data-toc-label="EVIDENCES-EVID_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings, distance measurements, and test logs that demonstrate the emergency braking stopping distance requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during ADAS testing phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_28 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_28 data-toc-label="EVIDENCES-EVID_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met.
+
+**Evidence Status:** Pending - temperature comparison test to be performed during sensor integration testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### EVIDENCES-EVID_L0_29 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_29 data-toc-label="EVIDENCES-EVID_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met.
+
+**Evidence Status:** Pending - integration test to be performed during driver presence validation testing.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
 
 
 

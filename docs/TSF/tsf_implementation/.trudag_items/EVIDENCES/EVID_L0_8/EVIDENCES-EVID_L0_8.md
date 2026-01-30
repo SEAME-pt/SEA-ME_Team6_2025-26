@@ -22,4 +22,8 @@ references:
 - type: file
   path: docs/images/Half-duplex-communication.png
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---

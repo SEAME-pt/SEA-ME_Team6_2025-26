@@ -8,6 +8,10 @@ references:
 - type: file
   path: docs/TSF/tsf_implementation/TSF_docs/WhatsTSF.md
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
     
 

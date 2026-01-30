@@ -21,7 +21,7 @@ score: 0.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: accepted
+review_status: pending
 ---
 This evidence item collects video recordings, startup logs, and timing measurements that demonstrate the instrument cluster UI availability requirement is met.
 

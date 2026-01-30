@@ -20,7 +20,7 @@ score: 0.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: accepted
+review_status: pending
 ---
 This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met.
 

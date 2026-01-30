@@ -10,13 +10,12 @@ references:
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ThreadXGuide.md
   - type: url
     url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md
-score: 0.0
+score: 1.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: pending
+review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 
-**Evidence Status:** Pending - no evidence has been documented in sprint files yet.
 

@@ -21,7 +21,7 @@ score: 0.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt
-review_status: accepted
+review_status: pending
 ---
 This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met.
 

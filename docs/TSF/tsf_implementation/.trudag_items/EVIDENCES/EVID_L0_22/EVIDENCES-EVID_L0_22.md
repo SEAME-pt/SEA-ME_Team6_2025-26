@@ -24,3 +24,4 @@ review_status: accepted
 This evidence item collects repository artifacts, sprint reports and timing measurements that demonstrate the STM32 ThreadX startup requirement is met.
 
 **Evidence Status:** Pending - timing measurements to be collected during hardware integration testing.
+
