@@ -36,6 +36,8 @@
 #define CAN_ID_ENVIRONMENT      0x420
 #define CAN_ID_BATTERY          0x421
 #define CAN_ID_TOF_DISTANCE     0x422
+#define CAN_ID_SRF08_DISTANCE   0x423
+#define CAN_ID_GESTURE          0x424
 
 /* Joystick (temporary)*/
 #define CAN_ID_JOYSTICK			0x500
@@ -94,6 +96,7 @@ typedef enum {
 #define CAN_PERIOD_IMU_MAG_MS        2000   /* 50 Hz */
 #define CAN_PERIOD_WHEEL_SPEED_MS    100  /* 10 Hz */
 #define CAN_PERIOD_TOF_MS            2000   /* 50 Hz */
+#define CAN_PERIOD_SRF08_MS          50    /* 5 Hz - matching sensor read rate */
 #define CAN_PERIOD_ENVIRONMENT_MS    1000 /* 1 Hz */
 #define CAN_PERIOD_BATTERY_MS        500  /* 2 Hz */
 #define CAN_PERIOD_HEARTBEAT_MS      100  /* 10 Hz */
@@ -107,8 +110,8 @@ typedef enum {
 /* Emergency Stop (0x001) - Bi-directional */
 typedef struct __attribute__((packed)) {
     uint8_t  active;        /* 1 = Emergency active, 0 = Clear */
-    uint8_t  source;        /* 0=ToF, 1=AGL, 2=Manual, 3=Watchdog */
-    uint16_t distance_mm;   /* Distance to obstacle (if ToF) */
+    uint8_t  source;        /* 0=ToF, 1=SRF08, 2=AGL, 3=Manual, 4=Watchdog */
+    uint16_t distance_mm;   /* Distance to obstacle (if distance sensor) */
     uint8_t  reason;        /* Reason code */
     uint8_t  reserved[2];
     uint8_t  crc;
@@ -201,7 +204,28 @@ typedef struct __attribute__((packed)) {
     uint8_t  status;            /* Sensor status flags */
 } ToFDistance_t;
 
-/* Heartbeat (0x700/0 	x701) */
+/* SRF08 Ultrasonic Distance (0x423) - STM32 -> AGL */
+typedef struct __attribute__((packed)) {
+    uint16_t distance_mm;       /* Distance in mm (0-6000mm range) */
+    uint8_t  light_level;       /* Light sensor reading (0-255) */
+    uint8_t  gain;              /* Current gain setting */
+    uint8_t  range_setting;     /* Current range setting */
+    uint8_t  reserved[2];
+    uint8_t  status;            /* Sensor status flags (bit 0: valid reading) */
+} SRF08Distance_t;
+
+/* Gesture Detection (0x424) - STM32 -> AGL */
+typedef struct __attribute__((packed)) {
+    uint8_t  gesture_type;      /* 0=None,1=Left,2=Right,3=Up,4=Down,5=Tap,6=DoubleTap,7=Away */
+    uint8_t  hand_detected;     /* 1 = hand detected, 0 = no hand */
+    int8_t   hand_x;            /* Hand X position (0-7 scaled to -100 to +100) */
+    int8_t   hand_y;            /* Hand Y position (0-7 scaled to -100 to +100) */
+    uint16_t hand_z_mm;         /* Hand Z distance in mm */
+    uint8_t  confidence;        /* Detection confidence 0-100% */
+    uint8_t  status;            /* Sensor status flags */
+} GestureFrame_t;
+
+/* Heartbeat (0x700/0x701) */
 typedef struct __attribute__((packed)) {
     uint8_t  state;         /* SystemState_t */
     uint32_t uptime_ms;     /* Milliseconds since boot */

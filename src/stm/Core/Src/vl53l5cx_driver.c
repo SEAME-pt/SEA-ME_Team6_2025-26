@@ -60,14 +60,14 @@ HAL_StatusTypeDef VL53L5CX_Init(void)
 	}
 	printf("[VL53L5CX] Firmware uploaded successfully!\r\n");
 
-	/* Configure for 4x4 resolution (16 zones) */
-	status = vl53l5cx_set_resolution(&vl53l5cx_driver.config, VL53L5CX_RESOLUTION_4X4);
+	/* Configure for 8x8 resolution (64 zones) - Required for gesture detection */
+	status = vl53l5cx_set_resolution(&vl53l5cx_driver.config, VL53L5CX_RESOLUTION_8X8);
 	if (status != 0) {
-		printf("[VL53L5CX] ERROR: Failed to set 4x4 resolution\r\n");
+		printf("[VL53L5CX] ERROR: Failed to set 8x8 resolution\r\n");
 		return HAL_ERROR;
 	}
-	vl53l5cx_driver.resolution = VL53L5CX_RESOLUTION_4X4;
-	printf("[VL53L5CX] Resolution set to 4x4 (16 zones)\r\n");
+	vl53l5cx_driver.resolution = VL53L5CX_RESOLUTION_8X8;
+	printf("[VL53L5CX] Resolution set to 8x8 (64 zones) for gesture detection\r\n");
 
 	/* Set ranging frequency to 30Hz (faster distance detection) */
 	status = vl53l5cx_set_ranging_frequency_hz(&vl53l5cx_driver.config, 30);
