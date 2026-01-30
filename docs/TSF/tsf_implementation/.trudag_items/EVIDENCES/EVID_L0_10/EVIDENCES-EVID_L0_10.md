@@ -10,4 +10,8 @@ references:
 - type: file
   path: docs/guides/Power Consumption Analysis.md
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---

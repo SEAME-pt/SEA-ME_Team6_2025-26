@@ -19,9 +19,9 @@ Item {
 
         SpeedGauge {
             anchors.centerIn: parent
-            value: temperatureProvider.currTemperature
+            value: wheelSpeedProvider.currWheelSpeed
             minValue: 0
-            maxValue: 300
+            maxValue: 80
             startAngle: 135
             endAngle: 270
         }

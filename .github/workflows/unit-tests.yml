@@ -1,0 +1,58 @@
+name: unit-tests
+
+on:
+  pull_request:
+    branches: [development]
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Pull test image
+        run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
+
+      - name: Configure + Build + Run tests
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            -w /work/src/tests \
+            ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
+            bash -lc '
+              rm -rf build && \
+              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
+              cmake --build build && \
+              ctest --test-dir build --output-on-failure
+            '
+
+      # OPTIONAL coverage report (HTML)
+      - name: Generate coverage HTML
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            -w /work/src/tests \
+            ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
+            bash -lc '
+              rm -rf coverage_html coverage.info coverage_filtered.info && \
+              lcov --directory build --capture --output-file coverage.info && \
+              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" --output-file coverage_filtered.info && \
+              genhtml coverage_filtered.info --output-directory coverage_html
+            '
+
+      - name: Upload coverage HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_html
+          path: src/tests/coverage_html

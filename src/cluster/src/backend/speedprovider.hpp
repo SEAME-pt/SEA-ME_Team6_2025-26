@@ -13,6 +13,8 @@
 #include <QTimer>
 #include <QtMath>
 
+#define MAX_SPEED 1000.0
+
 class SpeedProvider : public QObject
 {
     Q_OBJECT

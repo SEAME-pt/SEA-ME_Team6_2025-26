@@ -32,8 +32,8 @@ void LCD1602_Print(const char *str);
 void LCD1602_SetRGB(uint8_t r, uint8_t g, uint8_t b);
 
 /* Display Update Functions */
-void LCD1602_UpdateDisplay(float temp, float humidity, uint16_t tof_dist, float speed);
-void LCD1602_UpdateLine1(float temp, float humidity);
+void LCD1602_UpdateDisplay(float voltage, float temp, float humidity, uint16_t tof_dist, float speed);
+void LCD1602_UpdateLine1(float voltage, float temp, float humidity);
 void LCD1602_UpdateLine2(uint16_t tof_dist, float speed);
 
 #endif /* INC_LCD1602_H_ */

@@ -36,8 +36,8 @@
 #include <stdio.h>
 #include "stm32_can_benchmark.h"
 
-#include "vl53l5cx_simple.h"
 #include "motor_control.h"
+#include "srf08.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,6 +65,7 @@
 /* USER CODE BEGIN PV */
 
 extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c2;
 
 /* USER CODE END PV */
 
@@ -90,6 +91,7 @@ void Test_Servo_SetAngle(uint16_t angle)
 
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pulse);
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -138,22 +140,7 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-/*
- *   printf("\r\n========================================\r\n");
-  printf("  STM32 B-U585I-IOT02A - Team6\r\n");
-  printf("  VL53L5CX ULTRA-MINIMAL TEST\r\n");
-  printf("========================================\r\n");
-  if (VL53L5CX_SimpleTest() == HAL_OK) {
-    printf("\r\n[MAIN] SUCCESS! VL53L5CX is working!\r\n");
-  } else {
-    printf("\r\n[MAIN] FAILED! Check output above.\r\n");
-  }
-  printf("\r\n[MAIN] Test complete. System halted.\r\n");
-  printf("       Press RESET to run again.\r\n\r\n");
-  while(1) {
-    HAL_Delay(1000);
-  }
-*/
+
 
   // Inicia o PWM no TIM1_CH1 (PA8)
   printf("Iniciando PWM para servo motor em PA8 (TIM1_CH1)...\r\n");
@@ -165,7 +152,8 @@ int main(void)
 
   HAL_Delay(500);
 
-
+  // === TESTE SRF-08 DESATIVADO - Thread SRF08 ativa ===
+  printf("\r\n=== SRF08 sera inicializado pela thread dedicada ===\r\n\r\n");
 
   /* USER CODE END 2 */
 

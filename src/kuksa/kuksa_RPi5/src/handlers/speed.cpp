@@ -22,7 +22,7 @@ void handleWheelSpeed(const can_frame& frame, IKuksaClient& kuksa)
     const std::uint8_t  status    = can_decode::u8(&frame.data[7]);       // byte 7
     (void)direction; (void)status;
 
-    const std::int16_t rpm = can_decode::i16_le(&frame.data[0]);
+    //const std::int16_t rpm = can_decode::i16_le(&frame.data[0]);
 
     double rpm_signed = static_cast<double>(rpm);
     const double rps = rpm_signed / 60.0;
@@ -30,4 +30,5 @@ void handleWheelSpeed(const can_frame& frame, IKuksaClient& kuksa)
     const double speed_kmh = speed_mh * 3.6;
 
     kuksa.publishDouble(sig::VEHICLE_SPEED, speed_mh);
+    kuksa.publishInt32(sig::EMOTOR_SPEED_RPM, static_cast<int32_t>(rpm_signed));
 }

@@ -22,6 +22,7 @@ struct IKuksaClient {
   virtual void publishUint32(const std::string& path, std::uint32_t v) = 0;
 };
 
+//For testeing purposes
 struct FakeKuksaClient : public IKuksaClient {
   std::vector<PublishCall> calls;
 
@@ -50,5 +51,62 @@ struct FakeKuksaClient : public IKuksaClient {
     size_t n = 0;
     for (size_t i = 0; i < calls.size(); ++i) if (calls[i].path == p) ++n;
     return n;
+  }
+
+  size_t countPathType(const std::string& p, PublishCall::Type t) const {
+    size_t n = 0;
+    for (size_t i = 0; i < calls.size(); ++i)
+      if (calls[i].path == p && calls[i].type == t) ++n;
+    return n;
+  }
+
+  bool lastDouble(const std::string& p, double& out) const {
+    for (size_t i = calls.size(); i-- > 0; ) {
+      if (calls[i].path == p && calls[i].type == PublishCall::kDouble) {
+        out = calls[i].d;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool lastFloat(const std::string& p, float& out) const {
+    for (size_t i = calls.size(); i-- > 0; ) {
+      if (calls[i].path == p && calls[i].type == PublishCall::kFloat) {
+        out = calls[i].f;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool lastBool(const std::string& p, bool& out) const {
+    for (size_t i = calls.size(); i-- > 0; ) {
+      if (calls[i].path == p && calls[i].type == PublishCall::kBool) {
+        out = calls[i].b;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool lastInt32(const std::string& p, std::int32_t& out) const {
+    for (size_t i = calls.size(); i-- > 0; ) {
+      if (calls[i].path == p && calls[i].type == PublishCall::kInt32) {
+        out = calls[i].i32;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool lastUint32(const std::string& p, std::uint32_t& out) const {
+    for (size_t i = calls.size(); i-- > 0; ) {
+      if (calls[i].path == p && calls[i].type == PublishCall::kUint32) {
+        out = calls[i].u32;
+        return true;
+      }
+    }
+    return false;
   }
 };

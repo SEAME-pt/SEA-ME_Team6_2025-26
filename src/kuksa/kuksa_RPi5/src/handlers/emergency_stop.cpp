@@ -13,10 +13,6 @@ void handleEmergencyStop(const can_frame& frame, IKuksaClient& kuksa)
     const std::uint8_t reason = can_decode::u8(&frame.data[4]);
     (void)reason;
 
-    //kuksa.publishInt32(sig::ADAS_FRONT_DISTANCE_MM, static_cast<float>(dist_mm));
     kuksa.publishFloat(sig::ADAS_FRONT_DISTANCE_MM, static_cast<float>(dist_mm));
     kuksa.publishBool(sig::ADAS_FRONT_IS_WARNING, active);
-
-    // we can add an emergency stop signal if needed
-    //kuksa.publishInt32(sig::ECU_EMERGENCY_STOP_ACTIVE, active ? 1 : 0);
 }

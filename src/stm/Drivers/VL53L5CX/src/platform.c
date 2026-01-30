@@ -14,14 +14,10 @@ uint8_t VL53L5CX_RdByte(
 		uint8_t *p_value)
 {
 	uint8_t status = 0;
-	uint8_t data_write[2];
-	uint8_t data_read[1];
 
-	data_write[0] = (RegisterAdress >> 8) & 0xFF;
-	data_write[1] = RegisterAdress & 0xFF;
-	status = HAL_I2C_Master_Transmit(&hi2c2, p_platform->address, data_write, 2, 100);
-	status = HAL_I2C_Master_Receive(&hi2c2, p_platform->address, data_read, 1, 100);
-	*p_value = data_read[0];
+	/* Use HAL_I2C_Mem_Read for cleaner single-byte read */
+	status = HAL_I2C_Mem_Read(&hi2c2, p_platform->address, RegisterAdress,
+							  I2C_MEMADD_SIZE_16BIT, p_value, 1, 100);
 
 	return status;
 }
@@ -61,11 +57,11 @@ uint8_t VL53L5CX_RdMulti(
 		uint32_t size)
 {
 	uint8_t status;
-	uint8_t data_write[2];
-	data_write[0] = (RegisterAdress>>8) & 0xFF;
-	data_write[1] = RegisterAdress & 0xFF;
-	status = HAL_I2C_Master_Transmit(&hi2c2, p_platform->address, data_write, 2, 100);
-	status += HAL_I2C_Master_Receive(&hi2c2, p_platform->address, p_values, size, 100);
+
+	/* Use HAL_I2C_Mem_Read for better performance with large transfers (8x8 mode) */
+	/* Timeout increased to handle 8x8 data (~3KB) */
+	status = HAL_I2C_Mem_Read(&hi2c2, p_platform->address, RegisterAdress,
+							  I2C_MEMADD_SIZE_16BIT, p_values, size, 1000);
 
 	return status;
 }

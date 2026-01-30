@@ -17,10 +17,17 @@
  * ===========================================================================
  */
 
-/* Distance thresholds (mm) */
+/* Distance thresholds (mm) - ToF Sensor */
 #define TOF_EMERGENCY_THRESHOLD_MM    100    /* Trigger emergency stop */
 #define TOF_HYSTERESIS_MM             20     /* Prevent oscillation */
 #define TOF_RECOVERY_THRESHOLD_MM     (TOF_EMERGENCY_THRESHOLD_MM + TOF_HYSTERESIS_MM)  /* 120mm */
+
+/* Distance thresholds (mm) - SRF08 Ultrasonic Sensor */
+#define SRF08_EMERGENCY_THRESHOLD_MM  300    /* Trigger emergency stop */
+#define SRF08_SLOWDOWN_THRESHOLD_MM   500    /* Start reducing speed */
+#define SRF08_SLOWDOWN_SPEED_PERCENT  25     /* Speed limit in slowdown zone (25%) */
+#define SRF08_HYSTERESIS_MM           30     /* Prevent oscillation */
+#define SRF08_RECOVERY_THRESHOLD_MM   (SRF08_EMERGENCY_THRESHOLD_MM + SRF08_HYSTERESIS_MM)  /* 330mm */
 
 /* ===========================================================================
  * EMERGENCY STOP STATES
@@ -71,5 +78,21 @@ typedef enum {
  * Thread-safe: uint8_t is atomic on ARM Cortex-M33
  */
 extern volatile uint8_t emergency_stop_active;
+
+/**
+ * @brief Speed limit (0-100%) based on obstacle distance
+ *
+ * This variable is accessed by:
+ * - SRF08 Thread: writes (updates limit based on distance)
+ * - CAN_RX Thread: reads (applies limit to throttle commands)
+ *
+ * Values:
+ * - 100 = Full speed allowed (distance > 350mm)
+ * - 50  = Half speed (distance ~275mm)
+ * - 0   = Stop (distance < 200mm)
+ *
+ * Thread-safe: uint8_t is atomic on ARM Cortex-M33
+ */
+extern volatile uint8_t srf08_speed_limit;
 
 #endif /* INC_EMERGENCY_STOP_H_ */
