@@ -32,12 +32,12 @@ TEST(SpeedProviderTest, SpeedAboveMax) {
     SpeedProvider sp;
     QSignalSpy spy(&sp, &SpeedProvider::speedChanged);
 
-    sp.setSpeed(40.099);
-    EXPECT_EQ(sp.currSpeed().toStdString(), "40.0");
+    sp.setSpeed(1040.099);
+    EXPECT_EQ(sp.currSpeed().toStdString(), "1000.0");
     EXPECT_EQ(spy.count(), 1);
 
-    sp.setSpeed(74.212);
-    EXPECT_EQ(sp.currSpeed().toStdString(), "40.0");
+    sp.setSpeed(7104.212);
+    EXPECT_EQ(sp.currSpeed().toStdString(), "1000.0");
     EXPECT_EQ(spy.count(), 1);
 }
 

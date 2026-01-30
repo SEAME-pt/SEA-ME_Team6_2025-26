@@ -22,7 +22,7 @@ SpeedProvider::SpeedProvider(QObject *parent)
 }
 
 /**
- * @brief: Sets the current speed, bounded between 0 and 40.
+ * @brief: Sets the current speed, bounded between 0 and 1000.0.
  *
  * Updates the internal speed value and emits a signal if the new speed differs from the current value.
  *
@@ -31,7 +31,7 @@ SpeedProvider::SpeedProvider(QObject *parent)
  * @signals: speedChanged(): Emitted when the internal speed value is updated.
  */
 void SpeedProvider::setSpeed(double speed) {
-    speed = qBound(0.0, speed, 40.0);
+    speed = qBound(0.0, speed, static_cast<double>(MAX_SPEED));
 
     if (!qFuzzyCompare(speed, _speedValue)) {
         _speedValue = speed;

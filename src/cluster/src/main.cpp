@@ -16,6 +16,10 @@
 #include "backend/systemstatus.hpp" 
 #include "backend/speedprovider.hpp"
 #include "backend/temperatureprovider.hpp"
+#include "backend/distanceprovider.hpp"
+#include "backend/frontdistanceprovider.hpp"
+#include "backend/wheelspeedprovider.hpp"
+#include "backend/voltageprovider.hpp"
 #include "backend/ipcclient.hpp"
 #include "backend/reader.hpp"
 
@@ -23,12 +27,16 @@ void ipcConnections(QQmlApplicationEngine *engine)
 {
     auto speedProvider = new SpeedProvider;
     auto temperatureProvider = new TemperatureProvider;
+    auto distanceProvider = new DistanceProvider;
+    auto frontDistanceProvider = new FrontDistanceProvider;
+    auto wheelSpeedProvider = new WheelSpeedProvider;
+    auto voltageProvider = new VoltageProvider;
     auto ipcClient = new IpcClient;
     auto readerC = new Reader;
 
     QObject::connect(
         readerC,
-        &readerC::speedReceived,
+        &Reader::speedReceived,
         speedProvider,
         &SpeedProvider::setSpeed);
 
@@ -38,13 +46,53 @@ void ipcConnections(QQmlApplicationEngine *engine)
 
     QObject::connect(
         readerC,
-        &readerC::temperatureReceived,
+        &Reader::temperatureReceived,
         temperatureProvider,
         &TemperatureProvider::setTemperature);
 
     engine->rootContext()->setContextProperty(
         "temperatureProvider",
         temperatureProvider);
+
+    QObject::connect(
+        readerC,
+        &Reader::frontDistanceReceived,
+        frontDistanceProvider,
+        &FrontDistanceProvider::setFrontDistance);
+
+    engine->rootContext()->setContextProperty(
+        "frontDistanceProvider",
+        frontDistanceProvider);
+
+    QObject::connect(
+        readerC,
+        &Reader::voltageReceived,
+        voltageProvider,
+        &VoltageProvider::setVoltage);
+
+    engine->rootContext()->setContextProperty(
+        "voltageProvider",
+        voltageProvider);
+
+    // QObject::connect(
+    //     readerC,
+    //     &Reader::distanceReceived,
+    //     distanceProvider,
+    //     &DistanceProvider::setDistance);
+
+    // engine->rootContext()->setContextProperty(
+    //     "distanceProvider",
+    //     distanceProvider);
+
+    QObject::connect(
+        readerC,
+        &Reader::wheelSpeedReceived,
+        wheelSpeedProvider,
+        &WheelSpeedProvider::setWheelSpeed);
+
+    engine->rootContext()->setContextProperty(
+        "wheelSpeedProvider",
+        wheelSpeedProvider);
 }
 
 int main(int argc, char *argv[])

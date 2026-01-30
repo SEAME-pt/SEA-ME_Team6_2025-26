@@ -40,7 +40,7 @@ Item {
             anchors.centerIn: parent
             value: speedProvider.currSpeed
             minValue: 0
-            maxValue: 40
+            maxValue: 1000
             startAngle: 135
             endAngle: 270
         }

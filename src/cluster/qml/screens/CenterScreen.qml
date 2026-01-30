@@ -13,8 +13,11 @@ Item {
 
     Text {
         text: "Speed: " + speedProvider.currSpeed + "\n" +
-              "Temperature: " + temperatureProvider.currTemperature
-        font.pixelSize: 20
+              "Temperature: " + temperatureProvider.currTemperature + "\n" +
+              "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
+              "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
+              "Voltage: " + voltageProvider.currVoltage
+        font.pixelSize: 16
         color: "white"
         anchors.centerIn: parent
     }

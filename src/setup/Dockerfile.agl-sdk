@@ -1,0 +1,54 @@
+# Dockerfile.agl-sdk
+# Use:
+#   DOCKER_BUILDKIT=1 docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
+#
+# Requirement: The SDK file must to be on the same directory:
+#   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
+
+FROM souzitaaaa/team6-base:bookworm
+
+ARG SDK_VERSION=20.0.2
+ARG SDK_INSTALLER=poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-${SDK_VERSION}.sh
+ARG SDK_INSTALL_DIR=/opt/agl-sdk
+
+# SDK instalation
+RUN --mount=type=bind,source=${SDK_INSTALLER},target=/mnt/sdk-installer.sh \
+    echo "Copying SDK installer from mount..." && \
+    cp /mnt/sdk-installer.sh /tmp/sdk-installer.sh && \
+    echo "Installing SDK..." && \
+    chmod +x /tmp/sdk-installer.sh && \
+    /tmp/sdk-installer.sh -y -d ${SDK_INSTALL_DIR} && \
+    rm /tmp/sdk-installer.sh
+
+# Copy toolchain file
+COPY toolchains/agl-toolchain.cmake /opt/agl-toolchain.cmake
+
+# Copy helper scripts
+COPY scripts/agl-env /usr/local/bin/agl-env
+COPY scripts/qt6-build.sh /usr/local/bin/qt6-build.sh
+COPY scripts/proto-gen.sh /usr/local/bin/proto-gen.sh
+COPY scripts/verify-sdk.sh /usr/local/bin/verify-sdk.sh
+
+# Make scripts executable
+RUN sed -i 's/\r$//' /usr/local/bin/agl-env \
+    /usr/local/bin/qt6-build.sh \
+    /usr/local/bin/proto-gen.sh \
+    /usr/local/bin/verify-sdk.sh && \
+    chmod +x /usr/local/bin/agl-env \
+    /usr/local/bin/qt6-build.sh \
+    /usr/local/bin/proto-gen.sh \
+    /usr/local/bin/verify-sdk.sh
+
+RUN /usr/local/bin/verify-sdk.sh
+
+# Environment Variables definition
+ENV AGL_SDK_PATH=${SDK_INSTALL_DIR}
+ENV AGL_SDK_VERSION=${SDK_VERSION}
+ENV AGL_ENV_SCRIPT=${SDK_INSTALL_DIR}/environment-setup-aarch64-agl-linux
+ENV AGL_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
+ENV QT_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/agl-env"]
+CMD ["bash"]
