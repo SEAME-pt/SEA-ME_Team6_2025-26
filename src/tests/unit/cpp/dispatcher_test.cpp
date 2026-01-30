@@ -3,9 +3,9 @@
 #include <linux/can/raw.h>
 #include <cstdint>
 
-#include "../../../kuksa/kuksa_RPi5/inc/dispatch_frames.hpp"
-#include "../../../kuksa/kuksa_RPi5/inc/can_id.h"
-#include "../../../kuksa/kuksa_RPi5/inc/interface_kuksa_client.hpp"
+#include "dispatch_frames.hpp"
+#include "can_id.h"
+#include "interface_kuksa_client.hpp"
 
 // ---------- Spy counters ----------
 static int g_speed   = 0;
@@ -60,7 +60,13 @@ struct DispatchCase {
 
 class DispatchKnownIdsOnce : public ::testing::TestWithParam<DispatchCase> {};
 
-TEST_P(DispatchKnownIdsOnce, REQ_DISPATCH_002_KnownIdsCallExactlyOneHandlerOnce)
+// Parameterized test for each known CAN ID
+// The INSTANTIATE_TEST_SUITE_P below provides the parameters and runs this test for each case.
+// Each case checks that the correct handler is called exactly once.
+// EXPECT_EQ assertions are used to verify the call counts.
+// If EXPECT_EQ fails, it indicates either the expected handler was not called
+// If EXPECT_EQ doesnt
+TEST_P(DispatchKnownIdsOnce, Dispatch_KnownIdsCallExactlyOneHandlerOnce)
 {
   reset_spies();
   FakeKuksaClient k;
@@ -97,7 +103,7 @@ INSTANTIATE_TEST_SUITE_P(
   ::testing::ValuesIn(kCases)
 );
 
-TEST(Dispatch, REQ_DISPATCH_001_DispatchByStandardIdMask_IgnoresFlags)
+TEST(Dispatch, Dispatch_DispatchByStandardIdMask_IgnoresFlags)
 {
   reset_spies();
   FakeKuksaClient k;
@@ -120,7 +126,7 @@ TEST(Dispatch, REQ_DISPATCH_001_DispatchByStandardIdMask_IgnoresFlags)
   EXPECT_EQ(g_calls[H_ACCEL], 0);
 }
 
-TEST(Dispatch, REQ_DISPATCH_003_UnknownIdsAreIgnored)
+TEST(Dispatch, Dispatch_UnknownIdsAreIgnored)
 {
   reset_spies();
   FakeKuksaClient k;

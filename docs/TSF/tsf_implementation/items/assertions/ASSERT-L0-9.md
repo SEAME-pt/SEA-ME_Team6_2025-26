@@ -1,7 +1,8 @@
 ---
 id: ASSERT-L0-9
 header: ThreadX operates on STM32
-text: The ThreadX RTOS successfully runs on the STM32 microcontroller and executes scheduled tasks according to the documented configuration.
+text: The ThreadX RTOS successfully runs on the STM32 microcontroller and executes
+  scheduled tasks according to the documented configuration.
 level: '1.9'
 normative: true
 references:
@@ -12,4 +13,12 @@ references:
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
+review_status: accepted
+evidence:
+  type: validate_hardware_availability
+  configuration:
+    components:
+    - STM32
+    - CAN
+    - Raspberry Pi
 ---

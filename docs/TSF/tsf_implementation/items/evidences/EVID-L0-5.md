@@ -30,6 +30,10 @@ references:
 - type: file
   path: README.md
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 

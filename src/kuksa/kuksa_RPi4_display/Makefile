@@ -17,7 +17,9 @@ SRC := \
 
 # gRPC / Protobuf flags (static linking as requested)
 PKG_CONFIG := pkg-config
-LIBS := $(shell $(PKG_CONFIG) --cflags --libs --static grpc++ protobuf)
+#LIBS := $(shell $(PKG_CONFIG) --cflags --libs --static grpc++ protobuf)
+RAW_LIBS := $(shell $(PKG_CONFIG) --cflags --libs grpc++ protobuf)
+LIBS := $(subst -lutf8_validity,,$(subst -lutf8_range,-lutf8_range_lib,$(RAW_LIBS)))
 
 .PHONY: all clean fclean re
 

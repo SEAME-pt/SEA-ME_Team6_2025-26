@@ -4,8 +4,7 @@ header: 'Assumption: Driveable Car with Remote Control/Driveable Car Model...'
 level: '1.4'
 normative: true
 references:
-- id: EXPECT_L0_4
-  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_4/EXPECTATIONS-EXPECT_L0_4.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_4/EXPECTATIONS-EXPECT_L0_4.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
@@ -14,12 +13,13 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-      - "joystick"
-      - "gamepad"
-      - "controller"
-text: 'The joystick or remote control hardware is available, functional, and compatible
+    - joystick
+    - gamepad
+    - controller
+text: The joystick or remote control hardware is available, functional, and compatible
   with the target platform input subsystem before remote control integration testing
-  begins.'
+  begins.
+review_status: accepted
 ---
 The joystick or remote control hardware is available, functional, and compatible with the target platform input subsystem before remote control integration testing begins.
 

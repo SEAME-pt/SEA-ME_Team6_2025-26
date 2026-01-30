@@ -24,4 +24,8 @@ references:
 - type: file
   path: docs/demos/Validation-of-energy-layout-sprint2.jpeg
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---
