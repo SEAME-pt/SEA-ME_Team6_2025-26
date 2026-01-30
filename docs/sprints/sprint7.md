@@ -88,7 +88,7 @@ IV. Epic — Project Management & Traceability Refinement - #55
   - EXPECT-L0-7 - "QT Crosscompilation should be achieved" 
     - https://github.com/user-attachments/assets/b1ba19ad-0433-4411-96e4-704a57a6d639
     
-- Unity Tests:
+- Unit Tests:
   - EXPECT-L0-14 - "TSF & Documentation"
   - EXPECT-L0-19 - "Test requirement for TSF automation"
   - EXPECT-L0-21 - "Test the complete TSF automation workflow"
@@ -104,12 +104,36 @@ IV. Epic — Project Management & Traceability Refinement - #55
   - EXPECT-L0-14 - "TSF & Documentation"
   - EXPECT-L0-19 - "Test requirement for TSF automation"
   - EXPECT-L0-21 - "Test the complete TSF automation workflow"
+    - https://github.com/user-attachments/assets/2dd313fc-2a01-403a-8a98-09db62c380ee
+
+
 
 - TSF automation:
   - EXPECT-L0-14 - "TSF & Documentation"
   - EXPECT-L0-19 - "Test requirement for TSF automation"
   - EXPECT-L0-21 - "Test the complete TSF automation workflow"
-  
+    - https://github.com/user-attachments/assets/ddbec832-6fa0-4775-9f85-cee60e18d6c0
+    - https://github.com/user-attachments/assets/c73075ca-e46a-42ef-9375-266f1cd51844
+    - https://github.com/user-attachments/assets/71f868f6-5710-4b5d-b398-342c3eabc981
+    - https://github.com/user-attachments/assets/5b0fe7f8-6e8e-4221-87c6-f0af47443a3d
+    <img width="1314" height="658" alt="1  Screenshot 2026-01-30 at 15 41 21" src="https://github.com/user-attachments/assets/40bbf372-6a1f-4ec0-8fd4-472bc3c17c13" />
+
+    <img width="1301" height="657" alt="2  Screenshot 2026-01-30 at 15 42 05" src="https://github.com/user-attachments/assets/167f3012-d899-4c58-9f56-3ffe216b9098" />
+
+<img width="1289" height="640" alt="3  Screenshot 2026-01-30 at 15 42 21" src="https://github.com/user-attachments/assets/8774796d-9a81-4aea-97ea-f631f2d1a34c" />
+
+<img width="1272" height="658" alt="4  Screenshot 2026-01-30 at 15 42 49" src="https://github.com/user-attachments/assets/b4e4a52d-9678-4a65-ba1e-a3aa3ea7e5e3" />
+
+<img width="1278" height="642" alt="5  Screenshot 2026-01-30 at 15 43 06" src="https://github.com/user-attachments/assets/39efa45b-f4f0-4aa6-99b3-dbe5f7b6e797" />
+
+<img width="1274" height="641" alt="6  Screenshot 2026-01-30 at 15 43 28" src="https://github.com/user-attachments/assets/f6cd9e83-fdde-4be7-9e1c-74799e9f1efd" />
+
+<img width="1274" height="641" alt="7  Screenshot 2026-01-30 at 15 43 28 1" src="https://github.com/user-attachments/assets/671e88dd-c4f2-45ee-977c-fd6a00102c8d" />
+
+<img width="1285" height="572" alt="8  Screenshot 2026-01-30 at 15 45 22" src="https://github.com/user-attachments/assets/3fea2956-2cf9-4682-a251-ab304d85e9c6" />
+
+<img width="1276" height="619" alt="9  Screenshot 2026-01-30 at 15 45 44" src="https://github.com/user-attachments/assets/2e2aca3a-ed7b-493d-a820-0760310e4744" />
+
 - Reorganize and Update documentation:
   - EXPECT-L0-13 - "Project & GitHub setup"
   - EXPECT-L0-14 - "TSF & Documentation"
@@ -124,7 +148,8 @@ IV. Epic — Project Management & Traceability Refinement - #55
 
 
 - **Tests**:
-- 
+- unit tests - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CI-CD-tests-sprint7.png)
+- coverage - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/coverage-report-sprint7.png)
 
 
 ---
