@@ -43,7 +43,7 @@ TEST(WheelSpeed, PublishesOneDoubleToVehicleSpeedPath)
     const double rps = 60.0 / 60.0; // rpm to rps (60 rpm = 1 rps)
     const double expected = (rps * WHEEL_PERIMETER) * 1000.0 * 3.6;
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
     EXPECT_EQ(k.calls[0].type, PublishCall::kDouble);
     EXPECT_EQ(k.calls[0].path, sig::VEHICLE_SPEED);
     EXPECT_NEAR(k.calls[0].d, expected, 1e-9);
@@ -62,7 +62,7 @@ TEST(WheelSpeed, Rpm60EqualsWheelPerimeterMetersPerHour)
     FakeKuksaClient k;
     handleWheelSpeed(f, k);
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
 
     const double expected = WHEEL_PERIMETER * 1000.0 * 3.6; // because rps=1
     EXPECT_NEAR(k.calls[0].d, expected, 1e-9);
@@ -80,7 +80,7 @@ TEST(WheelSpeed, RpmZeroPublishesZero)
     FakeKuksaClient k;
     handleWheelSpeed(f, k);
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
     EXPECT_NEAR(k.calls[0].d, 0.0, 1e-12); // this expect_near is for floating-point tolerance
 }
 
@@ -96,7 +96,7 @@ TEST(WheelSpeed, NegativeRpmIsNegativeSpeed)
     FakeKuksaClient k;
     handleWheelSpeed(f, k);
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
     EXPECT_NEAR(k.calls[0].d, -WHEEL_PERIMETER * 1000.0 * 3.6, 1e-9);
 }
 
@@ -118,8 +118,8 @@ TEST(WheelSpeed, ChangingUnusedBytesDoesNotChangeOutput)
     handleWheelSpeed(f1, k1);
     handleWheelSpeed(f2, k2);
 
-    ASSERT_EQ(k1.calls.size(), 1u);
-    ASSERT_EQ(k2.calls.size(), 1u);
+    ASSERT_EQ(k1.calls.size(), 2u);
+    ASSERT_EQ(k2.calls.size(), 2u);
     EXPECT_NEAR(k1.calls[0].d, k2.calls[0].d, 1e-12);
 }
 
@@ -136,7 +136,7 @@ TEST(WheelSpeed, HighRpmValue)
     FakeKuksaClient k;
     handleWheelSpeed(f, k);
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
 
     EXPECT_TRUE(std::isfinite(k.calls[0].d));
 
@@ -159,7 +159,7 @@ TEST(WheelSpeed, LowRpmValue)
     FakeKuksaClient k;
     handleWheelSpeed(f, k);
 
-    ASSERT_EQ(k.calls.size(), 1u);
+    ASSERT_EQ(k.calls.size(), 2u);
     EXPECT_TRUE(std::isfinite(k.calls[0].d));
 
     const double rps = static_cast<double>(rpm) / 60.0;
