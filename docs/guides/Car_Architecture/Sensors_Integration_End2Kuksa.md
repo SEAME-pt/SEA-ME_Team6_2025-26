@@ -1,4 +1,4 @@
-# 🚗 Sensor Integration from Origin to Kuksa - SEA:ME Project
+# 🚗 Sensor Integration from Sensor to Kuksa - SEA:ME Project
 
 
 ---
