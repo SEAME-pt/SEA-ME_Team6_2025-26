@@ -152,6 +152,7 @@ add_executable(handlers_tests
   "${CMAKE_SOURCE_DIR}/unit/cpp/emergency_stop_test.cpp"
   "${CMAKE_SOURCE_DIR}/unit/cpp/imu_accel_test.cpp"
   "${CMAKE_SOURCE_DIR}/unit/cpp/imu_gyro_test.cpp"
+  "${CMAKE_SOURCE_DIR}/unit/cpp/joystick_test.cpp"
 )
 
 target_include_directories(handlers_tests PRIVATE
