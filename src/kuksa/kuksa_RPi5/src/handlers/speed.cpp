@@ -30,4 +30,5 @@ void handleWheelSpeed(const can_frame& frame, IKuksaClient& kuksa)
     const double speed_kmh = speed_mh * 3.6;
 
     kuksa.publishDouble(sig::VEHICLE_SPEED, speed_mh);
+    kuksa.publishInt32(sig::EMOTOR_SPEED_RPM, static_cast<int32_t>(rpm_signed));
 }
