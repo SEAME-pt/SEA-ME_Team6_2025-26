@@ -8,7 +8,12 @@
 #ifndef HTS221_H
 #define HTS221_H
 
+#ifdef UNIT_TESTING
+/* In unit tests include the lightweight HAL mock so we don't pull platform headers */
+#include "stm32u5xx_hal.h"
+#else
 #include "main.h"
+#endif
 
 /* I2C Address (8-bit write address) */
 #define HTS221_I2C_ADDR      0xBE

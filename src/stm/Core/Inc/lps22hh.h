@@ -26,7 +26,12 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#ifdef UNIT_TESTING
+/* In unit tests include the lightweight HAL mock so we don't pull platform headers */
+#include "stm32u5xx_hal.h"
+#else
 #include "main.h"
+#endif
 #include "i2c.h"
 
 /* USER CODE BEGIN Includes */

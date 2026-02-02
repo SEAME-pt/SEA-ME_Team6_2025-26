@@ -40,7 +40,6 @@ HAL_StatusTypeDef HTS221_Init(void)
   /* 1. Verificar ID */
   status = HTS221_ReadReg(HTS221_WHO_AM_I, &id);
   if (status != HAL_OK || id != HTS221_ID) return HAL_ERROR;
-
   /* 2. Power Down primeiro (recomendado) */
   HTS221_WriteReg(HTS221_CTRL_REG1, 0x00);
 

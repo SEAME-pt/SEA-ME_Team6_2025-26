@@ -26,8 +26,16 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#ifdef UNIT_TESTING
+// Quando estamos a compilar os testes unitários, não queremos puxar
+// as headers específicas do SDK STM32 que existem apenas no device.
+// Em vez disso, incluímos a versão "mock" de `stm32u5xx_hal.h` que é
+// providenciada pelos testes (em `src/stm/tests/mocks`).
+#include "stm32u5xx_hal.h"
+#else
 #include "main.h"
 #include "i2c.h"
+#endif
 
 /* USER CODE BEGIN Includes */
 

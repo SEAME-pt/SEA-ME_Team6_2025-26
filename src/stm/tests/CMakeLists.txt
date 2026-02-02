@@ -8,16 +8,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Adicionar flag de compilação para testes
 add_definitions(-DUNIT_TESTING)
 
-# Adicionar Google Test
-add_subdirectory(external/googletest)
-
-# Incluir diretórios
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
-    ${gtest_SOURCE_DIR}/include
-    ${gtest_SOURCE_DIR}
-)
+## Prefer system-installed GoogleTest; fall back to external/googletest if needed
+find_package(GTest QUIET)
+if (GTest_FOUND)
+    message(STATUS "Found system GTest: ${GTest_VERSION}")
+    include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+        ${CMAKE_CURRENT_SOURCE_DIR}/unit
+        ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
+        ${GTEST_INCLUDE_DIRS}
+    )
+else()
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/CMakeLists.txt")
+        add_subdirectory(external/googletest)
+        include_directories(
+            ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+            ${CMAKE_CURRENT_SOURCE_DIR}/unit
+            ${gtest_SOURCE_DIR}/include
+            ${gtest_SOURCE_DIR}
+        )
+    else()
+        message(FATAL_ERROR "GoogleTest not found. Run tests/setup_gtest.sh to download it or install system package 'libgtest-dev'.")
+    endif()
+endif()
 
 # Arquivos de mock (compartilhados por todos os testes)
 set(MOCK_SOURCES
@@ -116,6 +129,123 @@ target_link_libraries(integration_tests
     gtest
     gtest_main
     pthread
+)
+
+# ============================================================================
+# TESTE: IIS2MDC
+# ============================================================================
+add_executable(iis2mdc_tests
+    ${MOCK_SOURCES}
+    ../Core/Src/iis2mdc.c
+    unit/test_iis2mdc.cpp
+)
+
+target_link_libraries(iis2mdc_tests
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME iis2mdc_tests COMMAND iis2mdc_tests)
+
+# Ensure mocks are visible first when compiling the production source
+target_include_directories(iis2mdc_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
+)
+
+# ============================================================================
+# TESTE: ISM330DHCX
+# ============================================================================
+add_executable(ism330dhcx_tests
+    ${MOCK_SOURCES}
+    ../Core/Src/ism330dhcx.c
+    unit/test_ism330dhcx.cpp
+)
+
+target_link_libraries(ism330dhcx_tests
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME ism330dhcx_tests COMMAND ism330dhcx_tests)
+
+# Ensure mocks are visible first when compiling the production source
+target_include_directories(ism330dhcx_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
+)
+
+# ============================================================================
+# TESTE: HTS221
+# ============================================================================
+add_executable(hts221_tests
+    ${MOCK_SOURCES}
+    ../Core/Src/hts221.c
+    unit/test_hts221.cpp
+)
+
+target_link_libraries(hts221_tests
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME hts221_tests COMMAND hts221_tests)
+
+target_include_directories(hts221_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
+)
+
+# ============================================================================
+# TESTE: LPS22HH
+# ============================================================================
+add_executable(lps22hh_tests
+    ${MOCK_SOURCES}
+    ../Core/Src/lps22hh.c
+    unit/test_lps22hh.cpp
+)
+
+target_link_libraries(lps22hh_tests
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME lps22hh_tests COMMAND lps22hh_tests)
+
+target_include_directories(lps22hh_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
+)
+
+# ============================================================================
+# TESTE: VEML6030
+# ============================================================================
+add_executable(veml6030_tests
+    ${MOCK_SOURCES}
+    ../Core/Src/veml6030.c
+    unit/test_veml6030.cpp
+)
+
+target_link_libraries(veml6030_tests
+    gtest
+    gtest_main
+    pthread
+)
+
+add_test(NAME veml6030_tests COMMAND veml6030_tests)
+
+target_include_directories(veml6030_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
 # ============================================================================
