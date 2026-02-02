@@ -11,7 +11,7 @@
   - [ ] RAUC integration with OTA (5)
   - [ ] Migration to AGL with RAUC (8)
   - [ ] Creation of backup service of AGL (5)
-  - [ ] Update Qt with more data from KUKSA (5)
+  - [ ] Qt design modifications - integrate more data from KUKSA (13)
   - [ ] Implement security on KUKSA (TLS/JWT) (8)
 
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
@@ -57,7 +57,7 @@
 - ## **To improve**: 
 
   ## 🔗 Useful Links
-- Sprint board/view: [Sprint 6](https://github.com/orgs/SEAME-pt/projects/89/views/13)
+- Sprint board/view: [Sprint 8](https://github.com/orgs/SEAME-pt/projects/89/views/15)
 
 ## TSF Useful: 
   - EXPECT-L0-1 - "System architecture is defined and documented";
