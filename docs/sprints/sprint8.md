@@ -33,7 +33,7 @@
 
 ## 📈 Actual Progress
 
-- ## Sprint 8 points: 0/104
+- ## Sprint 8 points: 0/117
 
 - ## ✅ Undone:
 - ## ❌ Undone: 
