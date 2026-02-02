@@ -1130,7 +1130,7 @@ _None_
 		id: EXPECT_L0_19
 		header: "TSF Automation Testing"
 		text: |
-		  The project shall implement automated testing for TSF (Technical Specification Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
+		  The project shall implement automated testing for TSF (Technical Software Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
 		level: '1.19'
 		normative: true
 		references:
@@ -1716,6 +1716,66 @@ _None_
 		references:
 		- type: file
 		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_29/ASSERTIONS-ASSERT_L0_29.md
+		reviewers:
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
+		review_status: accepted
+		---
+		
+		````
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### ASSUMPTIONS-ASSUMP_L0_30 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_30 data-toc-label="ASSUMPTIONS-ASSUMP_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_30/EXPECTATIONS-EXPECT_L0_30.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EXPECT_L0_30
+		header: "Car ready to next module: The vehicle shall be finished to module 2"
+		text: |
+		  The vehicle shall be finished to module 2.
+		
+		  **Justification:** Architecture finished with software and hardware ready to next module: AGL, ThreadX, CAN, QT, Camera, Sensors, etc.
+		
+		  **References:** Car ready to ADAS and Machine Learning and OTA module 2.
+		
+		  **Acceptance Criteria:** Car should be completely finalized.
+		
+		  **Verification Method:** Visual, Unity, Functional, Integration tests.
+		level: '1.30'
+		normative: true
+		references:
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_30/ASSERTIONS-ASSERT_L0_30.md
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt

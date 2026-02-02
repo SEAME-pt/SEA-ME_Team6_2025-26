@@ -41,7 +41,7 @@ class AIMethod(Enum):
     COPILOT_CLI = "copilot_cli"  # Option C: gh copilot CLI
 
 
-@dataclass
+@dataclass #It means this is a data class, ie, a class mainly used to store data with automatic __init__, __repr__, etc.
 class TableRow:
     """Represents a row in the TSF requirements table."""
     id: str                      # L0-X

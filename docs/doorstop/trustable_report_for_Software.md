@@ -54,6 +54,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_30](ASSERTIONS.md#assertions-assert_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for ASSUMPTIONS ## {: data-toc-label="ASSUMPTIONS"}
 
@@ -88,6 +89,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSUMPTIONS-ASSUMP_L0_27](ASSUMPTIONS.md#assumptions-assump_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_28](ASSUMPTIONS.md#assumptions-assump_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_29](ASSUMPTIONS.md#assumptions-assump_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_30](ASSUMPTIONS.md#assumptions-assump_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EVIDENCES ## {: data-toc-label="EVIDENCES"}
 
@@ -122,6 +124,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EVIDENCES-EVID_L0_27](EVIDENCES.md#evidences-evid_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings, distance measurements, and test logs that demonstrate the emergency braking stopping distance requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_28](EVIDENCES.md#evidences-evid_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_29](EVIDENCES.md#evidences-evid_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_30](EVIDENCES.md#evidences-evid_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2. | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EXPECTATIONS ## {: data-toc-label="EXPECTATIONS"}
 
@@ -156,6 +159,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EXPECTATIONS-EXPECT_L0_27](EXPECTATIONS.md#expectations-expect_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_28](EXPECTATIONS.md#expectations-expect_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_29](EXPECTATIONS.md#expectations-expect_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ All Children Linked |
 
 
 ---
@@ -163,6 +167,6 @@ The contribution to the score of a parent item by a suspiciously linked child is
 _Generated for: Software_
 
 * _Repository root: /Volumes/Important_Docs/42/SEA-ME_Team6_2025-26_
-* _Commit SHA: b6223435cc5367bf0b9b1fb4a927583e926fdac2_
-* _Commit date/time: 2026-01-29 21:20:32 UTC_
-* _Commit tag: v1.0.0-78-gb622343_
+* _Commit SHA: 421d103e2e959dd64a6e12c9b753f9f863ba3b58_
+* _Commit date/time: 2026-01-30 00:39:16 UTC_
+* _Commit tag: v1.0.0-79-g421d103_
