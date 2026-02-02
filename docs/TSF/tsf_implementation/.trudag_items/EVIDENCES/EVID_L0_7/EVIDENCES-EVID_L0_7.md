@@ -14,4 +14,8 @@ references:
 - type: file
   path: src/cross-compiler/toolchain.cmake
 score: 1.0
+reviewers:
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
+review_status: accepted
 ---

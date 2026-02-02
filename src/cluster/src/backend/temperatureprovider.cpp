@@ -1,8 +1,6 @@
 /**
  * @author souzitaaaa
  * @email diogo.nogueirasousa123@gmail.com
- * @create date 2025-12-16 14:46:08
- * @modify date 2025-12-16 15:34:07
  * @desc TemperatureProvider Class functions
  */
 

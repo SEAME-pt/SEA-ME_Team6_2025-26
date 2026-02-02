@@ -33,6 +33,7 @@
 
 /* High Priority Threads */
 #define CAN_RX_THREAD_PRIORITY        11    /* CAN message reception and actuation */
+#define SRF08_THREAD_PRIORITY         11    /* SRF08 ultrasonic distance sensor - CRITICAL SAFETY */
 #define SPEED_THREAD_PRIORITY         12    /* Vehicle speed measurement */
 
 /* Medium Priority Threads */
@@ -63,6 +64,7 @@
 #define SPEED_THREAD_STACK_SIZE       2048
 #define IMU_THREAD_STACK_SIZE         2048
 #define TOF_THREAD_STACK_SIZE         4096
+#define SRF08_THREAD_STACK_SIZE       2048
 
 
 /* ===========================================================================

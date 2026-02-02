@@ -167,17 +167,20 @@ void LCD1602_SetRGB(uint8_t r, uint8_t g, uint8_t b)
 }
 
 /**
-  * @brief  Update Line 1 with temperature and humidity
+  * @brief  Update Line 1 with voltage, temperature and humidity
+  * @param  voltage: voltage in V
   * @param  temp: temperature in °C
   * @param  humidity: humidity in %
   * @retval None
   */
-void LCD1602_UpdateLine1(float temp, float humidity)
+void LCD1602_UpdateLine1(float voltage, float temp, float humidity)
 {
     char buf[17];  // 16 chars + null terminator
 
     LCD1602_SetCursor(0, 0);
-    snprintf(buf, sizeof(buf), "T:%.1fC H:%.1f%%  ", temp, humidity);
+    // Format: "V:12.6 T:25 H:45" (16 chars max)
+    snprintf(buf, sizeof(buf), "V:%.1f T:%dC H:%d%%",
+             voltage, (int)temp, (int)humidity);
     LCD1602_Print(buf);
 }
 
@@ -205,14 +208,15 @@ void LCD1602_UpdateLine2(uint16_t tof_dist, float speed)
 
 /**
   * @brief  Update display with sensor data (both lines)
+  * @param  voltage: voltage in V
   * @param  temp: temperature in °C
   * @param  humidity: humidity in %
   * @param  tof_dist: distance in mm
   * @param  speed: speed in km/h (converted to m/h for display)
   * @retval None
   */
-void LCD1602_UpdateDisplay(float temp, float humidity, uint16_t tof_dist, float speed)
+void LCD1602_UpdateDisplay(float voltage, float temp, float humidity, uint16_t tof_dist, float speed)
 {
-    LCD1602_UpdateLine1(temp, humidity);
+    LCD1602_UpdateLine1(voltage, temp, humidity);
     LCD1602_UpdateLine2(tof_dist, speed);
 }

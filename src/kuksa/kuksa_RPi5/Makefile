@@ -26,6 +26,7 @@ PUBLISHER_SRCS := \
   $(SRC_DIR)/main.cpp \
   $(SRC_DIR)/dispatch_frames.cpp \
   $(SRC_DIR)/kuksa_client.cpp \
+  $(SRC_DIR)/is_stm_connected.cpp \
   $(HANDLERS_DIR)/speed.cpp \
   $(HANDLERS_DIR)/environment.cpp \
   $(HANDLERS_DIR)/heartbeat_stm.cpp \
@@ -34,6 +35,7 @@ PUBLISHER_SRCS := \
   $(HANDLERS_DIR)/imu_accel.cpp \
   $(HANDLERS_DIR)/emergency_stop.cpp \
   $(HANDLERS_DIR)/battery.cpp \
+  $(HANDLERS_DIR)/joystick.cpp \
   $(GEN_SRCS)
 
 # --- Reader sources ---

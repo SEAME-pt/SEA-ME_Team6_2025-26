@@ -61,19 +61,18 @@ EXPECT-L0-4 - "Driveable Car with Remote Control"
       
 - **Docs/Guides updated**:
 
-    - Documentation in [Docs](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs)
-
 
 **GITHUB**
 
   EXPECT-L0-13 - "Project & GitHub setup":
-- [Github guidelines](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-guidelines.md)
-- [Github guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/github-actions-guide.md)
+- [Github guidelines](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-guidelines.md)
+- [Github guide](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md)
+- [CI/CD Workflow](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/validate_items_formatation.yml)
 
 **AGILE SCRUM**
 EXPECT-L0-15 - "Agile and Scrum":
 - [Scrum Implementation: Dailys](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md)
-- [Scrum Implementation: Sprints](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/sprints)
+
 - [Scrum Implementation: Project Board](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/projects?query=is%3Aopen)
 
 ---

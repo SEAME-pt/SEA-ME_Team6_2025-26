@@ -1,80 +1,214 @@
 #include "reader.hpp"
 
-Reader::Reader(QObject *parent): QObject(parent) {
-    qDebug() << "[Reader] Constructor called";
-
-    auto stub = create_val_stub(this._server);
-    qDebug() << "[Reader] Connected to " << this._server << "\n";
-
-    std::vector<std::string> paths;
-    paths.push_back("Vehicle.Speed");
-    paths.push_back("Vehicle.Exterior.AirTemperature");
-    paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
-
-    kuksa::val::v2::SubscribeRequest req;
-    for (size_t i = 0; i < paths.size(); ++i) {
-        req.add_signal_paths(paths[i]);
-    }
-
-    grpc::ClientContext ctx;
-
-    std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse> > stream(
-        stub->Subscribe(&ctx, req)
-    );
-
-    while (stream->Read(&resp)) {
-        // Our proto: map<string, Datapoint> entries
-        const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint>& entries = resp.entries();
-
-        for (::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint>::const_iterator it = entries.begin();
-             it != entries.end(); ++it)
-        {
-            const std::string& path = it->first;
-            const kuksa::val::v2::Datapoint& dp = it->second;
-            if (!dp.has_value()) {
-                qDebug() << "[READER] " << path << " = <no value>\n";
-                return;
-            }
-            if (path == 'Vehicle.Speed')
-                emit speedReceived(dp.value())
-            else if (path == 'Vehicle.Exterior.AirTemperature')
-                emit temperatureReceived(dp.value())
-        }
-
-        qDebug() << "----\n";
-    }
-
-    grpc::Status st = stream->Finish();
-    if (!st.ok()) {
-        qDebug() << "[KUKSA] Subscribe stream ended with error: " << st.error_message() << "\n";
-        return 1;
-    }
-
-    qDebug() << "[KUKSA] Subscribe stream ended cleanly.\n";
-
-    kuksa::val::v2::SubscribeResponse resp;
+ReaderWorker::ReaderWorker(const std::string &server)
+    : QObject(nullptr), _server(server), _shouldStop(false)
+{
+    qDebug() << "[ReaderWorker] Created for server:" << QString::fromStdString(server);
 }
 
-// Create a stub object that binds to the channel
-// the stub is like the wrapper that allows to call remote methods
-static std::unique_ptr<VAL::Stub> Reader::create_val_stub(const std::string& host_port)
+ReaderWorker::~ReaderWorker()
+{
+    _shouldStop = true;
+    qDebug() << "[ReaderWorker] Destroyed!";
+}
+
+void ReaderWorker::startReading()
+{
+    qDebug() << "[ReaderWorker] Starting to read from Kuksa...";
+    
+    try {
+        // Create stub
+        auto stub = create_val_stub(_server);
+        qDebug() << "[ReaderWorker] Connected to" << QString::fromStdString(_server);
+        emit connected();
+
+        // Setup subscription request
+        std::vector<std::string> paths;
+        paths.push_back("Vehicle.Speed");
+        paths.push_back("Vehicle.Exterior.AirTemperature");
+        paths.push_back("Vehicle.ECU.SafetyCritical.Heartbeat");
+        paths.push_back("Vehicle.ADAS.ObstacleDetection.Front.Distance");
+        paths.push_back("Vehicle.Powertrain.TractionBattery.CurrentVoltage");
+        //paths.push_back("Vehicle.TraveledDistance");
+        paths.push_back("Vehicle.Powertrain.ElectricMotor.Speed");
+
+        kuksa::val::v2::SubscribeRequest req;
+        for (size_t i = 0; i < paths.size(); ++i)
+        {
+            req.add_signal_paths(paths[i]);
+        }
+
+        // Create context and stream
+        grpc::ClientContext ctx;
+        kuksa::val::v2::SubscribeResponse resp;
+
+        std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse>> stream(
+            stub->Subscribe(&ctx, req));
+
+        // Read messages in loop (this runs in background thread)
+        while (!_shouldStop && stream->Read(&resp))
+        {
+            // Process the response
+            const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint> &entries = resp.entries();
+
+            for (auto it = entries.begin(); it != entries.end(); ++it)
+            {
+                const std::string &path = it->first;
+                const kuksa::val::v2::Datapoint &dp = it->second;
+                
+                if (!dp.has_value())
+                {
+                    qDebug() << "[ReaderWorker]" << QString::fromStdString(path) << "= <no value>";
+                    continue;
+                }
+                
+                // Emit signals to main thread
+                if (path == "Vehicle.Speed")
+                {
+                    double speed = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Speed:" << speed << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit speedReceived(speed);
+                }
+                else if (path == "Vehicle.Exterior.AirTemperature")
+                {
+                    double temp = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Temperature:" << temp << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit temperatureReceived(temp);
+                } 
+                else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") 
+                {
+                    double frontDistance = dp.value().float_();
+                    qDebug() << "[ReaderWorker] Front Distance:" << frontDistance << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit frontDistanceReceived(frontDistance);
+                } else if (path == "Vehicle.Powertrain.TractionBattery.CurrentVoltage") {
+                    double voltage = dp.value().float_();
+                    qDebug() << "[ReaderWorker] Voltage:" << voltage << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit voltageReceived(voltage);
+                }
+                else if (path == "Vehicle.Powertrain.ElectricMotor.Speed") 
+                {
+                    double wheelSpeed = static_cast<double>(dp.value().int32());
+                    qDebug() << "[ReaderWorker] Wheel Speed:" << wheelSpeed << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit wheelSpeedReceived(wheelSpeed);
+                }
+            }
+        }
+
+        // Stream ended
+        grpc::Status st = stream->Finish();
+        if (!st.ok())
+        {
+            QString errorMsg = QString::fromStdString(st.error_message());
+            qDebug() << "[ReaderWorker] Subscribe stream ended with error:" << errorMsg;
+            emit connectionError(errorMsg);
+        }
+        else
+        {
+            qDebug() << "[ReaderWorker] Subscribe stream ended cleanly";
+        }
+        
+    } catch (const std::exception &e) {
+        QString errorMsg = QString("Exception: %1").arg(e.what());
+        qDebug() << "[ReaderWorker]" << errorMsg;
+        emit connectionError(errorMsg);
+    }
+}
+
+void ReaderWorker::stopReading()
+{
+    qDebug() << "[ReaderWorker] Stop requested";
+    _shouldStop = true;
+}
+
+std::unique_ptr<VAL::Stub> ReaderWorker::create_val_stub(const std::string &host_port)
 {
     auto channel = grpc::CreateChannel(host_port, grpc::InsecureChannelCredentials());
     return VAL::NewStub(channel);
 }
 
-// Helper to convert Value to string for printing
-static std::string Reader::value_to_string(const kuksa::val::v2::Value& v)
+std::string ReaderWorker::value_to_string(const kuksa::val::v2::Value &v)
 {
-    switch (v.typed_value_case()) {
-        case kuksa::val::v2::Value::kDouble:  return std::to_string(v.double_());
-        case kuksa::val::v2::Value::kFloat:   return std::to_string(v.float_());
-        case kuksa::val::v2::Value::kInt32:   return std::to_string(v.int32());
-        case kuksa::val::v2::Value::kInt64:   return std::to_string((long long)v.int64());
-        case kuksa::val::v2::Value::kUint32:  return std::to_string(v.uint32());
-        case kuksa::val::v2::Value::kUint64:  return std::to_string((unsigned long long)v.uint64());
-        case kuksa::val::v2::Value::kBool:    return v.bool_() ? "true" : "false";
-        case kuksa::val::v2::Value::kString:  return v.string();
-        default:                              return "<unset>";
+    switch (v.typed_value_case())
+    {
+    case kuksa::val::v2::Value::kDouble:
+        return std::to_string(v.double_());
+    case kuksa::val::v2::Value::kFloat:
+        return std::to_string(v.float_());
+    case kuksa::val::v2::Value::kInt32:
+        return std::to_string(v.int32());
+    case kuksa::val::v2::Value::kInt64:
+        return std::to_string((long long)v.int64());
+    case kuksa::val::v2::Value::kUint32:
+        return std::to_string(v.uint32());
+    case kuksa::val::v2::Value::kUint64:
+        return std::to_string((unsigned long long)v.uint64());
+    case kuksa::val::v2::Value::kBool:
+        return v.bool_() ? "true" : "false";
+    case kuksa::val::v2::Value::kString:
+        return v.string();
+    default:
+        return "<unset>";
     }
+}
+
+// ============================================================================
+// Reader Implementation (runs in main thread)
+// ============================================================================
+
+Reader::Reader(QObject *parent) : QObject(parent)
+{
+    qDebug() << "[Reader] Constructor called - setting up background thread";
+
+    // Create worker thread
+    _workerThread = new QThread(this);
+    _worker = new ReaderWorker(_server);
+    
+    // Move worker to thread
+    _worker->moveToThread(_workerThread);
+
+    // Connect signals from worker to this object (forwarding to main thread)
+    connect(_worker, &ReaderWorker::speedReceived, this, &Reader::speedReceived);
+    connect(_worker, &ReaderWorker::temperatureReceived, this, &Reader::temperatureReceived);
+    connect(_worker, &ReaderWorker::distanceReceived, this, &Reader::distanceReceived);
+    connect(_worker, &ReaderWorker::frontDistanceReceived, this, &Reader::frontDistanceReceived);
+    connect(_worker, &ReaderWorker::wheelSpeedReceived, this, &Reader::wheelSpeedReceived);
+    connect(_worker, &ReaderWorker::voltageReceived, this, &Reader::voltageReceived);
+
+
+    connect(_worker, &ReaderWorker::connectionError, 
+            this, &Reader::connectionError);
+    connect(_worker, &ReaderWorker::connected, 
+            this, &Reader::connected);
+
+    // Start reading when thread starts
+    connect(_workerThread, &QThread::started, 
+            _worker, &ReaderWorker::startReading);
+    
+    // Cleanup when thread finishes
+    connect(_workerThread, &QThread::finished, 
+            _worker, &QObject::deleteLater);
+
+    // Start the thread
+    _workerThread->start();
+    
+    qDebug() << "[Reader] Background thread started";
+}
+
+Reader::~Reader()
+{
+    qDebug() << "[Reader] Destructor called - stopping background thread";
+    
+    // Stop the worker
+    _worker->stopReading();
+    
+    // Stop thread and wait
+    _workerThread->quit();
+    _workerThread->wait(5000); // Wait up to 5 seconds
+    
+    qDebug() << "[Reader] Background thread stopped";
 }
