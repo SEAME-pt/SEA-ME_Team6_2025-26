@@ -40,6 +40,9 @@
 #include "servo.h"
 #include "tim.h"
 #include "emergency_stop.h"
+#include "srf08.h"
+#include "ina226.h"
+#include "gesture_simple.h"
 
 /* USER CODE END Includes */
 
@@ -70,6 +73,7 @@ TX_THREAD temperature_thread;
 TX_THREAD speed_thread;
 TX_THREAD imu_thread;
 TX_THREAD tof_thread;
+TX_THREAD srf08_thread;
 TX_THREAD battery_thread;
 TX_THREAD thread_relay;
 TX_QUEUE  can_rx_queue;
@@ -83,6 +87,7 @@ static uint8_t temperature_thread_stack[TEMP_THREAD_STACK_SIZE];
 static uint8_t speed_thread_stack[SPEED_THREAD_STACK_SIZE];
 static uint8_t imu_thread_stack[IMU_THREAD_STACK_SIZE];
 static uint8_t tof_thread_stack[TOF_THREAD_STACK_SIZE];
+static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
 static uint8_t battery_thread_stack[1024];
 
 /* Mutex for printf protection */
@@ -101,14 +106,18 @@ extern I2C_HandleTypeDef hi2c1;
 extern TIM_HandleTypeDef htim1;
 
 /* Shared sensor data for LCD display */
+static volatile float shared_voltage = 0.0f;
 static volatile float shared_temperature = 0.0f;
 static volatile float shared_humidity = 0.0f;
 static volatile uint16_t shared_tof_distance = 0;
+static volatile uint16_t shared_srf08_distance = 0;
 static volatile float shared_speed = 0.0f;
 
 /* Emergency stop state management */
 volatile uint8_t emergency_stop_active = 0;
+volatile uint8_t srf08_speed_limit = 100;  /* Speed limit 0-100% (100=full speed) */
 static EmergencyStopState_t emergency_state = ESTOP_STATE_NORMAL;
+static EmergencyStopState_t srf08_emergency_state = ESTOP_STATE_NORMAL;
 
 /* System state tracking for Heartbeat */
 static volatile SystemState_t current_system_state = SYSTEM_STATE_INIT;
@@ -135,6 +144,7 @@ static void Temperature_Thread_Entry(ULONG thread_input);
 static void Speed_Thread_Entry(ULONG thread_input);
 static void IMU_Thread_Entry(ULONG thread_input);
 static void ToF_Thread_Entry(ULONG thread_input);
+static void SRF08_Thread_Entry(ULONG thread_input);
 static void Battery_Thread_Entry(ULONG thread_input);
 /* USER CODE END PFP */
 
@@ -243,6 +253,21 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
                        TOF_THREAD_STACK_SIZE,
                        TOF_THREAD_PRIORITY,
                        TOF_THREAD_PRIORITY,
+                       TX_NO_TIME_SLICE,
+                       TX_AUTO_START) != TX_SUCCESS)
+  {
+    ret = TX_THREAD_ERROR;
+  }
+
+  /* Create SRF08 thread */
+  if (tx_thread_create(&srf08_thread,
+                       "SRF08 Thread",
+                       SRF08_Thread_Entry,
+                       0,
+                       srf08_thread_stack,
+                       SRF08_THREAD_STACK_SIZE,
+                       SRF08_THREAD_PRIORITY,
+                       SRF08_THREAD_PRIORITY,
                        TX_NO_TIME_SLICE,
                        TX_AUTO_START) != TX_SUCCESS)
   {
@@ -535,10 +560,11 @@ static void Temperature_Thread_Entry(ULONG thread_input)
     shared_temperature = temperature;
     shared_humidity = humidity;
 
-    /* Atualizar apenas Linha 1 do LCD (Temp/Hum) */
+    /* Atualizar ambas as linhas do LCD */
     /* Não atualizar durante emergency stop */
     if (!emergency_stop_active) {
-        LCD1602_UpdateLine1(shared_temperature, shared_humidity);
+        LCD1602_UpdateLine1(shared_voltage, shared_temperature, shared_humidity);
+        LCD1602_UpdateLine2(shared_srf08_distance, shared_speed);
     }
     #endif
 
@@ -816,7 +842,7 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
 
                 #if ENABLE_LCD
                 LCD1602_SetRGB(LCD_COLOR_NORMAL_R, LCD_COLOR_NORMAL_G, LCD_COLOR_NORMAL_B);
-                LCD1602_UpdateLine2(shared_tof_distance, shared_speed);
+                LCD1602_UpdateLine2(shared_srf08_distance, shared_speed);
                 LCD1602_SetCursor(0, 0);
                 LCD1602_Print("T:--C H:--%    ");
                 #endif
@@ -839,15 +865,6 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
                 break;
               }
 
-              /* Bloquear durante emergency stop */
-              if (emergency_stop_active && !(cmd->flags & CMD_FLAG_EMERGENCY_STOP))
-              {
-                tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-                printf("\033[1;31m[CAN_RX] MotorCmd BLOCKED - Emergency Active!\r\n\033[0m");
-                tx_mutex_put(&printf_mutex);
-                break;
-              }
-
               /* Processar flags */
               if (cmd->flags & CMD_FLAG_EMERGENCY_STOP)
               {
@@ -858,6 +875,22 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
                 tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
                 printf("\033[1;31m[CAN_RX] EMERGENCY STOP!\r\n\033[0m");
                 tx_mutex_put(&printf_mutex);
+                break;
+              }
+
+              /* --- CONTROLO DO MOTOR (Throttle: -100 a +100) --- */
+              int8_t throttle = cmd->throttle;
+
+              /* Bloquear durante emergency stop, EXCETO marcha-atrás */
+              if (emergency_stop_active && throttle >= 0)
+              {
+                tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+                printf("\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
+                tx_mutex_put(&printf_mutex);
+
+                /* Para o motor se tentar andar para frente */
+                Motor_Stop();
+                actual_throttle_applied = 0;
                 break;
               }
 
@@ -872,11 +905,13 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
               uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
               Servo_SetAngle(servo_angle);
               actual_steering_applied = steering;
-
-              /* --- CONTROLO DO MOTOR (Throttle: -100 a +100) --- */
-              int8_t throttle = cmd->throttle;
               if (throttle < -100) throttle = -100;
               if (throttle > 100) throttle = 100;
+
+              /* Aplicar limite de velocidade do SRF08 (proximity-based speed control) */
+              if (throttle > (int8_t)srf08_speed_limit) {
+                throttle = (int8_t)srf08_speed_limit;
+              }
 
               if (cmd->flags & CMD_FLAG_BRAKE || throttle == 0)
               {
@@ -966,26 +1001,35 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
 
           /* === JOYSTICK CONTROL (0x500) - Legacy Support === */
           case CAN_ID_JOYSTICK:
-            /* Bloquear comandos de joystick durante emergency stop */
-            if (emergency_stop_active)
-            {
-              tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-              printf("\033[1;31m[CAN_RX] Joystick BLOCKED - Emergency Active!\r\n\033[0m");
-              tx_mutex_put(&printf_mutex);
-              break;
-            }
-
             if (rx_msg.dlc >= 4)
             {
               /* Extrair steering e throttle (little-endian int16) */
               int16_t steering = (int16_t)(rx_msg.data[0] | (rx_msg.data[1] << 8));
               int16_t throttle = (int16_t)(rx_msg.data[2] | (rx_msg.data[3] << 8));
 
+              /* Bloquear apenas FRENTE durante emergency stop (marcha-atrás permitida) */
+              if (emergency_stop_active && throttle >= 0)
+              {
+                tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+                printf("\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
+                tx_mutex_put(&printf_mutex);
+
+                /* Para o motor se tentar andar para frente */
+                Motor_Stop();
+                actual_throttle_applied = 0;
+                break;
+              }
+
               /* Limitar valores */
               if (steering < -100) steering = -100;
               if (steering > 100) steering = 100;
               if (throttle < -100) throttle = -100;
               if (throttle > 100) throttle = 100;
+
+              /* Aplicar limite de velocidade do SRF08 (proximity-based speed control) */
+              if (throttle > (int8_t)srf08_speed_limit) {
+                throttle = (int8_t)srf08_speed_limit;
+              }
 
               /* Controlo do servo */
               uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
@@ -1177,9 +1221,11 @@ static void IMU_Thread_Entry(ULONG thread_input)
   */
 
 /**
-  * @brief  ToF thread entry function (Simple Implementation)
+  * @brief  ToF thread entry function - 8x8 mode with Gesture Detection
   * @param  thread_input: thread input parameter (not used)
   * @retval None
+  * @note   Emergency stop has been moved to SRF08 thread
+  * @note   Uses movement accumulation algorithm (tested and working)
   */
 static void ToF_Thread_Entry(ULONG thread_input)
 {
@@ -1190,25 +1236,59 @@ static void ToF_Thread_Entry(ULONG thread_input)
   uint8_t isReady;
   VL53L5CX_ResultsData Results;
 
+  /* Gesture detection variables - Movement Accumulation Algorithm */
+  static GestureType_t last_gesture = GESTURE_NONE;
+  GestureType_t detected_gesture = GESTURE_NONE;
+
+  /* Tracking state for movement accumulation */
+  float start_x = -1.0f;
+  float start_z = -1.0f;
+  uint32_t start_time_gesture = 0;
+  float prev_center_x = -1.0f;
+  uint32_t hand_lost_time = 0;
+
+  /* Current hand position */
+  float center_x = 0.0f;
+  float center_y = 0.0f;
+  uint16_t min_z = 4000;
+  uint8_t hand_detected = 0;
+
+  /* Gesture thresholds */
+  #define GESTURE_SWIPE_THRESHOLD   2.0f    /* zones of movement */
+  #define GESTURE_TAP_Z_THRESHOLD   100     /* mm approach */
+  #define GESTURE_TAP_MIN_DIST      150     /* mm minimum distance for TAP */
+  #define GESTURE_MAX_DETECTION_MM  500     /* mm maximum detection range */
+  #define GESTURE_HAND_LOST_MS      300     /* ms before considering hand lost */
+  #define GESTURE_COOLDOWN_MS       500     /* ms between gestures */
+
+  uint32_t last_gesture_time = 0;
+
   tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[ToF] Thread iniciada!\r\n");
+  printf("\r\n[ToF] Thread iniciada - Modo 8x8 + Gestos (Acumulacao)!\r\n");
   tx_mutex_put(&printf_mutex);
+
+  /* Delay inicial para deixar outras threads I2C2 estabilizarem */
+  tx_thread_sleep(500);
 
   /* 1. Configurar I2C Address */
   Dev.platform.address = 0x52;
 
   /* 2. Reset via XSHUT (Hardware Reset) */
+  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+  printf("[ToF] Reset XSHUT...\r\n");
+  tx_mutex_put(&printf_mutex);
+
   HAL_GPIO_WritePin(Mems_VL53_xshut_GPIO_Port, Mems_VL53_xshut_Pin, GPIO_PIN_RESET);
-  tx_thread_sleep(2);
+  tx_thread_sleep(20);  /* 20ms com XSHUT low */
   HAL_GPIO_WritePin(Mems_VL53_xshut_GPIO_Port, Mems_VL53_xshut_Pin, GPIO_PIN_SET);
-  tx_thread_sleep(2);
+  tx_thread_sleep(100); /* 100ms para o sensor arrancar apos XSHUT high */
 
   /* 3. Verificar se está vivo */
   status = vl53l5cx_is_alive(&Dev, &isAlive);
 
   if (!isAlive || status) {
       tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-      printf("[ToF] ERRO: Sensor não detetado!\r\n");
+      printf("[ToF] ERRO: Sensor nao detetado!\r\n");
       tx_mutex_put(&printf_mutex);
   }
 
@@ -1221,11 +1301,27 @@ static void ToF_Thread_Entry(ULONG thread_input)
       tx_mutex_put(&printf_mutex);
   } else {
       tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-      printf("[ToF] VL53L5CX inicializado!\r\n");
+      printf("[ToF] VL53L5CX inicializado (8x8)!\r\n");
       tx_mutex_put(&printf_mutex);
   }
 
-  /* 5. Iniciar Leitura (Ranging) */
+  /* 5. Configurar para 8x8 resolucao (64 zonas) para gestos */
+  status = vl53l5cx_set_resolution(&Dev, VL53L5CX_RESOLUTION_8X8);
+  if (status) {
+      tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+      printf("[ToF] ERRO: Falha ao configurar 8x8!\r\n");
+      tx_mutex_put(&printf_mutex);
+  }
+
+  /* 6. Configurar frequencia mais alta para gestos (15Hz) */
+  status = vl53l5cx_set_ranging_frequency_hz(&Dev, 15);
+  if (status) {
+      tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+      printf("[ToF] AVISO: Falha ao configurar frequencia\r\n");
+      tx_mutex_put(&printf_mutex);
+  }
+
+  /* 7. Iniciar Leitura (Ranging) */
   status = vl53l5cx_start_ranging(&Dev);
 
   if (status) {
@@ -1234,189 +1330,200 @@ static void ToF_Thread_Entry(ULONG thread_input)
       tx_mutex_put(&printf_mutex);
   } else {
       tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-      printf("[ToF] Ranging iniciado!\r\n");
+      printf("[ToF] Ranging iniciado (8x8 @ 15Hz)!\r\n");
       tx_mutex_put(&printf_mutex);
   }
 
   /* --- LOOP PRINCIPAL DA THREAD --- */
   while (1)
   {
-      /* Verificar se há dados prontos */
+      /* Verificar se ha dados prontos */
       status = vl53l5cx_check_data_ready(&Dev, &isReady);
 
       if (isReady)
       {
           vl53l5cx_get_ranging_data(&Dev, &Results);
 
+          uint32_t current_time = HAL_GetTick();
+          detected_gesture = GESTURE_NONE;
 
-          /* Lógica de deteção de gestos/mão: Encontrar o ponto mais próximo */
-          uint16_t min_dist = 4000; // Max range
+          /* === FIND HAND CENTROID IN 8x8 GRID === */
+          float sum_x = 0.0f, sum_y = 0.0f;
+          int valid_count = 0;
+          min_z = 4000;
           uint8_t nearest_zone = 255;
-          uint8_t valid_targets = 0; // Contador de alvos válidos detectados
 
-          /* Varrer as zonas (assumindo 8x8 = 64 zonas, ou 4x4 = 16) */
-          /* O loop até 64 é seguro pois o array tem tamanho fixo */
           for (int i = 0; i < 64; i++) {
-              if (Results.distance_mm[i] > 0 && Results.distance_mm[i] < min_dist) {
-                  // Filtrar por status (5 e 9 são válidos)
-                  if(Results.target_status[i] == 5 || Results.target_status[i] == 9) {
-                      min_dist = Results.distance_mm[i];
+              /* Check if valid target within gesture range */
+              if ((Results.target_status[i] == 5 || Results.target_status[i] == 9) &&
+                  Results.distance_mm[i] > 0 && Results.distance_mm[i] < GESTURE_MAX_DETECTION_MM) {
+
+                  int row = i / 8;  /* 0-7 */
+                  int col = i % 8;  /* 0-7 */
+
+                  sum_x += col;
+                  sum_y += row;
+                  valid_count++;
+
+                  if (Results.distance_mm[i] < min_z) {
+                      min_z = Results.distance_mm[i];
                       nearest_zone = (uint8_t)i;
-                      valid_targets++;
-                  }
-              } else if (Results.distance_mm[i] > 0) {
-                  // Conta alvos válidos mesmo que não sejam o mais próximo
-                  if(Results.target_status[i] == 5 || Results.target_status[i] == 9) {
-                      valid_targets++;
                   }
               }
           }
 
-          /* === EMERGENCY STOP LOGIC === */
-          EmergencyStopState_t new_state = emergency_state;
-
-          if (min_dist < TOF_EMERGENCY_THRESHOLD_MM) {
-              // Entrar em EMERGENCY
-              if (emergency_state != ESTOP_STATE_EMERGENCY) {
-                  new_state = ESTOP_STATE_EMERGENCY;
-                  emergency_stop_active = 1;
-
-                  Motor_Stop();  // Parar motores imediatamente
-
-                  #if ENABLE_LCD
-                  LCD1602_SetRGB(LCD_COLOR_EMERGENCY_R, LCD_COLOR_EMERGENCY_G, LCD_COLOR_EMERGENCY_B);
-                  LCD1602_SetCursor(0, 0);
-                  LCD1602_Print("!EMERGENCY STOP!");
-                  LCD1602_SetCursor(0, 1);
-                  char buf[17];
-                  snprintf(buf, sizeof(buf), "Dist: %u mm    ", min_dist);
-                  LCD1602_Print(buf);
-                  #endif
-
-                  /* Enviar Emergency Stop frame (0x001) */
-                  EmergencyStop_t estop_frame;
-                  estop_frame.active = 1;                    /* Emergency active */
-                  estop_frame.source = 0;                    /* 0 = ToF sensor */
-                  estop_frame.distance_mm = min_dist;        /* Distance to obstacle */
-                  estop_frame.reason = 0x01;                 /* Reason: Proximity alert */
-                  estop_frame.reserved[0] = 0;
-                  estop_frame.reserved[1] = 0;
-                  estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
-
-                  mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
-
-                  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-                  printf("\033[1;31m[EMERGENCY] Dist %u mm < %u mm - MOTORS STOPPED!\033[0m\r\n",
-                         min_dist, TOF_EMERGENCY_THRESHOLD_MM);
-                  tx_mutex_put(&printf_mutex);
+          /* Need at least 3 valid zones to detect hand */
+          if (valid_count >= 3) {
+              center_x = sum_x / valid_count;
+              center_y = sum_y / valid_count;
+              hand_detected = 1;
+              hand_lost_time = 0;
+          } else {
+              hand_detected = 0;
+              if (hand_lost_time == 0) {
+                  hand_lost_time = current_time;
               }
           }
-          else if (min_dist >= TOF_RECOVERY_THRESHOLD_MM) {
-              // Recuperar para NORMAL
-              if (emergency_state == ESTOP_STATE_EMERGENCY) {
-                  new_state = ESTOP_STATE_NORMAL;
-                  emergency_stop_active = 0;
 
-                  #if ENABLE_LCD
-                  LCD1602_SetRGB(LCD_COLOR_NORMAL_R, LCD_COLOR_NORMAL_G, LCD_COLOR_NORMAL_B);
-                  LCD1602_UpdateLine2(shared_tof_distance, shared_speed);
-                  LCD1602_SetCursor(0, 0);
-                  LCD1602_Print("T:--C H:--%    ");
-                  #endif
-
-                  /* Enviar Emergency Stop CLEAR frame (0x001) */
-                  EmergencyStop_t estop_frame;
-                  estop_frame.active = 0;                    /* Emergency cleared */
-                  estop_frame.source = 0;                    /* 0 = ToF sensor */
-                  estop_frame.distance_mm = min_dist;        /* Current safe distance */
-                  estop_frame.reason = 0x00;                 /* Reason: Cleared */
-                  estop_frame.reserved[0] = 0;
-                  estop_frame.reserved[1] = 0;
-                  estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
-
-                  mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
-
-                  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-                  printf("\033[1;32m[EMERGENCY] Cleared - dist %u mm > %u mm\033[0m\r\n",
-                         min_dist, TOF_RECOVERY_THRESHOLD_MM);
-                  tx_mutex_put(&printf_mutex);
+          /* === GESTURE DETECTION WITH MOVEMENT ACCUMULATION === */
+          if (hand_detected) {
+              /* Check cooldown */
+              if ((current_time - last_gesture_time) < GESTURE_COOLDOWN_MS) {
+                  /* Still in cooldown, don't detect */
               }
-              else if (emergency_state == ESTOP_STATE_WARNING) {
-                  new_state = ESTOP_STATE_NORMAL;
-                  #if ENABLE_LCD
-                  LCD1602_SetRGB(LCD_COLOR_NORMAL_R, LCD_COLOR_NORMAL_G, LCD_COLOR_NORMAL_B);
-                  LCD1602_UpdateLine2(shared_tof_distance, shared_speed);
-                  #endif
+              else if (start_x < 0) {
+                  /* First detection - save start position */
+                  start_x = center_x;
+                  start_z = min_z;
+                  start_time_gesture = current_time;
+                  prev_center_x = center_x;
+              }
+              else {
+                  /* Calculate total movement from start */
+                  float total_dx = center_x - start_x;
+                  float total_dz = (float)min_z - start_z;
+
+                  /* SWIPE LEFT: moved left more than threshold */
+                  if (total_dx < -GESTURE_SWIPE_THRESHOLD) {
+                      detected_gesture = GESTURE_SWIPE_LEFT;
+                      start_x = -1.0f;  /* Reset tracking */
+                      last_gesture_time = current_time;
+                  }
+                  /* SWIPE RIGHT: moved right more than threshold */
+                  else if (total_dx > GESTURE_SWIPE_THRESHOLD) {
+                      detected_gesture = GESTURE_SWIPE_RIGHT;
+                      start_x = -1.0f;  /* Reset tracking */
+                      last_gesture_time = current_time;
+                  }
+                  /* TAP: approached sensor quickly */
+                  else if (total_dz < -GESTURE_TAP_Z_THRESHOLD && min_z < GESTURE_TAP_MIN_DIST) {
+                      detected_gesture = GESTURE_TAP;
+                      start_x = -1.0f;  /* Reset tracking */
+                      last_gesture_time = current_time;
+                  }
+
+                  prev_center_x = center_x;
               }
           }
           else {
-              // Zona de histerese (100-120mm): WARNING
-              if (emergency_state == ESTOP_STATE_NORMAL) {
-                  new_state = ESTOP_STATE_WARNING;
-                  #if ENABLE_LCD
-                  LCD1602_SetRGB(LCD_COLOR_WARNING_R, LCD_COLOR_WARNING_G, LCD_COLOR_WARNING_B);
-                  #endif
-                  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-                  printf("\033[1;33m[WARNING] Proximity: %u mm\033[0m\r\n", min_dist);
-                  tx_mutex_put(&printf_mutex);
+              /* Hand lost - reset after timeout */
+              if (hand_lost_time > 0 && (current_time - hand_lost_time) > GESTURE_HAND_LOST_MS) {
+                  start_x = -1.0f;
+                  start_z = -1.0f;
+                  prev_center_x = -1.0f;
               }
           }
 
-          emergency_state = new_state;
-          /* === END EMERGENCY STOP LOGIC === */
+          /* === ENVIAR GESTURE FRAME (0x424) === */
+          GestureFrame_t gesture_frame;
 
-          /* === NOVA IMPLEMENTAÇÃO: ToFDistance_t (0x422) === */
-          ToFDistance_t tof_frame;
+          gesture_frame.gesture_type = (uint8_t)detected_gesture;
+          gesture_frame.hand_detected = hand_detected;
 
-          if (nearest_zone != 255) // Se encontrou algo válido
-          {
-              tof_frame.min_distance_mm = min_dist;
-              tof_frame.nearest_zone = nearest_zone;
-              tof_frame.target_status = Results.target_status[nearest_zone];
-              tof_frame.detection_count = valid_targets;
-          }
-          else
-          {
-              // Nada detetado ou fora de alcance
-              tof_frame.min_distance_mm = 4000;
-              tof_frame.nearest_zone = 255;
-              tof_frame.target_status = 0;
-              tof_frame.detection_count = 0;
+          /* Convert hand position (0-7) to (-100 to +100) */
+          if (hand_detected) {
+              gesture_frame.hand_x = (int8_t)((center_x - 3.5f) * 28.57f);
+              gesture_frame.hand_y = (int8_t)((center_y - 3.5f) * 28.57f);
+              gesture_frame.hand_z_mm = min_z;
+              gesture_frame.confidence = 80;
+          } else {
+              gesture_frame.hand_x = 0;
+              gesture_frame.hand_y = 0;
+              gesture_frame.hand_z_mm = 0;
+              gesture_frame.confidence = 0;
           }
 
-          /* Reserved bytes */
-          tof_frame.reserved[0] = 0;
-          tof_frame.reserved[1] = 0;
+          gesture_frame.status = (status != 0) ? (1 << 0) : 0;
 
-          /* Status: sensor health */
-          tof_frame.status = (status != 0) ? (1 << 0) : 0;
-          if (emergency_stop_active) {
-              tof_frame.status |= (1 << 1); // Bit 1: Emergency stop active
-          }
+          /* Enviar frame de gesto */
+          mcp_send_message(CAN_ID_GESTURE, (uint8_t*)&gesture_frame, sizeof(gesture_frame));
 
-          /* Enviar dados normais apenas se NÃO estiver em emergency */
-          if (emergency_state != ESTOP_STATE_EMERGENCY) {
-              /* Enviar frame ToF (8 bytes) */
-              mcp_send_message(CAN_ID_TOF_DISTANCE, (uint8_t*)&tof_frame, sizeof(tof_frame));
-
-              #if ENABLE_LCD
-              /* Atualizar variável partilhada para o LCD */
-              shared_tof_distance = min_dist;
-
-              /* Atualizar Linha 2 do LCD (ToF/Speed) em tempo real */
-              LCD1602_UpdateLine2(shared_tof_distance, shared_speed);
-              #endif
+          /* Log apenas quando detecta um gesto novo */
+          if (detected_gesture != GESTURE_NONE && detected_gesture != last_gesture) {
+              const char* gesture_name = "";
+              switch(detected_gesture) {
+                  case GESTURE_SWIPE_LEFT:  gesture_name = "SWIPE_LEFT"; break;
+                  case GESTURE_SWIPE_RIGHT: gesture_name = "SWIPE_RIGHT"; break;
+                  case GESTURE_TAP:         gesture_name = "TAP"; break;
+                  default:                  gesture_name = "UNKNOWN"; break;
+              }
 
               tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-              printf("[ToF] Dist=%u mm | Zona=%u | Targets=%u | Status=0x%02X\r\n",
-                     tof_frame.min_distance_mm, tof_frame.nearest_zone,
-                     tof_frame.detection_count, tof_frame.status);
+              printf("\033[1;35m[GESTURE] %s detectado! Hand(%.1f, %.1f, %u mm)\033[0m\r\n",
+                     gesture_name, center_x, center_y, min_z);
+              tx_mutex_put(&printf_mutex);
+
+              /* Gestos removidos do LCD - linha 2 reservada para SRF08 + velocidade */
+          }
+          last_gesture = detected_gesture;
+
+          /* === ENVIAR ToF DISTANCE FRAME (0x422) === */
+          /* Encontrar distancia minima global (para qualquer distancia, nao so gestos) */
+          uint16_t global_min_dist = 4000;
+          uint8_t global_nearest_zone = 255;
+          uint8_t valid_targets = 0;
+
+          for (int i = 0; i < 64; i++) {
+              if (Results.target_status[i] == 5 || Results.target_status[i] == 9) {
+                  valid_targets++;
+                  if (Results.distance_mm[i] > 0 && Results.distance_mm[i] < global_min_dist) {
+                      global_min_dist = Results.distance_mm[i];
+                      global_nearest_zone = (uint8_t)i;
+                  }
+              }
+          }
+
+          ToFDistance_t tof_frame;
+          tof_frame.min_distance_mm = global_min_dist;
+          tof_frame.nearest_zone = global_nearest_zone;
+          tof_frame.target_status = (global_nearest_zone != 255) ? Results.target_status[global_nearest_zone] : 0;
+          tof_frame.detection_count = valid_targets;
+          tof_frame.reserved[0] = 0;
+          tof_frame.reserved[1] = 0;
+          tof_frame.status = (status != 0) ? (1 << 0) : 0;
+
+          /* Enviar frame ToF (8 bytes) */
+          mcp_send_message(CAN_ID_TOF_DISTANCE, (uint8_t*)&tof_frame, sizeof(tof_frame));
+
+          #if ENABLE_LCD
+          /* Atualizar variavel partilhada para o LCD */
+          shared_tof_distance = global_min_dist;
+          #endif
+
+          /* Log periodico (a cada 15 iteracoes ~1 segundo) */
+          static uint8_t log_counter = 0;
+          if (++log_counter >= 15) {
+              log_counter = 0;
+              tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+              printf("[ToF] Dist=%u mm | Zone=%u | Targets=%u | Hand=%s (%.1f,%.1f)\r\n",
+                     global_min_dist, global_nearest_zone, valid_targets,
+                     hand_detected ? "YES" : "NO", center_x, center_y);
               tx_mutex_put(&printf_mutex);
           }
       }
 
-      /* Sleep configurável via CAN_PERIOD_TOF_MS */
-      tx_thread_sleep(CAN_PERIOD_TOF_MS);
+      /* Sleep mais curto para gestos (66ms = ~15Hz) */
+      tx_thread_sleep(66);
   }
 }
 
@@ -1424,7 +1531,277 @@ static void ToF_Thread_Entry(ULONG thread_input)
 
 
 /**
-  * @brief  Battery thread entry function
+  * @brief  SRF08 thread entry function - OPTIMIZED FOR MINIMUM LAG
+  * @param  thread_input: thread input parameter (not used)
+  * @retval None
+  */
+static void SRF08_Thread_Entry(ULONG thread_input)
+{
+  (void)thread_input;
+
+  SRF08_HandleTypeDef hsrf08;
+  HAL_StatusTypeDef init_status;
+  uint32_t can_send_counter = 0;  // Contador para envios CAN periódicos
+
+  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+  printf("\r\n[SRF08] Thread iniciada (PRIORIDADE ALTA - SAFETY CRITICAL)!\r\n");
+  tx_mutex_put(&printf_mutex);
+
+  /* Inicializar SRF08 */
+  init_status = SRF08_Init(&hsrf08, &hi2c1, SRF08_DEFAULT_ADDR);
+
+  if (init_status == HAL_OK) {
+    uint8_t version = SRF08_GetVersion(&hsrf08);
+
+    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+    printf("[SRF08] Sensor OK! Versao: %d | Emergency @ %u mm\r\n",
+           version, SRF08_EMERGENCY_THRESHOLD_MM);
+    printf("[SRF08] Configurado: Gain=12 (medio, melhor <200mm), Range=140 (~6m)\r\n");
+    printf("[SRF08] Sleep fixo 70ms (sensor nao suporta polling)\r\n");
+    tx_mutex_put(&printf_mutex);
+  } else {
+    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+    printf("[SRF08] ERRO init! Status: %d\r\n", init_status);
+    tx_mutex_put(&printf_mutex);
+  }
+
+  /* Loop principal - OTIMIZADO PARA LAG MÍNIMO */
+  while (1)
+  {
+    /* Iniciar medição */
+    HAL_StatusTypeDef ranging_status = SRF08_StartRanging(&hsrf08);
+
+    /* DEBUG: Verificar se comando foi aceite */
+    static uint8_t err_log_counter = 0;
+    if (ranging_status != HAL_OK && ++err_log_counter >= 15) {
+        err_log_counter = 0;
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        printf("\033[1;31m[SRF08] ERRO ao enviar comando ranging! Status: %d\033[0m\r\n", ranging_status);
+        tx_mutex_put(&printf_mutex);
+    }
+
+    /* === AGUARDAR MEDIÇÃO COMPLETAR === */
+    uint8_t ready = 0;
+    uint8_t poll_attempts = 0;
+
+#if SRF08_DISABLE_POLLING
+    /* Modo sleep fixo (sem polling) - Mais confiável se sensor não suporta */
+    tx_thread_sleep(70);  // 70ms fixo (datasheet: 65ms min)
+    ready = 1;
+    poll_attempts = 14;   // Para logging
+#else
+    /* Modo polling inteligente */
+    const uint8_t MAX_POLLS = 14;  // 14 * 5ms = 70ms
+
+    while (!ready && poll_attempts < MAX_POLLS) {
+        tx_thread_sleep(5);  // Sleep 5ms entre polls
+        ready = SRF08_IsReady(&hsrf08);
+        poll_attempts++;
+    }
+    /* Após timeout, assumir que terminou */
+#endif
+
+    /* Verificar se deu timeout */
+    static uint8_t timeout_log_counter = 0;
+    if (!ready && ++timeout_log_counter >= 15) {
+        timeout_log_counter = 0;
+
+        // DEBUG: Ler registo COMMAND para ver o que está a retornar
+        uint8_t cmd_reg = 0xFF;
+        HAL_I2C_Mem_Read(hsrf08.hi2c, hsrf08.addr, SRF08_REG_COMMAND, 1, &cmd_reg, 1, 100);
+
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        printf("\033[1;33m[SRF08] WARNING: Timeout! Polls=%u | CMD_REG=0x%02X (esperado 0x00)\033[0m\r\n",
+               poll_attempts, cmd_reg);
+        tx_mutex_put(&printf_mutex);
+    }
+
+    /* Ler distância e luz - APENAS se pronto ou timeout */
+    uint16_t distance_cm = SRF08_GetDistanceCm(&hsrf08);
+    uint8_t light = SRF08_GetLight(&hsrf08);
+    uint16_t distance_mm_raw = (distance_cm == 0xFFFF) ? 0 : distance_cm * 10;
+
+    /* === FILTRO DE MÉDIA MÓVEL (5 amostras) === */
+    #define SRF08_FILTER_SIZE 5
+    #define SRF08_LIGHT_THRESHOLD 2  // Threshold baixo - aceitar mais leituras
+    static uint16_t distance_buffer[SRF08_FILTER_SIZE] = {0};
+    static uint8_t buffer_index = 0;
+    static uint8_t buffer_filled = 0;
+    static uint16_t distance_mm_filtered = 0;
+
+    /* Aceitar leitura se:
+     * 1. Light >= threshold (eco detectado com boa intensidade)
+     * 2. OU distância válida (mesmo com light baixo)
+     * 3. Rejeitar apenas se light=0 E distance=0 (sem eco nenhum)
+     */
+    if (light >= SRF08_LIGHT_THRESHOLD || distance_mm_raw > 0) {
+        /* Adicionar ao buffer circular */
+        distance_buffer[buffer_index] = distance_mm_raw;
+        buffer_index = (buffer_index + 1) % SRF08_FILTER_SIZE;
+        if (!buffer_filled && buffer_index == 0) buffer_filled = 1;
+
+        /* Calcular média */
+        uint32_t sum = 0;
+        uint8_t count = buffer_filled ? SRF08_FILTER_SIZE : buffer_index;
+        for (uint8_t i = 0; i < count; i++) {
+            sum += distance_buffer[i];
+        }
+        distance_mm_filtered = (count > 0) ? (sum / count) : 0;
+    }
+    /* Senão (light=0 E distance=0), manter valor filtrado anterior */
+
+    uint16_t distance_mm = distance_mm_filtered;  // Usar valor filtrado
+
+    /* DEBUG: Log valores brutos do SRF08 */
+    static uint8_t srf08_log_counter = 0;
+    if (++srf08_log_counter >= 15) {  // Log a cada ~1 segundo
+        srf08_log_counter = 0;
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        if (distance_cm == 0xFFFF) {
+            printf("\033[1;31m[SRF08] ERRO I2C ao ler distancia!\033[0m\r\n");
+        } else {
+            printf("\033[1;36m[SRF08] %u mm | L=%u | SpeedLimit=%u%%",
+                   distance_mm, light, srf08_speed_limit);
+            if (srf08_speed_limit < 100) {
+                printf(" \033[1;33m[SLOWDOWN!]\033[1;36m");
+            }
+            if (light == 0 && distance_cm == 0) {
+                printf(" <- SEM ECO");
+            }
+            printf("\033[0m\r\n");
+        }
+        tx_mutex_put(&printf_mutex);
+    }
+
+    /* Atualizar variável partilhada para o LCD */
+    shared_srf08_distance = distance_mm;
+
+    #if ENABLE_LCD
+    /* Atualizar LCD em tempo real (65ms update rate) */
+    if (!emergency_stop_active) {
+        LCD1602_UpdateLine2(shared_srf08_distance, shared_speed);
+    }
+    #endif
+
+    /* === SPEED CONTROL BASED ON DISTANCE === */
+    /* Calcular limite de velocidade baseado na distância */
+    if (distance_mm >= SRF08_SLOWDOWN_THRESHOLD_MM || light == 0) {
+        /* Distância segura (>500mm) ou sem objeto: velocidade total */
+        srf08_speed_limit = 100;
+    }
+    else if (distance_mm <= SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
+        /* Muito perto (<300mm): PARAR */
+        srf08_speed_limit = 0;
+    }
+    else if (light > 0) {
+        /* Zona de slowdown (300-500mm): Reduzir para 25% */
+        srf08_speed_limit = SRF08_SLOWDOWN_SPEED_PERCENT;
+    }
+
+    /* === EMERGENCY STOP LOGIC - SEMPRE ATIVO (independente de light) === */
+    EmergencyStopState_t new_state = srf08_emergency_state;
+
+    /* CRITICAL: Verificar emergency SEMPRE (mesmo com light=0) */
+    if (distance_mm < SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
+      /* Entrar em EMERGENCY apenas se light > 0 (objeto detectado) */
+      if (srf08_emergency_state != ESTOP_STATE_EMERGENCY) {
+        /* 1. PARAR MOTORES IMEDIATAMENTE */
+        Motor_Stop();
+
+        /* 2. Atualizar estados */
+        new_state = ESTOP_STATE_EMERGENCY;
+        emergency_stop_active = 1;
+
+        /* 3. Enviar Emergency Stop CAN */
+        EmergencyStop_t estop_frame;
+        estop_frame.active = 1;
+        estop_frame.source = 1;  /* SRF08 */
+        estop_frame.distance_mm = distance_mm;
+        estop_frame.reason = 0x01;
+        estop_frame.reserved[0] = 0;
+        estop_frame.reserved[1] = 0;
+        estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
+        mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
+
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        printf("\033[1;31m[SRF08 ESTOP!] %u mm < %u mm (L=%u)\033[0m\r\n",
+               distance_mm, SRF08_EMERGENCY_THRESHOLD_MM, light);
+        tx_mutex_put(&printf_mutex);
+      }
+    }
+    else if (srf08_emergency_state == ESTOP_STATE_EMERGENCY) {
+      /* RECOVERY: Se estava em EMERGENCY, verificar se pode sair */
+      /* IMPORTANTE: Faz recovery SEMPRE que não há objeto perto, independente de light */
+      if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM || light == 0) {
+        /* Recuperar: distância segura OU sem objeto detectado */
+        new_state = ESTOP_STATE_NORMAL;
+        emergency_stop_active = 0;
+
+        /* Enviar CLEAR CAN */
+        EmergencyStop_t estop_frame;
+        estop_frame.active = 0;
+        estop_frame.source = 1;
+        estop_frame.distance_mm = distance_mm;
+        estop_frame.reason = 0x00;
+        estop_frame.reserved[0] = 0;
+        estop_frame.reserved[1] = 0;
+        estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
+        mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
+
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        printf("\033[1;32m[SRF08] RECOVERY! Dist=%u mm L=%u (CLEAR ENVIADO)\033[0m\r\n",
+               distance_mm, light);
+        tx_mutex_put(&printf_mutex);
+      }
+    }
+    else if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM && srf08_emergency_state == ESTOP_STATE_WARNING) {
+      /* Sair de WARNING para NORMAL */
+      new_state = ESTOP_STATE_NORMAL;
+    }
+    else if (distance_mm < SRF08_RECOVERY_THRESHOLD_MM && distance_mm >= SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
+      /* Zona de histerese: WARNING */
+      if (srf08_emergency_state == ESTOP_STATE_NORMAL) {
+        new_state = ESTOP_STATE_WARNING;
+      }
+    }
+
+    srf08_emergency_state = new_state;
+    /* === END EMERGENCY STOP LOGIC === */
+
+    /* === ENVIAR DADOS CAN PERIODICAMENTE === */
+    can_send_counter++;
+    if (light > 0 && srf08_emergency_state != ESTOP_STATE_EMERGENCY && (can_send_counter % 1) == 0) {
+      SRF08Distance_t srf08_frame;
+      srf08_frame.distance_mm = distance_mm;
+      srf08_frame.light_level = light;
+      srf08_frame.gain = 0;
+      srf08_frame.range_setting = 0;
+      srf08_frame.reserved[0] = 0;
+      srf08_frame.reserved[1] = 0;
+      srf08_frame.status = 0x01;
+
+      if (init_status != HAL_OK) {
+        srf08_frame.status |= (1 << 1);
+      }
+
+      mcp_send_message(CAN_ID_SRF08_DISTANCE, (uint8_t*)&srf08_frame, sizeof(srf08_frame));
+
+      /* Printf reduzido - apenas a cada 10 iterações */
+      if ((can_send_counter % 10) == 0) {
+        tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+        printf("[SRF08] %u mm | L=%u | State=%u\r\n", distance_mm, light, srf08_emergency_state);
+        tx_mutex_put(&printf_mutex);
+      }
+    }
+
+    /* DELAY ZERO - Loop contínuo para resposta máxima */
+    tx_thread_relinquish();
+  }
+}
+
+
+/**
+  * @brief  Battery thread entry function - Uses INA226 for real measurements
   * @param  thread_input: thread input parameter (not used)
   * @retval None
   */
@@ -1432,68 +1809,97 @@ static void Battery_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
+  HAL_StatusTypeDef ina226_status;
+  INA226_Data_t ina226_data;
+
   tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
   printf("\r\n[Battery] Thread iniciada!\r\n");
   tx_mutex_put(&printf_mutex);
 
-  /* TODO: Inicializar sensor de bateria (INA219, MAX17043, etc.)
-   * Por enquanto, vamos usar valores simulados
-   */
+  /* Initialize INA226 Current/Voltage Monitor on I2C1 */
+  ina226_status = INA226_Init(&hi2c1);
+
+  if (ina226_status == HAL_OK) {
+    uint16_t mfg_id = INA226_GetManufacturerID();
+    uint16_t die_id = INA226_GetDieID();
+
+    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+    printf("[Battery] INA226 inicializado! MFG=0x%04X DIE=0x%04X\r\n", mfg_id, die_id);
+    tx_mutex_put(&printf_mutex);
+  } else {
+    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
+    printf("[Battery] ERRO ao inicializar INA226! Status: %d\r\n", ina226_status);
+    tx_mutex_put(&printf_mutex);
+  }
 
   /* Variáveis de estado da bateria */
-  uint16_t voltage_mv = 12000;      // 12.0V inicial
-  int16_t current_ma = 0;           // 0mA inicial
-  uint8_t soc = 100;                // 100% carga inicial
-  int8_t temperature = 25;          // 25°C
-  uint8_t cycles = 0;               // 0 ciclos
-  uint8_t battery_status = 0;       // Status OK
+  uint16_t voltage_mv = 0;
+  int16_t current_ma = 0;
+  uint8_t soc = 100;                // SOC estimado (sem fuel gauge)
+  int8_t temperature = 25;          // Temperatura estimada
+  uint8_t cycles = 0;               // Ciclos de carga
+  uint8_t battery_status = 0;
+
+  /* Para estimativa de SOC baseada em tensão (LiPo 3S = 11.1V nominal) */
+  #define BATTERY_FULL_MV     12600   /* 4.2V × 3 células */
+  #define BATTERY_EMPTY_MV    9900    /* 3.3V × 3 células (cutoff seguro) */
 
   while (1)
   {
-    /* === SIMULAÇÃO DE DADOS DE BATERIA === */
-    /* TODO: Substituir por leitura real de sensor I2C (INA219, MAX17043, etc.) */
-
-    /* Simular descarga lenta baseada no throttle aplicado */
-    if (actual_throttle_applied != 0)
+    /* === LEITURA REAL DO INA226 === */
+    if (ina226_status == HAL_OK)
     {
-      /* Motor ativo - consumo de corrente */
-      current_ma = -((int16_t)abs(actual_throttle_applied) * 30); // ~3A @ 100%
+      HAL_StatusTypeDef read_status = INA226_ReadAll(&ina226_data);
 
-      /* Pequena queda de tensão sob carga */
-      voltage_mv = 12000 - (abs(actual_throttle_applied) * 5); // Drop de ~0.5V @ 100%
+      if (read_status == HAL_OK && ina226_data.valid)
+      {
+        /* Converter para formato da frame CAN */
+        voltage_mv = (uint16_t)(ina226_data.voltage_V * 1000.0f);
+        current_ma = (int16_t)(ina226_data.current_A * 1000.0f);
 
-      /* Descarga do SOC (muito lenta para simulação) */
-      if (soc > 0) {
-        static uint32_t discharge_counter = 0;
-        if (++discharge_counter >= 100) { // Descarrega 1% a cada 100 iterações (50s)
-          discharge_counter = 0;
-          soc--;
+        /* Atualizar variável partilhada para o LCD */
+        shared_voltage = ina226_data.voltage_V;
+
+        /* Estimativa de SOC baseada na tensão (método simples) */
+        if (voltage_mv >= BATTERY_FULL_MV) {
+          soc = 100;
+        } else if (voltage_mv <= BATTERY_EMPTY_MV) {
+          soc = 0;
+        } else {
+          /* Interpolação linear entre EMPTY e FULL */
+          soc = (uint8_t)(((uint32_t)(voltage_mv - BATTERY_EMPTY_MV) * 100) /
+                          (BATTERY_FULL_MV - BATTERY_EMPTY_MV));
         }
+
+        /* Estimativa de temperatura (sem sensor dedicado) */
+        /* Aumenta com corrente alta (simplificado) */
+        if (abs(current_ma) > 5000) {
+          temperature = 35;  /* Alta corrente = aquecimento */
+        } else if (abs(current_ma) > 2000) {
+          temperature = 30;
+        } else {
+          temperature = 25;  /* Temperatura ambiente */
+        }
+
+        /* Status flags baseados em medições reais */
+        battery_status = 0;
+        if (voltage_mv < 10500) battery_status |= (1 << 0);  /* Undervoltage warning */
+        if (voltage_mv < BATTERY_EMPTY_MV) battery_status |= ERROR_FLAG_UNDERVOLTAGE;
+        if (voltage_mv > 13000) battery_status |= ERROR_FLAG_OVERVOLTAGE;
+        if (soc < 20) battery_status |= (1 << 2);            /* Low battery */
+        if (abs(current_ma) > 15000) battery_status |= (1 << 4); /* Overcurrent */
+      }
+      else
+      {
+        /* Falha na leitura - marcar status como erro */
+        battery_status = ERROR_FLAG_SENSOR_FAULT;
       }
     }
     else
     {
-      /* Motor parado - corrente mínima (consumo do sistema) */
-      current_ma = -150; // 150mA (sistema)
-      voltage_mv = 12000;
+      /* INA226 não inicializado - manter valores anteriores com flag de erro */
+      battery_status = ERROR_FLAG_SENSOR_FAULT;
     }
-
-    /* Temperatura aumenta ligeiramente com uso */
-    if (abs(actual_throttle_applied) > 50)
-    {
-      temperature = 30; // Aquece para 30°C sob carga
-    }
-    else
-    {
-      temperature = 25; // Volta ao normal
-    }
-
-    /* Status flags */
-    battery_status = 0;
-    if (voltage_mv < 11000) battery_status |= (1 << 0); // Undervoltage
-    if (voltage_mv > 14000) battery_status |= (1 << 1); // Overvoltage
-    if (soc < 20) battery_status |= (1 << 2);           // Low battery
-    if (temperature > 40) battery_status |= (1 << 3);   // High temperature
 
     /* === CONSTRUIR E ENVIAR BatteryStatus_t (0x421) === */
     BatteryStatus_t battery_frame;
@@ -1508,10 +1914,15 @@ static void Battery_Thread_Entry(ULONG thread_input)
     /* Enviar frame (8 bytes) */
     mcp_send_message(CAN_ID_BATTERY, (uint8_t*)&battery_frame, sizeof(battery_frame));
 
+    /* Log com dados reais */
     tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Battery] %u.%03uV | %dmA | SOC=%u%% | Temp=%d°C | Status=0x%02X\r\n",
-           voltage_mv / 1000, voltage_mv % 1000,
-           current_ma, soc, temperature, battery_status);
+    if (ina226_status == HAL_OK && ina226_data.valid) {
+      printf("[Battery] %.2fV | %.2fA | %.2fW | SOC=%u%% | Status=0x%02X\r\n",
+             ina226_data.voltage_V, ina226_data.current_A, ina226_data.power_W,
+             soc, battery_status);
+    } else {
+      printf("[Battery] SENSOR ERROR | Status=0x%02X\r\n", battery_status);
+    }
     tx_mutex_put(&printf_mutex);
 
     /* Sleep configurável via CAN_PERIOD_BATTERY_MS (500ms = 2Hz) */

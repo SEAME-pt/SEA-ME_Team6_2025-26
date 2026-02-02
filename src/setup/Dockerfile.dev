@@ -1,0 +1,92 @@
+# ===========================================================================
+# Dockerfile.dev - Development environment extending base image
+# ===========================================================================
+# Usage: 
+#   docker build -f Dockerfile.dev -t cluster-dev:latest .
+#   docker run -it --rm -v $(pwd)/cluster:/workspace cluster-dev:latest
+# ===========================================================================
+
+FROM souzitaaaa/team6-base:bookworm
+
+ARG QT_VERSION=6.7.3
+
+RUN apt-get update && apt-get install -y \
+    libgl1 libxcb-xinerama0 libxcb-cursor0 \
+    libxcb-util1 libxcb-render-util0 \
+    libxcb-randr0-dev libxcb-xtest0-dev libxcb-xinerama0-dev \
+    libxcb-shape0-dev libxcb-xkb-dev libxcb-render0-dev \
+    libxcb-cursor-dev libxcb-icccm4-dev libxcb-sync-dev \
+    libc-ares-dev \
+    gdb valgrind clang-format \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+
+RUN apt-get update && apt-get install -y \
+    libgrpc++-dev=1.47.* \
+    libgrpc-dev=1.47.* \
+    protobuf-compiler=3.21.* \
+    libprotobuf-dev=3.21.* \
+    protobuf-compiler-grpc=1.47.* \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt-mark hold libgrpc++-dev libgrpc-dev protobuf-compiler libprotobuf-dev protobuf-compiler-grpc
+
+RUN mkdir -p qt6/src qt6/host-build && \
+    cd qt6/src && \
+    echo "=== Downloading Qt 6.7.3 submodules ===" && \
+    wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
+    wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
+    \
+    echo "=== Extracting sources ===" && \
+    cd ../host-build && \
+    tar xf ../src/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
+    \
+    echo "=== Building qtbase ===" && \
+    cd qtbase-everywhere-src-${QT_VERSION} && \
+    cmake -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DQT_BUILD_EXAMPLES=OFF \
+        -DQT_BUILD_TESTS=OFF \
+        -DCMAKE_INSTALL_PREFIX=/opt/qt6 \
+        -DFEATURE_xcb=ON \
+        -DFEATURE_dbus=ON && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install . && \
+    \
+    echo "=== Building qtshadertools ===" && \
+    cd ../qtshadertools-everywhere-src-${QT_VERSION} && \
+    /opt/qt6/bin/qt-configure-module . && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install . && \
+    \
+    echo "=== Building qtdeclarative (QML + Quick + Controls2) ===" && \
+    cd ../qtdeclarative-everywhere-src-${QT_VERSION} && \
+    /opt/qt6/bin/qt-configure-module . && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install . && \
+    \
+    echo "=== Cleanup ===" && \
+    cd /build && \
+    rm -rf qt6
+
+ENV PATH="/opt/qt6/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/qt6/lib:${LD_LIBRARY_PATH}"
+ENV PKG_CONFIG_PATH="/opt/qt6/lib/pkgconfig:${PKG_CONFIG_PATH}"
+ENV CMAKE_PREFIX_PATH="/opt/qt6:${CMAKE_PREFIX_PATH}"
+ENV QT_PLUGIN_PATH="/opt/qt6/plugins"
+ENV QML_IMPORT_PATH="/opt/qt6/qml"
+
+COPY scripts/dev-build.sh /usr/local/bin/dev-build.sh
+RUN chmod +x /usr/local/bin/dev-build.sh
+
+WORKDIR /workspace
+
+ENV DISPLAY=:0
+
+CMD ["/bin/bash"]

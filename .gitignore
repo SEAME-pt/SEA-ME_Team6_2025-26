@@ -7,6 +7,7 @@ to_delete
 *.tar
 *.tar.gz
 *.tgz
+*.zip
 
 .dotstop_extensions.backup
 .dotstop_extensions.backup/
@@ -16,7 +17,18 @@ to_delete
 # Local testing
 src/cluster/CMakeLists.txt.user
 src/cluster/build/
+src/cluster/build-arm/
+src/cluster/build-arm
+src/cluster/build-dev/
+src/cluster/build-dev
+src/cluster/build-host/
+src/cluster/build-host
 src/cluster/build
+src/deploy/
+src/deploy
+src/setup/sdk-agl/
+src/setup/sdk-agl
+src/setup/poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
 tests/build/
 tests/build
 HelloQt6
