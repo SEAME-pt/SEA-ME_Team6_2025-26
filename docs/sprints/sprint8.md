@@ -7,9 +7,7 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [ ] Management of STM32's and CAN resources (13)
-  - [ ] OTA implementation (without RAUC) (5)
-  - [ ] RAUC integration with OTA (5)
-  - [ ] Migration to AGL with RAUC (8)
+  - [ ] OTA implementation (13)
   - [ ] Creation of backup service of AGL (5)
   - [ ] Qt design modifications - integrate more data from KUKSA (13)
   - [ ] Implement security on KUKSA (TLS/JWT) (8)
@@ -21,19 +19,19 @@
 
 - #### **Epic** - Testing and Validate Software - [#103](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/103)
   - [ ] Temperature benchmark (cooler vs no cooler) (5)
-  - [ ] Joystick unit tests (5)
+  - [ ] Joystick unit tests (3)
   - [ ] Integration of tests - Python tests + Cpp tests (5)
 
 - #### **Epic** — Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
-  - [ ] TSF Documentation (8)
+  - [ ] TSF Documentation review (3)
   - [ ] Review TSF evidences (5)
-  - [ ] Restructure folder structure and documentation (8)
+  - [ ] Restructure folder structure and documentation (3)
   
 ---
 
 ## 📈 Actual Progress
 
-- ## Sprint 8 points: 0/117
+- ## Sprint 8 points: 0/100
 
 - ## ✅ Undone:
 - ## ❌ Undone: 
@@ -89,3 +87,4 @@
   - EXPECT-L0-27 - "Emergency braking stopping distance"
   - EXPECT-L0-28 - "Exterior temperature measurement accuracy"
   - EXPECT-L0-29 - "Driver presence condition"
+  - EXPECT-L0-30 - "Car ready to next module 2"
