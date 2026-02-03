@@ -16,8 +16,9 @@ Item {
               "Temperature: " + temperatureProvider.currTemperature + "\n" +
               "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
               "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
-              "Voltage: " + voltageProvider.currVoltage
-        font.pixelSize: 16
+              "Voltage: " + voltageProvider.currVoltage + "\n" +
+              "Heading: " + headingProvider.currHeading 
+        font.pixelSize: 14
         color: "white"
         anchors.centerIn: parent
     }

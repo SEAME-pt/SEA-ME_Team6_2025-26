@@ -31,6 +31,7 @@ void ReaderWorker::startReading()
         paths.push_back("Vehicle.Powertrain.TractionBattery.CurrentVoltage");
         //paths.push_back("Vehicle.TraveledDistance");
         paths.push_back("Vehicle.Powertrain.ElectricMotor.Speed");
+        paths.push_back("Vehicle.CurrentLocation.Heading");
 
         kuksa::val::v2::SubscribeRequest req;
         for (size_t i = 0; i < paths.size(); ++i)
@@ -95,6 +96,11 @@ void ReaderWorker::startReading()
                     qDebug() << "[ReaderWorker] Wheel Speed:" << wheelSpeed << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit wheelSpeedReceived(wheelSpeed);
+                } else if (path == "Vehicle.CurrentLocation.Heading") {
+                    double heading = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Heading:" << heading << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit headingReceived(heading);
                 }
             }
         }
@@ -178,6 +184,7 @@ Reader::Reader(QObject *parent) : QObject(parent)
     connect(_worker, &ReaderWorker::frontDistanceReceived, this, &Reader::frontDistanceReceived);
     connect(_worker, &ReaderWorker::wheelSpeedReceived, this, &Reader::wheelSpeedReceived);
     connect(_worker, &ReaderWorker::voltageReceived, this, &Reader::voltageReceived);
+    connect(_worker, &ReaderWorker::headingReceived, this, &Reader::headingReceived);
 
 
     connect(_worker, &ReaderWorker::connectionError, 

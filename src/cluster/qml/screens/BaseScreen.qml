@@ -30,6 +30,6 @@ Rectangle {
         }
 
         // Bottom bar
-        BottomBar {}
+        // BottomBar {}
     }
 }

@@ -34,6 +34,7 @@ signals:
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
     void voltageReceived(double voltage);
+    void headingReceived(double heading);
     void connectionError(QString error);
     void connected();
 
@@ -61,6 +62,7 @@ signals:
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
     void voltageReceived(double voltage);
+    void headingReceived(double heading);
     void connectionError(QString error);
     void connected();
 

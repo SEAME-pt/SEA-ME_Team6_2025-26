@@ -12,7 +12,7 @@
         <!-- QML Components -->
         <file>qml/components/TopBar.qml</file>
         <file>qml/components/BottomBar.qml</file>
-        <file>qml/components/SpeedGauge.qml</file>
+        <file>qml/components/Gauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
@@ -38,6 +38,8 @@
         <file>src/backend/ipcclient.hpp</file>
         <file>src/backend/reader.cpp</file>
         <file>src/backend/reader.hpp</file>
+        <file>src/backend/headingprovider.cpp</file>
+        <file>src/backend/headingprovider.hpp</file>
 
         <!-- Icons  -->
         <file>assets/icons/battery-empty-solid-full.svg</file>
