@@ -21,58 +21,47 @@ Item {
     property real bottomValue: 0
     property real bottomMinValue: 9
     property real bottomMaxValue: 13
-    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 25
-    property real bottomSweepAngle: 360 - root.centerEndAngle - 50
+    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 30
+    property real bottomSweepAngle: 360 - root.centerEndAngle - 60
 
     function sweepValue(v, minVal, maxVal, endAngle) {
         var t = Math.max(0, Math.min(1,(v - minVal) / (maxVal - minVal)))
         return endAngle * t
     }
 
-    // Outer glow/shadow for the entire gauge
-    Rectangle {
-        anchors.centerIn: parent
-        width: parent.width + 20
-        height: parent.height + 20
-        radius: width / 2
-        color: "transparent"
-        
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#60000000"
-            shadowBlur: 0.4
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 0
-        }
-    }
 
-    // Inner shadow background circle
+    // Inner background circle
     Rectangle {
+        id: innerCircle
         anchors.centerIn: parent
         width: parent.width - 50
         height: parent.height - 50
         radius: width / 2
         color: "#0a0a0a"
     }
+    
+    // Inner background circle shadow
+    MultiEffect {
+        source: innerCircle
+        anchors.fill: innerCircle
+        shadowEnabled: true
+        shadowColor: "#b0b0b0"
+        shadowBlur: 1.0
+        shadowOpacity: 0.35
+        shadowScale: 1.31
+        shadowVerticalOffset: 0
+        shadowHorizontalOffset: 0
+    }
 
-    // Background Arc with shadow
+    // Background Center Arc
     Shape {
         anchors.fill: parent
         antialiasing: true
         layer.enabled: true
         layer.smooth: true
         
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#40000000"
-            shadowBlur: 0.2
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 2
-        }
-        
         ShapePath {
-            strokeWidth: 20
+            strokeWidth: 21
             strokeColor: BaseTheme.blackLight
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
@@ -91,25 +80,16 @@ Item {
         }
     }
 
-    // Filled Arc with glow effect
+    // Fill Center Arc
     Shape {
         id: fillArc
-        visible: true
         anchors.fill: parent
         antialiasing: true
         layer.enabled: true
         layer.smooth: true
         
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#60ffffff"
-            shadowBlur: 0.5
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 0
-        }
-        
         ShapePath {
-            strokeWidth: 20
+            strokeWidth: 21
             strokeColor: BaseTheme.white
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
@@ -141,9 +121,9 @@ Item {
             property real tickRadius: root.width / 2 - 24
             property real numberRadius: root.width / 2 - 42
             
-            // Tick mark with subtle shadow
+            // Tick mark
             Rectangle {
-                width: 2
+                width: 3
                 height: 6
                 color: "white"
                 radius: 1
@@ -151,36 +131,19 @@ Item {
                 y: root.height / 2 + Math.sin(tickItem.angle * Math.PI / 180) * tickItem.tickRadius - height / 2
                 rotation: tickItem.angle + 90
                 transformOrigin: Item.Center
-                
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#30ffffff"
-                    shadowBlur: 0.2
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 0
-                }
             }
             
-            // Number label with text shadow
+            // Number label
             Text {
                 text: tickItem.tickValue
                 font.pixelSize: 12
                 font.weight: Font.Normal
                 color: "white"
+                opacity: 0.8
                 x: root.width / 2 + Math.cos(tickItem.angle * Math.PI / 180) * tickItem.numberRadius - width / 2
                 y: root.height / 2 + Math.sin(tickItem.angle * Math.PI / 180) * tickItem.numberRadius - height / 2
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: "#60000000"
-                    shadowBlur: 0.3
-                    shadowHorizontalOffset: 0
-                    shadowVerticalOffset: 1
-                }
             }
         }
     }
@@ -191,7 +154,7 @@ Item {
         anchors.verticalCenterOffset: 0
         spacing: -10
         
-        // Value label with prominent glow
+        // Value label
         Text {
             text: Math.round(root.centerValue)
             anchors.horizontalCenter: parent.horizontalCenter
@@ -202,29 +165,20 @@ Item {
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
-                shadowColor: "#80ffffff"
-                shadowBlur: 0.6
+                shadowColor: "white"
+                shadowBlur: 0.3
                 shadowHorizontalOffset: 0
                 shadowVerticalOffset: 0
             }
         }
         
-        // Unit label with subtle shadow
+        // Unit label
         Text {
             text: root.centerUnit
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 18
             color: "white"
             opacity: 0.7
-            
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: "#40000000"
-                shadowBlur: 0.3
-                shadowHorizontalOffset: 0
-                shadowVerticalOffset: 1
-            }
         }
     }
 
@@ -236,7 +190,7 @@ Item {
         }
     }
 
-    // Bottom arc background with shadow
+    // Background Bottom arc
     Shape {
         visible: root.showBottom
         anchors.fill: parent
@@ -244,16 +198,8 @@ Item {
         layer.enabled: true
         layer.smooth: true
         
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: "#30000000"
-            shadowBlur: 0.2
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 1
-        }
-        
         ShapePath {
-            strokeWidth: 20
+            strokeWidth: 21
             strokeColor: BaseTheme.blackLight
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
@@ -272,7 +218,7 @@ Item {
         }
     }
 
-    // Bottom filled arc with glow
+    // Bottom filled arc
     Shape {
         id: bottomFillArc
         visible: root.showBottom
@@ -281,21 +227,8 @@ Item {
         layer.enabled: true
         layer.smooth: true
         
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowColor: Qt.rgba(
-                BaseTheme.primaryLight.r,
-                BaseTheme.primaryLight.g,
-                BaseTheme.primaryLight.b,
-                0.5
-            )
-            shadowBlur: 0.5
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 0
-        }
-        
         ShapePath {
-            strokeWidth: 20
+            strokeWidth: 21
             strokeColor: BaseTheme.primaryLight
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
@@ -322,17 +255,17 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: root.width * 0.24
+        anchors.leftMargin: root.width * 0.26
         
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: "#60000000"
+            shadowColor: "white"
             shadowBlur: 0.3
             shadowHorizontalOffset: 0
-            shadowVerticalOffset: 1
+            shadowVerticalOffset: 0
         }
     }
 
@@ -344,17 +277,17 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: 8
         anchors.right: parent.right
-        anchors.rightMargin: root.width * 0.24
+        anchors.rightMargin: root.width * 0.26
         
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: "#60000000"
+            shadowColor: "white"
             shadowBlur: 0.3
             shadowHorizontalOffset: 0
-            shadowVerticalOffset: 1
+            shadowVerticalOffset: 0
         }
     }
 
