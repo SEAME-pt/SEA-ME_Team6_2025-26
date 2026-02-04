@@ -43,16 +43,27 @@
   - Processing CAN messages in ThreadX.
  
 - **Demos**:
-  - Coverage report - Testing
+  - Coverage report:
+    - EXPECT-L0-16 - "CI/CD" 
+    - EXPECT-L0-31 - "Unit tests"
+    
   ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/demos/first-code-coverage.png)
+  
   - Qt app receiving real values from CAN messages
+    - EXPECT-L0-5 - "Launch basic Qt on built-in display"
+    - EXPECT-L0-6 - "The Qt GUI shall display static graphical elements"
+    - EXPECT-L0-7 - "QT Crosscompilation should be achieved"
+    - EXPECT-L0-11 - "QT cluster UI auto-start on boot on display"
   - https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223
   - End-to-end communication with KUKSA
+    - EXPECT-L0-1 - "System architecture is defined and documented"
   ![Image](https://github.com/user-attachments/assets/93c0be02-b795-4251-90d5-cee29f532622)
   - https://drive.google.com/file/d/1IAODelnUotcU6ZGGdhF4OY6deZO966iM/view?usp=sharing
   - CAN messages benchmark
+    - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
   ![Image](https://github.com/user-attachments/assets/504d738f-c1b2-4f7c-8e9c-e903a6c60e4e)
-  - Demo of starting Relay 
+  - Demo of starting Relay
+    - EXPECT-L0-2 - "Hardware Assembly: Fully assemble the PiRacer robot"
   - https://github.com/user-attachments/assets/51083775-6852-4c18-8703-7d6342156b04
 
 - **Docs updated**:
