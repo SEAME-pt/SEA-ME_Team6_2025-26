@@ -24,29 +24,16 @@ static std::string read_file(const std::string& path)
     return ss.str();
 }
 
-static std::string strip_grpc_scheme(std::string addr)
-{
-    const std::string grpcs = "grpcs://";
-    const std::string grpc  = "grpc://";
-    if (addr.compare(0, grpcs.size(), grpcs) == 0)
-        return addr.substr(grpcs.size());
-    if (addr.compare(0, grpc.size(), grpc) == 0)
-        return addr.substr(grpc.size());
-    return addr;
-}
-
 struct KuksaClient::Impl {
     std::shared_ptr<grpc::Channel> channel;
     std::unique_ptr<VAL::Stub> stub;
 
     Impl(const std::string& addr, const std::string& ca_cert_path)
     {
-        const std::string host_port = strip_grpc_scheme(addr);
-
         grpc::SslCredentialsOptions ssl_opts;
         ssl_opts.pem_root_certs = read_file(ca_cert_path);
 
-        channel = grpc::CreateChannel(host_port, grpc::SslCredentials(ssl_opts));
+        channel = grpc::CreateChannel(addr, grpc::SslCredentials(ssl_opts));
         stub = VAL::NewStub(channel);
     }
 };
