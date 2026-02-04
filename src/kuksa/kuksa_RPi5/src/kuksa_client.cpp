@@ -27,12 +27,13 @@ static std::string read_file(const std::string& path)
 struct KuksaClient::Impl {
     std::shared_ptr<grpc::Channel> channel;
     std::unique_ptr<VAL::Stub> stub;
+    std::string jwt;
 
     Impl(const std::string& addr, const std::string& ca_cert_path)
     {
-        grpc::SslCredentialsOptions ssl_opts;
-        ssl_opts.pem_root_certs = read_file(ca_cert_path);
-
+        grpc::SslCredentialsOptions ssl_opts; 
+        ssl_opts.pem_root_certs = read_file(ca_cert_path); // Load CA cert
+        jwt = read_file("/etc/kuksa/jwt/publisher.jwt"); // Load JWT from file
         channel = grpc::CreateChannel(addr, grpc::SslCredentials(ssl_opts));
         stub = VAL::NewStub(channel);
     }
@@ -48,6 +49,7 @@ KuksaClient::~KuksaClient() = default;
 void KuksaClient::publishDouble(const std::string& path, double value)
 {
     grpc::ClientContext ctx;
+    add_auth(ctx, impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -64,6 +66,7 @@ void KuksaClient::publishDouble(const std::string& path, double value)
 void KuksaClient::publishInt32(const std::string& path, std::int32_t value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -80,6 +83,7 @@ void KuksaClient::publishInt32(const std::string& path, std::int32_t value)
 void KuksaClient::publishBool(const std::string& path, bool value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -96,6 +100,7 @@ void KuksaClient::publishBool(const std::string& path, bool value)
 void KuksaClient::publishFloat(const std::string& path, float value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -112,6 +117,7 @@ void KuksaClient::publishFloat(const std::string& path, float value)
 void KuksaClient::publishUint32(const std::string& path, std::uint32_t value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
