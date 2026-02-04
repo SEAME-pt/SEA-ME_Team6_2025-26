@@ -72,9 +72,16 @@ void ipcConnections(QQmlApplicationEngine *engine)
         voltageProvider,
         &VoltageProvider::setVoltage);
 
+    QObject::connect(
+        readerC,
+        &Reader::voltageLevelReceived,
+        voltageProvider,
+        &VoltageProvider::setVoltageIcon);
+
     engine->rootContext()->setContextProperty(
         "voltageProvider",
         voltageProvider);
+
 
     // QObject::connect(
     //     readerC,

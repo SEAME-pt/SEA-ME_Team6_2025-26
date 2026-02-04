@@ -8,11 +8,16 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
 #include <grpcpp/grpcpp.h>
 #include "kuksa/val.grpc.pb.h"
 #include "kuksa/types.pb.h"
 
 using kuksa::val::v2::VAL;
+
+static std::string read_file(const std::string& path);
+static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port);
 
 // Worker class that runs in a separate thread
 class ReaderWorker : public QObject
@@ -34,6 +39,7 @@ signals:
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
     void voltageReceived(double voltage);
+    void voltageLevelReceived(bool status, std::string source);
     void headingReceived(double heading);
     void connectionError(QString error);
     void connected();
@@ -42,7 +48,6 @@ private:
     std::string _server;
     std::atomic<bool> _shouldStop;
     
-    std::unique_ptr<VAL::Stub> create_val_stub(const std::string &host_port);
     static std::string value_to_string(const kuksa::val::v2::Value &v);
 };
 
@@ -62,6 +67,7 @@ signals:
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
     void voltageReceived(double voltage);
+    void voltageLevelReceived(bool status, std::string source);
     void headingReceived(double heading);
     void connectionError(QString error);
     void connected();

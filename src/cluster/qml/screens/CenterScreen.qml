@@ -17,30 +17,10 @@ Item {
               "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
               "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
               "Voltage: " + voltageProvider.currVoltage + "\n" +
-              "Heading: " + headingProvider.currHeading 
-        font.pixelSize: 14
+              "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
+              "Heading: " + headingProvider.currHeading  
+        font.pixelSize: 12
         color: "white"
         anchors.centerIn: parent
     }
-
-
-    /*Rectangle {
-        anchors.centerIn: parent
-        width: 60
-        height: 60
-        radius: 10
-        color: "steelblue"
-        id: normalRect
-    }
-
-    MultiEffect {
-        source: normalRect
-        anchors.fill: normalRect
-        shadowEnabled: true
-        shadowColor: "#90ffffff"
-        shadowScale: 1
-        shadowOpacity: 0.8
-        shadowVerticalOffset: 6
-        shadowBlur: 1
-    }*/
 }

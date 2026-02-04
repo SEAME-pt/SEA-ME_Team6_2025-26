@@ -14,7 +14,7 @@ Item {
     property real centerMaxValue: 1000
     property real centerStartAngle: 135
     property real centerEndAngle: 270
-    property string centerUnit: "m/h"
+    property string centerUnit: ""
     property var centerTicks: []
 
     property var showBottom: false
@@ -23,12 +23,21 @@ Item {
     property real bottomMaxValue: 13
     property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 30
     property real bottomSweepAngle: 360 - root.centerEndAngle - 60
+    property string middleIcon: ""
+    property string middleText: ""
+
+    function getMiddleColor(icon) {
+        if (middleIcon == "qrc:/assets/icons/flash.svg")
+            return BaseTheme.white
+        else if (middleIcon == "qrc:/assets/icons/flash-warning.svg")
+            return BaseTheme.warning
+        return BaseTheme.danger
+    }
 
     function sweepValue(v, minVal, maxVal, endAngle) {
         var t = Math.max(0, Math.min(1,(v - minVal) / (maxVal - minVal)))
         return endAngle * t
     }
-
 
     // Inner background circle
     Rectangle {
@@ -151,7 +160,7 @@ Item {
     // Center content
     Column {
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: -4
         spacing: -10
         
         // Value label
@@ -185,7 +194,60 @@ Item {
     // Animate changes
     Behavior on centerValue {
         NumberAnimation {
-            duration: 300
+            duration: 500
+            easing.type: Easing.InOutQuad
+        }
+    }
+
+    Column {
+        visible: root.showBottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 32
+        spacing: 4
+
+        // Icon
+        Image {
+            source: root.middleIcon
+            anchors.horizontalCenter: parent.horizontalCenter
+            fillMode: Image.PreserveAspectFit
+            width: 24
+            height: 24
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: getMiddleColor(root.middleIcon)
+                shadowBlur: 0.3
+                shadowScale: 1.2
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+            }
+        }
+        
+        // Text
+        Text {
+            text: root.middleText
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 12
+            font.weight: Font.Medium
+            color: getMiddleColor(root.middleIcon)
+            opacity: 0.8
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: getMiddleColor(root.middleIcon)
+                shadowBlur: 0.3
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+            }
+        }
+    }
+
+    Behavior on middleIcon {
+        NumberAnimation {
+            duration: 500
             easing.type: Easing.InOutQuad
         }
     }
