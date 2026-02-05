@@ -12,7 +12,7 @@ static const Entry kHandlers[] = {
 
     { CAN_ID_IMU_ACCEL,         &handleImuAccel },
     { CAN_ID_IMU_GYRO,          &handleImuGyro },
-    //{ CAN_ID_IMU_MAG,           &handleImuMag },
+    { CAN_ID_IMU_MAG,           &handleImuMag },
 
     { CAN_ID_TOF_DISTANCE,      &handleToFDistance },
     { CAN_ID_BATTERY,           &handleBattery },

@@ -33,6 +33,7 @@ PUBLISHER_SRCS := \
   $(HANDLERS_DIR)/tof_distance.cpp \
   $(HANDLERS_DIR)/imu_gyro.cpp \
   $(HANDLERS_DIR)/imu_accel.cpp \
+  $(HANDLERS_DIR)/imu_magn.cpp \
   $(HANDLERS_DIR)/emergency_stop.cpp \
   $(HANDLERS_DIR)/battery.cpp \
   $(HANDLERS_DIR)/joystick.cpp \
