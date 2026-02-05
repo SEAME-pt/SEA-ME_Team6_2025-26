@@ -44,6 +44,9 @@
 #include "ina226.h"
 #include "gesture_simple.h"
 
+#include "system_ctx.h"
+#include "sys_helpers.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -313,64 +316,6 @@ void MX_ThreadX_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
-// HELPER FUNCTIONS
-
-static inline void put_u8(uint8_t *dst, uint8_t v)
-{
-    dst[0] = v;
-}
-
-static inline void put_i16_le(uint8_t *dst, int16_t v) // little-endian storage
-{
-    uint16_t uv = (uint16_t)v;        // reinterpret bits
-    dst[0] = (uint8_t)(uv & 0xFF);    // LSB
-    dst[1] = (uint8_t)(uv >> 8);      // MSB
-}
-
-static inline void put_u16_le(uint8_t *dst, uint16_t v)
-{
-  dst[0] = (uint8_t)(v & 0xFF);
-  dst[1] = (uint8_t)((v >> 8) & 0xFF);
-}
-
-/**
-  * @brief  Calculate CRC-8 (polynomial 0x07, init 0x00)
-  * @param  data: pointer to data buffer
-  * @param  len: data length
-  * @retval CRC-8 value
-  */
-static uint8_t calculate_crc8(const uint8_t *data, uint8_t len)
-{
-    uint8_t crc = 0x00;
-    for (uint8_t i = 0; i < len; i++) {
-        crc ^= data[i];
-        for (uint8_t j = 0; j < 8; j++) {
-            if (crc & 0x80)
-                crc = (crc << 1) ^ 0x07;
-            else
-                crc <<= 1;
-        }
-    }
-    return crc;
-}
-
-/**
-  * @brief  Validate CRC-8 of received frame
-  * @param  data: pointer to frame data (including CRC byte at end)
-  * @param  len: total frame length (including CRC byte)
-  * @retval 1 if valid, 0 if invalid
-  */
-static uint8_t validate_crc8(const uint8_t *data, uint8_t len)
-{
-    if (len < 2) return 0; // Frame too short
-
-    uint8_t received_crc = data[len - 1];
-    uint8_t calculated_crc = calculate_crc8(data, len - 1);
-
-    return (received_crc == calculated_crc);
-}
-
-
 /**
   * @brief  Send CAN message via MCP2515
   * @param  id: CAN message ID
