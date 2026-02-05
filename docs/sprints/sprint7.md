@@ -89,15 +89,15 @@ IV. Epic — Project Management & Traceability Refinement - #55
     - https://github.com/user-attachments/assets/b1ba19ad-0433-4411-96e4-704a57a6d639
     
 - Unit Tests:
-  - EXPECT-L0-14 - "TSF & Documentation"
-  - EXPECT-L0-19 - "Test requirement for TSF automation"
-  - EXPECT-L0-21 - "Test the complete TSF automation workflow"
+  - EXPECT-L0-16 - "CI/CD"
+  - EXPECT-L0-31 - "Unit tests"
+    
     - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CI-CD-tests-sprint7.png)
 
 - Coverage Report:
-  - EXPECT-L0-14 - "TSF & Documentation"
-  - EXPECT-L0-19 - "Test requirement for TSF automation"
-  - EXPECT-L0-21 - "Test the complete TSF automation workflow"
+  - EXPECT-L0-16 - "CI/CD"
+  - EXPECT-L0-31 - "Unit tests"
+    
     - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/coverage-report-sprint7.png)
 
 - TSF requirements:
