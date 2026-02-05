@@ -9,8 +9,10 @@ typedef struct {
   TX_MUTEX state_mutex;    // for shared VehicleState snapshot pattern
   VehicleState state;      // rpm, tof, mag for now
 
-  // later:
-  // TX_EVENT_FLAGS_GROUP data_flags;
+  TX_MUTEX sys_mutex;           // protects system fields below
+  uint8_t system_state;         // SYSTEM_STATE_*
+  uint8_t drive_mode;           // DRIVE_MODE_*
+  uint8_t error_flags;          // bitmask
 } SystemCtx;
 
 SystemCtx* system_ctx(void);

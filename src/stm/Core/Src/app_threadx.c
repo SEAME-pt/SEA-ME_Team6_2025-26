@@ -46,6 +46,7 @@
 
 #include "system_ctx.h"
 #include "sys_helpers.h"
+#include "tasks/task_heartbeat.h"
 
 /* USER CODE END Includes */
 
@@ -359,57 +360,14 @@ static void HeartBeat_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[HeartBeat] Thread iniciada!\r\n");
-  tx_mutex_put(&printf_mutex);
+  SystemCtx* ctx = system_ctx();
 
-  tx_thread_sleep(10);
-  mcp_init();
-
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("[HeartBeat] MCP2515 inicializado\r\n");
-  tx_mutex_put(&printf_mutex);
-
-  /* Transição para estado READY após inicialização */
-  current_system_state = SYSTEM_STATE_READY;
-
-  /* Pequeno delay antes de começar o loop principal */
-  tx_thread_sleep(100);
-
-  /* Transição para RUNNING */
-  current_system_state = SYSTEM_STATE_RUNNING;
+  task_heartbeat_init(ctx);
 
   while (1)
   {
-    /* === NOVA IMPLEMENTAÇÃO: Heartbeat_t (0x701) === */
-    Heartbeat_t hb_frame;
-
-    /* Estado do sistema */
-    hb_frame.state = (uint8_t)current_system_state;
-
-    /* Uptime em milissegundos */
-    hb_frame.uptime_ms = HAL_GetTick();
-
-    /* Flags de erro do sistema */
-    hb_frame.errors = system_error_flags;
-
-    /* Modo de condução atual */
-    hb_frame.mode = (uint8_t)current_drive_mode;
-
-    /* Calcular CRC-8 (todos os bytes exceto o último) */
-    hb_frame.crc = calculate_crc8((uint8_t*)&hb_frame, sizeof(hb_frame) - 1);
-
-    /* Enviar frame Heartbeat (8 bytes) */
-    mcp_send_message(CAN_ID_HEARTBEAT_STM32, (uint8_t*)&hb_frame, sizeof(hb_frame));
-
-    HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[HeartBeat] State=%u | Uptime=%lu ms | Errors=0x%02X | Mode=%u | CRC=0x%02X\r\n",
-           hb_frame.state, hb_frame.uptime_ms, hb_frame.errors, hb_frame.mode, hb_frame.crc);
-    tx_mutex_put(&printf_mutex);
-
-    tx_thread_sleep(CAN_PERIOD_HEARTBEAT_MS);
+      task_heartbeat_step(ctx);
+      tx_thread_sleep(CAN_PERIOD_HEARTBEAT_MS);
   }
 }
 
