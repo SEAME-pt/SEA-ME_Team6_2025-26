@@ -144,7 +144,7 @@ static volatile uint8_t motor_status_counter = 0;
 /* USER CODE BEGIN PFP */
 static void HeartBeat_Thread_Entry(ULONG thread_input);
 static void CAN_RX_Thread_Entry(ULONG thread_input);
-static void Temperature_Thread_Entry(ULONG thread_input);
+static void Environment_Thread_Entry(ULONG thread_input);
 static void Speed_Thread_Entry(ULONG thread_input);
 static void IMU_Thread_Entry(ULONG thread_input);
 static void ToF_Thread_Entry(ULONG thread_input);
@@ -206,7 +206,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   /* Create Temperature thread */
   if (tx_thread_create(&temperature_thread,
                        "Temperature Thread",
-                       Temperature_Thread_Entry,
+                       Environment_Thread_Entry,
                        0,
                        temperature_thread_stack,
                        TEMP_THREAD_STACK_SIZE,
@@ -373,144 +373,24 @@ static void HeartBeat_Thread_Entry(ULONG thread_input)
 
 
 /**
-  * @brief  Temperature thread entry function
+  * @brief  Environment thread entry function
   * @param  thread_input: thread input parameter (not used)
   * @retval None
   */
 
-static void Temperature_Thread_Entry(ULONG thread_input)
+static void Environment_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
-  float temperature = 0.0f;
-  float pressure = 0.0f;
-  float humidity = 0.0f;
-  uint16_t ambient_light = 0;
+    SystemCtx* ctx = system_ctx();
 
-  HAL_StatusTypeDef status_lps, status_hts, status_veml;
+    task_environment_init(ctx);
 
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[Temperatura] Thread iniciada!\r\n");
-  tx_mutex_put(&printf_mutex);
-
-  /* I2C Scanner - Provides necessary delay to avoid I2C bus contention
-   * Multiple threads (IMU, ToF, Temperature) all use I2C2 simultaneously
-   * Scanner staggers initialization and reduces conflicts
-   */
-  #define ENABLE_I2C_SCAN 0  // DISABLED: para testar servo sem interferências
-
-  #if ENABLE_I2C_SCAN
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  I2C_Scan(&hi2c2, "I2C2");
-  tx_mutex_put(&printf_mutex);
-  #endif
-
-  /* Initialize sensors */
-  status_lps = LPS22HH_Init();
-  status_hts = HTS221_Init();
-  status_veml = VEML6030_Init();
-
-  /* Report sensor initialization status (only errors to reduce UART congestion) */
-  if (status_lps != HAL_OK) {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Temp] LPS22HH ERRO=%d\r\n", status_lps);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  if (status_hts != HAL_OK) {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Temp] HTS221 ERRO=%d\r\n", status_hts);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  if (status_veml != HAL_OK) {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Temp] VEML6030 ERRO=%d\r\n", status_veml);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  /* BUGFIX: tx_thread_sleep() blocks indefinitely in this thread - skip delay
-   * Sensors should be ready by now (scanner + other threads already ran)
-   */
-
-  /* LCD1602 Initialization - Now initialized AFTER sensors are confirmed working */
-  #if ENABLE_LCD
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("[LCD] Inicializando LCD1602 (I2C1)...\r\n");
-  tx_mutex_put(&printf_mutex);
-
-  LCD1602_Init(&hi2c1);
-
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("[LCD] LCD1602 inicializado com sucesso!\r\n");
-  tx_mutex_put(&printf_mutex);
-  #else
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("[LCD] LCD1602 DESATIVADO\r\n");
-  tx_mutex_put(&printf_mutex);
-  #endif
-
-  while (1)
-  {
-    /* Ler dados dos sensores */
-    LPS22HH_ReadTemperature(&temperature);
-    LPS22HH_ReadPressure(&pressure);
-    HTS221_ReadHumidity(&humidity);
-    VEML6030_ReadALS(&ambient_light);
-
-    #if ENABLE_LCD
-    /* Atualizar variáveis partilhadas para o LCD */
-    shared_temperature = temperature;
-    shared_humidity = humidity;
-
-    /* Atualizar ambas as linhas do LCD */
-    /* Não atualizar durante emergency stop */
-    if (!emergency_stop_active) {
-        LCD1602_UpdateLine1(shared_voltage, shared_temperature, shared_humidity);
-        LCD1602_UpdateLine2(shared_srf08_distance, shared_speed);
+    while (1) {
+        task_environment_step(ctx);
+        tx_thread_sleep(CAN_PERIOD_ENVIRONMENT_MS);
     }
-    #endif
-
-    /* === NOVA IMPLEMENTAÇÃO: Environment_t (0x420) === */
-    Environment_t env_frame;
-
-    /* Temperatura: 0.01°C resolution (ex: 25.3°C -> 2530) */
-    env_frame.temperature = (int16_t)(temperature * 100.0f);
-
-    /* Humidade: 0-100% (ex: 45.5% -> 45) */
-    env_frame.humidity = (uint8_t)humidity;
-
-    /* Ambient Light: escala x100 (ex: 1234 lux -> 12, max 25500 lux) */
-    uint16_t light_scaled = ambient_light / 100;
-    if (light_scaled > 255) light_scaled = 255;
-    env_frame.ambient_light_x100 = (uint8_t)light_scaled;
-
-    /* Pressão: Pa (ex: 101325 Pa) - 24 bits */
-    uint32_t pressure_pa = (uint32_t)(pressure * 100.0f); // hPa -> Pa
-    env_frame.pressure = pressure_pa & 0xFFFFFF;
-
-    /* Status: sensor health flags (0 = OK) */
-    env_frame.status = 0;
-    if (status_lps != HAL_OK) env_frame.status |= (1 << 0); // LPS22HH error
-    if (status_hts != HAL_OK) env_frame.status |= (1 << 1); // HTS221 error
-    if (status_veml != HAL_OK) env_frame.status |= (1 << 2); // VEML6030 error
-
-    /* Enviar frame Environment (8 bytes) - TUDO num só frame! */
-    mcp_send_message(CAN_ID_ENVIRONMENT, (uint8_t*)&env_frame, sizeof(env_frame));
-
-    HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
-
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Environment] Enviado: %.2f°C | %.2f hPa | %.2f%% | %u lux (8 bytes)\r\n",
-           temperature, pressure, humidity, ambient_light);
-    tx_mutex_put(&printf_mutex);
-
-    tx_thread_sleep(CAN_PERIOD_ENVIRONMENT_MS);
-  }
 }
-
-
-
 
 /**
   * @brief  Speed thread entry function
