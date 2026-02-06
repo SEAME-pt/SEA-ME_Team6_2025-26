@@ -11,4 +11,4 @@
  * @param len    Payload length (0..8)
  * @return 0 on success, non-zero on error
  */
-int mcp_send_message(uint16_t can_id, const uint8_t* data, size_t len);
+void mcp_send_message(uint16_t id, uint8_t *data, uint8_t len);
