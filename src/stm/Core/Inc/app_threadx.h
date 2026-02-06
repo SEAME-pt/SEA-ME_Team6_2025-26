@@ -55,6 +55,10 @@ extern "C" {
 #include "sys_helpers.h"
 #include "tasks/task_heartbeat.h"
 #include "tasks/task_environment.h"
+#include "tasks/task_speed.h"
+#include "tasks/task_imu.h"
+#include "tasks/task_tof.h"
+#include "tasks/task_srf08.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
