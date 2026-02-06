@@ -69,27 +69,56 @@ void task_srf08_init(SystemCtx* ctx)
 
 void task_srf08_step(SystemCtx* ctx)
 {
-    /* Start ranging */
+    /* Iniciar medição */
     HAL_StatusTypeDef ranging_status = SRF08_StartRanging(&s_srf.hsrf08);
+
+    /* DEBUG: Verificar se comando foi aceite */
     if (ranging_status != HAL_OK && ++s_srf.err_log_counter >= 15) {
         s_srf.err_log_counter = 0;
-        sys_log(ctx, "[SRF08] ERRO ranging cmd! Status=%d\r\n", ranging_status);
+        sys_log(ctx, "[SRF08] ERRO ao enviar comando ranging! Status: %d\r\n", ranging_status);
     }
 
-    /* Fixed wait: SRF08 needs ~65ms */
-    tx_thread_sleep(SRF08_PERIOD_MS);
+    /* === AGUARDAR MEDIÇÃO COMPLETAR === */
+    uint8_t ready = 0;
+    uint8_t poll_attempts = 0;
 
-    /* Read distance + light */
+    #if SRF08_DISABLE_POLLING
+        tx_thread_sleep(70);  /* 70ms fixo (datasheet: 65ms min) */
+        ready = 1;
+        poll_attempts = 14;
+    #else
+    const uint8_t MAX_POLLS = 14;  /* 14 * 5ms = 70ms */
+    while (!ready && poll_attempts < MAX_POLLS) {
+        tx_thread_sleep(5);
+        ready = SRF08_IsReady(&s_srf.hsrf08);
+        poll_attempts++;
+    }
+    #endif
+
+    /* Verificar se deu timeout */
+    if (!ready && ++s_srf.timeout_log_counter >= 15) {
+        s_srf.timeout_log_counter = 0;
+
+        uint8_t cmd_reg = 0xFF;
+        HAL_I2C_Mem_Read(s_srf.hsrf08.hi2c, s_srf.hsrf08.addr, SRF08_REG_COMMAND, 1,
+                         &cmd_reg, 1, 100);
+
+        sys_log(ctx, "[SRF08] WARNING: Timeout! Polls=%u | CMD_REG=0x%02X (esperado 0x00)\r\n",
+                poll_attempts, cmd_reg);
+    }
+
+    /* Ler distância e luz - APENAS se pronto ou timeout */
     uint16_t distance_cm = SRF08_GetDistanceCm(&s_srf.hsrf08);
     uint8_t  light       = SRF08_GetLight(&s_srf.hsrf08);
+    uint16_t distance_mm_raw = (distance_cm == 0xFFFF) ? 0u : (uint16_t)(distance_cm * 10u);
 
-    /* Validity (IMPORTANT): don't use stale filtered values for control */
-    uint8_t read_ok = (distance_cm != 0xFFFF);
-    uint16_t distance_mm_raw = read_ok ? (uint16_t)(distance_cm * 10u) : 0u;
-    uint8_t dist_valid = read_ok && (distance_mm_raw > 0u);
-
-    /* Moving average filter: update only with valid distance */
-    if (dist_valid) {
+    /* === FILTRO DE MÉDIA MÓVEL (5 amostras) ===
+       Aceitar leitura se:
+       1) Light >= threshold
+       2) OU distância válida (mesmo com light baixo)
+       Rejeitar apenas se light=0 E distance=0 (sem eco nenhum)
+    */
+    if (light >= SRF08_LIGHT_THRESHOLD || distance_mm_raw > 0u) {
         s_srf.distance_buf[s_srf.buf_idx] = distance_mm_raw;
         s_srf.buf_idx = (uint8_t)((s_srf.buf_idx + 1u) % SRF08_FILTER_SIZE);
         if (!s_srf.buf_filled && s_srf.buf_idx == 0u) s_srf.buf_filled = 1u;
@@ -99,81 +128,90 @@ void task_srf08_step(SystemCtx* ctx)
         for (uint8_t i = 0; i < count; i++) sum += s_srf.distance_buf[i];
         s_srf.distance_mm_filtered = (count > 0u) ? (uint16_t)(sum / count) : 0u;
     }
-    /* else: keep previous filtered value, BUT do not use it for emergency decisions */
+    /* Senão (light=0 E distance=0), manter valor filtrado anterior */
 
     uint16_t distance_mm = s_srf.distance_mm_filtered;
 
-    /* Update VehicleState */
+    /* DEBUG: Log valores brutos (a cada ~1s) */
+    if (++s_srf.srf08_log_counter >= 15) {
+        s_srf.srf08_log_counter = 0;
+        if (distance_cm == 0xFFFF) {
+            sys_log(ctx, "[SRF08] ERRO I2C ao ler distancia!\r\n");
+        } else {
+            sys_log(ctx, "[SRF08] %u mm | L=%u | SpeedLimit=%u%%\r\n",
+                    distance_mm, light, (unsigned)srf08_speed_limit);
+        }
+    }
+
+    /* Atualizar VehicleState */
     tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-    ctx->state.srf08_distance_mm = distance_mm;       /* filtered value for telemetry */
+    ctx->state.srf08_distance_mm = distance_mm;
     ctx->state.srf08_light       = light;
-    ctx->state.srf08_valid       = dist_valid;        /* add this flag to VehicleState */
     ctx->state.srf08_ts          = tx_time_get();
     tx_mutex_put(&ctx->state_mutex);
 
-    /* ---- SPEED LIMIT (avoid forcing full speed just because light==0) ---- */
-    if (!dist_valid) {
-        /* pick your policy:
-           - 100 for permissive
-           - SRF08_SLOWDOWN_SPEED_PERCENT for conservative */
-        srf08_speed_limit = SRF08_SLOWDOWN_SPEED_PERCENT;
-    } else if (distance_mm >= SRF08_SLOWDOWN_THRESHOLD_MM) {
+    /* === SPEED CONTROL BASED ON DISTANCE === */
+    if (distance_mm >= SRF08_SLOWDOWN_THRESHOLD_MM || light == 0) {
         srf08_speed_limit = 100;
-    } else if (distance_mm <= SRF08_EMERGENCY_THRESHOLD_MM) {
+    }
+    else if (distance_mm <= SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
         srf08_speed_limit = 0;
-    } else {
+    }
+    else if (light > 0) {
         srf08_speed_limit = SRF08_SLOWDOWN_SPEED_PERCENT;
     }
 
-    /* ---- EMERGENCY STOP (use dist_valid; do NOT gate on light) ---- */
+    /* === EMERGENCY STOP LOGIC (replicado) === */
     EmergencyStopState_t new_state = srf08_emergency_state;
 
-    if (dist_valid && distance_mm < SRF08_EMERGENCY_THRESHOLD_MM) {
+    if (distance_mm < SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
         if (srf08_emergency_state != ESTOP_STATE_EMERGENCY) {
             Motor_Stop();
 
             new_state = ESTOP_STATE_EMERGENCY;
             emergency_stop_active = 1;
 
-            EmergencyStop_t estop;
-            estop.active = 1;
-            estop.source = 1; /* SRF08 */
-            estop.distance_mm = distance_mm;
-            estop.reason = 0x01;
-            estop.reserved[0] = 0;
-            estop.reserved[1] = 0;
-            estop.crc = calculate_crc8((uint8_t*)&estop, sizeof(estop) - 1);
+            EmergencyStop_t estop_frame;
+            estop_frame.active = 1;
+            estop_frame.source = 1; /* SRF08 */
+            estop_frame.distance_mm = distance_mm;
+            estop_frame.reason = 0x01;
+            estop_frame.reserved[0] = 0;
+            estop_frame.reserved[1] = 0;
+            estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
 
-            mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop, sizeof(estop));
+            mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
 
-            sys_log(ctx, "[SRF08 ESTOP] %u mm < %u mm (L=%u)\r\n",
+            sys_log(ctx, "[SRF08 ESTOP!] %u mm < %u mm (L=%u)\r\n",
                     distance_mm, SRF08_EMERGENCY_THRESHOLD_MM, light);
         }
-    } else if (srf08_emergency_state == ESTOP_STATE_EMERGENCY) {
-        /* Recovery: only leave emergency when we have a valid safe distance */
-        if (dist_valid && distance_mm >= SRF08_RECOVERY_THRESHOLD_MM) {
+    }
+    else if (srf08_emergency_state == ESTOP_STATE_EMERGENCY) {
+        if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM || light == 0) {
             new_state = ESTOP_STATE_NORMAL;
             emergency_stop_active = 0;
 
-            EmergencyStop_t estop;
-            estop.active = 0;
-            estop.source = 1;
-            estop.distance_mm = distance_mm;
-            estop.reason = 0x00;
-            estop.reserved[0] = 0;
-            estop.reserved[1] = 0;
-            estop.crc = calculate_crc8((uint8_t*)&estop, sizeof(estop) - 1);
+            EmergencyStop_t estop_frame;
+            estop_frame.active = 0;
+            estop_frame.source = 1;
+            estop_frame.distance_mm = distance_mm;
+            estop_frame.reason = 0x00;
+            estop_frame.reserved[0] = 0;
+            estop_frame.reserved[1] = 0;
+            estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
 
-            mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop, sizeof(estop));
+            mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
 
-            sys_log(ctx, "[SRF08] RECOVERY Dist=%u mm (L=%u)\r\n", distance_mm, light);
+            sys_log(ctx, "[SRF08] RECOVERY! Dist=%u mm L=%u (CLEAR ENVIADO)\r\n",
+                    distance_mm, light);
         }
-    } else if (dist_valid && distance_mm >= SRF08_RECOVERY_THRESHOLD_MM &&
-               srf08_emergency_state == ESTOP_STATE_WARNING) {
+    }
+    else if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM &&
+             srf08_emergency_state == ESTOP_STATE_WARNING) {
         new_state = ESTOP_STATE_NORMAL;
-    } else if (dist_valid &&
-               distance_mm < SRF08_RECOVERY_THRESHOLD_MM &&
-               distance_mm >= SRF08_EMERGENCY_THRESHOLD_MM) {
+    }
+    else if (distance_mm < SRF08_RECOVERY_THRESHOLD_MM &&
+             distance_mm >= SRF08_EMERGENCY_THRESHOLD_MM && light > 0) {
         if (srf08_emergency_state == ESTOP_STATE_NORMAL) {
             new_state = ESTOP_STATE_WARNING;
         }
@@ -181,26 +219,33 @@ void task_srf08_step(SystemCtx* ctx)
 
     srf08_emergency_state = new_state;
 
-    /* ---- CAN publish (always publish, mark validity + errors) ---- */
-    SRF08Distance_t srf_frame;
-    srf_frame.distance_mm = distance_mm;
-    srf_frame.light_level = light;
-    srf_frame.gain = 0;
-    srf_frame.range_setting = 0;
-    srf_frame.reserved[0] = 0;
-    srf_frame.reserved[1] = 0;
+    /* === ENVIAR DADOS CAN PERIODICAMENTE (replicado) === */
+    s_srf.can_send_counter++;
+    if (light > 0 &&
+        srf08_emergency_state != ESTOP_STATE_EMERGENCY &&
+        (s_srf.can_send_counter % 1u) == 0u) {
 
-    srf_frame.status = 0;
-    if (!dist_valid)           srf_frame.status |= (1 << 0); /* invalid distance */
-    if (s_srf.init_status != HAL_OK) srf_frame.status |= (1 << 1); /* init error */
-    if (!read_ok)              srf_frame.status |= (1 << 2); /* I2C read error */
+        SRF08Distance_t srf08_frame;
+        srf08_frame.distance_mm = distance_mm;
+        srf08_frame.light_level = light;
+        srf08_frame.gain = 0;
+        srf08_frame.range_setting = 0;
+        srf08_frame.reserved[0] = 0;
+        srf08_frame.reserved[1] = 0;
+        srf08_frame.status = 0x01;
 
-    mcp_send_message(CAN_ID_SRF08_DISTANCE, (uint8_t*)&srf_frame, sizeof(srf_frame));
+        if (s_srf.init_status != HAL_OK) {
+            srf08_frame.status |= (1 << 1);
+        }
 
-    /* periodic log (~1s) */
-    if (++s_srf.srf08_log_counter >= 15) {
-        s_srf.srf08_log_counter = 0;
-        sys_log(ctx, "[SRF08] %u mm | L=%u | valid=%u | state=%u | limit=%u%%\r\n",
-                distance_mm, light, (unsigned)dist_valid, (unsigned)new_state, (unsigned)srf08_speed_limit);
+        mcp_send_message(CAN_ID_SRF08_DISTANCE, (uint8_t*)&srf08_frame, sizeof(srf08_frame));
+
+        if ((s_srf.can_send_counter % 10u) == 0u) {
+            sys_log(ctx, "[SRF08] %u mm | L=%u | State=%u\r\n",
+                    distance_mm, light, (unsigned)srf08_emergency_state);
+        }
     }
+
+    /* DELAY ZERO - Loop contínuo para resposta máxima */
+    tx_thread_relinquish();
 }
