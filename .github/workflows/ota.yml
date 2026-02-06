@@ -1,36 +1,83 @@
-name: OTA Build & Deploy/Release
+name: OTA Build & Release (ARM64)
 
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.3)'
+        required: true
+        default: 'v1.0.3'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-arm64:
+    runs-on: ubuntu-22.04
     
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Build kuksa_RPi5
+      - name: Set up QEMU for ARM64
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build in ARM64 container
         run: |
-          cd src/kuksa/kuksa_RPi5
-          make
-          
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/src/kuksa/kuksa_RPi5 \
+            arm64v8/debian:bookworm-slim \
+            bash -c "
+              apt-get update && \
+              apt-get install -y g++ make pkg-config libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc && \
+              make clean || true && \
+              make && \
+              file bin/can_to_kuksa_publisher
+            "
+
       - name: Package OTA
         run: |
           mkdir -p ota
-          cp src/kuksa/kuksa_RPi5/kuksa ota/
+          cp src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher ota/
           cp src/kuksa/kuksa_RPi5/vss_min.json ota/
-          tar -czf update.tar.gz ota/
+          tar -czf update.tar.gz -C ota .
           
-      - name: Hash
+      - name: Generate hash
         run: sha256sum update.tar.gz > hash.txt
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: "OTA Release ${{ steps.version.outputs.version }}"
+          body: |
+            ## OTA Update Package
+            
+            **Binary:** `can_to_kuksa_publisher` (ARM64/aarch64)
+            **Config:** `vss_min.json`
+            **Target:** Raspberry Pi 5 (AGL)
+            
+            ### Installation on AGL
+            ```bash
+            /opt/ota/ota-update.sh ${{ steps.version.outputs.version }} \
+              https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/update.tar.gz \
+              $(curl -sL https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/hash.txt | cut -d' ' -f1)
+            ```
           files: |
             update.tar.gz
             hash.txt
-            
