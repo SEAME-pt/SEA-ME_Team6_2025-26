@@ -71,16 +71,15 @@ void task_heartbeat_init(SystemCtx* ctx)
     mcp_init();
     sys_log(ctx, "[HeartBeat] MCP2515 inicializado\r\n");
 
-    uint8_t st, err, mode;
-    /* Same state progression as before (still global for now) */
     tx_mutex_get(&ctx->sys_mutex, TX_WAIT_FOREVER);
-	st   = ctx->system_state;
-	tx_mutex_put(&ctx->sys_mutex);
-    // current_system_state = SYSTEM_STATE_READY;
+    ctx->system_state = SYSTEM_STATE_READY;
+    tx_mutex_put(&ctx->sys_mutex);
 
     tx_thread_sleep(100);
 
-    // current_system_state = SYSTEM_STATE_RUNNING;
+    tx_mutex_get(&ctx->sys_mutex, TX_WAIT_FOREVER);
+    ctx->system_state = SYSTEM_STATE_RUNNING;
+    tx_mutex_put(&ctx->sys_mutex);
 }
 
 void task_heartbeat_step(SystemCtx* ctx)
