@@ -94,10 +94,7 @@ static volatile uint16_t shared_srf08_distance = 0;
 static volatile float shared_speed = 0.0f;
 
 /* Emergency stop state management */
-volatile uint8_t emergency_stop_active = 0;
-volatile uint8_t srf08_speed_limit = 100;  /* Speed limit 0-100% (100=full speed) */
 static EmergencyStopState_t emergency_state = ESTOP_STATE_NORMAL;
-static EmergencyStopState_t srf08_emergency_state = ESTOP_STATE_NORMAL;
 
 /* System state tracking for Heartbeat */
 static volatile SystemState_t current_system_state = SYSTEM_STATE_INIT;

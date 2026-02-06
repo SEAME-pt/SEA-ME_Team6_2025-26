@@ -118,9 +118,6 @@ void task_imu_step(SystemCtx* ctx)
         ctx->state.mag_mG[1]        = my_mG;
         ctx->state.mag_mG[2]        = mz_mG;
 
-        ctx->state.accel_ts         = now;
-        ctx->state.gyro_ts          = now;
-        ctx->state.mag_ts           = now;
         ctx->state.imu_ts           = now;
 
         tx_mutex_put(&ctx->state_mutex);
