@@ -4,6 +4,8 @@
 # Usage: 
 #   docker build -f Dockerfile.dev -t cluster-dev:latest .
 #   docker run -it --rm -v $(pwd)/cluster:/workspace cluster-dev:latest
+#   Windows:
+#        docker run -it --rm -e DISPLAY=host.docker.internal:0 --add-host=host.docker.internal:host-gateway -v ${PWD}/cluster:/workspace cluster-dev:latest
 # ===========================================================================
 
 FROM souzitaaaa/team6-base:bookworm
@@ -87,25 +89,37 @@ RUN echo "=== Verifying Protobuf/gRPC installation ===" && \
     ldconfig -p | grep -E "(protobuf|grpc|absl)" | head -20
 
 # ===========================================================================
-# Build Qt6 6.7.3 for native x86_64 development
+# Qt6 Build - Download sources
 # ===========================================================================
-RUN mkdir -p qt6/src qt6/host-build && \
+RUN mkdir -p qt6/src && \
     cd qt6/src && \
     echo "=== Downloading Qt 6.7.3 submodules ===" && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtsvg-everywhere-src-${QT_VERSION}.tar.xz && \
-    \
-    echo "=== Extracting sources ===" && \
-    cd ../host-build && \
+    echo "=== Download complete ==="
+
+# ===========================================================================
+# Qt6 Build - Extract sources
+# ===========================================================================
+RUN mkdir -p qt6/host-build && \
+    cd qt6/host-build && \
+    echo "=== Extracting qtbase ===" && \
     tar xf ../src/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extracting qtshadertools ===" && \
     tar xf ../src/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extracting qtdeclarative ===" && \
     tar xf ../src/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extracting qtsvg ===" && \
     tar xf ../src/qtsvg-everywhere-src-${QT_VERSION}.tar.xz && \
-    \
-    echo "=== Building qtbase ===" && \
-    cd qtbase-everywhere-src-${QT_VERSION} && \
+    echo "=== Extraction complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtbase (core Qt framework)
+# ===========================================================================
+RUN cd qt6/host-build/qtbase-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtbase ===" && \
     cmake -GNinja \
         -DCMAKE_BUILD_TYPE=Release \
         -DQT_BUILD_EXAMPLES=OFF \
@@ -113,30 +127,55 @@ RUN mkdir -p qt6/src qt6/host-build && \
         -DCMAKE_INSTALL_PREFIX=/opt/qt6 \
         -DFEATURE_xcb=ON \
         -DFEATURE_dbus=ON && \
+    echo "=== Building qtbase (this may take a while) ===" && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtbase ===" && \
     cmake --install . && \
-    \
+    echo "=== qtbase build complete ==="
+
+# ===========================================================================
+# Qt6 Build -  Build qtshadertools
+# ===========================================================================
+RUN cd qt6/host-build/qtshadertools-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtshadertools ===" && \
+    /opt/qt6/bin/qt-configure-module . && \
     echo "=== Building qtshadertools ===" && \
-    cd ../qtshadertools-everywhere-src-${QT_VERSION} && \
-    /opt/qt6/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtshadertools ===" && \
     cmake --install . && \
-    \
-    echo "=== Building qtdeclarative (QML + Quick + Controls2) ===" && \
-    cd ../qtdeclarative-everywhere-src-${QT_VERSION} && \
+    echo "=== qtshadertools build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtdeclarative (QML + Quick + Controls2)
+# ===========================================================================
+RUN cd qt6/host-build/qtdeclarative-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtdeclarative ===" && \
     /opt/qt6/bin/qt-configure-module . && \
+    echo "=== Building qtdeclarative (this may take a while) ===" && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtdeclarative ===" && \
     cmake --install . && \
-    \
+    echo "=== qtdeclarative build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtsvg
+# ===========================================================================
+RUN cd qt6/host-build/qtsvg-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtsvg ===" && \
+    /opt/qt6/bin/qt-configure-module . && \
     echo "=== Building qtsvg ===" && \
-    cd ../qtsvg-everywhere-src-${QT_VERSION} && \
-    /opt/qt6/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtsvg ===" && \
     cmake --install . && \
-    \
-    echo "=== Cleanup ===" && \
+    echo "=== qtsvg build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Cleanup build artifacts
+# ===========================================================================
+RUN echo "=== Cleaning up Qt build artifacts ===" && \
     cd /build && \
-    rm -rf qt6
+    rm -rf qt6 && \
+    echo "=== Cleanup complete ==="
 
 # Verify Qt installation
 RUN echo "=== Verifying Qt6 installation ===" && \
@@ -146,24 +185,20 @@ RUN echo "=== Verifying Qt6 installation ===" && \
 # ===========================================================================
 # Environment Configuration
 # ===========================================================================
-ENV PATH="/opt/qt6/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/opt/qt6/lib:${LD_LIBRARY_PATH}"
-ENV PKG_CONFIG_PATH="/opt/qt6/lib/pkgconfig:${PKG_CONFIG_PATH}"
-ENV CMAKE_PREFIX_PATH="/opt/qt6:${CMAKE_PREFIX_PATH}"
-ENV QT_PLUGIN_PATH="/opt/qt6/plugins"
-ENV QML_IMPORT_PATH="/opt/qt6/qml"
+# Note: Set empty defaults to avoid undefined variable warnings
+ENV PATH="/opt/qt6/bin:${PATH}" \
+    LD_LIBRARY_PATH="/opt/qt6/lib:${LD_LIBRARY_PATH:-}" \
+    PKG_CONFIG_PATH="/opt/qt6/lib/pkgconfig:${PKG_CONFIG_PATH:-}" \
+    CMAKE_PREFIX_PATH="/opt/qt6:${CMAKE_PREFIX_PATH:-}" \
+    QT_PLUGIN_PATH="/opt/qt6/plugins" \
+    QML_IMPORT_PATH="/opt/qt6/qml" \
+    DISPLAY=:0
 
 WORKDIR /workspace
 
-RUN mkdir /etc/kuksa
-
-RUN mkdir /etc/kuksa/tls
-RUN mkdir /etc/kuksa/jwt
+RUN mkdir -p /etc/kuksa/tls /etc/kuksa/jwt
 
 COPY ca.crt /etc/kuksa/tls
 COPY reader.jwt /etc/kuksa/jwt
-
-# For X11 forwarding if needed
-ENV DISPLAY=:0
 
 CMD ["/bin/bash"]
