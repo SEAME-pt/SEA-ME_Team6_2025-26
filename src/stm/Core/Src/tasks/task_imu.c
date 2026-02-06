@@ -94,9 +94,9 @@ void task_imu_step(SystemCtx* ctx)
         int16_t ay_mg    = clamp_i16((int32_t)(s_imu.accel.y * 1000.0f));
         int16_t az_mg    = clamp_i16((int32_t)(s_imu.accel.z * 1000.0f));
 
-        int16_t gx_dps01 = clamp_i16((int32_t)(s_imu.gyro.x * 10.0f));
-        int16_t gy_dps01 = clamp_i16((int32_t)(s_imu.gyro.y * 10.0f));
-        int16_t gz_dps01 = clamp_i16((int32_t)(s_imu.gyro.z * 10.0f));
+        int16_t gx_dps = clamp_i16((int32_t)(s_imu.gyro.x * 10.0f));
+        int16_t gy_dps = clamp_i16((int32_t)(s_imu.gyro.y * 10.0f));
+        int16_t gz_dps = clamp_i16((int32_t)(s_imu.gyro.z * 10.0f));
 
         int16_t mx_mG    = clamp_i16((int32_t)s_imu.mag.x);
         int16_t my_mG    = clamp_i16((int32_t)s_imu.mag.y);
@@ -110,9 +110,9 @@ void task_imu_step(SystemCtx* ctx)
         ctx->state.accel_mg[1]      = ay_mg;
         ctx->state.accel_mg[2]      = az_mg;
 
-        ctx->state.gyro_dps01[0]    = gx_dps01;
-        ctx->state.gyro_dps01[1]    = gy_dps01;
-        ctx->state.gyro_dps01[2]    = gz_dps01;
+        ctx->state.gyro_dps[0]    = gx_dps;
+        ctx->state.gyro_dps[1]    = gy_dps;
+        ctx->state.gyro_dps[2]    = gz_dps;
 
         ctx->state.mag_mG[0]        = mx_mG;
         ctx->state.mag_mG[1]        = my_mG;
