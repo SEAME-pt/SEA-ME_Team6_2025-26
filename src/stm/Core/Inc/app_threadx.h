@@ -30,7 +30,31 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "mcp2515.h"
+#include "lps22hh.h"
+#include "speedometer.h"
+#include "ism330dhcx.h"
+#include "iis2mdc.h"
+#include "veml6030.h"
+#include "vl53l5cx_driver.h"
+#include "hts221.h"
+#include "main.h"
+#include <stdio.h>
+#include "can_id.h"
+#include "thread_config.h"
+#include "lcd1602.h"
+#include "motor_control.h"
+#include "servo.h"
+#include "tim.h"
+#include "emergency_stop.h"
+#include "srf08.h"
+#include "ina226.h"
+#include "gesture_simple.h"
 
+#include "system_ctx.h"
+#include "sys_helpers.h"
+#include "tasks/task_heartbeat.h"
+#include "tasks/task_environment.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
