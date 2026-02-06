@@ -343,67 +343,16 @@ static void Speed_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[Speed] Thread iniciada!\r\n");
-  tx_mutex_put(&printf_mutex);
+    SystemCtx* ctx = system_ctx();
+    task_speed_init(ctx);
 
-  /* Initialize speedometer */
-  Speedometer_Init();
-
-  while (1)
-  {
-    /* Conta pulsos durante o período configurado (CAN_PERIOD_WHEEL_SPEED_MS) */
-    for (uint32_t i = 0; i < CAN_PERIOD_WHEEL_SPEED_MS; i++)
-    {
-      Speedometer_CountPulse();
-      tx_thread_sleep(1);
+    while (1) {
+        task_speed_step(ctx);
+        /* IMPORTANT:
+           Since task_speed_step() already waits CAN_PERIOD_WHEEL_SPEED_MS * 1ms internally,
+           do NOT sleep again here. */
     }
-
-    Speedometer_CalculateSpeed();
-
-    float speed_kmh = Speedometer_GetSpeed();
-    float rpm = Speedometer_GetRPM();
-
-    if (speed_kmh < 0.0f) speed_kmh = 0.0f;
-
-    /* === NOVA IMPLEMENTAÇÃO: WheelSpeed_t (0x403) === */
-    WheelSpeed_t wheel_frame;
-
-    /* RPM com sinal (positivo = frente, negativo = trás) */
-    wheel_frame.rpm = (int16_t)rpm;
-
-    /* Incrementar odometria baseado na velocidade atual */
-    /* Estimativa: incrementar quando há movimento detectado */
-    if (speed_kmh > 0.1f) {
-      odometry_pulse_counter++;
-    }
-    wheel_frame.total_pulses = odometry_pulse_counter;
-
-    /* Direção baseada no sinal do RPM */
-    if (rpm > 0.5f) {
-      wheel_direction = 0; // Forward
-    } else if (rpm < -0.5f) {
-      wheel_direction = 1; // Reverse
-    }
-    // Se RPM ~= 0, mantém direção anterior
-    wheel_frame.direction = wheel_direction;
-
-    /* Status: 0 = OK */
-    wheel_frame.status = 0;
-
-    /* Enviar frame WheelSpeed (8 bytes) */
-    mcp_send_message(CAN_ID_WHEEL_SPEED, (uint8_t*)&wheel_frame, sizeof(wheel_frame));
-
-    /* Atualizar variável partilhada para o LCD */
-    shared_speed = speed_kmh;
-
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Speed] RPM=%d | Pulsos=%lu | Dir=%u | %.0f m/h\r\n",
-           wheel_frame.rpm, wheel_frame.total_pulses, wheel_frame.direction, speed_kmh * 1000.0f);
-    tx_mutex_put(&printf_mutex);
-  }
 }
-
 
 /**
   * @brief  CAN RX thread entry function - Receives and processes actuation commands
