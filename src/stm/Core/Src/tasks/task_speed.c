@@ -1,5 +1,5 @@
 // task_speed.c
-#include "task_speed.h"
+#include "./tasks/task_speed.h"
 
 static uint32_t s_odometry_pulse_counter = 0;
 static uint8_t  s_wheel_direction = 0; // 0=forward, 1=reverse

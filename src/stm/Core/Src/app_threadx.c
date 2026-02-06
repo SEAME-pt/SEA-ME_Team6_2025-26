@@ -755,7 +755,6 @@ static void CAN_RX_Thread_Entry(ULONG thread_input)
   }
 }
 
-
 /**
   * @brief  IMU thread entry function
   * @param  thread_input: thread input parameter (not used)
@@ -765,126 +764,13 @@ static void IMU_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
-  ISM330DHCX_AxesRaw_t accel_data;
-  ISM330DHCX_AxesRaw_t gyro_data;
-  IIS2MDC_MagData_t mag_data;
-  HAL_StatusTypeDef status_accel, status_gyro, status_mag;
-  HAL_StatusTypeDef init_status_ism, init_status_iis;
+    SystemCtx* ctx = system_ctx();
+    task_imu_init(ctx);
 
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[IMU] Thread iniciada!\r\n");
-  tx_mutex_put(&printf_mutex);
-
-  /* Initialize ISM330DHCX */
-  init_status_ism = ISM330DHCX_Init();
-
-  if (init_status_ism == HAL_OK)
-  {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[IMU] ISM330DHCX inicializado com sucesso!\r\n");
-    tx_mutex_put(&printf_mutex);
-  }
-  else
-  {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[IMU] ERRO ao inicializar ISM330DHCX! Status: %d\r\n", init_status_ism);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  /* Initialize IIS2MDC (Magnetometer) */
-  init_status_iis = IIS2MDC_Init();
-
-  if (init_status_iis == HAL_OK)
-  {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[IMU] IIS2MDC (Magnetometro) inicializado com sucesso!\r\n");
-    tx_mutex_put(&printf_mutex);
-  }
-  else
-  {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[IMU] ERRO ao inicializar IIS2MDC! Status: %d\r\n", init_status_iis);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  while (1)
-  {
-    /* === ACELERÔMETRO: ImuAccel_t (0x400) === */
-    status_accel = ISM330DHCX_ReadAccel(&accel_data);
-
-    if (status_accel == HAL_OK)
-    {
-      ImuAccel_t accel_frame;
-
-      /* Conversão para milli-g (ex: 1.234g -> 1234 mg) */
-      accel_frame.acc_x = (int16_t)(accel_data.x * 1000.0f);
-      accel_frame.acc_y = (int16_t)(accel_data.y * 1000.0f);
-      accel_frame.acc_z = (int16_t)(accel_data.z * 1000.0f);
-
-      accel_frame.reserved = 0;
-
-      /* Status: bit 0 = sensor error */
-      accel_frame.status = (init_status_ism != HAL_OK) ? (1 << 0) : 0;
-
-      /* Enviar frame (8 bytes) */
-      mcp_send_message(CAN_ID_IMU_ACCEL, (uint8_t*)&accel_frame, sizeof(accel_frame));
+    while (1) {
+        task_imu_step(ctx);
+        /* NOTE: task_imu_step already sleeps to match CAN_PERIOD_IMU_FAST_MS */
     }
-
-    /* Small delay before reading gyro */
-    tx_thread_sleep(5);
-
-    /* === GIROSCÓPIO: ImuGyro_t (0x401) === */
-    status_gyro = ISM330DHCX_ReadGyro(&gyro_data);
-
-    if (status_gyro == HAL_OK)
-    {
-      ImuGyro_t gyro_frame;
-
-      /* Conversão para 0.1 °/s (ex: 123.4 dps -> 1234) */
-      gyro_frame.gyro_x = (int16_t)(gyro_data.x * 10.0f);
-      gyro_frame.gyro_y = (int16_t)(gyro_data.y * 10.0f);
-      gyro_frame.gyro_z = (int16_t)(gyro_data.z * 10.0f);
-
-      gyro_frame.reserved = 0;
-      gyro_frame.status = (init_status_ism != HAL_OK) ? (1 << 0) : 0;
-
-      /* Enviar frame (8 bytes) */
-      mcp_send_message(CAN_ID_IMU_GYRO, (uint8_t*)&gyro_frame, sizeof(gyro_frame));
-    }
-
-    /* Small delay before reading magnetometer */
-    tx_thread_sleep(5);
-
-    /* === MAGNETÔMETRO: ImuMag_t (0x402) === */
-    status_mag = IIS2MDC_ReadMag(&mag_data);
-
-    if (status_mag == HAL_OK)
-    {
-      ImuMag_t mag_frame;
-
-      /* Dados já em milli-Gauss */
-      mag_frame.mag_x = (int16_t)(mag_data.x);
-      mag_frame.mag_y = (int16_t)(mag_data.y);
-      mag_frame.mag_z = (int16_t)(mag_data.z);
-
-      mag_frame.reserved = 0;
-      mag_frame.status = (init_status_iis != HAL_OK) ? (1 << 0) : 0;
-
-      /* Enviar frame (8 bytes) */
-      mcp_send_message(CAN_ID_IMU_MAG, (uint8_t*)&mag_frame, sizeof(mag_frame));
-
-      tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-      printf("[IMU] Accel(%.2f, %.2f, %.2f)g | Gyro(%.1f, %.1f, %.1f)dps | Mag(%.0f, %.0f, %.0f)mG\r\n",
-             accel_data.x, accel_data.y, accel_data.z,
-             gyro_data.x, gyro_data.y, gyro_data.z,
-             mag_data.x, mag_data.y, mag_data.z);
-      tx_mutex_put(&printf_mutex);
-    }
-
-    /* Sleep ajustado: CAN_PERIOD_IMU_FAST_MS menos os delays internos (5+5=10ms) */
-    uint32_t imu_sleep = (CAN_PERIOD_IMU_FAST_MS > 10) ? (CAN_PERIOD_IMU_FAST_MS - 10) : 0;
-    tx_thread_sleep(imu_sleep);
-  }
 }
 
 
