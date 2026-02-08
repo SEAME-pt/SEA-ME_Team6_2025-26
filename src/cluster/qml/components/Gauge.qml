@@ -57,7 +57,7 @@ Item {
         shadowColor: "#b0b0b0"
         shadowBlur: 1.0
         shadowOpacity: 0.35
-        shadowScale: 1.31
+        shadowScale: 1.28
         shadowVerticalOffset: 0
         shadowHorizontalOffset: 0
     }
