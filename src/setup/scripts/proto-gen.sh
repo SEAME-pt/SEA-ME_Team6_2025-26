@@ -4,9 +4,9 @@
 # Use: proto-gen.sh <proto-file> [output-dir]
 # ===========================================================================
 
-source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+source /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
 
-PROTO_FILE="$1"U: 
+PROTO_FILE="$1"
 OUTPUT_DIR="${2:-./generated}"
 
 if [ -z "$PROTO_FILE" ]; then

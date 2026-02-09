@@ -6,12 +6,11 @@
 
 set -e
 
-source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+source /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
 
 PROJECT_DIR="${1:-.}"
 BUILD_TYPE="${2:-Release}"
 
-# Convert project dir to absolute path
 PROJECT_DIR="$(realpath "${PROJECT_DIR}")"
 BUILD_DIR="${PROJECT_DIR}/build-arm"
 

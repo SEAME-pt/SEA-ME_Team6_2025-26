@@ -2,16 +2,17 @@
 # AGL SDK Toolchain for Cross-Compilation
 # Inclui: Toolchain ARM + Qt6 + gRPC/Protobuf
 # Projeto: SEA:ME
+# Target: Raspberry Pi 4 (ARMv7, 32-bit)
 # ===========================================================================
 
 set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR aarch64)
+set(CMAKE_SYSTEM_PROCESSOR arm)
 
 # ---------------------------------------------------------------------------
 # SDK Paths
 # ---------------------------------------------------------------------------
 set(AGL_SDK_PATH "/opt/agl-sdk")
-set(AGL_SYSROOT "${AGL_SDK_PATH}/sysroots/aarch64-agl-linux")
+set(AGL_SYSROOT "${AGL_SDK_PATH}/sysroots/armv7vet2hf-neon-vfpv4-agl-linux-gnueabi")
 set(AGL_HOST_TOOLS "${AGL_SDK_PATH}/sysroots/x86_64-aglsdk-linux")
 
 # ---------------------------------------------------------------------------
@@ -20,16 +21,21 @@ set(AGL_HOST_TOOLS "${AGL_SDK_PATH}/sysroots/x86_64-aglsdk-linux")
 set(CMAKE_SYSROOT ${AGL_SYSROOT})
 set(CMAKE_FIND_ROOT_PATH ${AGL_SYSROOT})
 
-set(CMAKE_C_COMPILER ${AGL_HOST_TOOLS}/usr/bin/aarch64-agl-linux/aarch64-agl-linux-gcc)
-set(CMAKE_CXX_COMPILER ${AGL_HOST_TOOLS}/usr/bin/aarch64-agl-linux/aarch64-agl-linux-g++)
+set(CMAKE_C_COMPILER ${AGL_HOST_TOOLS}/usr/bin/arm-agl-linux-gnueabi/arm-agl-linux-gnueabi-gcc)
+set(CMAKE_CXX_COMPILER ${AGL_HOST_TOOLS}/usr/bin/arm-agl-linux-gnueabi/arm-agl-linux-gnueabi-g++)
+
+# ---------------------------------------------------------------------------
+# ARM Architecture Flags (Critical for VFP compatibility)
+# ---------------------------------------------------------------------------
+set(ARM_ARCH_FLAGS "-march=armv7ve -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard")
 
 # ---------------------------------------------------------------------------
 # Compiler/Linker Flags
 # ---------------------------------------------------------------------------
-set(CMAKE_C_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")
-set(CMAKE_CXX_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")
-set(CMAKE_EXE_LINKER_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")
-set(CMAKE_SHARED_LINKER_FLAGS_INIT "--sysroot=${AGL_SYSROOT}")
+set(CMAKE_C_FLAGS_INIT "${ARM_ARCH_FLAGS} --sysroot=${AGL_SYSROOT}")
+set(CMAKE_CXX_FLAGS_INIT "${ARM_ARCH_FLAGS} --sysroot=${AGL_SYSROOT}")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${ARM_ARCH_FLAGS} --sysroot=${AGL_SYSROOT}")
+set(CMAKE_SHARED_LINKER_FLAGS_INIT "${ARM_ARCH_FLAGS} --sysroot=${AGL_SYSROOT}")
 
 # ---------------------------------------------------------------------------
 # Search Paths

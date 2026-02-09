@@ -3,7 +3,7 @@
 # ===========================================================================
 # Usage: 
 #   docker build -f Dockerfile.dev -t cluster-dev:latest .
-#   docker run -it --rm -v $(pwd)/cluster:/workspace cluster-dev:latest
+#   sudo docker run -it --rm   -v $(pwd)/cluster:/workspace   -e DISPLAY=$DISPLAY   -v /tmp/.X11-unix:/tmp/.X11-unix:rw   --network host   --privileged   cluster-dev:latest
 #   Windows:
 #        docker run -it --rm -e DISPLAY=host.docker.internal:0 --add-host=host.docker.internal:host-gateway -v ${PWD}/cluster:/workspace cluster-dev:latest
 # ===========================================================================
