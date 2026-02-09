@@ -56,6 +56,7 @@ jobs:
               ls -la bin/
               file bin/can_to_kuksa_publisher
             '
+
       - name: Upload KUKSA artifact
         uses: actions/upload-artifact@v4
         with:
@@ -63,6 +64,7 @@ jobs:
           path: |
             src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher
             src/kuksa/kuksa_RPi5/vss_min.json
+
   build-cluster:
     name: Build Qt Cluster (ARM64)
     runs-on: ubuntu-22.04
@@ -88,6 +90,7 @@ jobs:
               ls -la /workspace/cluster/build-arm/
               file /workspace/cluster/build-arm/HelloQt6Qml
             '
+
       - name: Upload Cluster artifact
         uses: actions/upload-artifact@v4
         with:
@@ -129,6 +132,7 @@ jobs:
           else
             echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           fi
+
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:

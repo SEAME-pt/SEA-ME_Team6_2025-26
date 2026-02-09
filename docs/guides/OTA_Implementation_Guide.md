@@ -1,0 +1,1344 @@
+# 📡 OTA Implementation Guide — SEA:ME Team 6
+
+**Last Updated:** February 2026  
+**Branch:** `feature/OTA/implementation`  
+**Status:** MVP Implemented, RAUC Pending
+
+---
+
+## Table of Contents
+
+1. [What is OTA?](#1-what-is-ota)
+2. [OTA Types](#2-ota-types)
+3. [Architecture Overview](#3-architecture-overview)
+4. [What We Are Implementing](#4-what-we-are-implementing)
+5. [Current Implementation Status](#5-current-implementation-status)
+6. [Complete File Inventory](#6-complete-file-inventory)
+7. [Implementation Details](#7-implementation-details)
+8. [CI/CD Pipeline](#8-cicd-pipeline)
+9. [How to Use](#9-how-to-use)
+10. [Security Considerations](#10-security-considerations)
+11. [Future Roadmap](#11-future-roadmap)
+12. [Troubleshooting](#12-troubleshooting)
+13. [References](#13-references)
+
+---
+
+## 1. What is OTA?
+
+### 1.1 Definition
+
+**Over-the-Air (OTA)** means transmitting data, commands, or updates without physical connection, using wireless communication.
+
+In simple terms:
+> Alter, update, or control a device remotely, via network (Wi-Fi, cellular, Bluetooth, LoRa, satellite, etc.).
+
+### 1.2 Why OTA Matters
+
+| Benefit | Description |
+|---------|-------------|
+| 🔧 **Updates** | Firmware, software, security patches, bug fixes |
+| 📡 **Remote Config** | Change parameters, enable/disable features |
+| 🔍 **Monitoring** | Collect logs, remote diagnostics, telemetry |
+| 🤖 **Scale** | Manage thousands of devices without physical access |
+
+### 1.3 Real-World Examples
+
+- **Tesla** → Driving and safety updates
+- **Apple/Google** → Mobile OS updates
+- **AWS IoT / Azure IoT Hub** → OTA for millions of devices
+- **Routers / Firewalls** → Critical security patches
+
+### 1.4 Advantages
+
+**Technical:**
+- No physical access needed
+- Fast updates
+- Reduced downtime
+- Immediate security fixes
+
+**Economic:**
+- Lower maintenance costs
+- Fewer field technicians
+- Global scale
+
+**Strategic:**
+- "Living" product, always evolving
+- Rapid response to critical failures
+- Continuous improvement
+
+### 1.5 Risks & Challenges
+
+| Risk | Description |
+|------|-------------|
+| ⚠️ **Security** | Man-in-the-Middle attacks, malicious firmware |
+| ⚠️ **Reliability** | Interrupted update → bricked device |
+| ⚠️ **Control** | Poorly tested updates affect millions |
+| ⚠️ **Energy** | Battery consumption (critical in IoT) |
+
+---
+
+## 2. OTA Types
+
+### 2.1 The Three OTA Categories
+
+| Type | Full Name | Description | Our Implementation |
+|------|-----------|-------------|-------------------|
+| **FOTA** | Firmware OTA | Update firmware on MCUs | Planned (STM32) |
+| **SOTA** | Software OTA | Update applications/services | ✅ Implemented |
+| **COTA** | Configuration OTA | Update configs without code change | ✅ Implemented |
+
+### 2.2 SOTA (Software OTA) — Currently Implemented
+
+Updates user-space software:
+- Binaries (e.g., `kuksa` publisher)
+- systemd services
+- Qt applications
+- Python scripts
+
+### 2.3 COTA (Configuration OTA) — Currently Implemented
+
+Updates configuration without reboot:
+- VSS tree (`vss_min.json`)
+- JSON/YAML configs
+- Feature flags
+- CAN parameters
+
+### 2.4 FOTA (Firmware OTA) — Planned
+
+Updates firmware on STM32:
+- Application only (not bootloader)
+- Via AGL gateway over CAN/UART
+- UDS-inspired protocol
+
+---
+
+## 3. Architecture Overview
+
+### 3.1 High-Level Architecture
+
+```
+┌──────────────────┐
+│    Developer     │
+└────────┬─────────┘
+         │ git push / tag
+         ▼
+┌──────────────────────────┐
+│    GitHub Actions        │
+│  ────────────────────    │
+│  • Build                 │
+│  • Test                  │
+│  • Package (tar.gz)      │
+│  • Generate hash         │
+│  • Create Release        │
+└────────┬─────────────────┘
+         │ HTTPS
+         ▼
+┌──────────────────────────┐
+│   GitHub Releases        │
+│   (OTA Server)           │
+│  ────────────────────    │
+│  • update.tar.gz         │
+│  • hash.txt              │
+└────────┬─────────────────┘
+         │ HTTPS download
+         ▼
+┌──────────────────────────────────────────────┐
+│           AGL Device (Raspberry Pi 5)        │
+│  ──────────────────────────────────────────  │
+│  OTA Agent (systemd service)                 │
+│   • Poll / webhook                           │
+│   • Download                                 │
+│   • Verify (hash/signature)                  │
+│   • Install                                  │
+│   • Health check                             │
+│   • Rollback (user-space)                    │
+│                                              │
+│  Services: kuksa, CAN apps, etc.             │
+│                                              │
+│  (Future) RAUC: rootfs, kernel, boot         │
+└──────────────────────────────────────────────┘
+         │ CAN / UART
+         ▼
+┌──────────────────────────┐
+│   STM32U585 (ThreadX)    │
+│   (Future FOTA target)   │
+└──────────────────────────┘
+```
+
+### 3.2 Detailed OTA Flow (Target Architecture)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      GITHUB                                 │
+├─────────────────────────────────────────────────────────────┤
+│  Developer pushes code                                      │
+│       │                                                     │
+│       ▼                                                     │
+│  GitHub Actions Workflow                                    │
+│   • Detect changes in src/kuksa/kuksa_RPi5/                │
+│   • Cross-compile for ARM64 (aarch64)                      │
+│   • Package: can_to_kuksa_publisher + vss_min.json         │
+│   • Generate hash.txt                                       │
+│   • Create GitHub Release (v1.0.x)                         │
+└─────────────────────────────────────────────────────────────┘
+                          │
+                          │ HTTPS (GitHub Releases)
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    AGL (Raspberry Pi 5)                     │
+├─────────────────────────────────────────────────────────────┤
+│  ota-polling.service (systemd timer)                        │
+│   • Runs every X minutes                                    │
+│   • Checks GitHub API for new release                      │
+│   • Compares with /etc/ota-version                         │
+│   • If new version:                                        │
+│     → Download update.tar.gz                               │
+│     → Verify hash                                          │
+│     → Stop can-to-kuksa.service                            │
+│     → Backup current binary                                │
+│     → Install new binary                                   │
+│     → Start can-to-kuksa.service                           │
+│     → Health check                                         │
+│     → Rollback if failed                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3.3 Key Principle
+
+> **AGL acts as OTA Gateway / Master ECU**
+
+The STM32 MCU does NOT communicate directly with the cloud.
+All updates flow through AGL, which:
+- Centralizes security
+- Manages downloads
+- Controls update decisions
+
+This aligns with automotive OEM architectures.
+
+### 3.4 Separation of Responsibilities
+
+| Layer | Responsible | Function |
+|-------|-------------|----------|
+| **CI/CD** | GitHub Actions | Build, test, sign |
+| **Distribution** | OTA Server (GitHub Releases) | Store artifacts |
+| **Execution** | OTA Agent (AGL) | Apply update |
+| **Security** | Hash / signature | Integrity |
+| **Robustness** | RAUC (future) | Atomicity |
+
+---
+
+## 4. What We Are Implementing
+
+### 4.1 Implementation Strategy
+
+We chose a **phased approach**:
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **Phase A** | OTA Manual with systemd | ✅ Complete |
+| **Phase B** | SWUpdate / Enhanced rollback | 🔜 Next |
+| **Phase C** | RAUC (A/B rootfs) | 📋 Planned |
+
+### 4.2 Why This Order?
+
+1. **Phase A** (Manual) — Proves the concept works
+2. **Phase B** (Enhanced) — Adds robustness
+3. **Phase C** (RAUC) — Production-grade
+
+This approach:
+- ✅ Minimizes risk
+- ✅ Each phase is demonstrable
+- ✅ Academically defensible
+- ✅ Aligns with automotive best practices
+
+### 4.3 What We Update
+
+| Component | Type | Method | Status |
+|-----------|------|--------|--------|
+| `kuksa` publisher | SOTA | systemd + script | ✅ |
+| VSS tree (`vss_min.json`) | COTA | File copy | ✅ |
+| CAN services | SOTA | systemd | ✅ |
+| Qt Cluster app | SOTA | File copy | 🔜 |
+| STM32 firmware | FOTA | CAN/UART | 📋 |
+
+---
+
+## 5. Current Implementation Status
+
+### 5.1 What's Working Now
+
+#### On AGL (Raspberry Pi 5):
+
+| Component | Path | Status |
+|-----------|------|--------|
+| OTA script | `/opt/ota/ota-update.sh` | ✅ |
+| OTA directories | `/opt/ota/{downloads,releases,logs,backup,current}` | ✅ |
+| Version file | `/etc/ota-version` | ✅ (v1.0.1) |
+| systemd services | `/etc/systemd/system/ota-*.service` | ✅ |
+| Hello OTA test | `/usr/bin/hello-ota.sh` | ✅ |
+
+#### On GitHub:
+
+| Component | Path | Status |
+|-----------|------|--------|
+| OTA workflow | `.github/workflows/ota.yml` | ✅ |
+| Releases | GitHub Releases page | ✅ |
+
+### 5.2 Directory Structure on AGL
+
+```
+/opt/ota/
+├── backup/              # Previous version backup
+│   └── hello-ota.sh
+├── current/             # Current installed version
+│   └── hello-ota.sh
+├── downloads/           # Downloaded packages
+│   └── update.tar.gz
+├── logs/                # OTA operation logs
+│   └── ota.log
+├── releases/            # Extracted releases
+│   ├── test.txt
+│   └── v1.0.1/
+│       └── hello-ota.sh
+└── ota-update.sh        # Main OTA script
+```
+
+### 5.3 systemd Services
+
+```bash
+# Hello OTA test service
+cat /etc/systemd/system/hello-ota.service
+[Unit]
+Description=Hello OTA Test Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/hello-ota.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# OTA Agent service
+cat /etc/systemd/system/ota-agent.service
+[Unit]
+Description=OTA Update Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ota/ota-update.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 5.4 Phase B: Next Steps
+
+Before moving to RAUC (Phase C), we need to complete Phase B:
+
+| Task | Description | Status |
+|------|-------------|--------|
+| Install `kuksa` binary | Replace hello-ota with actual kuksa publisher | ⬜ Not Started |
+| Atomic symlinks | Instant switchover without downtime | ⬜ Not Started |
+| HTTP/D-Bus health checks | Verify service is actually working, not just running | ⬜ Not Started |
+| Automatic trigger | Webhook or timer-based OTA polling | ⬜ Not Started |
+| Dual-install directories | Keep two versions for instant rollback | ⬜ Not Started |
+
+**Phase B Checklist:**
+- [ ] Build and package `kuksa` binary for OTA
+- [ ] Create symlink-based atomic update script
+- [ ] Implement health check endpoint
+- [ ] Configure automatic OTA polling (timer or webhook)
+- [ ] Test rollback with actual kuksa service
+
+### 5.5 Phase A.2: Current Progress (Real-time Tracking)
+
+> **Last Updated:** 2025-01-08 (Session in progress)
+
+#### A.2 Objective
+
+Replace `hello-ota` proof-of-concept with actual `can_to_kuksa_publisher` binary.
+
+#### A.2 Implementation Steps
+
+| Step | Task | Status | Notes |
+|------|------|--------|-------|
+| A.2.1 | Choose cross-compilation strategy | ✅ Done | QEMU + Docker ARM64 (Section 8) |
+| A.2.2 | Update `.github/workflows/ota.yml` | ✅ Done | ARM64 cross-compile workflow created |
+| A.2.3 | Create tag v1.1.0 | ✅ Done | Tag pushed to trigger workflow |
+| A.2.4 | Verify workflow builds correctly | ⏳ Verifying | **Check GitHub Actions logs** |
+| A.2.5 | Confirm artifacts in Release | ⏳ Waiting | Need `update.tar.gz` + `hash.txt` |
+| A.2.6 | Update `ota-update.sh` on AGL | ⬜ Pending | Change target from hello-ota to kuksa |
+| A.2.7 | Test OTA download on AGL | ⬜ Pending | `sudo /opt/ota/ota-update.sh v1.1.0` |
+| A.2.8 | Verify service restart | ⬜ Pending | Check can-to-kuksa.service |
+| A.2.9 | Test rollback mechanism | ⬜ Pending | Force failure, verify recovery |
+
+#### Current Blockers
+
+- [ ] **Workflow status unknown** — Need to check GitHub Actions for v1.1.0
+
+#### Key Files for A.2
+
+| Location | File | Purpose |
+|----------|------|---------|
+| GitHub | `.github/workflows/ota.yml` | ARM64 cross-compile workflow |
+| AGL | `/opt/ota/ota-update.sh` | Main OTA script (needs update) |
+| AGL | `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` | Target binary location |
+| AGL | `/etc/systemd/system/can-to-kuksa.service` | Service to restart after update |
+
+---
+
+## 6. Complete File Inventory
+
+This section documents **ALL files and directories** involved in the OTA process, including who created them and their purpose.
+
+### 6.0 Directory Structure: `/bin` vs `/usr/bin`
+
+Understanding where to install binaries is important for OTA:
+
+| Directory | Purpose | When to Use | Examples |
+|-----------|---------|-------------|----------|
+| `/bin` | **Essential system binaries** — required for boot and single-user mode | Core OS utilities | `ls`, `cp`, `cat`, `sh` |
+| `/usr/bin` | **User/application binaries** — installed by user or packages | OTA scripts, applications, tools | `hello-ota.sh`, `kuksa` |
+
+**For OTA:** We use `/usr/bin/` because our scripts are applications, not essential system utilities.
+
+> ⚠️ **Note:** Never install OTA-managed binaries in `/bin` — that directory is for boot-essential commands only.
+
+### 6.1 Files on AGL Device (Raspberry Pi 5)
+
+#### 📁 `/opt/ota/` — OTA Working Directory
+
+| File/Directory | Purpose | Created By | Notes |
+|----------------|---------|------------|-------|
+| `ota-update.sh` | Main OTA installation script | User (João) | Core script that handles download, verify, backup, install, rollback |
+| `ota-update.sh~` | Backup of script (nano editor) | System | Auto-generated by nano |
+| `backup/` | Stores previous version for rollback | Script | Created by `ota-update.sh` |
+| `backup/hello-ota.sh` | Previous version of hello-ota | Script | Copied before update |
+| `current/` | Currently installed version | Script | Active version symlink target |
+| `current/hello-ota.sh` | Current hello-ota binary | Script | What's actually running |
+| `downloads/` | Temporary download location | Script | Cleaned after install |
+| `downloads/update.tar.gz` | Downloaded OTA package | Script | From GitHub Release |
+| `logs/` | OTA operation logs | Script | Persistent logs |
+| `logs/ota.log` | Main OTA log file | Script | All operations logged here |
+| `releases/` | Extracted release versions | Script | Historical versions |
+| `releases/v1.0.1/` | Specific version directory | Script | Contains extracted files |
+| `releases/test.txt` | Test file | User (João) | Initial testing |
+
+#### 📁 `/etc/` — System Configuration
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/etc/ota-version` | Current OTA version marker | Script | Contains e.g., `v1.0.1` |
+| `/etc/version` | AGL system version | AGL Build | System image version `20251103101437` |
+| `/etc/systemd/system/hello-ota.service` | Hello OTA systemd unit | User (João) | Test service for OTA validation |
+| `/etc/systemd/system/ota-agent.service` | OTA Agent systemd unit | User (João) | Triggers OTA updates |
+| `/etc/systemd/system/ota-apply.service` | OTA Apply systemd unit | User (João) | Alternative trigger method |
+| `/etc/systemd/system/can-to-kuksa.service` | CAN to KUKSA service | User (João) | Main application service |
+| `/etc/systemd/system/can-heartbeat.service` | CAN heartbeat service | User (João) | CAN monitoring |
+| `/etc/kuksa/` | KUKSA configuration directory | User (João) | KUKSA databroker configs |
+
+#### 📁 `/usr/bin/` — System Binaries
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/usr/bin/hello-ota.sh` | Hello OTA test executable | Script (OTA) | Copied from `/opt/ota/current/` |
+| `/usr/bin/ota-update.sh` | OTA script (if installed here) | Optional | Alternative location |
+
+#### 📁 `/bin/` — Core Binaries (AGL)
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/bin/hello-ota.sh` | Hello OTA (symlink or copy) | Script | May exist here too |
+| `/bin/ota-update.sh` | OTA update script copy | Script | Convenience symlink |
+| `/bin/databroker` | KUKSA databroker binary | AGL Build | Core KUKSA component |
+| `/bin/hash.txt` | Hash file (test artifact) | User (test) | From OTA testing |
+| `/bin/update.tar.gz` | Update package (test) | User (test) | From OTA testing |
+
+#### 📁 `/var/log/` — Runtime Logs
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/var/log/hello-ota.log` | Hello OTA service output | hello-ota.sh | Appended on each run |
+| `/var/log/mosquitto/` | MQTT broker logs | Mosquitto | If MQTT is used |
+
+#### 📁 `/root/` — Root Home Directory
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/root/SEAME_vss_tree.json` | VSS tree definition | User (João) | Vehicle Signal Specification |
+| `/root/joystick_control.py` | Joystick control script | User | Manual control |
+| `/root/test_can_actuation.sh` | CAN test script | User | Testing |
+| `/root/test_can_motors.sh` | Motor test script | User | Testing |
+| `/root/teste_can.py` | CAN test Python | User | Testing |
+
+#### 📁 `/opt/scripts/` — Custom Scripts
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `/opt/scripts/` | Additional scripts | User | Custom automation |
+
+### 6.2 Files on GitHub Repository
+
+#### 📁 `.github/workflows/` — CI/CD Pipelines
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `ota.yml` | OTA build & release workflow | User (João) + AI Support | Triggers on `v*` tags |
+| `tsf-validate.yml` | TSF validation workflow | User (João) + AI Support | TSF CI/CD |
+| `daily-meeting.yml` | Daily meeting automation | User | Team workflow |
+| `taskly.yml` | Task automation | User | Team workflow |
+
+#### 📁 `src/kuksa/kuksa_RPi5/` — KUKSA Publisher Source
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `Makefile` | Build configuration | User (João) | Compiles `kuksa` binary |
+| `kuksa` | Compiled binary (output) | Make | OTA artifact |
+| `vss_min.json` | Minimal VSS tree | User (João) | COTA artifact |
+| `src/` | Source code | User (João) | C/C++ sources |
+| `generated/` | Generated headers | User (João) | From VSS |
+
+#### 📁 `docs/guides/` — Documentation
+
+| File | Purpose | Created By | Notes |
+|------|---------|------------|-------|
+| `OTA_Implementation_Guide.md` | This document | User (João) + AI Support | Complete OTA documentation |
+
+### 6.3 OTA Artifacts (Generated)
+
+| Artifact | Location | Purpose | Created By |
+|----------|----------|---------|------------|
+| `update.tar.gz` | GitHub Release | OTA package containing binaries/configs | GitHub Actions |
+| `hash.txt` | GitHub Release | SHA-256 checksum of package | GitHub Actions |
+
+### 6.4 Complete Path Reference Table
+
+| Category | Path | Description |
+|----------|------|-------------|
+| **OTA Working Dir** | `/opt/ota/` | All OTA operations happen here |
+| **OTA Script** | `/opt/ota/ota-update.sh` | Main update script |
+| **OTA Logs** | `/opt/ota/logs/ota.log` | Operation logs |
+| **OTA Downloads** | `/opt/ota/downloads/` | Temp download location |
+| **OTA Releases** | `/opt/ota/releases/` | Version history |
+| **OTA Backup** | `/opt/ota/backup/` | Rollback source |
+| **OTA Current** | `/opt/ota/current/` | Active version |
+| **Version Marker** | `/etc/ota-version` | Current version string |
+| **systemd Units** | `/etc/systemd/system/` | Service definitions |
+| **Installed Binary** | `/usr/bin/hello-ota.sh` | Active executable |
+| **Service Logs** | `/var/log/hello-ota.log` | Service output |
+| **GitHub Workflow** | `.github/workflows/ota.yml` | CI/CD pipeline |
+| **Source Code** | `src/kuksa/kuksa_RPi5/` | Build source |
+
+### 6.5 File Flow During OTA Update
+
+```
+GitHub Repository
+       │
+       ├─ src/kuksa/kuksa_RPi5/
+       │   ├─ Makefile
+       │   ├─ src/*.c
+       │   └─ vss_min.json
+       │
+       ▼ (git tag v1.0.2 → triggers workflow)
+       
+GitHub Actions (.github/workflows/ota.yml)
+       │
+       ├─ make → kuksa binary
+       ├─ tar -czf → update.tar.gz
+       └─ sha256sum → hash.txt
+       │
+       ▼ (uploaded to GitHub Release)
+       
+GitHub Release (https://github.com/.../releases/download/v1.0.2/)
+       │
+       ├─ update.tar.gz
+       └─ hash.txt
+       │
+       ▼ (curl download by OTA script)
+       
+AGL Device (/opt/ota/)
+       │
+       ├─ downloads/update.tar.gz    ← Downloaded here
+       ├─ releases/v1.0.2/           ← Extracted here
+       ├─ backup/                    ← Previous version backed up
+       ├─ current/                   ← New version installed
+       └─ logs/ota.log               ← Operation logged
+       │
+       ▼ (cp to system location)
+       
+System Locations
+       │
+       ├─ /usr/bin/hello-ota.sh      ← Binary installed
+       ├─ /etc/ota-version           ← Version updated to "v1.0.2"
+       └─ systemctl restart          ← Service restarted
+```
+
+### 6.6 Ownership Summary
+
+| Created By | Files |
+|------------|-------|
+| **User (João)** | `ota-update.sh`, systemd services, test scripts, source code, Makefile |
+| **User (João) + AI Support** | `OTA_Implementation_Guide.md`, workflow improvements, documentation |
+| **GitHub Actions** | `update.tar.gz`, `hash.txt` (generated artifacts) |
+| **OTA Script** | `backup/`, `current/`, `releases/`, `logs/ota.log`, `/etc/ota-version` |
+| **AGL Build** | System binaries, `/etc/version`, base OS files |
+
+---
+
+## 7. Implementation Details
+
+### 7.1 OTA Update Script
+
+**Location:** `/opt/ota/ota-update.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+# -------- ARGUMENTS --------
+if [ $# -ne 3 ]; then
+  echo "Usage: ota-update.sh <VERSION> <URL> <HASH>"
+  exit 1
+fi
+
+VERSION="$1"
+URL="$2"
+HASH="$3"
+
+# -------- PATHS --------
+WORKDIR="/opt/ota"
+LOG="$WORKDIR/logs/ota.log"
+DL="$WORKDIR/downloads/update.tar.gz"
+RELEASE="$WORKDIR/releases/$VERSION"
+CURRENT="$WORKDIR/current"
+BACKUP="$WORKDIR/backup"
+
+SERVICE_NAME="hello-ota"
+BIN_DST="/usr/bin/hello-ota.sh"
+
+mkdir -p "$WORKDIR/logs" "$WORKDIR/downloads" "$WORKDIR/releases"
+
+echo "=== OTA update $VERSION ===" >> "$LOG"
+
+# -------- DOWNLOAD --------
+echo "[1] Downloading package" >> "$LOG"
+curl -fL "$URL" -o "$DL"
+
+# -------- VERIFY HASH --------
+echo "[2] Verifying hash" >> "$LOG"
+echo "$HASH  $DL" | sha256sum -c -
+
+# -------- BACKUP --------
+echo "[3] Backup current version" >> "$LOG"
+rm -rf "$BACKUP"
+if [ -d "$CURRENT" ]; then
+  cp -r "$CURRENT" "$BACKUP"
+fi
+
+# -------- EXTRACT --------
+echo "[4] Extracting update" >> "$LOG"
+rm -rf "$RELEASE"
+mkdir -p "$RELEASE"
+tar -xzf "$DL" -C "$RELEASE"
+
+# -------- APPLY --------
+echo "[5] Applying update" >> "$LOG"
+systemctl stop "$SERVICE_NAME"
+
+rm -rf "$CURRENT"
+cp -r "$RELEASE" "$CURRENT"
+
+cp "$CURRENT/hello-ota.sh" "$BIN_DST"
+chmod +x "$BIN_DST"
+
+systemctl start "$SERVICE_NAME"
+
+# -------- HEALTH CHECK --------
+sleep 2
+if ! systemctl is-active --quiet "$SERVICE_NAME"; then
+  echo "[ERROR] Service failed, rolling back" >> "$LOG"
+
+  systemctl stop "$SERVICE_NAME"
+  rm -rf "$CURRENT"
+  cp -r "$BACKUP" "$CURRENT"
+  cp "$CURRENT/hello-ota.sh" "$BIN_DST"
+  chmod +x "$BIN_DST"
+  systemctl start "$SERVICE_NAME"
+
+  echo "rollback" > /etc/ota-version
+  exit 1
+fi
+
+# -------- SUCCESS --------
+echo "$VERSION" > /etc/ota-version
+echo "Update $VERSION successful" >> "$LOG"
+```
+
+### 7.2 OTA Flow
+
+```
+1. Download package from GitHub Release
+         ↓
+2. Verify SHA-256 hash
+         ↓
+3. Backup current version
+         ↓
+4. Extract new version
+         ↓
+5. Stop service
+         ↓
+6. Copy new files
+         ↓
+7. Start service
+         ↓
+8. Health check
+         ↓
+   ┌─────┴─────┐
+   │           │
+  OK?        FAIL?
+   │           │
+   ▼           ▼
+Update     Rollback
+version    to backup
+```
+
+---
+
+## 8. CI/CD Pipeline
+
+### 8.1 GitHub Actions Workflow
+
+**Location:** `.github/workflows/ota.yml`
+
+```yaml
+name: OTA Build & Deploy/Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build kuksa_RPi5
+        run: |
+          cd src/kuksa/kuksa_RPi5
+          make
+          
+      - name: Package OTA
+        run: |
+          mkdir -p ota
+          cp src/kuksa/kuksa_RPi5/kuksa ota/
+          cp src/kuksa/kuksa_RPi5/vss_min.json ota/
+          tar -czf update.tar.gz ota/
+          
+      - name: Hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
+```
+
+### 8.2 Workflow Trigger
+
+The workflow triggers on tags matching `v*`:
+
+```bash
+# Create and push tag
+git tag v1.0.2
+git push origin v1.0.2
+```
+
+### 8.3 Release Artifacts
+
+After workflow completes, GitHub Release contains:
+- `update.tar.gz` — The OTA package
+- `hash.txt` — SHA-256 checksum
+
+### 8.4 Cross-Compilation Strategy
+
+#### The Challenge
+
+The KUKSA publisher (`can_to_kuksa_publisher`) must run on **ARM64** (Raspberry Pi 5), but GitHub Actions runners use **x86_64**. This requires either cross-compilation or emulation.
+
+#### What is QEMU?
+
+**QEMU** (Quick EMUlator) is an open-source emulator that can run code compiled for one architecture on a different architecture. In CI/CD, QEMU allows running ARM64 binaries on x86_64 runners by emulating the ARM processor.
+
+#### Build Options Considered
+
+| Option | Description | Build Time | Complexity | Status |
+|--------|-------------|------------|------------|--------|
+| **A) QEMU + Docker** | Run ARM64 Docker container via QEMU | ~5-10 min | Low | ✅ **CHOSEN** |
+| **B) Native Cross-Compile** | Use ARM64 toolchain directly | ~1-2 min | High | ❌ Rejected |
+| **C) Self-Hosted Runner** | CI on actual ARM64 hardware | ~1-2 min | Very High | ❌ Rejected |
+
+#### Decision: Option A (QEMU + Docker ARM64)
+
+We chose **QEMU emulation with Docker ARM64** for the following reasons:
+
+**Pros:**
+| Advantage | Description |
+|-----------|-------------|
+| ✅ **Simplicity** | No complex toolchain setup required |
+| ✅ **Identical Environment** | Compiles in same environment as target (Debian ARM64) |
+| ✅ **Package Availability** | Uses native ARM64 packages (gRPC, protobuf) |
+| ✅ **Maintainability** | Standard Makefile works without modification |
+| ✅ **Reproducibility** | Same container = same results every time |
+
+**Cons:**
+| Disadvantage | Mitigation |
+|--------------|------------|
+| ⚠️ Slower (~5-10 min) | Acceptable for our release frequency |
+| ⚠️ QEMU emulation overhead | Build happens in CI, not blocking development |
+
+#### Why We Rejected Option B (Native Cross-Compile)
+
+| Reason | Explanation |
+|--------|-------------|
+| ❌ **gRPC Complexity** | Would need to cross-compile gRPC (~30+ min first build) |
+| ❌ **Library Compatibility** | Risk of ABI mismatches between host and target |
+| ❌ **Toolchain Setup** | Complex CMake toolchain files required |
+| ❌ **Debugging Difficulty** | Cross-compile errors harder to diagnose |
+
+#### Why We Rejected Option C (Self-Hosted Runner)
+
+| Reason | Explanation |
+|--------|-------------|
+| ❌ **Hardware Dependency** | RPi must be online and connected |
+| ❌ **Security Risk** | Self-hosted runners have security implications |
+| ❌ **Maintenance Overhead** | Need to maintain runner software |
+| ❌ **Not Portable** | Tied to specific hardware |
+
+---
+
+### 8.5 Workflow Templates (Archive)
+
+This section archives the workflow configurations for each option, for future reference.
+
+#### Template A: QEMU + Docker (CURRENT - In Use)
+
+**File:** `.github/workflows/ota.yml`
+
+```yaml
+name: OTA Build & Release (ARM64)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.3)'
+        required: true
+        default: 'v1.0.3'
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for ARM64
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build in ARM64 container
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace/src/kuksa/kuksa_RPi5 \
+            arm64v8/debian:bookworm-slim \
+            bash -c "
+              apt-get update && \
+              apt-get install -y g++ make pkg-config libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc && \
+              make clean || true && \
+              make && \
+              file bin/can_to_kuksa_publisher
+            "
+
+      - name: Package OTA
+        run: |
+          mkdir -p ota
+          cp src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher ota/
+          cp src/kuksa/kuksa_RPi5/vss_min.json ota/
+          tar -czf update.tar.gz -C ota .
+          
+      - name: Generate hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
+```
+
+#### Template B: Native Cross-Compile (NOT USED - Archive)
+
+This template was designed but **not implemented** due to complexity:
+
+```yaml
+name: OTA Build & Release (ARM64 Cross-Compile)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  GRPC_VERSION: "1.60.0"
+  TARGET_ARCH: aarch64-linux-gnu
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install cross-compilation toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            binutils-aarch64-linux-gnu \
+            pkg-config cmake ninja-build git
+
+      - name: Cache gRPC ARM64 build
+        id: cache-grpc
+        uses: actions/cache@v4
+        with:
+          path: ~/grpc-arm64
+          key: grpc-arm64-${{ env.GRPC_VERSION }}-v2
+
+      - name: Build gRPC for ARM64 (if not cached)
+        if: steps.cache-grpc.outputs.cache-hit != 'true'
+        run: |
+          # Clone gRPC with submodules
+          git clone --recurse-submodules -b v${{ env.GRPC_VERSION }} --depth 1 \
+            https://github.com/grpc/grpc.git ~/grpc-src
+          
+          # Build protoc for host first
+          mkdir -p ~/grpc-host-build && cd ~/grpc-host-build
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DgRPC_BUILD_TESTS=OFF ~/grpc-src
+          ninja -j$(nproc) grpc_cpp_plugin protoc
+          
+          # Create ARM64 toolchain file
+          cat > ~/arm64-toolchain.cmake << 'EOF'
+          set(CMAKE_SYSTEM_NAME Linux)
+          set(CMAKE_SYSTEM_PROCESSOR aarch64)
+          set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
+          set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+          set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+          set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+          set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+          EOF
+          
+          # Build gRPC for ARM64
+          mkdir -p ~/grpc-arm64-build && cd ~/grpc-arm64-build
+          cmake -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=~/arm64-toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=~/grpc-arm64 \
+            -DgRPC_BUILD_TESTS=OFF \
+            -D_gRPC_CPP_PLUGIN=~/grpc-host-build/grpc_cpp_plugin \
+            ~/grpc-src
+          ninja -j$(nproc) && ninja install
+
+      - name: Build KUKSA Publisher for ARM64
+        run: |
+          cd src/kuksa/kuksa_RPi5
+          
+          # Use cross-compiler with ARM64 gRPC
+          aarch64-linux-gnu-g++ -std=c++17 -O2 \
+            -I$HOME/grpc-arm64/include -Iinc -Igenerated \
+            src/*.cpp src/handlers/*.cpp generated/kuksa/val/v2/*.cc \
+            -L$HOME/grpc-arm64/lib \
+            -lgrpc++ -lgrpc -lgpr -lprotobuf -lpthread \
+            -static-libstdc++ -static-libgcc \
+            -o bin/can_to_kuksa_publisher
+          
+          file bin/can_to_kuksa_publisher
+
+      - name: Package and Release
+        run: |
+          mkdir -p ota
+          cp src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher ota/
+          tar -czf update.tar.gz -C ota .
+          sha256sum update.tar.gz > hash.txt
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
+```
+
+**Why this was rejected:**
+- First build of gRPC for ARM64 takes ~30+ minutes
+- Complex CMake toolchain configuration
+- Risk of ABI mismatches
+- Cache invalidation issues
+
+#### Template C: Hello-OTA Test (Phase A.1 - Historical)
+
+This was the original proof-of-concept workflow used with `hello-ota.sh`:
+
+```yaml
+name: OTA Build & Deploy/Release (Hello-OTA Test)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create hello-ota script
+        run: |
+          mkdir -p ota
+          cat > ota/hello-ota.sh << 'EOF'
+          #!/bin/bash
+          while true; do
+            echo "[$(date)] Hello from OTA version $OTA_VERSION" >> /var/log/hello-ota.log
+            sleep 10
+          done
+          EOF
+          chmod +x ota/hello-ota.sh
+          
+      - name: Package OTA
+        run: tar -czf update.tar.gz -C ota .
+          
+      - name: Hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            update.tar.gz
+            hash.txt
+```
+
+**Purpose:** Validated the entire OTA pipeline (GitHub Actions → Release → Download → Install → Rollback) before implementing with real binaries.
+
+---
+
+### 8.6 Dependencies for Cross-Compile
+
+For reference, the KUKSA publisher requires these libraries:
+
+| Library | Purpose | ARM64 Package (Debian) |
+|---------|---------|------------------------|
+| gRPC++ | gRPC C++ framework | `libgrpc++-dev` |
+| protobuf | Protocol Buffers | `libprotobuf-dev` |
+| protoc-grpc | gRPC code generator | `protobuf-compiler-grpc` |
+| pthread | POSIX threads | Built-in |
+
+---
+
+## 9. How to Use
+
+### 9.1 Creating a New Release
+
+**Step 1:** Make your changes and commit
+```bash
+git add .
+git commit -m "feat: Add new feature"
+git push
+```
+
+**Step 2:** Create a tag
+```bash
+git tag v1.0.2
+git push origin v1.0.2
+```
+
+**Step 3:** Wait for GitHub Actions to complete
+
+**Step 4:** Verify release at:
+```
+https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/releases
+```
+
+### 9.2 Deploying to AGL
+
+**Option A: Manual Deploy (SSH)**
+
+```bash
+# SSH to AGL device
+ssh root@<AGL_IP>
+
+# Download release
+VERSION="v1.0.2"
+REPO="SEAME-pt/SEA-ME_Team6_2025-26"
+
+curl -L -o /tmp/update.tar.gz \
+  "https://github.com/$REPO/releases/download/$VERSION/update.tar.gz"
+
+curl -L -o /tmp/hash.txt \
+  "https://github.com/$REPO/releases/download/$VERSION/hash.txt"
+
+# Get hash
+HASH=$(cut -d' ' -f1 /tmp/hash.txt)
+
+# Run OTA update
+/opt/ota/ota-update.sh "$VERSION" \
+  "https://github.com/$REPO/releases/download/$VERSION/update.tar.gz" \
+  "$HASH"
+```
+
+**Option B: One-liner from Mac**
+
+```bash
+ssh root@10.21.220.191 \
+  "/opt/ota/ota-update.sh v1.0.2 \
+   https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/releases/download/v1.0.2/update.tar.gz \
+   \$(curl -sL https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/releases/download/v1.0.2/hash.txt | cut -d' ' -f1)"
+```
+
+### 9.3 Verifying Update
+
+```bash
+# Check version
+cat /etc/ota-version
+
+# Check logs
+cat /opt/ota/logs/ota.log
+
+# Check service status
+systemctl status hello-ota
+
+# Check service logs
+cat /var/log/hello-ota.log
+```
+
+---
+
+## 10. Security Considerations
+
+### 10.1 Current Security Measures
+
+| Measure | Description | Status |
+|---------|-------------|--------|
+| **HTTPS** | Encrypted download from GitHub | ✅ |
+| **SHA-256** | Hash verification | ✅ |
+| **Versioning** | Explicit version tracking | ✅ |
+| **Logs** | Persistent operation logs | ✅ |
+| **Rollback** | Automatic on service failure | ✅ |
+
+### 9.2 Known Limitations
+
+| Limitation | Description | Mitigation |
+|------------|-------------|------------|
+| No code signing | Artifacts not cryptographically signed | Use private repo + HTTPS |
+| User-space only | No kernel/boot protection | Acceptable for academic project |
+| Manual trigger | No automatic polling | Future: webhook/cron |
+
+### 10.3 Future Security Enhancements
+
+- [ ] RSA/ECC signature verification
+- [ ] TLS client certificates
+- [ ] Secure boot chain
+- [ ] Encrypted artifacts
+
+---
+
+## 11. Future Roadmap
+
+### 11.1 Phase B: Enhanced OTA (SWUpdate)
+
+- [ ] Symlink-based atomic updates
+- [ ] Dual-install directories
+- [ ] HTTP health checks
+- [ ] D-Bus integration
+- [ ] Webhook triggers
+
+### 11.2 Phase C: RAUC Integration
+
+- [ ] Yocto layer integration
+- [ ] A/B rootfs partitions
+- [ ] Automatic rollback on boot failure
+- [ ] Signed bundles (.raucb)
+- [ ] Full system updates
+
+### 11.3 FOTA for STM32
+
+- [ ] Bootloader with A/B slots
+- [ ] UDS over CAN protocol
+- [ ] AGL as FOTA gateway
+- [ ] Secure boot verification
+
+---
+
+## 12. Troubleshooting
+
+### 12.1 Common Issues
+
+**Issue: Hash mismatch**
+```bash
+# Symptom
+sha256sum: WARNING: 1 computed checksum did NOT match
+
+# Solution
+# Re-download the file or check network issues
+rm /opt/ota/downloads/update.tar.gz
+# Retry download
+```
+
+**Issue: Service fails to start**
+```bash
+# Check service status
+systemctl status hello-ota
+
+# Check journal
+journalctl -u hello-ota -n 50
+
+# Manual rollback
+cp /opt/ota/backup/* /usr/bin/
+systemctl restart hello-ota
+```
+
+**Issue: Download fails**
+```bash
+# Check network
+ping github.com
+
+# Check DNS
+nslookup github.com
+
+# Test curl
+curl -I https://github.com
+```
+
+### 12.2 Log Locations
+
+| Log | Path |
+|-----|------|
+| OTA operations | `/opt/ota/logs/ota.log` |
+| Hello OTA service | `/var/log/hello-ota.log` |
+| systemd journal | `journalctl -u hello-ota` |
+
+---
+
+## 13. References
+
+### 13.1 Internal Documentation
+
+- [TSF Implementation Guide](../TSF/tsf_implementation/TSF_docs/README.md)
+- [KUKSA Integration](../../src/kuksa/README.md)
+
+### 13.2 External Resources
+
+- [RAUC Documentation](https://rauc.readthedocs.io/)
+- [SWUpdate](https://sbabic.github.io/swupdate/)
+- [Uptane Framework](https://uptane.github.io/)
+- [AGL Documentation](https://docs.automotivelinux.org/)
+
+### 13.3 Standards
+
+- ISO 14229 (UDS)
+- ISO 26262 (Functional Safety)
+- UNECE WP.29 (Cybersecurity Regulations)
+
+---
+
+## Appendix A: OTA Manual vs RAUC Comparison
+
+| Criteria | OTA Manual | RAUC |
+|----------|------------|------|
+| Atomicity | ❌ Limited | ✅ Full |
+| Auto rollback | ⚠️ Service-level | ✅ Boot-level |
+| Full system update | ❌ No | ✅ Yes |
+| Complexity | ⭐ Low | ⭐⭐⭐⭐ High |
+| Brick risk | Low (user-space) | Very low |
+| Implementation time | Very low | High |
+| Academic suitability | ✅ Excellent | ✅ Good |
+
+---
+
+## Appendix B: Academic Justification
+
+> "Although automotive-grade OTA frameworks such as RAUC or Uptane exist, for this project we adopted a service-level OTA strategy. This approach avoids full system reflashes, minimizes risks during development, and aligns with the modular update philosophy promoted by modern automotive architectures."
+
+This implementation demonstrates:
+- ✅ Understanding of OTA principles
+- ✅ CI/CD integration
+- ✅ Security awareness (hash verification)
+- ✅ Robustness (rollback capability)
+- ✅ Scalability path (RAUC-ready architecture)
+
+---
+
+## Appendix C: Quick Reference
+
+### Essential Commands
+
+```bash
+# Check current version
+cat /etc/ota-version
+
+# View OTA logs
+cat /opt/ota/logs/ota.log
+
+# Manual update
+/opt/ota/ota-update.sh <VERSION> <URL> <HASH>
+
+# Service status
+systemctl status hello-ota
+
+# Create release tag
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+### Key Paths
+
+| What | Where |
+|------|-------|
+| OTA script | `/opt/ota/ota-update.sh` |
+| Version file | `/etc/ota-version` |
+| Logs | `/opt/ota/logs/ota.log` |
+| Backup | `/opt/ota/backup/` |
+| Current | `/opt/ota/current/` |
+| GitHub workflow | `.github/workflows/ota.yml` |
+
+---
+
+**Document Version:** 1.0  
+**Author:** SEA:ME Team 6  
+**Last Updated:** February 2026
