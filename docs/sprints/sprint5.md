@@ -54,6 +54,7 @@
     - EXPECT-L0-6 - "The Qt GUI shall display static graphical elements"
     - EXPECT-L0-7 - "QT Crosscompilation should be achieved"
     - EXPECT-L0-11 - "QT cluster UI auto-start on boot on display"
+    - EXPECT-L0-12 - "Wireless DCI display"
   - https://github.com/user-attachments/assets/3f2fdbde-a6dc-48fb-baea-6ff7a0ed3223
   - End-to-end communication with KUKSA
     - EXPECT-L0-1 - "System architecture is defined and documented"
@@ -73,7 +74,7 @@
   - Testing framework decision in here -> [Testing-Framework-Decision](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Testing-Framework-Decision.md)
 
 - **Tests**:
-  - Speed provider tests -> [here](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/test-knowledge/src/tests/unit/speedprovider_test.cpp)
+  - Speed provider tests - EXPECT-L0-31 - "Unit Tests" [here](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/docs/test-knowledge/src/tests/unit/speedprovider_test.cpp)
   
 ---
 
