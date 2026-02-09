@@ -1,5 +1,25 @@
 #include "reader.hpp"
 
+static std::string read_file(const std::string& path)
+{
+    std::ifstream f(path.c_str(), std::ios::in | std::ios::binary);
+    if (!f.is_open())
+        throw std::runtime_error("Failed to open file: " + path);
+
+    std::ostringstream ss;
+    ss << f.rdbuf();
+    return ss.str();
+}
+
+static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port)
+{
+    grpc::SslCredentialsOptions ssl_opts;
+    ssl_opts.pem_root_certs = read_file("/etc/kuksa/tls/ca.crt");
+
+    auto channel = grpc::CreateChannel(host_port, grpc::SslCredentials(ssl_opts));
+    return VAL::NewStub(channel);
+}
+
 ReaderWorker::ReaderWorker(const std::string &server)
     : QObject(nullptr), _server(server), _shouldStop(false)
 {
@@ -31,15 +51,19 @@ void ReaderWorker::startReading()
         paths.push_back("Vehicle.Powertrain.TractionBattery.CurrentVoltage");
         //paths.push_back("Vehicle.TraveledDistance");
         paths.push_back("Vehicle.Powertrain.ElectricMotor.Speed");
+        paths.push_back("Vehicle.CurrentLocation.Heading");
+        paths.push_back("Vehicle.Powertrain.TractionBattery.IsCritical");
+        paths.push_back("Vehicle.Powertrain.TractionBattery.IsLevelLow");
 
         kuksa::val::v2::SubscribeRequest req;
         for (size_t i = 0; i < paths.size(); ++i)
-        {
             req.add_signal_paths(paths[i]);
-        }
 
         // Create context and stream
+        std::string jwt = read_file("/etc/kuksa/jwt/reader.jwt");
+
         grpc::ClientContext ctx;
+        ctx.AddMetadata("authorization", "Bearer " + jwt);
         kuksa::val::v2::SubscribeResponse resp;
 
         std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse>> stream(
@@ -95,6 +119,21 @@ void ReaderWorker::startReading()
                     qDebug() << "[ReaderWorker] Wheel Speed:" << wheelSpeed << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit wheelSpeedReceived(wheelSpeed);
+                } else if (path == "Vehicle.CurrentLocation.Heading") {
+                    double heading = dp.value().double_();
+                    qDebug() << "[ReaderWorker] Heading:" << heading << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit headingReceived(heading);
+                } else if (path == "Vehicle.Powertrain.TractionBattery.IsLevelLow") {
+                    bool status = dp.value().bool_();
+                    qDebug() << "[ReaderWorker] IsLevelLow:" << status << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit voltageLevelReceived(status, "low");
+                } else if (path == "Vehicle.Powertrain.TractionBattery.IsCritical") {
+                    bool status = dp.value().bool_();
+                    qDebug() << "[ReaderWorker] IsCritical:" << status << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit voltageLevelReceived(status, "critical");
                 }
             }
         }
@@ -123,12 +162,6 @@ void ReaderWorker::stopReading()
 {
     qDebug() << "[ReaderWorker] Stop requested";
     _shouldStop = true;
-}
-
-std::unique_ptr<VAL::Stub> ReaderWorker::create_val_stub(const std::string &host_port)
-{
-    auto channel = grpc::CreateChannel(host_port, grpc::InsecureChannelCredentials());
-    return VAL::NewStub(channel);
 }
 
 std::string ReaderWorker::value_to_string(const kuksa::val::v2::Value &v)
@@ -178,6 +211,8 @@ Reader::Reader(QObject *parent) : QObject(parent)
     connect(_worker, &ReaderWorker::frontDistanceReceived, this, &Reader::frontDistanceReceived);
     connect(_worker, &ReaderWorker::wheelSpeedReceived, this, &Reader::wheelSpeedReceived);
     connect(_worker, &ReaderWorker::voltageReceived, this, &Reader::voltageReceived);
+    connect(_worker, &ReaderWorker::voltageLevelReceived, this, &Reader::voltageLevelReceived);
+    connect(_worker, &ReaderWorker::headingReceived, this, &Reader::headingReceived);
 
 
     connect(_worker, &ReaderWorker::connectionError, 

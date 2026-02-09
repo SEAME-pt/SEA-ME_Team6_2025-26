@@ -3,13 +3,19 @@
 # ===========================================================================
 # Usage: 
 #   docker build -f Dockerfile.dev -t cluster-dev:latest .
-#   docker run -it --rm -v $(pwd)/cluster:/workspace cluster-dev:latest
+#   sudo docker run -it --rm   -v $(pwd)/cluster:/workspace   -e DISPLAY=$DISPLAY   -v /tmp/.X11-unix:/tmp/.X11-unix:rw   --network host   --privileged   cluster-dev:latest
+#   Windows:
+#        docker run -it --rm -e DISPLAY=host.docker.internal:0 --add-host=host.docker.internal:host-gateway -v ${PWD}/cluster:/workspace cluster-dev:latest
 # ===========================================================================
 
 FROM souzitaaaa/team6-base:bookworm
 
 ARG QT_VERSION=6.7.3
+ARG PROTOBUF_TAG=v25.0
+ARG GRPC_TAG=v1.60.1
+ARG ABSEIL_TAG=20230802.0
 
+# Install additional development tools and X11 libraries for native Qt development
 RUN apt-get update && apt-get install -y \
     libgl1 libxcb-xinerama0 libxcb-cursor0 \
     libxcb-util1 libxcb-render-util0 \
@@ -22,33 +28,98 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /build
 
-RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list
+# ===========================================================================
+# Build Abseil from source (required for Protobuf v25.0)
+# ===========================================================================
+RUN echo "=== Building Abseil ${ABSEIL_TAG} ===" && \
+    git clone --depth 1 --branch ${ABSEIL_TAG} https://github.com/abseil/abseil-cpp.git /tmp/abseil && \
+    cmake -S /tmp/abseil -B /tmp/abseil/build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+        -DABSL_BUILD_TESTING=OFF \
+        -DABSL_USE_GOOGLETEST_HEAD=OFF \
+        -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake --build /tmp/abseil/build -j$(nproc) && \
+    cmake --install /tmp/abseil/build && \
+    ldconfig && \
+    rm -rf /tmp/abseil
 
-RUN apt-get update && apt-get install -y \
-    libgrpc++-dev=1.47.* \
-    libgrpc-dev=1.47.* \
-    protobuf-compiler=3.21.* \
-    libprotobuf-dev=3.21.* \
-    protobuf-compiler-grpc=1.47.* \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# ===========================================================================
+# Build Protobuf v25.0 from source (matching cross-compilation version)
+# ===========================================================================
+RUN echo "=== Building Protobuf ${PROTOBUF_TAG} ===" && \
+    git clone --depth 1 --branch ${PROTOBUF_TAG} https://github.com/protocolbuffers/protobuf.git /tmp/protobuf && \
+    cmake -S /tmp/protobuf -B /tmp/protobuf/build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -Dprotobuf_BUILD_TESTS=OFF \
+        -Dprotobuf_ABSL_PROVIDER=package \
+        -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake --build /tmp/protobuf/build -j$(nproc) && \
+    cmake --install /tmp/protobuf/build && \
+    ldconfig && \
+    rm -rf /tmp/protobuf
 
-RUN apt-mark hold libgrpc++-dev libgrpc-dev protobuf-compiler libprotobuf-dev protobuf-compiler-grpc
+# ===========================================================================
+# Build gRPC v1.60.1 from source (matching cross-compilation version)
+# ===========================================================================
+RUN echo "=== Building gRPC ${GRPC_TAG} ===" && \
+    git clone --depth 1 --branch ${GRPC_TAG} https://github.com/grpc/grpc.git /tmp/grpc && \
+    cd /tmp/grpc && \
+    git submodule update --init --recursive && \
+    cmake -S /tmp/grpc -B /tmp/grpc/build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DgRPC_INSTALL=ON \
+        -DgRPC_BUILD_TESTS=OFF \
+        -DgRPC_PROTOBUF_PROVIDER=package \
+        -DgRPC_ABSL_PROVIDER=package \
+        -DgRPC_CARES_PROVIDER=package \
+        -DgRPC_RE2_PROVIDER=package \
+        -DgRPC_SSL_PROVIDER=package \
+        -DgRPC_ZLIB_PROVIDER=package \
+        -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake --build /tmp/grpc/build -j$(nproc) && \
+    cmake --install /tmp/grpc/build && \
+    ldconfig && \
+    rm -rf /tmp/grpc
 
-RUN mkdir -p qt6/src qt6/host-build && \
+# Verify installations
+RUN echo "=== Verifying Protobuf/gRPC installation ===" && \
+    protoc --version && \
+    which grpc_cpp_plugin && \
+    ldconfig -p | grep -E "(protobuf|grpc|absl)" | head -20
+
+# ===========================================================================
+# Qt6 Build - Download sources
+# ===========================================================================
+RUN mkdir -p qt6/src && \
     cd qt6/src && \
     echo "=== Downloading Qt 6.7.3 submodules ===" && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
     wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
-    \
-    echo "=== Extracting sources ===" && \
-    cd ../host-build && \
+    wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtsvg-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Download complete ==="
+
+# ===========================================================================
+# Qt6 Build - Extract sources
+# ===========================================================================
+RUN mkdir -p qt6/host-build && \
+    cd qt6/host-build && \
+    echo "=== Extracting qtbase ===" && \
     tar xf ../src/qtbase-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extracting qtshadertools ===" && \
     tar xf ../src/qtshadertools-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extracting qtdeclarative ===" && \
     tar xf ../src/qtdeclarative-everywhere-src-${QT_VERSION}.tar.xz && \
-    \
-    echo "=== Building qtbase ===" && \
-    cd qtbase-everywhere-src-${QT_VERSION} && \
+    echo "=== Extracting qtsvg ===" && \
+    tar xf ../src/qtsvg-everywhere-src-${QT_VERSION}.tar.xz && \
+    echo "=== Extraction complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtbase (core Qt framework)
+# ===========================================================================
+RUN cd qt6/host-build/qtbase-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtbase ===" && \
     cmake -GNinja \
         -DCMAKE_BUILD_TYPE=Release \
         -DQT_BUILD_EXAMPLES=OFF \
@@ -56,37 +127,78 @@ RUN mkdir -p qt6/src qt6/host-build && \
         -DCMAKE_INSTALL_PREFIX=/opt/qt6 \
         -DFEATURE_xcb=ON \
         -DFEATURE_dbus=ON && \
+    echo "=== Building qtbase (this may take a while) ===" && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtbase ===" && \
     cmake --install . && \
-    \
+    echo "=== qtbase build complete ==="
+
+# ===========================================================================
+# Qt6 Build -  Build qtshadertools
+# ===========================================================================
+RUN cd qt6/host-build/qtshadertools-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtshadertools ===" && \
+    /opt/qt6/bin/qt-configure-module . && \
     echo "=== Building qtshadertools ===" && \
-    cd ../qtshadertools-everywhere-src-${QT_VERSION} && \
-    /opt/qt6/bin/qt-configure-module . && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtshadertools ===" && \
     cmake --install . && \
-    \
-    echo "=== Building qtdeclarative (QML + Quick + Controls2) ===" && \
-    cd ../qtdeclarative-everywhere-src-${QT_VERSION} && \
+    echo "=== qtshadertools build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtdeclarative (QML + Quick + Controls2)
+# ===========================================================================
+RUN cd qt6/host-build/qtdeclarative-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtdeclarative ===" && \
     /opt/qt6/bin/qt-configure-module . && \
+    echo "=== Building qtdeclarative (this may take a while) ===" && \
     cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtdeclarative ===" && \
     cmake --install . && \
-    \
-    echo "=== Cleanup ===" && \
+    echo "=== qtdeclarative build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Build qtsvg
+# ===========================================================================
+RUN cd qt6/host-build/qtsvg-everywhere-src-${QT_VERSION} && \
+    echo "=== Configuring qtsvg ===" && \
+    /opt/qt6/bin/qt-configure-module . && \
+    echo "=== Building qtsvg ===" && \
+    cmake --build . --parallel $(nproc) && \
+    echo "=== Installing qtsvg ===" && \
+    cmake --install . && \
+    echo "=== qtsvg build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Cleanup build artifacts
+# ===========================================================================
+RUN echo "=== Cleaning up Qt build artifacts ===" && \
     cd /build && \
-    rm -rf qt6
+    rm -rf qt6 && \
+    echo "=== Cleanup complete ==="
 
-ENV PATH="/opt/qt6/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/opt/qt6/lib:${LD_LIBRARY_PATH}"
-ENV PKG_CONFIG_PATH="/opt/qt6/lib/pkgconfig:${PKG_CONFIG_PATH}"
-ENV CMAKE_PREFIX_PATH="/opt/qt6:${CMAKE_PREFIX_PATH}"
-ENV QT_PLUGIN_PATH="/opt/qt6/plugins"
-ENV QML_IMPORT_PATH="/opt/qt6/qml"
+# Verify Qt installation
+RUN echo "=== Verifying Qt6 installation ===" && \
+    /opt/qt6/bin/qmake --version && \
+    ls -la /opt/qt6/lib/cmake/ | grep Qt6 | head -10
 
-COPY scripts/dev-build.sh /usr/local/bin/dev-build.sh
-RUN chmod +x /usr/local/bin/dev-build.sh
+# ===========================================================================
+# Environment Configuration
+# ===========================================================================
+# Note: Set empty defaults to avoid undefined variable warnings
+ENV PATH="/opt/qt6/bin:${PATH}" \
+    LD_LIBRARY_PATH="/opt/qt6/lib:${LD_LIBRARY_PATH:-}" \
+    PKG_CONFIG_PATH="/opt/qt6/lib/pkgconfig:${PKG_CONFIG_PATH:-}" \
+    CMAKE_PREFIX_PATH="/opt/qt6:${CMAKE_PREFIX_PATH:-}" \
+    QT_PLUGIN_PATH="/opt/qt6/plugins" \
+    QML_IMPORT_PATH="/opt/qt6/qml" \
+    DISPLAY=:0
 
 WORKDIR /workspace
 
-ENV DISPLAY=:0
+RUN mkdir -p /etc/kuksa/tls /etc/kuksa/jwt
+
+COPY ca.crt /etc/kuksa/tls
+COPY reader.jwt /etc/kuksa/jwt
 
 CMD ["/bin/bash"]
