@@ -20,26 +20,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up QEMU for ARM64
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
-
       - name: Pull Team6 AGL SDK
         run: docker pull souzitaaaa/team6-agl-sdk:latest
 
-      - name: Build KUKSA publisher in SDK container
+      - name: Build KUKSA publisher with cross-compiler
         run: |
-          docker run --rm --platform linux/arm64 \
+          docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             souzitaaaa/team6-agl-sdk:latest \
             bash -c '
               set -e
-              cd /workspace/src/kuksa/kuksa_RPi5
               
-              echo "=== Environment Info ==="
+              echo "=== SDK Environment Info ==="
               uname -m
-              which g++ && g++ --version | head -1
+              echo "Looking for cross-compiler..."
+              
+              # Source the SDK environment if available
+              if [ -f /opt/agl-sdk/environment-setup-* ]; then
+                echo "Sourcing AGL SDK environment..."
+                source /opt/agl-sdk/environment-setup-*
+                echo "CC=$CC"
+                echo "CXX=$CXX"
+              elif [ -f /opt/poky/*/environment-setup-* ]; then
+                echo "Sourcing Poky SDK environment..."
+                source /opt/poky/*/environment-setup-*
+              fi
+              
+              cd /workspace/src/kuksa/kuksa_RPi5
               
               echo "=== Building KUKSA publisher ==="
               make clean || true
@@ -66,17 +73,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up QEMU for ARM64
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
-
       - name: Pull Team6 AGL SDK
         run: docker pull souzitaaaa/team6-agl-sdk:latest
 
-      - name: Build Qt Cluster in SDK container
+      - name: Build Qt Cluster with cross-compiler
         run: |
-          docker run --rm --platform linux/arm64 \
+          docker run --rm \
             -v ${{ github.workspace }}/src:/workspace \
             souzitaaaa/team6-agl-sdk:latest \
             bash -c '
