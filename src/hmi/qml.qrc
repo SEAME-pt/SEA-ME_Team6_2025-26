@@ -5,14 +5,8 @@
         
         <!-- QML Screens -->
         <file>qml/screens/BaseScreen.qml</file>
-        <file>qml/screens/LeftScreen.qml</file>
-	<file>qml/screens/CenterScreen.qml</file>
-	<file>qml/screens/RightScreen.qml</file>
 	
         <!-- QML Components -->
-        <file>qml/components/TopBar.qml</file>
-        <file>qml/components/BottomBar.qml</file>
-        <file>qml/components/Gauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
@@ -38,18 +32,10 @@
         <file>src/backend/ipcclient.hpp</file>
         <file>src/backend/reader.cpp</file>
         <file>src/backend/reader.hpp</file>
-        <file>src/backend/headingprovider.cpp</file>
-        <file>src/backend/headingprovider.hpp</file>
 
         <!-- Icons  -->
-        <file>assets/icons/flash.svg</file>
-        <file>assets/icons/flash-warning.svg</file>
-        <file>assets/icons/flash-danger.svg</file>
+        <!-- <file>assets/icons/battery-empty-solid-full.svg</file> -->
         
         <!-- Images  -->
-        <file>assets/images/brisa-logo.png</file>
-        <file>assets/images/critical-techworks-logo.png</file>
-        <file>assets/images/eclipse-fundation-logo.png</file>
-        <file>assets/images/seame-logo.png</file>
     </qresource>
 </RCC>
