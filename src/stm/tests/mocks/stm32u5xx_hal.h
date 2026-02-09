@@ -34,6 +34,18 @@ typedef struct
 #define TIM_CHANNEL_3  0x00000008U
 #define TIM_CHANNEL_4  0x0000000CU
 
+/* I2C memory address size define used in iis2mdc.c */
+#define I2C_MEMADD_SIZE_8BIT 1
+
+/* Prototypes for I2C memory read/write used by tests */
+HAL_StatusTypeDef HAL_I2C_Mem_Read(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
+                                   uint8_t MemAddress, uint16_t MemAddSize,
+                                   uint8_t *pData, uint16_t Size, uint32_t Timeout);
+
+HAL_StatusTypeDef HAL_I2C_Mem_Write(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
+                                    uint8_t MemAddress, uint16_t MemAddSize,
+                                    uint8_t *pData, uint16_t Size, uint32_t Timeout);
+
 // Function prototypes (não duplicar do main.h)
 HAL_StatusTypeDef HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
                                           uint8_t *pData, uint16_t Size, uint32_t Timeout);

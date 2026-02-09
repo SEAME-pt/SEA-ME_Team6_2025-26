@@ -9775,3 +9775,40 @@ _None_
 **Fallacies:**
 
 _None_
+
+
+---
+
+### EVIDENCES-EVID_L0_30 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_30 data-toc-label="EVIDENCES-EVID_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2.
+
+**Evidence Status:** Pending - tests and documentation to be completed during finalization phase.
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [ASSERTIONS-ASSERT_L0_30](ASSERTIONS.md#assertions-assert_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+_None_
+
+{% raw %}
+
+**References:**
+
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md)
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_

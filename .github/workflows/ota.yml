@@ -1,0 +1,160 @@
+name: OTA Build & Release (ARM64)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.3)'
+        required: true
+        default: 'v1.0.3'
+
+jobs:
+  build-kuksa:
+    name: Build KUKSA Publisher (ARM64)
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Team6 AGL SDK
+        run: docker pull souzitaaaa/team6-agl-sdk:latest
+
+      - name: Build KUKSA publisher with cross-compiler
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            souzitaaaa/team6-agl-sdk:latest \
+            bash -c '
+              set -e
+              
+              echo "=== SDK Environment Info ==="
+              uname -m
+              echo "Looking for cross-compiler..."
+              
+              # Source the SDK environment if available
+              if [ -f /opt/agl-sdk/environment-setup-* ]; then
+                echo "Sourcing AGL SDK environment..."
+                source /opt/agl-sdk/environment-setup-*
+                echo "CC=$CC"
+                echo "CXX=$CXX"
+              elif [ -f /opt/poky/*/environment-setup-* ]; then
+                echo "Sourcing Poky SDK environment..."
+                source /opt/poky/*/environment-setup-*
+              fi
+              
+              cd /workspace/src/kuksa/kuksa_RPi5
+              
+              echo "=== Building KUKSA publisher ==="
+              make clean || true
+              make
+              
+              echo "=== Verifying binary ==="
+              ls -la bin/
+              file bin/can_to_kuksa_publisher
+            '
+
+      - name: Upload KUKSA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kuksa-publisher
+          path: |
+            src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher
+            src/kuksa/kuksa_RPi5/vss_min.json
+
+  build-cluster:
+    name: Build Qt Cluster (ARM64)
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Team6 AGL SDK
+        run: docker pull souzitaaaa/team6-agl-sdk:latest
+
+      - name: Build Qt Cluster with cross-compiler
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/src:/workspace \
+            souzitaaaa/team6-agl-sdk:latest \
+            bash -c '
+              set -e
+              echo "=== Building Qt6 Cluster ==="
+              qt6-build.sh /workspace/cluster/
+              
+              echo "=== Verifying binary ==="
+              ls -la /workspace/cluster/build-arm/
+              file /workspace/cluster/build-arm/HelloQt6Qml
+            '
+
+      - name: Upload Cluster artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt-cluster
+          path: src/cluster/build-arm/HelloQt6Qml
+
+  release:
+    name: Create OTA Release
+    needs: [build-kuksa, build-cluster]
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Download KUKSA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kuksa-publisher
+          path: ota/kuksa
+
+      - name: Download Cluster artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qt-cluster
+          path: ota/cluster
+
+      - name: Package OTA
+        run: |
+          echo "=== OTA Package Contents ==="
+          find ota -type f
+          tar -czf update.tar.gz -C ota .
+          
+      - name: Generate hash
+        run: sha256sum update.tar.gz > hash.txt
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: "OTA Release ${{ steps.version.outputs.version }}"
+          body: |
+            ## OTA Update Package
+            
+            ### Included Binaries (ARM64/aarch64)
+            
+            | Binary | Description | Target Path |
+            |--------|-------------|-------------|
+            | `can_to_kuksa_publisher` | KUKSA CAN publisher | `/home/kuksa_RPi5/bin/` |
+            | `vss_min.json` | VSS configuration | `/home/kuksa_RPi5/` |
+            | `HelloQt6Qml` | Qt6 Cluster UI | `/opt/cluster/` |
+            
+            **Target:** Raspberry Pi 5 (AGL)
+            
+            ### Installation on AGL
+            ```bash
+            /opt/ota/ota-update.sh ${{ steps.version.outputs.version }}
+            ```
+          files: |
+            update.tar.gz
+            hash.txt

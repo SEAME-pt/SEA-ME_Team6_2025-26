@@ -1511,7 +1511,7 @@ _None_
 		id: EXPECT_L0_19
 		header: "TSF Automation Testing"
 		text: |
-		  The project shall implement automated testing for TSF (Technical Specification Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
+		  The project shall implement automated testing for TSF (Technical Software Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
 		level: '1.19'
 		normative: true
 		references:
@@ -2485,6 +2485,106 @@ _None_
 		This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met.
 		
 		**Evidence Status:** Pending - integration test to be performed during driver presence validation testing.
+		
+		````
+
+
+
+{% endraw %}
+
+**Fallacies:**
+
+_None_
+
+
+---
+
+### ASSERTIONS-ASSERT_L0_30 | Reviewed: ✔ | Score: 0.0 ### {: #assertions-assert_l0_30 data-toc-label="ASSERTIONS-ASSERT_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+**Supporting Items:**
+
+| Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
+| --- | --- | --- | --- |
+| [EVIDENCES-EVID_L0_30](EVIDENCES.md#evidences-evid_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2. | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+
+{% raw %}
+
+**References:**
+
+- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_30/EXPECTATIONS-EXPECT_L0_30.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EXPECT_L0_30
+		header: "Car ready to next module: The vehicle shall be finished to module 2"
+		text: |
+		  The vehicle shall be finished to module 2.
+		
+		  **Justification:** Architecture finished with software and hardware ready to next module: AGL, ThreadX, CAN, QT, Camera, Sensors, etc.
+		
+		  **References:** Car ready to ADAS and Machine Learning and OTA module 2.
+		
+		  **Acceptance Criteria:** Car should be completely finalized.
+		
+		  **Verification Method:** Visual, Unity, Functional, Integration tests.
+		level: '1.30'
+		normative: true
+		references:
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_30/ASSERTIONS-ASSERT_L0_30.md
+		reviewers:
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
+		review_status: accepted
+		---
+		
+		````
+
+
+- `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_30/EVIDENCES-EVID_L0_30.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EVID_L0_30
+		header: "Car ready to next module: The vehicle shall be finished to module 2 - Evidence"
+		text: |
+		  Evidence demonstrating that the vehicle is completely finalized for module 2, with all required components (AGL, ThreadX, CAN, QT, Camera, Sensors, etc.) integrated and operational.
+		
+		  **Verification Method:** Visual, Unity, Functional, Integration tests.
+		
+		  **Expected Artifacts:**
+		  - Visual inspection photos of the completed vehicle setup
+		  - Unity simulation results showing system integration
+		  - Functional test reports for each component (AGL, ThreadX, CAN, QT, etc.)
+		  - Integration test logs demonstrating inter-component communication
+		  - Hardware readiness documentation
+		  - Software deployment verification
+		level: '1.30'
+		normative: true
+		references:
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		score: 0.0
+		reviewers:
+		  - name: Joao Jesus Silva
+		    email: joao.silva@seame.pt
+		review_status: pending
+		---
+		This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2.
+		
+		**Evidence Status:** Pending - tests and documentation to be completed during finalization phase.
 		
 		````
 
