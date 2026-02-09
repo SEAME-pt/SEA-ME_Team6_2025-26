@@ -1,4 +1,4 @@
-CXX := g++
+ CXX := g++
 CXXFLAGS := -std=c++17 -O2 -Wall -Wextra
 CXXFLAGS += -Iinc -Igenerated
 CXXFLAGS += $(shell pkg-config --cflags grpc++ protobuf 2>/dev/null)

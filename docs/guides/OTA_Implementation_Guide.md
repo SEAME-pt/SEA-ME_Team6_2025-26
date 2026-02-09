@@ -359,6 +359,41 @@ Before moving to RAUC (Phase C), we need to complete Phase B:
 - [ ] Configure automatic OTA polling (timer or webhook)
 - [ ] Test rollback with actual kuksa service
 
+### 5.5 Phase A.2: Current Progress (Real-time Tracking)
+
+> **Last Updated:** 2025-01-08 (Session in progress)
+
+#### A.2 Objective
+
+Replace `hello-ota` proof-of-concept with actual `can_to_kuksa_publisher` binary.
+
+#### A.2 Implementation Steps
+
+| Step | Task | Status | Notes |
+|------|------|--------|-------|
+| A.2.1 | Choose cross-compilation strategy | ✅ Done | QEMU + Docker ARM64 (Section 8) |
+| A.2.2 | Update `.github/workflows/ota.yml` | ✅ Done | ARM64 cross-compile workflow created |
+| A.2.3 | Create tag v1.1.0 | ✅ Done | Tag pushed to trigger workflow |
+| A.2.4 | Verify workflow builds correctly | ⏳ Verifying | **Check GitHub Actions logs** |
+| A.2.5 | Confirm artifacts in Release | ⏳ Waiting | Need `update.tar.gz` + `hash.txt` |
+| A.2.6 | Update `ota-update.sh` on AGL | ⬜ Pending | Change target from hello-ota to kuksa |
+| A.2.7 | Test OTA download on AGL | ⬜ Pending | `sudo /opt/ota/ota-update.sh v1.1.0` |
+| A.2.8 | Verify service restart | ⬜ Pending | Check can-to-kuksa.service |
+| A.2.9 | Test rollback mechanism | ⬜ Pending | Force failure, verify recovery |
+
+#### Current Blockers
+
+- [ ] **Workflow status unknown** — Need to check GitHub Actions for v1.1.0
+
+#### Key Files for A.2
+
+| Location | File | Purpose |
+|----------|------|---------|
+| GitHub | `.github/workflows/ota.yml` | ARM64 cross-compile workflow |
+| AGL | `/opt/ota/ota-update.sh` | Main OTA script (needs update) |
+| AGL | `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` | Target binary location |
+| AGL | `/etc/systemd/system/can-to-kuksa.service` | Service to restart after update |
+
 ---
 
 ## 6. Complete File Inventory
