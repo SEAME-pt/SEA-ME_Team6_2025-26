@@ -237,8 +237,9 @@ We chose a **phased approach**:
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **Phase A** | OTA Manual with systemd | ✅ Complete |
-| **Phase B** | Atomic symlinks + auto-polling | ✅ Complete |
-| **Phase C** | RAUC (A/B rootfs) | 📋 Planned |
+| **Phase B** | SWUpdate / Enhanced rollback | ✅ Complete |
+| **Phase C** | Atomic symlinks + auto-polling | ✅ Complete |
+| **Phase D** | RAUC (A/B rootfs) | 📋 Planned |
 
 ### 4.2 Why This Order?
 
@@ -1328,9 +1329,9 @@ curl -I https://github.com
 
 ---
 
-## 14. Phase B Implementation (2026-02-10)
+## 14. Phase C Implementation (2026-02-10)
 
-Phase B adds production-ready features:
+Phase C adds production-ready features:
 - **Automatic OTA polling** with systemd timer
 - **Atomic symlinks** for zero-downtime updates
 - **Qt Cluster service** (Wayland-based dashboard)
@@ -1461,7 +1462,7 @@ systemctl enable --now cluster.service
 systemctl enable --now ota-check.timer
 ```
 
-### 14.8 Phase B Status
+### 14.8 Phase C Status
 
 | Component | File | Status |
 |-----------|------|--------|
