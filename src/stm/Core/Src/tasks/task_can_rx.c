@@ -11,10 +11,6 @@
 #include "motor_control.h"
 #include "servo.h"
 
-// ---- Existing globals used by legacy code (keep for behavior compatibility) ----
-extern volatile uint8_t  emergency_stop_active;
-extern volatile uint8_t  srf08_speed_limit;
-
 // ---- Timing constants (keep original behavior) ----
 #ifndef CAN_PERIOD_MOTOR_STATUS_MS
 #define CAN_PERIOD_MOTOR_STATUS_MS 100  // adjust if already defined elsewhere
@@ -102,7 +98,10 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, c
 
   if (estop->active)
   {
-    snap->emergency_stop_active = 1;
+    tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+    ctx->state.emergency_stop_active = 1;
+    tx_mutex_put(&ctx->state_mutex);
+
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     s_rx.actual_steering_applied = 0;
@@ -114,8 +113,9 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, c
   }
   else
   {
-    snap->emergency_stop_active = 0;
-
+    tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+    ctx->state.emergency_stop_active = 0;
+    tx_mutex_put(&ctx->state_mutex);
     sys_log(ctx, "\033[1;32m[CAN_RX] Emergency CLEARED by AGL\r\n\033[0m");
   }
 }
@@ -145,7 +145,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   int8_t throttle = cmd->throttle;
 
   // Block forward during emergency stop (reverse OK)
-  if (emergency_stop_active && throttle >= 0)
+  if (snap->emergency_stop_active && throttle >= 0)
   {
     sys_log(ctx, "\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
     Motor_Stop();
@@ -167,8 +167,8 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (throttle > 100)  throttle = 100;
 
   // Apply SRF08 speed limit (only clamps positive throttle)
-  if (throttle > (int8_t)snap.srf08_speed_limit)
-    throttle = (int8_t)snap.srf08_speed_limit;
+  if (throttle > (int8_t)snap->srf08_speed_limit)
+    throttle = (int8_t)snap->srf08_speed_limit;
 
   if ((cmd->flags & CMD_FLAG_BRAKE) || throttle == 0)
   {
@@ -251,7 +251,7 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   int16_t steering = (int16_t)(rx_msg->data[0] | (rx_msg->data[1] << 8));
   int16_t throttle = (int16_t)(rx_msg->data[2] | (rx_msg->data[3] << 8));
 
-  if (snap.emergency_stop_active && throttle >= 0)
+  if (snap->emergency_stop_active && throttle >= 0)
   {
     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
     Motor_Stop();
@@ -264,8 +264,8 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  if (throttle > (int8_t)snap.srf08_speed_limit)
-    throttle = (int8_t)snap.srf08_speed_limit;
+  if (throttle > (int8_t)snap->srf08_speed_limit)
+    throttle = (int8_t)snap->srf08_speed_limit;
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
