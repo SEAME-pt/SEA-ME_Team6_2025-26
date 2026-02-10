@@ -31,21 +31,38 @@
 
 ## 📈 Actual Progress
 
-- ## Sprint 8 points: 0/100
+- ## Sprint 8 points: 13/100
 
-- ## ✅ Undone:
+- ## ✅ Done:
+  - [x] **OTA implementation (13 points)** — Full CI/CD pipeline working
+    - GitHub Actions workflow: build KUKSA + Qt Cluster for ARM
+    - Automatic release creation with `update.tar.gz` + `hash.txt`
+    - OTA script on AGL: download, verify, backup, install, health check
+    - Successfully deployed v1.5.0 to Raspberry Pi 5
+
 - ## ❌ Undone: 
 ---
 
 ## ✅ Outcomes
 
 - **Delivered**:
+  - OTA system fully functional (Phase A.2 complete)
+  - CI/CD pipeline: git push tag → ARM build → GitHub Release → AGL install
+  - Binaries deployed: `can_to_kuksa_publisher` + `HelloQt6Qml`
   
 - **Demos**:
+  - OTA update v1.5.0 successfully installed on AGL (Raspberry Pi 5)
+  - Service `can-to-kuksa.service` running after OTA update
 
 - **Docs updated**:
+  - `docs/guides/OTA_Implementation_Guide.md` — Complete Phase A.2 documentation
+  - `docs/sprints/sprint8.md` — Sprint progress
 
 - **Tests**:
+  - OTA download and hash verification ✅
+  - Binary installation ✅
+  - Service restart ✅
+  - Rollback mechanism (pending manual test)
 
 ---
 
