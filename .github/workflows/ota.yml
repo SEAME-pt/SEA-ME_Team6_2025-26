@@ -11,6 +11,9 @@ on:
         required: true
         default: 'v1.0.3'
 
+permissions:
+  contents: write
+
 jobs:
   build-kuksa:
     name: Build KUKSA Publisher (ARM64)
