@@ -16,3 +16,4 @@ typedef struct {
 } SystemCtx;
 
 SystemCtx* system_ctx(void);
+void system_ctx_init(void);
