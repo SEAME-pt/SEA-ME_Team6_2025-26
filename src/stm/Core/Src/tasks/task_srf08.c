@@ -1,11 +1,10 @@
 #include "./tasks/task_srf08.h"
 #include "srf08.h"
 #include "can_id.h"          // CAN_ID_*
-#include "motor.h"            // Motor_Stop()
-#include "crc.h"              // calculate_crc8()
+#include "motor_control.h"            // Motor_Stop()
+#include "sys_helpers.h"              // calculate_crc8()
 #include "mcp2515.h"          // mcp_send_message()
-#include "lcd1602.h"          // LCD1602_UpdateLine2()
-#include "sys_log.h"          // sys_log(ctx,...)
+
 
 // Keep these extern/global if other code depends on them exactly as globals
 extern volatile uint8_t emergency_stop_active;

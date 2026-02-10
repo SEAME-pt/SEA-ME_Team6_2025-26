@@ -93,6 +93,10 @@ static volatile uint16_t shared_tof_distance = 0;
 //static volatile uint16_t shared_srf08_distance = 0;
 static volatile float shared_speed = 0.0f;
 
+// DAVID - preciso de tirar isto daqui e colocar no system state
+volatile uint8_t emergency_stop_active = 0; // Flag global de emergência (1=ativo, 0=normal)
+volatile uint8_t srf08_speed_limit = 100; // Limite de velocidade imposto pelo SRF08 (0-100%)
+
 /* System state tracking for Heartbeat */
 static volatile SystemState_t current_system_state = SYSTEM_STATE_INIT;
 static volatile DriveMode_t current_drive_mode = DRIVE_MODE_IDLE;
