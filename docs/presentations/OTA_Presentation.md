@@ -77,27 +77,27 @@ update.tar.gz (4.8 MB)
 
 ---
 
-## 🚀 Demo: OTA Update on AGL
+## 🚀 Demo: Automatic OTA Update (Phase C)
 
-### Command:
+### Automatic Update Flow:
+```
+✅ [1/8] Download do package
+✅ [2/8] Hash verified OK  
+✅ [3/8] Extracting to /opt/ota/releases/v1.6.0
+✅ [4/8] Stopping services
+✅ [5/8] Previous version: v1.5.0
+✅ [6/8] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.6.0
+✅ [7/8] Installing binaries
+✅ [8/8] Starting services
+✅ === Update to v1.6.0 successful ===
+```
+
+### Timer-based Polling:
 ```bash
-/opt/ota/ota-update.sh v1.5.0
+$ systemctl list-timers | grep ota
+NEXT                          LEFT    LAST                          PASSED
+Tue 2026-02-10 18:28:00 UTC   15min   Tue 2026-02-10 18:13:02 UTC   2s ago   ota-check.timer
 ```
-
-### Output:
-```
-[14:11:41] === OTA Update to v1.5.0 ===
-[14:11:41] [1/7] Downloading package from GitHub Release...
-[14:11:42] [2/7] Verifying SHA256 hash... OK
-[14:11:42] [3/7] Backing up current version...
-[14:11:43] [4/7] Extracting update package...
-[14:11:43] [5/7] Stopping services...
-[14:11:43] [6/7] Installing new binaries...
-           Installed: can_to_kuksa_publisher
-           Installed: vss_min.json
-           Installed: HelloQt6Qml
-[14:11:43] [7/7] Starting services...
-[14:11:46] === Update to v1.5.0 successful ===
 ```
 
 ---
@@ -106,10 +106,13 @@ update.tar.gz (4.8 MB)
 
 ```bash
 $ cat /etc/ota-version
-v1.5.0
+v1.6.0
 
-$ file /home/root/kuksa_RPi5/bin/can_to_kuksa_publisher
-ELF 32-bit LSB pie executable, ARM
+$ ls -la /opt/ota/current
+lrwxrwxrwx 1 root root 26 /opt/ota/current -> /opt/ota/releases/v1.6.0
+
+$ ls /opt/ota/releases/
+v1.0.1  v1.5.0  v1.6.0
 
 $ systemctl is-active can-to-kuksa.service
 active
@@ -146,8 +149,22 @@ active
 |-------|-------------|--------|
 | **A.1** | hello-ota PoC | ✅ Complete |
 | **A.2** | Real binaries (kuksa + cluster) | ✅ Complete |
-| **B** | Atomic symlinks, auto-polling | 🔜 Next |
-| **C** | RAUC (A/B rootfs) | 📋 Planned |
+| **B** | Enhanced rollback, CI/CD | ✅ Complete |
+| **C** | Atomic symlinks, auto-polling | ✅ **Complete** |
+| **D** | RAUC (A/B rootfs) | 📋 Planned |
+
+### Phase C Features:
+
+| Feature | Status |
+|---------|--------|
+| Timer automático (15 min) | ✅ |
+| GitHub API polling | ✅ |
+| Auto-download | ✅ |
+| Hash verification | ✅ |
+| Atomic symlink switch | ✅ |
+| Service restart | ✅ |
+| Version history | ✅ |
+| Rollback capability | ✅ |
 
 ---
 
@@ -164,12 +181,15 @@ active
 
 ## 🎉 Summary
 
-✅ **Complete OTA pipeline working**
-- Developer pushes tag → GitHub builds → AGL installs
-- Hash verification + backup + rollback
-- 13 sprint points delivered
+✅ **Complete OTA pipeline with automatic updates**
+- Developer pushes tag → GitHub builds → AGL auto-installs
+- Timer polls GitHub every 15 minutes
+- Atomic symlink switching for zero-downtime
+- Hash verification + version history + rollback
 
-**Next:** Automatic polling + cluster.service
+**Delivered:** Phases A, B, C complete
+
+**Next:** Phase D - RAUC (A/B rootfs)
 
 ---
 

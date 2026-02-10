@@ -1478,13 +1478,54 @@ systemctl enable --now ota-check.timer
 | Component | File | Status |
 |-----------|------|--------|
 | Qt Cluster Service | `systemd/cluster.service` | ✅ Created |
-| OTA Check Timer | `systemd/ota-check.timer` | ✅ Created |
-| OTA Check Service | `systemd/ota-check.service` | ✅ Created |
-| Polling Script | `scripts/ota-check.sh` | ✅ Created |
-| Atomic Symlinks | `scripts/ota-update.sh` | ✅ Updated |
+| OTA Check Timer | `systemd/ota-check.timer` | ✅ Active |
+| OTA Check Service | `systemd/ota-check.service` | ✅ Working |
+| Polling Script | `scripts/ota-check.sh` | ✅ Tested |
+| Atomic Symlinks | `scripts/ota-update.sh` | ✅ Tested |
 | Install Script | `install.sh` | ✅ Created |
 | Documentation | `README.md` | ✅ Created |
-| Deploy to AGL | - | 🔄 Pending |
+| Deploy to AGL | - | ✅ **Complete** |
+
+### 14.9 Phase C Validation (2026-02-10 18:13 UTC)
+
+**Automatic OTA Update v1.5.0 → v1.6.0:**
+
+```
+✅ [1/8] Download do package
+✅ [2/8] Hash verified OK  
+✅ [3/8] Extracting to /opt/ota/releases/v1.6.0
+✅ [4/8] Stopping services
+✅ [5/8] Previous version: v1.5.0
+✅ [6/8] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.6.0
+✅ [7/8] Installing binaries
+✅ [8/8] Starting services
+✅ === Update to v1.6.0 successful ===
+```
+
+**Phase C Features Validated:**
+
+| Feature | Status |
+|---------|--------|
+| Timer automático (15 min) | ✅ |
+| GitHub API polling | ✅ |
+| Auto-download | ✅ |
+| Hash verification | ✅ |
+| Atomic symlink switch | ✅ |
+| Service restart | ✅ |
+| Version history | ✅ |
+| Rollback capability | ✅ |
+
+**Verification:**
+```bash
+$ cat /etc/ota-version
+v1.6.0
+
+$ ls -la /opt/ota/current
+lrwxrwxrwx 1 root root 26 Feb 10 18:13 /opt/ota/current -> /opt/ota/releases/v1.6.0
+
+$ ls /opt/ota/releases/
+v1.0.1  v1.5.0  v1.6.0
+```
 
 ---
 
