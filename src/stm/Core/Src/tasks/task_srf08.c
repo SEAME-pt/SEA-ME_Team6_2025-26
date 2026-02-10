@@ -301,6 +301,7 @@ void task_srf08_step(SystemCtx* ctx)
   tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
   ctx->state.srf08_distance_mm = distance_mm;
   ctx->state.srf08_light = light;
-  ctx->state.srf08_speed_limit_pct = srf08_speed_limit;
+  ctx->state.srf08_speed_limit = srf08_speed_limit;
+  ctx->state.emergency_stop_active = emergency_stop_active;
   tx_mutex_put(&ctx->state_mutex);
 }
