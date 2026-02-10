@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================
-# OTA Phase B Installation Script
+# OTA Phase C Installation Script
 # Run this on AGL (Raspberry Pi 5) to install OTA components
 # ============================================================
 
 set -e
 
-echo "=== OTA Phase B Installation ==="
+echo "=== OTA Phase C Installation ==="
 
 # Create directories
 echo "[1/6] Creating directories..."

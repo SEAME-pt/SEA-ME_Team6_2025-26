@@ -5,15 +5,24 @@ Over-the-Air update system for the AGL-based vehicle platform.
 ## Directory Structure
 
 ```
-src/ota/
+src/ota/                    # Source files (GitHub repo)
 ├── install.sh              # Installation script for AGL
 ├── scripts/
-│   ├── ota-update.sh       # Main OTA update script (Phase B)
+│   ├── ota-update.sh       # Main OTA update script (Phase C)
 │   └── ota-check.sh        # Automatic update check script
 └── systemd/
     ├── cluster.service     # Qt Cluster Dashboard service
     ├── ota-check.service   # OTA check oneshot service
     └── ota-check.timer     # Timer for periodic checks
+
+/opt/ota/                   # Installed location on AGL
+├── backup/                 # Previous version backup
+├── current/                # Active version (symlink)
+├── downloads/              # Downloaded packages
+├── logs/                   # OTA operation logs
+├── releases/               # All installed versions
+├── ota-update.sh           # Main OTA script
+└── ota-check.sh            # Polling script
 ```
 
 ## Installation on AGL

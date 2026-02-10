@@ -243,9 +243,10 @@ We chose a **phased approach**:
 
 ### 4.2 Why This Order?
 
-1. **Phase A** (Manual) — Proves the concept works
-2. **Phase B** (Enhanced) — Adds robustness
-3. **Phase C** (RAUC) — Production-grade
+1. **Phase A** (Manual) — Proves the concept works with hello-ota test
+2. **Phase B** (Enhanced) — Real binaries (KUKSA + Qt Cluster) with rollback
+3. **Phase C** (Production) — Atomic symlinks + automatic polling
+4. **Phase D** (RAUC) — A/B rootfs for full system updates
 
 This approach:
 - ✅ Minimizes risk
@@ -341,24 +342,24 @@ RemainAfterExit=true
 WantedBy=multi-user.target
 ```
 
-### 5.4 Phase B: Next Steps
+### 5.4 Phase B: Enhanced Rollback (✅ Complete)
 
-Before moving to RAUC (Phase C), we need to complete Phase B:
+Phase B replaced the hello-ota proof-of-concept with real binaries:
 
 | Task | Description | Status |
 |------|-------------|--------|
-| Install `kuksa` binary | Replace hello-ota with actual kuksa publisher | ⬜ Not Started |
-| Atomic symlinks | Instant switchover without downtime | ⬜ Not Started |
-| HTTP/D-Bus health checks | Verify service is actually working, not just running | ⬜ Not Started |
-| Automatic trigger | Webhook or timer-based OTA polling | ⬜ Not Started |
-| Dual-install directories | Keep two versions for instant rollback | ⬜ Not Started |
+| Install `kuksa` binary | Replace hello-ota with actual kuksa publisher | ✅ Done |
+| Install Qt Cluster | HelloQt6Qml dashboard application | ✅ Done |
+| CI/CD ARM64 cross-compile | GitHub Actions with Diogo's SDK | ✅ Done |
+| Service-level rollback | Automatic rollback on service failure | ✅ Done |
+| Version file tracking | `/etc/ota-version` with version history | ✅ Done |
 
-**Phase B Checklist:**
-- [ ] Build and package `kuksa` binary for OTA
-- [ ] Create symlink-based atomic update script
-- [ ] Implement health check endpoint
-- [ ] Configure automatic OTA polling (timer or webhook)
-- [ ] Test rollback with actual kuksa service
+**Phase B Deliverables:**
+- [x] KUKSA `can_to_kuksa_publisher` (856KB ARM binary)
+- [x] Qt Cluster `HelloQt6Qml` (13.5MB ARM binary)
+- [x] GitHub Actions workflow with 3 parallel jobs
+- [x] `ota-update.sh` script with backup/restore
+- [x] v1.5.0 deployed on AGL
 
 ### 5.5 Phase A.2: Current Progress (Real-time Tracking)
 
@@ -1232,15 +1233,25 @@ cat /var/log/hello-ota.log
 
 ## 11. Future Roadmap
 
-### 11.1 Phase B: Enhanced OTA (SWUpdate)
+### 11.1 Phase B: Enhanced OTA ✅ Complete
 
-- [ ] Symlink-based atomic updates
-- [ ] Dual-install directories
-- [ ] HTTP health checks
-- [ ] D-Bus integration
-- [ ] Webhook triggers
+Real binaries with CI/CD cross-compilation:
+- [x] KUKSA `can_to_kuksa_publisher` binary
+- [x] Qt Cluster `HelloQt6Qml` application
+- [x] GitHub Actions ARM64 workflow
+- [x] Service-level rollback
+- [x] Version tracking in `/etc/ota-version`
 
-### 11.2 Phase C: RAUC Integration
+### 11.2 Phase C: Atomic Symlinks + Auto-polling ✅ Complete
+
+Production-ready OTA with zero-downtime updates:
+- [x] Atomic symlink switching
+- [x] systemd timer for automatic polling
+- [x] GitHub API integration for version checks
+- [x] Version history with improved rollback
+- [x] Qt Cluster service (Wayland)
+
+### 11.3 Phase D: RAUC Integration 📋 Planned
 
 - [ ] Yocto layer integration
 - [ ] A/B rootfs partitions
@@ -1248,7 +1259,7 @@ cat /var/log/hello-ota.log
 - [ ] Signed bundles (.raucb)
 - [ ] Full system updates
 
-### 11.3 FOTA for STM32
+### 11.4 FOTA for STM32 📋 Planned
 
 - [ ] Bootloader with A/B slots
 - [ ] UDS over CAN protocol
@@ -1402,7 +1413,7 @@ The `ota-check.sh` script:
 
 ### 14.4 Atomic Symlinks
 
-Phase B introduces atomic symlink switching for zero-downtime updates:
+Phase C introduces atomic symlink switching for zero-downtime updates:
 
 ```bash
 # Directory structure with versioned releases
@@ -1423,7 +1434,7 @@ Phase B introduces atomic symlink switching for zero-downtime updates:
 
 ### 14.5 Version History
 
-Phase B maintains a version history file:
+Phase C maintains a version history file:
 
 ```bash
 $ cat /opt/ota/version-history.log
