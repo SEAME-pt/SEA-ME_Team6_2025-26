@@ -14,14 +14,8 @@
 extern volatile uint8_t  emergency_stop_active;
 extern volatile uint8_t  srf08_speed_limit;
 
-extern volatile int8_t   actual_throttle_applied;
-extern volatile int8_t   actual_steering_applied;
-extern volatile uint16_t motor_current_estimate_ma;
 extern volatile uint16_t shared_srf08_distance;
 extern volatile uint16_t shared_speed;
-
-extern volatile uint8_t motor_status_counter;
-extern volatile DriveMode_t current_drive_mode;
 
 // ---- Timing constants (keep original behavior) ----
 #ifndef CAN_PERIOD_MOTOR_STATUS_MS
@@ -41,6 +35,12 @@ typedef struct
   uint32_t last_motor_status_tick;
   uint32_t last_debug_tick;
 
+  int8_t   actual_throttle_applied;
+  int8_t   actual_steering_applied;
+  uint16_t motor_current_estimate_ma;
+  uint8_t  motor_status_counter;
+  DriveMode_t current_drive_mode;
+
   uint8_t  cmd_log_counter;
   uint8_t  joystick_log_counter;
 } TaskCanRx;
@@ -56,12 +56,12 @@ static void send_motor_status_if_due(void)
   s_rx.last_motor_status_tick = now;
 
   MotorStatus_t motor_status_frame;
-  motor_status_frame.actual_throttle   = actual_throttle_applied;
-  motor_status_frame.actual_steering   = actual_steering_applied;
-  motor_status_frame.motor_current_ma  = motor_current_estimate_ma;
+  motor_status_frame.actual_throttle   = s_rx.actual_throttle_applied;
+  motor_status_frame.actual_steering   = s_rx.actual_steering_applied;
+  motor_status_frame.motor_current_ma  = s_rx.motor_current_estimate_ma;
   motor_status_frame.driver_temp       = 25; // TODO real
-  motor_status_frame.pwm_duty          = (uint8_t)((abs(actual_throttle_applied) * 255) / 100);
-  motor_status_frame.counter           = motor_status_counter++;
+  motor_status_frame.pwm_duty          = (uint8_t)((abs(s_rx.actual_throttle_applied) * 255) / 100);
+  motor_status_frame.counter           = s_rx.motor_status_counter++;
 
   motor_status_frame.crc = calculate_crc8((uint8_t*)&motor_status_frame,
                                          sizeof(motor_status_frame) - 1);
@@ -106,8 +106,8 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   {
     emergency_stop_active = 1;
     Motor_Stop();
-    actual_throttle_applied = 0;
-    actual_steering_applied = 0;
+    s_rx.actual_throttle_applied = 0;
+    s_rx.actual_steering_applied = 0;
 
     sys_log(ctx,
       "\033[1;31m[CAN_RX] EMERGENCY STOP from AGL! Source=%u Reason=0x%02X Dist=%u mm\r\n\033[0m",
@@ -138,8 +138,8 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   if (cmd->flags & CMD_FLAG_EMERGENCY_STOP)
   {
     Motor_Stop();
-    actual_throttle_applied = 0;
-    actual_steering_applied = 0;
+    s_rx.actual_throttle_applied = 0;
+    s_rx.actual_steering_applied = 0;
     sys_log(ctx, "\033[1;31m[CAN_RX] EMERGENCY STOP!\r\n\033[0m");
     return;
   }
@@ -151,11 +151,11 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   {
     sys_log(ctx, "\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
     Motor_Stop();
-    actual_throttle_applied = 0;
+    s_rx.actual_throttle_applied = 0;
     return;
   }
 
-  current_drive_mode = (DriveMode_t)cmd->mode;
+  s_rx.current_drive_mode = (DriveMode_t)cmd->mode;
 
   int8_t steering = cmd->steering;
   if (steering < -100) steering = -100;
@@ -163,7 +163,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
-  actual_steering_applied = steering;
+  s_rx.actual_steering_applied = steering;
 
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
@@ -175,20 +175,20 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   if ((cmd->flags & CMD_FLAG_BRAKE) || throttle == 0)
   {
     Motor_Stop();
-    actual_throttle_applied = 0;
+    s_rx.actual_throttle_applied = 0;
   }
   else if (throttle > 0)
   {
     Motor_Forward((uint8_t)throttle);
-    actual_throttle_applied = throttle;
+    s_rx.actual_throttle_applied = throttle;
   }
   else
   {
     Motor_Backward((uint8_t)(-throttle));
-    actual_throttle_applied = throttle;
+    s_rx.actual_throttle_applied = throttle;
   }
 
-  motor_current_estimate_ma = (uint16_t)(abs(throttle) * 20); // ~2A @ 100%
+  s_rx.motor_current_estimate_ma = (uint16_t)(abs(throttle) * 20); // ~2A @ 100%
 
   if (++s_rx.cmd_log_counter >= 10)
   {
@@ -257,7 +257,7 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   {
     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
     Motor_Stop();
-    actual_throttle_applied = 0;
+    s_rx.actual_throttle_applied = 0;
     return;
   }
 
@@ -271,22 +271,22 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
-  actual_steering_applied = (int8_t)steering;
+  s_rx.actual_steering_applied = (int8_t)steering;
 
   if (throttle > 10)
   {
     Motor_Forward((uint8_t)throttle);
-    actual_throttle_applied = (int8_t)throttle;
+    s_rx.actual_throttle_applied = (int8_t)throttle;
   }
   else if (throttle < -10)
   {
     Motor_Backward((uint8_t)(-throttle));
-    actual_throttle_applied = (int8_t)throttle;
+    s_rx.actual_throttle_applied = (int8_t)throttle;
   }
   else
   {
     Motor_Stop();
-    actual_throttle_applied = 0;
+    s_rx.actual_throttle_applied = 0;
   }
 
   if (++s_rx.joystick_log_counter >= 10)
