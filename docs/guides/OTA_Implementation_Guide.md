@@ -256,11 +256,11 @@ This approach:
 
 | Component | Type | Method | Status |
 |-----------|------|--------|--------|
-| `kuksa` publisher | SOTA | systemd + script | ✅ |
-| VSS tree (`vss_min.json`) | COTA | File copy | ✅ |
-| CAN services | SOTA | systemd | ✅ |
-| Qt Cluster app | SOTA | File copy | 🔜 |
-| STM32 firmware | FOTA | CAN/UART | 📋 |
+| `kuksa` publisher | SOTA | systemd + script | ✅ Working |
+| Qt Cluster app | SOTA | systemd + script | ✅ Working |
+| VSS tree (`vss_min.json`) | COTA | File copy | ✅ Working |
+| CAN services | SOTA | systemd | ✅ Working |
+| STM32 firmware | FOTA | CAN/UART | 📋 Planned |
 
 ---
 
@@ -361,38 +361,88 @@ Before moving to RAUC (Phase C), we need to complete Phase B:
 
 ### 5.5 Phase A.2: Current Progress (Real-time Tracking)
 
-> **Last Updated:** 2025-01-08 (Session in progress)
+> **Last Updated:** 2026-02-10 ✅ **COMPLETE**
 
 #### A.2 Objective
 
-Replace `hello-ota` proof-of-concept with actual `can_to_kuksa_publisher` binary.
+Replace `hello-ota` proof-of-concept with actual binaries:
+1. **`can_to_kuksa_publisher`** — KUKSA CAN-to-databroker publisher
+2. **`HelloQt6Qml`** — Qt6 Cluster UI application
 
 #### A.2 Implementation Steps
 
 | Step | Task | Status | Notes |
 |------|------|--------|-------|
-| A.2.1 | Choose cross-compilation strategy | ✅ Done | QEMU + Docker ARM64 (Section 8) |
-| A.2.2 | Update `.github/workflows/ota.yml` | ✅ Done | ARM64 cross-compile workflow created |
-| A.2.3 | Create tag v1.1.0 | ✅ Done | Tag pushed to trigger workflow |
-| A.2.4 | Verify workflow builds correctly | ⏳ Verifying | **Check GitHub Actions logs** |
-| A.2.5 | Confirm artifacts in Release | ⏳ Waiting | Need `update.tar.gz` + `hash.txt` |
-| A.2.6 | Update `ota-update.sh` on AGL | ⬜ Pending | Change target from hello-ota to kuksa |
-| A.2.7 | Test OTA download on AGL | ⬜ Pending | `sudo /opt/ota/ota-update.sh v1.1.0` |
-| A.2.8 | Verify service restart | ⬜ Pending | Check can-to-kuksa.service |
+| A.2.1 | Choose cross-compilation strategy | ✅ Done | Diogo's AGL SDK with ARM cross-compiler |
+| A.2.2 | Update `.github/workflows/ota.yml` | ✅ Done | 3-job workflow (kuksa, cluster, release) |
+| A.2.3 | Create workflow tags | ✅ Done | v1.1.0 → v1.5.0 (final working version) |
+| A.2.4a | **Qt Cluster build** | ✅ Done | `HelloQt6Qml` (13.5MB ARM ELF) |
+| A.2.4b | **KUKSA build** | ✅ Done | `can_to_kuksa_publisher` (856KB ARM ELF) |
+| A.2.5 | Confirm artifacts in Release | ✅ Done | `update.tar.gz` + `hash.txt` |
+| A.2.6 | Update `ota-update.sh` on AGL | ✅ Done | New script handles kuksa+cluster |
+| A.2.7 | Test OTA download on AGL | ✅ Done | v1.5.0 installed successfully |
+| A.2.8 | Verify service restart | ✅ Done | `can-to-kuksa.service` active |
 | A.2.9 | Test rollback mechanism | ⬜ Pending | Force failure, verify recovery |
 
-#### Current Blockers
+#### All Blockers Resolved ✅
 
-- [ ] **Workflow status unknown** — Need to check GitHub Actions for v1.1.0
+- [x] ~~Workflow strategy~~ — Resolved: use Diogo's SDK (`souzitaaaa/team6-agl-sdk:latest`)
+- [x] ~~Code sync~~ — Resolved: all branches synchronized (main, development, feature/OTA)
+- [x] ~~Qt Cluster build~~ — Resolved: compiles successfully in CI
+- [x] ~~KUKSA build~~ — Resolved: Diogo added gRPC to SDK image
+- [x] ~~GitHub Release permissions~~ — Resolved: added `permissions: contents: write`
+
+#### Final Workflow (v1.5.0) ✅
+
+```
+┌─────────────────┐   ┌──────────────────┐   ┌───────────────┐
+│   build-kuksa   │   │  build-cluster   │   │    release    │
+│    (✅ SUCCESS)  │   │    (✅ SUCCESS)   │   │  (✅ SUCCESS)  │
+├─────────────────┤   ├──────────────────┤   ├───────────────┤
+│ 856KB ARM ELF   │   │ 13.5MB ARM ELF   │   │ update.tar.gz │
+│ + vss_min.json  │   │ HelloQt6Qml      │   │ + hash.txt    │
+└─────────────────┘   └──────────────────┘   └───────────────┘
+```
+
+#### Installed on AGL (2026-02-10)
+
+```bash
+$ cat /etc/ota-version
+v1.5.0
+
+$ file /home/root/kuksa_RPi5/bin/can_to_kuksa_publisher
+ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (GNU/Linux)
+
+$ file /opt/cluster/HelloQt6Qml  
+ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (GNU/Linux)
+
+$ systemctl is-active can-to-kuksa.service
+active
+```
 
 #### Key Files for A.2
 
 | Location | File | Purpose |
 |----------|------|---------|
-| GitHub | `.github/workflows/ota.yml` | ARM64 cross-compile workflow |
-| AGL | `/opt/ota/ota-update.sh` | Main OTA script (needs update) |
-| AGL | `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` | Target binary location |
-| AGL | `/etc/systemd/system/can-to-kuksa.service` | Service to restart after update |
+| GitHub | `.github/workflows/ota.yml` | Multi-job ARM cross-compile workflow |
+| Docker | `souzitaaaa/team6-agl-sdk:latest` | Diogo's SDK with Qt6 + gRPC + ARM toolchain |
+| AGL | `/opt/ota/ota-update.sh` | Main OTA script (updated) |
+| AGL | `/home/root/kuksa_RPi5/bin/can_to_kuksa_publisher` | KUKSA binary ✅ |
+| AGL | `/home/root/kuksa_RPi5/vss_min.json` | VSS config ✅ |
+| AGL | `/opt/cluster/HelloQt6Qml` | Qt Cluster binary ✅ |
+| AGL | `/etc/systemd/system/can-to-kuksa.service` | KUKSA service ✅ |
+
+#### OTA Package Contents (v1.5.0)
+
+```
+update.tar.gz
+├── kuksa/
+│   ├── bin/
+│   │   └── can_to_kuksa_publisher   # 856KB ARM binary
+│   └── vss_min.json                 # VSS tree config
+└── cluster/
+    └── HelloQt6Qml                  # 13.5MB ARM binary
+```
 
 ---
 
