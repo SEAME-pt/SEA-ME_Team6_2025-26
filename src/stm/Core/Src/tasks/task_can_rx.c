@@ -1,8 +1,9 @@
-#include "task_can_rx.h"
+#include "./tasks/task_can_rx.h"
 
 #include <stdio.h>
 #include <stdlib.h>   // abs
-#include "main.h"     // GPIOF, hi2c1, htim1, HAL_GetTick, HAL_GPIO_WritePin
+#include "i2c.h"     // GPIOF, hi2c1, htim1, HAL_GetTick, HAL_GPIO_WritePin
+#include "tim.h"
 #include "sys_helpers.h"  // sys_log
 #include "can_id.h"      // CAN_ID_*
 #include "can_tx.h"      // mcp_send_message()
@@ -13,9 +14,6 @@
 // ---- Existing globals used by legacy code (keep for behavior compatibility) ----
 extern volatile uint8_t  emergency_stop_active;
 extern volatile uint8_t  srf08_speed_limit;
-
-extern volatile uint16_t shared_srf08_distance;
-extern volatile uint16_t shared_speed;
 
 // ---- Timing constants (keep original behavior) ----
 #ifndef CAN_PERIOD_MOTOR_STATUS_MS
@@ -89,7 +87,7 @@ static void clear_mcp_flags_if_due(void)
     MCP2515_WriteRegister(REG_EFLG, 0x00);
 }
 
-static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < sizeof(EmergencyStop_t))
     return;
@@ -104,7 +102,7 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg)
 
   if (estop->active)
   {
-    emergency_stop_active = 1;
+    snap->emergency_stop_active = 1;
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     s_rx.actual_steering_applied = 0;
@@ -116,13 +114,13 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   }
   else
   {
-    emergency_stop_active = 0;
+    snap->emergency_stop_active = 0;
 
     sys_log(ctx, "\033[1;32m[CAN_RX] Emergency CLEARED by AGL\r\n\033[0m");
   }
 }
 
-static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < sizeof(MotorCmd_t))
     return;
@@ -169,8 +167,8 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   if (throttle > 100)  throttle = 100;
 
   // Apply SRF08 speed limit (only clamps positive throttle)
-  if (throttle > (int8_t)srf08_speed_limit)
-    throttle = (int8_t)srf08_speed_limit;
+  if (throttle > (int8_t)snap.srf08_speed_limit)
+    throttle = (int8_t)snap.srf08_speed_limit;
 
   if ((cmd->flags & CMD_FLAG_BRAKE) || throttle == 0)
   {
@@ -200,12 +198,12 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   }
 }
 
-static void handle_config_cmd(SystemCtx* ctx)
+static void handle_config_cmd(SystemCtx* ctx, const VehicleState* snap)
 {
   sys_log(ctx, "\033[1;33m[CAN_RX] ConfigCmd recebido (não implementado)\r\n\033[0m");
 }
 
-static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < sizeof(Heartbeat_t))
     return;
@@ -226,7 +224,7 @@ static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   // TODO watchdog timeout logic
 }
 
-static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < 1)
     return;
@@ -245,7 +243,7 @@ static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   }
 }
 
-static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < 4)
     return;
@@ -253,7 +251,7 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   int16_t steering = (int16_t)(rx_msg->data[0] | (rx_msg->data[1] << 8));
   int16_t throttle = (int16_t)(rx_msg->data[2] | (rx_msg->data[3] << 8));
 
-  if (emergency_stop_active && throttle >= 0)
+  if (snap.emergency_stop_active && throttle >= 0)
   {
     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
     Motor_Stop();
@@ -266,8 +264,8 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  if (throttle > (int8_t)srf08_speed_limit)
-    throttle = (int8_t)srf08_speed_limit;
+  if (throttle > (int8_t)snap.srf08_speed_limit)
+    throttle = (int8_t)snap.srf08_speed_limit;
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
@@ -299,16 +297,16 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg)
   }
 }
 
-static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   switch (rx_msg->id)
   {
-    case CAN_ID_EMERGENCY_STOP: handle_emergency_stop(ctx, rx_msg); break;
-    case CAN_ID_MOTOR_CMD:      handle_motor_cmd(ctx, rx_msg);      break;
-    case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx);            break;
-    case CAN_ID_HEARTBEAT_AGL:  handle_heartbeat_agl(ctx, rx_msg);  break;
-    case CAN_ID_CMD_RELAY:      handle_relay_cmd(ctx, rx_msg);      break;
-    case CAN_ID_JOYSTICK:       handle_joystick(ctx, rx_msg);       break;
+    case CAN_ID_EMERGENCY_STOP: handle_emergency_stop(ctx, rx_msg, snap); break;
+    case CAN_ID_MOTOR_CMD:      handle_motor_cmd(ctx, rx_msg, snap);      break;
+    case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx, snap);            break;
+    case CAN_ID_HEARTBEAT_AGL:  handle_heartbeat_agl(ctx, rx_msg, snap);  break;
+    case CAN_ID_CMD_RELAY:      handle_relay_cmd(ctx, rx_msg, snap);      break;
+    case CAN_ID_JOYSTICK:       handle_joystick(ctx, rx_msg, snap);       break;
 
     default:
       sys_log(ctx, "\033[1;36m[CAN_RX] ID desconhecido: 0x%03lX\r\n\033[0m", rx_msg->id);
@@ -350,6 +348,13 @@ void task_can_rx_step(SystemCtx* ctx)
   send_motor_status_if_due();
   clear_mcp_flags_if_due();
 
+  //get the latest state snapshot for decision making
+  VehicleState snap;
+
+  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+  snap = ctx->state;
+  tx_mutex_put(&ctx->state_mutex);
+
   // RX drain with bounded work
   CAN_Message_t rx_msg;
   uint32_t processed = 0;
@@ -362,7 +367,7 @@ void task_can_rx_step(SystemCtx* ctx)
 
     if (MCP2515_ReadMessage(&rx_msg))
     {
-      process_one_rx(ctx, &rx_msg);
+      process_one_rx(ctx, &rx_msg, &snap);
       processed++;
     }
     else
