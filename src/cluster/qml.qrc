@@ -45,7 +45,10 @@
         <file>assets/icons/flash.svg</file>
         <file>assets/icons/flash-warning.svg</file>
         <file>assets/icons/flash-danger.svg</file>
-        
+        <file>assets/icons/danger.svg</file>
+        <file>assets/icons/danger-warning.svg</file>
+        <file>assets/icons/danger-danger.svg</file>
+
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>
         <file>assets/images/critical-techworks-logo.png</file>

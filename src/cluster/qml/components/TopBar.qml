@@ -16,7 +16,7 @@ Item {
 
     Rectangle {
         id: base
-        width: parent.width / 2
+        width: parent.width
         height: 32
         anchors.horizontalCenter: parent.horizontalCenter
         color: BaseTheme.blackLight

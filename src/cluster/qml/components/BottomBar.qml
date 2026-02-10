@@ -6,76 +6,61 @@ import Cluster.Backend 1.0
 
 Item {
     id: bottomBar
-    Layout.preferredHeight: 40
+    Layout.preferredHeight: 48
     Layout.fillWidth: true
     Layout.margins: 0
 
-    TimeProvider {
-        id: clock
-    }
+    TimeProvider { id: clock }
 
-    Rectangle {
-        id: base
-        width: parent.width / 2
-        height: 32
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        color: BaseTheme.blackLight
+    RowLayout {
+        id: row
+        anchors.fill: parent
+        spacing: 0
 
-        RowLayout {
-            id: row
-            anchors.fill: parent
-            spacing: 12
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/critical-techworks-logo.png"
-                    sourceSize.width: 22
-                    sourceSize.height: 22
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
-                }
+            Text {
+                text: "67 Km"
+                font.pixelSize: 12
+                color: "white"
+                anchors.centerIn: parent
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/seame-logo.png"
-                    sourceSize.width: 16
-                    sourceSize.height: 16
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
-                }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Text {
+                text: clock.currTime
+                font.pixelSize: 14
+                color: "white"
+                anchors.centerIn: parent
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            RowLayout {
+                anchors.centerIn: parent
+                spacing: 8
+
                 Image {
-                    source: "qrc:/assets/images/eclipse-fundation-logo.png"
-                    sourceSize.width: 16
-                    sourceSize.height: 16
-                    anchors.centerIn: parent
+                    source: "qrc:/assets/icons/danger.svg"
                     fillMode: Image.PreserveAspectFit
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    opacity: 0.1
                 }
-            }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/brisa-logo.png"
-                    sourceSize.width: 22
-                    sourceSize.height: 22
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+                Text {
+                    text: "67 C"
+                    font.pixelSize: 12
+                    color: "white"
                 }
             }
         }
