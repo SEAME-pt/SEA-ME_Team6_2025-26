@@ -9,7 +9,7 @@ void task_speed_init(SystemCtx* ctx)
     sys_log(ctx, "\r\n[Speed] Thread iniciada!\r\n");
 
     /* Initialize speedometer once */
-    Speedometer_Init();
+    Speedometer_Init(ctx);
 }
 
 void task_speed_step(SystemCtx* ctx)

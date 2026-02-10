@@ -35,7 +35,7 @@ void task_heartbeat_init(SystemCtx* ctx)
     tx_thread_sleep(10);
 
     /* Init MCP2515 once */
-    mcp_init();
+    mcp_init(ctx);
     sys_log(ctx, "[HeartBeat] MCP2515 inicializado\r\n");
 
     tx_mutex_get(&ctx->sys_mutex, TX_WAIT_FOREVER);

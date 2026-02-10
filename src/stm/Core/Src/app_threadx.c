@@ -71,7 +71,7 @@ static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
 static uint8_t battery_thread_stack[1024];
 
 /* Mutex for printf protection */
-TX_MUTEX printf_mutex;
+//TX_MUTEX printf_mutex;
 
 /* VL53L5CX Configuration Structure (simples) */
 extern VL53L5CX_Configuration Dev;
@@ -141,11 +141,13 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
   /* USER CODE BEGIN App_ThreadX_Init */
 
+  system_ctx_init();
+
   /* Create mutex for printf protection */
-  if (tx_mutex_create(&printf_mutex, "Printf Mutex", TX_NO_INHERIT) != TX_SUCCESS)
-  {
-    ret = TX_MUTEX_ERROR;
-  }
+  //if (tx_mutex_create(&printf_mutex, "Printf Mutex", TX_NO_INHERIT) != TX_SUCCESS)
+  //{
+  //  ret = TX_MUTEX_ERROR;
+  //}
 
   /* Create HeartBeat thread */
   if (tx_thread_create(&heartbeat_thread,
