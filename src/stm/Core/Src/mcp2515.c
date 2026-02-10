@@ -100,25 +100,25 @@ void mcp_init(SystemCtx* ctx)
 {
   uint8_t test_val;
 
-  sys_log(ctx, "[MCP2515] Iniciando...\r\n");
+  sys_log(ctx, "[MCP2515] Iniciando...");
 
   MCP2515_Reset();
   tx_thread_sleep(10);
 
   test_val = MCP2515_ReadRegister(REG_CANSTAT);
-  sys_log(ctx, "[MCP2515] CANSTAT após reset: 0x%02X (esperado: 0x80)\r\n", test_val);
+  sys_log(ctx, "[MCP2515] CANSTAT após reset: 0x%02X (esperado: 0x80)", test_val);
 
   MCP2515_WriteRegister(REG_CANCTRL, 0x80);
   tx_thread_sleep(5);
 
   test_val = MCP2515_ReadRegister(REG_CANCTRL);
-  sys_log(ctx, "[MCP2515] CANCTRL após config: 0x%02X (esperado: 0x87)\r\n", test_val);
+  sys_log(ctx, "[MCP2515] CANCTRL após config: 0x%02X (esperado: 0x87)", test_val);
 
   MCP2515_WriteRegister(REG_CNF1, 0x00);
   MCP2515_WriteRegister(REG_CNF2, 0x90);
   MCP2515_WriteRegister(REG_CNF3, 0x02);
 
-  sys_log(ctx, "[MCP2515] Bitrate 500 kbps configurado\r\n");
+  sys_log(ctx, "[MCP2515] Bitrate 500 kbps configurado");
 
   MCP2515_WriteRegister(0x60, 0x60);
   MCP2515_WriteRegister(0x70, 0x60);
@@ -135,15 +135,15 @@ void mcp_init(SystemCtx* ctx)
   tx_thread_sleep(5);
 
   test_val = MCP2515_ReadRegister(REG_CANCTRL);
-  sys_log(ctx, "[MCP2515] CANCTRL em normal mode: 0x%02X (esperado: 0x00 ou 0x07)\r\n", test_val);
+  sys_log(ctx, "[MCP2515] CANCTRL em normal mode: 0x%02X (esperado: 0x00 ou 0x07)", test_val);
 
   test_val = MCP2515_ReadRegister(REG_CANSTAT);
-  sys_log(ctx, "[MCP2515] CANSTAT em normal mode: 0x%02X\r\n", test_val);
+  sys_log(ctx, "[MCP2515] CANSTAT em normal mode: 0x%02X", test_val);
 
   if ((test_val & 0xE0) == 0x00)
-    sys_log(ctx, "[MCP2515] ✓ Inicialização OK - Modo Normal Ativo!\r\n");
+    sys_log(ctx, "[MCP2515] ✓ Inicialização OK - Modo Normal Ativo!");
   else
-    sys_log(ctx, "[MCP2515] ✗ ERRO: MCP2515 não entrou em modo normal!\r\n");
+    sys_log(ctx, "[MCP2515] ✗ ERRO: MCP2515 não entrou em modo normal!");
 }
 
 

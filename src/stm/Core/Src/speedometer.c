@@ -30,7 +30,7 @@ void Speedometer_Init(SystemCtx* ctx)
     estado_anterior = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
     last_calculation_time = HAL_GetTick();
 
-    sys_log(ctx, "[Speedometer] Inicializado - Encoder: %d furos, Roda: %.2f mm\r\n",
+    sys_log(ctx, "[Speedometer] Inicializado - Encoder: %d furos, Roda: %.2f mm",
            ENCODER_HOLES, WHEEL_DIAMETER * 1000);
 }
 

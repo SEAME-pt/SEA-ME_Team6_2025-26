@@ -90,7 +90,7 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, c
 
   if (!validate_crc8(rx_msg->data, sizeof(EmergencyStop_t)))
   {
-    sys_log(ctx, "\033[1;31m[CAN_RX] EmergencyStop CRC INVÁLIDO!\r\n\033[0m");
+    sys_log(ctx, "\033[1;31m[CAN_RX] EmergencyStop CRC INVÁLIDO!\033[0m");
     return;
   }
 
@@ -107,7 +107,7 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, c
     s_rx.actual_steering_applied = 0;
 
     sys_log(ctx,
-      "\033[1;31m[CAN_RX] EMERGENCY STOP from AGL! Source=%u Reason=0x%02X Dist=%u mm\r\n\033[0m",
+      "\033[1;31m[CAN_RX] EMERGENCY STOP from AGL! Source=%u Reason=0x%02X Dist=%u mm\033[0m",
       estop->source, estop->reason, estop->distance_mm
     );
   }
@@ -116,7 +116,7 @@ static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, c
     tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
     ctx->state.emergency_stop_active = 0;
     tx_mutex_put(&ctx->state_mutex);
-    sys_log(ctx, "\033[1;32m[CAN_RX] Emergency CLEARED by AGL\r\n\033[0m");
+    sys_log(ctx, "\033[1;32m[CAN_RX] Emergency CLEARED by AGL\033[0m");
   }
 }
 
@@ -127,7 +127,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
 
   if (!validate_crc8(rx_msg->data, sizeof(MotorCmd_t)))
   {
-    sys_log(ctx, "\033[1;31m[CAN_RX] MotorCmd CRC INVÁLIDO!\r\n\033[0m");
+    sys_log(ctx, "\033[1;31m[CAN_RX] MotorCmd CRC INVÁLIDO!\033[0m");
     return;
   }
 
@@ -138,7 +138,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     s_rx.actual_steering_applied = 0;
-    sys_log(ctx, "\033[1;31m[CAN_RX] EMERGENCY STOP!\r\n\033[0m");
+    sys_log(ctx, "\033[1;31m[CAN_RX] EMERGENCY STOP!\033[0m");
     return;
   }
 
@@ -147,7 +147,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   // Block forward during emergency stop (reverse OK)
   if (snap->emergency_stop_active && throttle >= 0)
   {
-    sys_log(ctx, "\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
+    sys_log(ctx, "\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\033[0m");
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     return;
@@ -192,7 +192,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   {
     s_rx.cmd_log_counter = 0;
     sys_log(ctx,
-      "\033[1;32m[CAN_RX] MotorCmd: T=%d S=%d Mode=%u Flags=0x%02X\r\n\033[0m",
+      "\033[1;32m[CAN_RX] MotorCmd: T=%d S=%d Mode=%u Flags=0x%02X\033[0m",
       throttle, steering, cmd->mode, cmd->flags
     );
   }
@@ -200,7 +200,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
 
 static void handle_config_cmd(SystemCtx* ctx, const VehicleState* snap)
 {
-  sys_log(ctx, "\033[1;33m[CAN_RX] ConfigCmd recebido (não implementado)\r\n\033[0m");
+  sys_log(ctx, "\033[1;33m[CAN_RX] ConfigCmd recebido (não implementado)\033[0m");
 }
 
 static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
@@ -210,14 +210,14 @@ static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, co
 
   if (!validate_crc8(rx_msg->data, sizeof(Heartbeat_t)))
   {
-    sys_log(ctx, "\033[1;31m[CAN_RX] Heartbeat AGL CRC INVÁLIDO!\r\n\033[0m");
+    sys_log(ctx, "\033[1;31m[CAN_RX] Heartbeat AGL CRC INVÁLIDO!\033[0m");
     return;
   }
 
   const Heartbeat_t* hb = (const Heartbeat_t*)rx_msg->data;
 
   sys_log(ctx,
-    "\033[1;32m[CAN_RX] Heartbeat AGL: State=%u Uptime=%lu ms Errors=0x%02X\r\n\033[0m",
+    "\033[1;32m[CAN_RX] Heartbeat AGL: State=%u Uptime=%lu ms Errors=0x%02X\033[0m",
     hb->state, hb->uptime_ms, hb->errors
   );
 
@@ -234,12 +234,12 @@ static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (relay_state == 1)
   {
     HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_SET);
-    sys_log(ctx, "\033[1;32m[CAN_RX] RELAY ON\r\n\033[0m");
+    sys_log(ctx, "\033[1;32m[CAN_RX] RELAY ON\033[0m");
   }
   else
   {
     HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_RESET);
-    sys_log(ctx, "\033[1;31m[CAN_RX] RELAY OFF\r\n\033[0m");
+    sys_log(ctx, "\033[1;31m[CAN_RX] RELAY OFF\033[0m");
   }
 }
 
@@ -253,7 +253,7 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
 
   if (snap->emergency_stop_active && throttle >= 0)
   {
-    sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\r\n\033[0m");
+    sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency! (Reverse OK)\033[0m");
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     return;
@@ -291,7 +291,7 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   {
     s_rx.joystick_log_counter = 0;
     sys_log(ctx,
-      "\033[1;34m[CAN_RX] Joystick: S=%d (%u°) T=%d\r\n\033[0m",
+      "\033[1;34m[CAN_RX] Joystick: S=%d (%u°) T=%d\033[0m",
       (int)steering, (unsigned)servo_angle, (int)throttle
     );
   }
@@ -309,7 +309,7 @@ static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg, const Ve
     case CAN_ID_JOYSTICK:       handle_joystick(ctx, rx_msg, snap);       break;
 
     default:
-      sys_log(ctx, "\033[1;36m[CAN_RX] ID desconhecido: 0x%03lX\r\n\033[0m", rx_msg->id);
+      sys_log(ctx, "\033[1;36m[CAN_RX] ID desconhecido: 0x%03lX\033[0m", rx_msg->id);
       break;
   }
 }
@@ -323,23 +323,23 @@ void task_can_rx_init(SystemCtx* ctx)
   // Safe relay init
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_RESET);
 
-  sys_log(ctx, "\033[1;36m\r\n[CAN_RX] Thread iniciada - Protocolo CAN atualizado!\r\n\033[0m");
+  sys_log(ctx, "\033[1;36m[CAN_RX] Thread iniciada - Protocolo CAN atualizado!\033[0m");
 
   s_rx.motor_init_status = Motor_Init(&hi2c1);
   if (s_rx.motor_init_status == HAL_OK)
-    sys_log(ctx, "\033[1;32m[CAN_RX] Motor Driver TB6612FNG inicializado!\r\n\033[0m");
+    sys_log(ctx, "\033[1;32m[CAN_RX] Motor Driver TB6612FNG inicializado!\033[0m");
   else
-    sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Motor Driver! Status: %d\r\n\033[0m",
+    sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Motor Driver! Status: %d\033[0m",
             s_rx.motor_init_status);
 
   s_rx.servo_init_status = Servo_Init(&htim1, TIM_CHANNEL_1);
   if (s_rx.servo_init_status == HAL_OK)
-    sys_log(ctx, "\033[1;32m[CAN_RX] Servo MG996R inicializado (PA8/TIM1_CH1)!\r\n\033[0m");
+    sys_log(ctx, "\033[1;32m[CAN_RX] Servo MG996R inicializado (PA8/TIM1_CH1)!\033[0m");
   else
-    sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Servo! Status: %d\r\n\033[0m",
+    sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Servo! Status: %d\033[0m",
             s_rx.servo_init_status);
 
-  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x201, 0x500, 0x700, 0x801)...\r\n\033[0m");
+  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x201, 0x500, 0x700, 0x801)...\033[0m");
 }
 
 void task_can_rx_step(SystemCtx* ctx)

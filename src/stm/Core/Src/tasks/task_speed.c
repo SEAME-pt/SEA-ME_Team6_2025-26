@@ -6,7 +6,7 @@ static uint8_t  s_wheel_direction = 0; // 0=forward, 1=reverse
 
 void task_speed_init(SystemCtx* ctx)
 {
-    sys_log(ctx, "\r\n[Speed] Thread iniciada!\r\n");
+    sys_log(ctx, "[Speed] Thread iniciada!");
 
     /* Initialize speedometer once */
     Speedometer_Init(ctx);

@@ -29,14 +29,14 @@ void task_heartbeat_init(SystemCtx* ctx)
 {
     (void)ctx;
 
-    sys_log(ctx, "\r\n[HeartBeat] Thread iniciada!\r\n");
+    sys_log(ctx, "[HeartBeat] Thread iniciada!");
 
     /* Small settle time before SPI/CAN init */
     tx_thread_sleep(10);
 
     /* Init MCP2515 once */
     mcp_init(ctx);
-    sys_log(ctx, "[HeartBeat] MCP2515 inicializado\r\n");
+    sys_log(ctx, "[HeartBeat] MCP2515 inicializado");
 
     tx_mutex_get(&ctx->sys_mutex, TX_WAIT_FOREVER);
     ctx->system_state = SYSTEM_STATE_READY;
@@ -76,7 +76,7 @@ void task_heartbeat_step(SystemCtx* ctx)
     HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
 
     sys_log(ctx,
-        "[HeartBeat] State=%u | Uptime=%lu ms | Errors=0x%02X | Mode=%u | CRC=0x%02X\r\n",
+        "[HeartBeat] State=%u | Uptime=%lu ms | Errors=0x%02X | Mode=%u | CRC=0x%02X",
         hb_frame.state,
         (unsigned long)hb_frame.uptime_ms,
         hb_frame.errors,

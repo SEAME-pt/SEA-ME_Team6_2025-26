@@ -21,12 +21,12 @@ static EnvTaskCtx s_env;
  * ------------------------------------------------------------ */
 void task_environment_init(SystemCtx* ctx)
 {
-    sys_log(ctx, "\r\n[Environment] Thread iniciada!\r\n");
+    sys_log(ctx, "[Environment] Thread iniciada!");
 
     /* I2C scan - debug only */
     #define ENABLE_I2C_SCAN 0
     #if ENABLE_I2C_SCAN
-    sys_log(ctx, "[Environment] I2C2 scan...\r\n");
+    sys_log(ctx, "[Environment] I2C2 scan...");
     I2C_Scan(&hi2c2, "I2C2");
     #endif
 
@@ -37,11 +37,11 @@ void task_environment_init(SystemCtx* ctx)
 
     /* Report only errors */
     if (s_env.status_lps != HAL_OK)
-        sys_log(ctx, "[Environment] LPS22HH ERRO=%d\r\n", s_env.status_lps);
+        sys_log(ctx, "[Environment] LPS22HH ERRO=%d", s_env.status_lps);
     if (s_env.status_hts != HAL_OK)
-        sys_log(ctx, "[Environment] HTS221 ERRO=%d\r\n", s_env.status_hts);
+        sys_log(ctx, "[Environment] HTS221 ERRO=%d", s_env.status_hts);
     if (s_env.status_veml != HAL_OK)
-        sys_log(ctx, "[Environment] VEML6030 ERRO=%d\r\n", s_env.status_veml);
+        sys_log(ctx, "[Environment] VEML6030 ERRO=%d", s_env.status_veml);
 }
 
 /* ------------------------------------------------------------
@@ -92,7 +92,7 @@ void task_environment_step(SystemCtx* ctx)
     HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
 
     sys_log(ctx,
-        "[Environment] Enviado: %.2f°C | %.2f hPa | %.2f%% | %u lux\r\n",
+        "[Environment] Enviado: %.2f°C | %.2f hPa | %.2f%% | %u lux",
         s_env.temperature, s_env.pressure, s_env.humidity, s_env.ambient_light
     );
 }

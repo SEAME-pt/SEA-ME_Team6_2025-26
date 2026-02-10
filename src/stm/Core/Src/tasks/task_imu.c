@@ -28,21 +28,21 @@ static int16_t clamp_i16(int32_t v)
 
 void task_imu_init(SystemCtx* ctx)
 {
-    sys_log(ctx, "\r\n[IMU] Thread iniciada!\r\n");
+    sys_log(ctx, "[IMU] Thread iniciada!");
 
     /* Init ISM330DHCX (accel+gyro) */
     s_imu.init_ism = ISM330DHCX_Init();
     if (s_imu.init_ism == HAL_OK)
-        sys_log(ctx, "[IMU] ISM330DHCX inicializado com sucesso!\r\n");
+        sys_log(ctx, "[IMU] ISM330DHCX inicializado com sucesso!");
     else
-        sys_log(ctx, "[IMU] ERRO ao inicializar ISM330DHCX! Status: %d\r\n", s_imu.init_ism);
+        sys_log(ctx, "[IMU] ERRO ao inicializar ISM330DHCX! Status: %d", s_imu.init_ism);
 
     /* Init IIS2MDC (mag) */
     s_imu.init_iis = IIS2MDC_Init();
     if (s_imu.init_iis == HAL_OK)
-        sys_log(ctx, "[IMU] IIS2MDC (Magnetometro) inicializado com sucesso!\r\n");
+        sys_log(ctx, "[IMU] IIS2MDC (Magnetometro) inicializado com sucesso!");
     else
-        sys_log(ctx, "[IMU] ERRO ao inicializar IIS2MDC! Status: %d\r\n", s_imu.init_iis);
+        sys_log(ctx, "[IMU] ERRO ao inicializar IIS2MDC! Status: %d", s_imu.init_iis);
 }
 
 void task_imu_step(SystemCtx* ctx)
@@ -126,7 +126,7 @@ void task_imu_step(SystemCtx* ctx)
     /* log only when we have a full set */
     if (st_accel == HAL_OK && st_gyro == HAL_OK && st_mag == HAL_OK) {
         sys_log(ctx,
-            "[IMU] Accel(%.2f, %.2f, %.2f)g | Gyro(%.1f, %.1f, %.1f)dps | Mag(%.0f, %.0f, %.0f)mG\r\n",
+            "[IMU] Accel(%.2f, %.2f, %.2f)g | Gyro(%.1f, %.1f, %.1f)dps | Mag(%.0f, %.0f, %.0f)mG",
             s_imu.accel.x, s_imu.accel.y, s_imu.accel.z,
             s_imu.gyro.x,  s_imu.gyro.y,  s_imu.gyro.z,
             s_imu.mag.x,   s_imu.mag.y,   s_imu.mag.z

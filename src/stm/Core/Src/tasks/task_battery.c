@@ -39,7 +39,7 @@ static int8_t temp_estimate_from_current_ma(int16_t ma)
 
 void task_battery_init(SystemCtx* ctx)
 {
-    sys_log(ctx, "\r\n[Battery] Thread iniciada!\r\n");
+    sys_log(ctx, "[Battery] Thread iniciada!");
 
     s_batt.voltage_mv = 0;
     s_batt.current_ma = 0;
@@ -53,9 +53,9 @@ void task_battery_init(SystemCtx* ctx)
     if (s_batt.ina_status == HAL_OK) {
         uint16_t mfg_id = INA226_GetManufacturerID();
         uint16_t die_id = INA226_GetDieID();
-        sys_log(ctx, "[Battery] INA226 inicializado! MFG=0x%04X DIE=0x%04X\r\n", mfg_id, die_id);
+        sys_log(ctx, "[Battery] INA226 inicializado! MFG=0x%04X DIE=0x%04X", mfg_id, die_id);
     } else {
-        sys_log(ctx, "[Battery] ERRO ao inicializar INA226! Status: %d\r\n", s_batt.ina_status);
+        sys_log(ctx, "[Battery] ERRO ao inicializar INA226! Status: %d", s_batt.ina_status);
     }
 }
 
@@ -102,11 +102,11 @@ void task_battery_step(SystemCtx* ctx)
 
     /* Log */
     if (s_batt.ina_status == HAL_OK && s_batt.ina.valid) {
-        sys_log(ctx, "[Battery] %.2fV | %.2fA | %.2fW | SOC=%u%% | Status=0x%02X\r\n",
+        sys_log(ctx, "[Battery] %.2fV | %.2fA | %.2fW | SOC=%u%% | Status=0x%02X",
                 s_batt.ina.voltage_V, s_batt.ina.current_A, s_batt.ina.power_W,
                 (unsigned)s_batt.soc, (unsigned)s_batt.status);
     } else {
-        sys_log(ctx, "[Battery] SENSOR ERROR | Status=0x%02X\r\n", (unsigned)s_batt.status);
+        sys_log(ctx, "[Battery] SENSOR ERROR | Status=0x%02X", (unsigned)s_batt.status);
     }
 
     tx_thread_sleep(CAN_PERIOD_BATTERY_MS);

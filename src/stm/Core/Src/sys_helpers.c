@@ -8,16 +8,34 @@
  * Logging
  * ============================================================ */
 
+#include <stdarg.h>
+#include <stdio.h>
+
 void sys_log(SystemCtx* ctx, const char* fmt, ...)
 {
+    char buf[256];
+
     va_list ap;
     va_start(ap, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
 
     tx_mutex_get(&ctx->printf_mutex, TX_WAIT_FOREVER);
-    vprintf(fmt, ap);
-    tx_mutex_put(&ctx->printf_mutex);
 
-    va_end(ap);
+    // Force start of line at column 0
+    printf("\r");
+
+    // Print the formatted message
+    printf("%s", buf);
+
+    // Ensure the line ends cleanly (only if caller didn't already)
+    size_t n = 0;
+    while (buf[n] != '\0') n++;
+
+    if (n < 2 || !(buf[n - 2] == '\r' && buf[n - 1] == '\n'))
+        printf("\r\n");
+
+    tx_mutex_put(&ctx->printf_mutex);
 }
 
 /* ============================================================

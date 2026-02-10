@@ -59,7 +59,7 @@ void task_srf08_init(SystemCtx* ctx)
   TaskSRF08 z = {0};
   s_srf = z;
 
-  sys_log(ctx, "\r\n[SRF08] Thread iniciada (PRIORIDADE ALTA - SAFETY CRITICAL)!\r\n");
+  sys_log(ctx, "[SRF08] Thread iniciada (PRIORIDADE ALTA - SAFETY CRITICAL)!");
 
   s_srf.init_status = SRF08_Init(&s_srf.hsrf08, &hi2c1, SRF08_DEFAULT_ADDR);
 
@@ -68,15 +68,15 @@ void task_srf08_init(SystemCtx* ctx)
     uint8_t version = SRF08_GetVersion(&s_srf.hsrf08);
 
     sys_log(ctx,
-      "[SRF08] Sensor OK! Versao: %d | Emergency @ %u mm\r\n"
-      "[SRF08] Configurado: Gain=12 (medio, melhor <200mm), Range=140 (~6m)\r\n"
-      "[SRF08] Sleep fixo 70 ticks (sensor nao suporta polling)\r\n",
+      "[SRF08] Sensor OK! Versao: %d | Emergency @ %u mm"
+      "[SRF08] Configurado: Gain=12 (medio, melhor <200mm), Range=140 (~6m)"
+      "[SRF08] Sleep fixo 70 ticks (sensor nao suporta polling)",
       version, SRF08_EMERGENCY_THRESHOLD_MM
     );
   }
   else
   {
-    sys_log(ctx, "[SRF08] ERRO init! Status: %d\r\n", s_srf.init_status);
+    sys_log(ctx, "[SRF08] ERRO init! Status: %d", s_srf.init_status);
   }
 }
 
@@ -113,7 +113,7 @@ void task_srf08_step(SystemCtx* ctx)
   {
     s_srf.err_log_counter = 0;
     sys_log(ctx,
-      "\033[1;31m[SRF08] ERRO ao enviar comando ranging! Status: %d\033[0m\r\n",
+      "\033[1;31m[SRF08] ERRO ao enviar comando ranging! Status: %d\033[0m",
       ranging_status
     );
   }
@@ -148,7 +148,7 @@ void task_srf08_step(SystemCtx* ctx)
     );
 
     sys_log(ctx,
-      "\033[1;33m[SRF08] WARNING: Timeout! Polls=%u | CMD_REG=0x%02X (esperado 0x00)\033[0m\r\n",
+      "\033[1;33m[SRF08] WARNING: Timeout! Polls=%u | CMD_REG=0x%02X (esperado 0x00)\033[0m",
       poll_attempts, cmd_reg
     );
   }
@@ -167,7 +167,7 @@ void task_srf08_step(SystemCtx* ctx)
 
     if (distance_cm == 0xFFFF)
     {
-      sys_log(ctx, "\033[1;31m[SRF08] ERRO I2C ao ler distancia!\033[0m\r\n");
+      sys_log(ctx, "\033[1;31m[SRF08] ERRO I2C ao ler distancia!\033[0m");
     }
     else
     {
@@ -182,7 +182,7 @@ void task_srf08_step(SystemCtx* ctx)
       if (light == 0 && distance_cm == 0)
         sys_log(ctx, " <- SEM ECO");
 
-      sys_log(ctx, "\033[0m\r\n");
+      sys_log(ctx, "\033[0m");
     }
   }
 
@@ -224,7 +224,7 @@ void task_srf08_step(SystemCtx* ctx)
       mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
 
       sys_log(ctx,
-        "\033[1;31m[SRF08 ESTOP!] %u mm < %u mm (L=%u)\033[0m\r\n",
+        "\033[1;31m[SRF08 ESTOP!] %u mm < %u mm (L=%u)\033[0m",
         distance_mm, SRF08_EMERGENCY_THRESHOLD_MM, light
       );
     }
@@ -248,7 +248,7 @@ void task_srf08_step(SystemCtx* ctx)
       mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
 
       sys_log(ctx,
-        "\033[1;32m[SRF08] RECOVERY! Dist=%u mm L=%u (CLEAR ENVIADO)\033[0m\r\n",
+        "\033[1;32m[SRF08] RECOVERY! Dist=%u mm L=%u (CLEAR ENVIADO)\033[0m",
         distance_mm, light
       );
     }
@@ -290,7 +290,7 @@ void task_srf08_step(SystemCtx* ctx)
 
     if ((s_srf.can_send_counter % 10) == 0)
     {
-      sys_log(ctx, "[SRF08] %u mm | L=%u | State=%u\r\n",
+      sys_log(ctx, "[SRF08] %u mm | L=%u | State=%u",
               distance_mm, light, (unsigned)srf08_emergency_state);
     }
   }
