@@ -237,7 +237,7 @@ We chose a **phased approach**:
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **Phase A** | OTA Manual with systemd | ✅ Complete |
-| **Phase B** | SWUpdate / Enhanced rollback | 🔜 Next |
+| **Phase B** | Atomic symlinks + auto-polling | ✅ Complete |
 | **Phase C** | RAUC (A/B rootfs) | 📋 Planned |
 
 ### 4.2 Why This Order?
@@ -1325,6 +1325,154 @@ curl -I https://github.com
 - ISO 14229 (UDS)
 - ISO 26262 (Functional Safety)
 - UNECE WP.29 (Cybersecurity Regulations)
+
+---
+
+## 14. Phase B Implementation (2026-02-10)
+
+Phase B adds production-ready features:
+- **Automatic OTA polling** with systemd timer
+- **Atomic symlinks** for zero-downtime updates
+- **Qt Cluster service** (Wayland-based dashboard)
+- **Version history** with improved rollback
+
+### 14.1 New File Structure
+
+```
+src/ota/
+├── install.sh              # Installation script for AGL
+├── README.md               # OTA documentation
+├── scripts/
+│   ├── ota-check.sh        # GitHub API polling script
+│   └── ota-update.sh       # v2 with atomic symlinks
+└── systemd/
+    ├── cluster.service     # Qt Cluster Dashboard (Wayland)
+    ├── ota-check.service   # OTA check oneshot
+    └── ota-check.timer     # 15-minute polling timer
+```
+
+### 14.2 Qt Cluster Service
+
+The `cluster.service` runs the Qt6 Dashboard on Wayland:
+
+```ini
+[Unit]
+Description=Qt Cluster Dashboard
+After=weston.service graphical.target
+Wants=weston.service
+
+[Service]
+Type=simple
+User=root
+Environment=XDG_RUNTIME_DIR=/run/user/0
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=QT_QPA_PLATFORM=wayland
+ExecStart=/opt/cluster/current/HelloQt6Qml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
+```
+
+### 14.3 Automatic OTA Polling
+
+The `ota-check.timer` polls GitHub every 15 minutes for new releases:
+
+```ini
+[Unit]
+Description=OTA Update Check Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+RandomizedDelaySec=30
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+The `ota-check.sh` script:
+1. Reads current version from `/etc/ota-version`
+2. Queries GitHub API for latest release
+3. Compares versions
+4. If newer, downloads and runs `ota-update.sh`
+
+### 14.4 Atomic Symlinks
+
+Phase B introduces atomic symlink switching for zero-downtime updates:
+
+```bash
+# Directory structure with versioned releases
+/opt/ota/releases/v1.5.0/
+/opt/ota/releases/v1.6.0/
+/opt/ota/current -> releases/v1.6.0  # Atomic symlink
+
+/opt/cluster/releases/v1.5.0/HelloQt6Qml
+/opt/cluster/releases/v1.6.0/HelloQt6Qml
+/opt/cluster/current -> releases/v1.6.0  # Atomic symlink
+```
+
+**Update Flow:**
+1. Download new version to `/opt/ota/releases/v1.6.0/`
+2. Verify integrity with SHA-256 hash
+3. Atomic symlink switch: `ln -sfn releases/v1.6.0 current`
+4. Reload affected services
+
+### 14.5 Version History
+
+Phase B maintains a version history file:
+
+```bash
+$ cat /opt/ota/version-history.log
+2026-02-10T14:30:00Z v1.5.0 installed
+2026-02-10T16:45:00Z v1.6.0 installed
+```
+
+### 14.6 Improved Rollback
+
+If update fails, rollback uses atomic symlink:
+
+```bash
+# Get previous version
+PREV=$(sed -n '2p' /opt/ota/version-history.log | awk '{print $2}')
+
+# Atomic rollback
+ln -sfn "releases/$PREV" current
+
+# Restart services
+systemctl restart cluster can-to-kuksa
+```
+
+### 14.7 Installation on AGL
+
+```bash
+# On development machine
+scp -r src/ota/* root@10.21.220.191:/tmp/ota-install/
+
+# On AGL (Raspberry Pi 5)
+cd /tmp/ota-install
+chmod +x install.sh
+./install.sh
+
+# Enable services
+systemctl enable --now cluster.service
+systemctl enable --now ota-check.timer
+```
+
+### 14.8 Phase B Status
+
+| Component | File | Status |
+|-----------|------|--------|
+| Qt Cluster Service | `systemd/cluster.service` | ✅ Created |
+| OTA Check Timer | `systemd/ota-check.timer` | ✅ Created |
+| OTA Check Service | `systemd/ota-check.service` | ✅ Created |
+| Polling Script | `scripts/ota-check.sh` | ✅ Created |
+| Atomic Symlinks | `scripts/ota-update.sh` | ✅ Updated |
+| Install Script | `install.sh` | ✅ Created |
+| Documentation | `README.md` | ✅ Created |
+| Deploy to AGL | - | 🔄 Pending |
 
 ---
 
