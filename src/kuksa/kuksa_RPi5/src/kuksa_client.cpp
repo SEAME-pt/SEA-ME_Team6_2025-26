@@ -49,7 +49,7 @@ KuksaClient::~KuksaClient() = default;
 void KuksaClient::publishDouble(const std::string& path, double value)
 {
     grpc::ClientContext ctx;
-    add_auth(ctx, impl_->jwt); // Add JWT for authentication
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt);
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
