@@ -90,7 +90,7 @@ static volatile float shared_voltage = 0.0f;
 static volatile float shared_temperature = 0.0f;
 static volatile float shared_humidity = 0.0f;
 static volatile uint16_t shared_tof_distance = 0;
-static volatile uint16_t shared_srf08_distance = 0;
+//static volatile uint16_t shared_srf08_distance = 0;
 static volatile float shared_speed = 0.0f;
 
 /* System state tracking for Heartbeat */
