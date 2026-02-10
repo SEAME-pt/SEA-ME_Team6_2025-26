@@ -17,13 +17,12 @@ Item {
         anchors.fill: parent
         color: BaseTheme.black
 
-        SpeedGauge {
+        Gauge {
             anchors.centerIn: parent
-            value: wheelSpeedProvider.currWheelSpeed
-            minValue: 0
-            maxValue: 80
-            startAngle: 135
-            endAngle: 270
+            centerValue: wheelSpeedProvider.currWheelSpeed
+            centerMaxValue: 80
+            centerTicks: [0, 10, 20, 30, 40, 50, 60, 70, 80]
+            centerUnit: "RPM"
         }
     }
 }
