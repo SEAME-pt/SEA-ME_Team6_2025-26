@@ -90,11 +90,17 @@ log "[5/8] Previous version: $PREVIOUS_VERSION"
 # -------- ATOMIC SYMLINK SWITCH --------
 log "[6/8] Performing atomic symlink switch..."
 
+# Handle legacy: if current is a directory (not symlink), remove it first
+if [ -d "$CURRENT_LINK" ] && [ ! -L "$CURRENT_LINK" ]; then
+    log "Converting legacy directory to symlink..."
+    rm -rf "$CURRENT_LINK"
+fi
+
 # Create new symlink atomically using rename
 TEMP_LINK="$WORKDIR/current.new"
 rm -f "$TEMP_LINK"
 ln -s "$RELEASE_DIR" "$TEMP_LINK"
-mv -T "$TEMP_LINK" "$CURRENT_LINK" 2>/dev/null || {
+mv -Tf "$TEMP_LINK" "$CURRENT_LINK" 2>/dev/null || {
     # Fallback for systems without mv -T
     rm -f "$CURRENT_LINK"
     ln -s "$RELEASE_DIR" "$CURRENT_LINK"
