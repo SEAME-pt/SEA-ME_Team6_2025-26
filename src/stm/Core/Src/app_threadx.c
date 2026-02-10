@@ -814,125 +814,12 @@ static void Battery_Thread_Entry(ULONG thread_input)
 {
   (void)thread_input;
 
-  HAL_StatusTypeDef ina226_status;
-  INA226_Data_t ina226_data;
+    SystemCtx* ctx = system_ctx();
+    task_battery_init(ctx);
 
-  tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-  printf("\r\n[Battery] Thread iniciada!\r\n");
-  tx_mutex_put(&printf_mutex);
-
-  /* Initialize INA226 Current/Voltage Monitor on I2C1 */
-  ina226_status = INA226_Init(&hi2c1);
-
-  if (ina226_status == HAL_OK) {
-    uint16_t mfg_id = INA226_GetManufacturerID();
-    uint16_t die_id = INA226_GetDieID();
-
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Battery] INA226 inicializado! MFG=0x%04X DIE=0x%04X\r\n", mfg_id, die_id);
-    tx_mutex_put(&printf_mutex);
-  } else {
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Battery] ERRO ao inicializar INA226! Status: %d\r\n", ina226_status);
-    tx_mutex_put(&printf_mutex);
-  }
-
-  /* Variáveis de estado da bateria */
-  uint16_t voltage_mv = 0;
-  int16_t current_ma = 0;
-  uint8_t soc = 100;                // SOC estimado (sem fuel gauge)
-  int8_t temperature = 25;          // Temperatura estimada
-  uint8_t cycles = 0;               // Ciclos de carga
-  uint8_t battery_status = 0;
-
-  /* Para estimativa de SOC baseada em tensão (LiPo 3S = 11.1V nominal) */
-  #define BATTERY_FULL_MV     12600   /* 4.2V × 3 células */
-  #define BATTERY_EMPTY_MV    9900    /* 3.3V × 3 células (cutoff seguro) */
-
-  while (1)
-  {
-    /* === LEITURA REAL DO INA226 === */
-    if (ina226_status == HAL_OK)
-    {
-      HAL_StatusTypeDef read_status = INA226_ReadAll(&ina226_data);
-
-      if (read_status == HAL_OK && ina226_data.valid)
-      {
-        /* Converter para formato da frame CAN */
-        voltage_mv = (uint16_t)(ina226_data.voltage_V * 1000.0f);
-        current_ma = (int16_t)(ina226_data.current_A * 1000.0f);
-
-        /* Atualizar variável partilhada para o LCD */
-        shared_voltage = ina226_data.voltage_V;
-
-        /* Estimativa de SOC baseada na tensão (método simples) */
-        if (voltage_mv >= BATTERY_FULL_MV) {
-          soc = 100;
-        } else if (voltage_mv <= BATTERY_EMPTY_MV) {
-          soc = 0;
-        } else {
-          /* Interpolação linear entre EMPTY e FULL */
-          soc = (uint8_t)(((uint32_t)(voltage_mv - BATTERY_EMPTY_MV) * 100) /
-                          (BATTERY_FULL_MV - BATTERY_EMPTY_MV));
-        }
-
-        /* Estimativa de temperatura (sem sensor dedicado) */
-        /* Aumenta com corrente alta (simplificado) */
-        if (abs(current_ma) > 5000) {
-          temperature = 35;  /* Alta corrente = aquecimento */
-        } else if (abs(current_ma) > 2000) {
-          temperature = 30;
-        } else {
-          temperature = 25;  /* Temperatura ambiente */
-        }
-
-        /* Status flags baseados em medições reais */
-        battery_status = 0;
-        if (voltage_mv < 10500) battery_status |= (1 << 0);  /* Undervoltage warning */
-        if (voltage_mv < BATTERY_EMPTY_MV) battery_status |= ERROR_FLAG_UNDERVOLTAGE;
-        if (voltage_mv > 13000) battery_status |= ERROR_FLAG_OVERVOLTAGE;
-        if (soc < 20) battery_status |= (1 << 2);            /* Low battery */
-        if (abs(current_ma) > 15000) battery_status |= (1 << 4); /* Overcurrent */
-      }
-      else
-      {
-        /* Falha na leitura - marcar status como erro */
-        battery_status = ERROR_FLAG_SENSOR_FAULT;
-      }
+    while (1) {
+        task_battery_step(ctx); /* step sleeps CAN_PERIOD_BATTERY_MS */
     }
-    else
-    {
-      /* INA226 não inicializado - manter valores anteriores com flag de erro */
-      battery_status = ERROR_FLAG_SENSOR_FAULT;
-    }
-
-    /* === CONSTRUIR E ENVIAR BatteryStatus_t (0x421) === */
-    BatteryStatus_t battery_frame;
-
-    battery_frame.voltage_mv = voltage_mv;
-    battery_frame.current_ma = current_ma;
-    battery_frame.soc = soc;
-    battery_frame.temperature = temperature;
-    battery_frame.cycles = cycles;
-    battery_frame.status = battery_status;
-
-    /* Enviar frame (8 bytes) */
-    mcp_send_message(CAN_ID_BATTERY, (uint8_t*)&battery_frame, sizeof(battery_frame));
-
-    /* Log com dados reais */
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    if (ina226_status == HAL_OK && ina226_data.valid) {
-      printf("[Battery] %.2fV | %.2fA | %.2fW | SOC=%u%% | Status=0x%02X\r\n",
-             ina226_data.voltage_V, ina226_data.current_A, ina226_data.power_W,
-             soc, battery_status);
-    } else {
-      printf("[Battery] SENSOR ERROR | Status=0x%02X\r\n", battery_status);
-    }
-    tx_mutex_put(&printf_mutex);
-
-    /* Sleep configurável via CAN_PERIOD_BATTERY_MS (500ms = 2Hz) */
-    tx_thread_sleep(CAN_PERIOD_BATTERY_MS);
-  }
 }
 
 
@@ -966,6 +853,5 @@ void thread_relay_entry(ULONG thread_input)
         }
     }
 }
-
 
 /* USER CODE END 1 */

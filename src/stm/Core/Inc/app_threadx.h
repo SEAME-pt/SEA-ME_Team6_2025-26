@@ -59,6 +59,7 @@ extern "C" {
 #include "tasks/task_imu.h"
 #include "tasks/task_tof.h"
 #include "tasks/task_srf08.h"
+#include "tasks/task_battery.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
