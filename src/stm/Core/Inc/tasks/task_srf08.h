@@ -8,6 +8,7 @@
 #include "motor_control.h"
 #include "emergency_stop.h"
 #include "srf08.h"
+#include "i2c.h"
 
 #include "main.h" 
 

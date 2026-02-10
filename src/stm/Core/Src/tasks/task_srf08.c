@@ -1,4 +1,3 @@
-// ./tasks/task_srf08.c
 #include "./tasks/task_srf08.h"
 
 /* ---------------------------
@@ -247,5 +246,5 @@ void task_srf08_step(SystemCtx* ctx)
     }
 
     /* DELAY ZERO - Loop contínuo para resposta máxima */
-    tx_thread_relinquish();
+    //tx_thread_relinquish();
 }

@@ -4,8 +4,9 @@
 typedef struct {
     uint32_t rpm;
     uint16_t tof_distance_mm;
-    uint16_t srf08_distance_mm
+    uint16_t srf08_distance_mm;
     uint8_t  srf08_light;
+    uint8_t  srf08_valid;
     int16_t  accel_mg[3];      // x,y,z in milli-g
     int16_t  gyro_dps[3];      // x,y,z in 0.1 deg/s
     int16_t  mag_mG[3];        // x,y,z in milli-Gauss
