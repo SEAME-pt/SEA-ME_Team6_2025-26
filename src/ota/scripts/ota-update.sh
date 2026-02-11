@@ -17,8 +17,9 @@ HASH_FILE="$WORKDIR/downloads/hash.txt"
 RELEASES_DIR="$WORKDIR/releases"
 CURRENT_LINK="$WORKDIR/current"
 
-# Target paths (symlinks to current version)
-KUKSA_DIR="/home/root/kuksa_RPi5"
+# Target paths for binaries
+# NOTE: KUKSA service uses /home/kuksa_RPi5/ (without 'root')
+KUKSA_DIR="/home/kuksa_RPi5"
 CLUSTER_DIR="/opt/cluster"
 
 mkdir -p "$WORKDIR/logs" "$WORKDIR/downloads" "$RELEASES_DIR"
