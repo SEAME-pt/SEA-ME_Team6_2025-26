@@ -4,7 +4,7 @@ import urllib.request
 import os
 
 
-class FileReference(BaseReference):
+class TSFLocalFileReference(BaseReference):
     def __init__(self, path: str, **kwargs):
         self._path = path
 

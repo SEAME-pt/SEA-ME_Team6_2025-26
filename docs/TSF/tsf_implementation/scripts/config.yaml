@@ -5,7 +5,7 @@
 # PATHS CONFIGURATION
 # ============================================================================
 paths:
-  repo_root: "/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
+  repo_root: "/home/seame/Desktop/tsf"
   tsf_implementation: "${paths.repo_root}/docs/TSF/tsf_implementation"
   items_dir: "${paths.tsf_implementation}/items"
   scripts_dir: "${paths.tsf_implementation}/scripts"

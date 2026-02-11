@@ -11,7 +11,10 @@ set -e
 # 5. Marks all items as reviewed for SME assessment
 # 6. Runs lint validation
 
-REPO_ROOT="/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
+# Compute repository root relative to this script to avoid hardcoded paths
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# scripts is at: docs/TSF/tsf_implementation/scripts -> go four levels up to reach repo root
+REPO_ROOT="$(cd "$script_dir/../../../.." && pwd)"
 BASE_DIR="$REPO_ROOT/docs/TSF"
 TSF_IMPL="$BASE_DIR/tsf_implementation"
 ITEMS_SOURCE="$TSF_IMPL/items"
@@ -23,6 +26,14 @@ echo "=========================================="
 echo "TSF Trudag Setup - Clean Mode"
 echo "=========================================="
 echo ""
+
+# Detect if 'trudag' CLI is available; if not, skip trudag-dependent steps
+if ! command -v trudag >/dev/null 2>&1; then
+    echo "⚠️  'trudag' command not found in PATH. Steps that require trudag will be skipped."
+    SKIP_TRUDAG=true
+else
+    SKIP_TRUDAG=false
+fi
 
 # Step 0: Clean all generated files (NEVER touch source items/)
 echo "🧹 Step 0: Cleaning all generated files..."
@@ -47,20 +58,24 @@ echo ""
 # Step 2: Initialize DB in tsf_implementation and create symlink in root
 echo "🗄️  Step 2: Initializing trudag DB..."
 cd "$TSF_IMPL"
-trudag init
-echo "✓ DB initialized: $DB_FILE"
+if [ "$SKIP_TRUDAG" = "false" ]; then
+    trudag init
+    echo "✓ DB initialized: $DB_FILE"
+else
+    echo "  ⚠️  Skipping 'trudag init' (trudag not available)"
+fi
 
 # Create symlink in repo root so trudag can find it
 cd "$REPO_ROOT"
-[ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
-ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
-echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
+#[ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
+ln -sf "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
+echo "✓ Created/updated symlink: $DB_SYMLINK -> $DB_FILE"
 
 # Create symlink for .dotstop_extensions in tsf_implementation so trudag finds validators
 cd "$TSF_IMPL"
-[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
-ln -s "../../../.dotstop_extensions" ".dotstop_extensions"
-echo "✓ Created .dotstop_extensions symlink for validators"
+#[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
+ln -sf "../../../.dotstop_extensions" ".dotstop_extensions"
+echo "✓ Created/updated .dotstop_extensions symlink for validators"
 echo ""
 
 # Step 3: Create items in trudag DB
@@ -101,7 +116,13 @@ for category_dir in "$ITEMS_SOURCE"/*; do
         mkdir -p "$target_dir"
         
         # Trudag create-item will create PREFIX-ITEM_ID.md in target_dir
-        trudag manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
+        if [ "$SKIP_TRUDAG" = "false" ]; then
+            trudag manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
+        else
+            # Ensure target dir exists even if trudag is missing so we can copy files
+            mkdir -p "$target_dir"
+            echo "    ⚠️  Skipping trudag create-item for $PREFIX-$item_id (trudag not available)"
+        fi
         
         # Copy our source content to the created file
         target_file="$target_dir/$PREFIX-$item_id.md"
@@ -140,11 +161,11 @@ echo ""
 
 # Fix file reference paths in YAML to point to .trudag_items structure
 echo "🔧 Fixing file reference paths and IDs in .trudag_items..."
-python3 - <<'PYTHON'
+# Use an unquoted heredoc so shell variables like $TSF_IMPL expand inside the embedded Python
+python3 - <<PYTHON
 import re
 from pathlib import Path
-
-trudag_items = Path("/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/.trudag_items")
+trudag_items = Path("$TSF_IMPL/.trudag_items")
 
 fixed_count = 0
 
@@ -234,14 +255,18 @@ PYTHON
 echo ""
 
 # Step 4: Apply logical links from graph.dot (reasoning structure)
-echo "🔗 Step 4: Creating logical links from graph.dot..."
-cd "$REPO_ROOT"
-
-link_count=0
-failed_links=0
-total_lines=$(wc -l < "$GRAPH_DIR/graph.dot")
-echo "  Processing $total_lines lines from graph.dot..."
-
+            if [ "$SKIP_TRUDAG" = "false" ]; then
+                # Suppress trudag noise, mark item and its links as reviewed
+                if trudag manage set-item "$full_id" --links 2>/dev/null; then
+                    echo "    ✓ $full_id"
+                    reviewed=$((reviewed + 1))
+                else
+                    echo "    ✗ $full_id (failed)"
+                    failed_review=$((failed_review + 1))
+                fi
+            else
+                echo "    ⚠️  Skipping mark reviewed for $full_id (trudag not available)"
+            fi
 # Extract links from graph.dot and create them
 # Format in graph.dot: "EXPECT-L0-1" -> "ASSERT-L0-1"
 # Convert to DB format: "EXPECTATIONS-EXPECT_L0_1" -> "ASSERTIONS-ASSERT_L0_1"
@@ -283,7 +308,11 @@ while IFS= read -r line; do
         echo "  Linking: $from -> $to"
         
         # Try to create link, ignore URL validation errors
-        output=$(trudag manage create-link "$from" "$to" 2>&1)
+        if [ "$SKIP_TRUDAG" = "false" ]; then
+            output=$(trudag manage create-link "$from" "$to" 2>&1)
+        else
+            output="trudag not available - skipping create-link"
+        fi
         exit_code=$?
         
         # Check if error is just about URL validation (can be ignored)
@@ -330,12 +359,16 @@ for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
         full_id="$PREFIX-$item_id"
         
         # Suppress trudag noise, mark item and its links as reviewed
-        if trudag manage set-item "$full_id" --links 2>/dev/null; then
-            echo "    ✓ $full_id"
-            reviewed=$((reviewed + 1))
+        if [ "$SKIP_TRUDAG" = "false" ]; then
+            if trudag manage set-item "$full_id" --links 2>/dev/null; then
+                echo "    ✓ $full_id"
+                reviewed=$((reviewed + 1))
+            else
+                echo "    ✗ $full_id (failed)"
+                failed_review=$((failed_review + 1))
+            fi
         else
-            echo "    ✗ $full_id (failed)"
-            failed_review=$((failed_review + 1))
+            echo "    ⚠️  Skipping mark reviewed for $full_id (trudag not available)"
         fi
     done
 done
@@ -347,14 +380,18 @@ echo ""
 echo "🔍 Step 6: Running trudag lint..."
 cd "$REPO_ROOT"
 # Run lint and capture output, filter warnings but show important ones
-lint_output=$(trudag manage lint 2>&1)
-lint_exit=$?
-echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
-if [ $lint_exit -eq 0 ]; then
-    echo "✓ Lint passed!"
+if [ "$SKIP_TRUDAG" = "false" ]; then
+    lint_output=$(trudag manage lint 2>&1)
+    lint_exit=$?
+    echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
+    if [ $lint_exit -eq 0 ]; then
+        echo "✓ Lint passed!"
+    else
+        echo "✗ Lint failed - please review errors above"
+        exit 1
+    fi
 else
-    echo "✗ Lint failed - please review errors above"
-    exit 1
+    echo "  ⚠️  Skipping trudag lint (trudag not available)"
 fi
 echo ""
 
@@ -364,50 +401,59 @@ echo "✅ Setup complete!"
 echo "=========================================="
 echo ""
 
-# Step 7: Run trudag score
+ # Step 7: Run trudag score
 echo "📊 Step 7: Running trudag score..."
-score_output=$(trudag score 2>&1)
-score_exit=$?
+if [ "$SKIP_TRUDAG" = "false" ]; then
+    score_output=$(trudag score 2>&1)
+    score_exit=$?
 
-# Show scores (filter noise but keep score lines)
-echo "$score_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format"
+    # Show scores (filter noise but keep score lines)
+    echo "$score_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format"
 
-if [ $score_exit -eq 0 ]; then
-    # Calculate and show summary
-    total_items=$(echo "$score_output" | grep "=" | wc -l)
-    perfect_score=$(echo "$score_output" | grep "= 1.0" | wc -l)
-    zero_score=$(echo "$score_output" | grep "= 0.0" | wc -l)
-    partial_score=$(echo "$score_output" | grep "= 0.5" | wc -l)
-    
-    echo ""
-    echo "📈 Score Summary:"
-    echo "   • Total items scored: $total_items"
-    echo "   • Perfect score (1.0): $perfect_score"
-    echo "   • Partial score (0.5): $partial_score"
-    echo "   • Zero score (0.0): $zero_score"
-    echo "✓ Score calculated!"
+    if [ $score_exit -eq 0 ]; then
+        # Calculate and show summary
+        total_items=$(echo "$score_output" | grep "=" | wc -l)
+        perfect_score=$(echo "$score_output" | grep "= 1.0" | wc -l)
+        zero_score=$(echo "$score_output" | grep "= 0.0" | wc -l)
+        partial_score=$(echo "$score_output" | grep "= 0.5" | wc -l)
+        
+        echo ""
+        echo "📈 Score Summary:"
+        echo "   • Total items scored: $total_items"
+        echo "   • Perfect score (1.0): $perfect_score"
+        echo "   • Partial score (0.5): $partial_score"
+        echo "   • Zero score (0.0): $zero_score"
+        echo "✓ Score calculated!"
+    else
+        echo "✗ Score failed - please review errors above"
+        exit 1
+    fi
 else
-    echo "✗ Score failed - please review errors above"
-    exit 1
+    echo "  ⚠️  Skipping trudag score (trudag not available)"
 fi
 echo ""
 
 # Step 8: Run trudag publish
 echo "🚀 Step 8: Running trudag publish..."
-publish_output=$(trudag publish 2>&1)
-publish_exit=$?
+if [ "$SKIP_TRUDAG" = "false" ]; then
+    publish_output=$(trudag publish 2>&1)
+    publish_exit=$?
 
-# Filter noise from publish output
-echo "$publish_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:"
+    # Filter noise from publish output
+    echo "$publish_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:"
 
-if [ $publish_exit -eq 0 ]; then
-    echo ""
-    echo "📁 Published reports to:"
-    echo "   • $REPO_ROOT/docs/doorstop/"
-    ls -la "$REPO_ROOT/docs/doorstop/" 2>/dev/null | grep "\.md" | awk '{print "   • " $NF}'
-    echo "✓ Publish successful!"
+    if [ $publish_exit -eq 0 ]; then
+        echo ""
+        echo "📁 Published reports to:"
+        echo "   • $REPO_ROOT/docs/doorstop/"
+        ls -la "$REPO_ROOT/docs/doorstop/" 2>/dev/null | grep "\.md" | awk '{print "   • " $NF}'
+        echo "✓ Publish successful!"
+    else
+        echo "✗ Publish failed - please review errors above"
+        exit 1
+    fi
 else
-    echo "✗ Publish failed - please review errors above"
-    exit 1
+    echo "  ⚠️  Skipping trudag publish (trudag not available)"
 fi
+echo ""
 echo ""
