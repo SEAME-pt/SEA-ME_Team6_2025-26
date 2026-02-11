@@ -47,14 +47,17 @@ Item {
 
             RowLayout {
                 anchors.centerIn: parent
-                spacing: 8
+                anchors.alignWhenCentered: false
+                spacing: 6
 
                 Image {
-                    source: "qrc:/assets/icons/danger.svg"
+                    source: "qrc:/assets/icons/temperature.svg"
                     fillMode: Image.PreserveAspectFit
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
-                    opacity: 0.1
+                    smooth: true
+                    mipmap: true
+                    sourceSize.width: 22
+                    sourceSize.height: 22
+                    opacity: 1
                 }
 
                 Text {

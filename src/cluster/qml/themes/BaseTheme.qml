@@ -19,7 +19,7 @@ QtObject {
     readonly property color success: "#378b1b"
     readonly property color warning: "#F0D500"
     readonly property color danger: "#F32013"
-
+    readonly property color info: "#1E88E5"
 
     //? Accent / Vibrant color
     readonly property color vibrant: "#0ADD08"

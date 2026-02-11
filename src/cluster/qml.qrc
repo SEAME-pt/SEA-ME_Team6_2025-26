@@ -48,6 +48,9 @@
         <file>assets/icons/danger.svg</file>
         <file>assets/icons/danger-warning.svg</file>
         <file>assets/icons/danger-danger.svg</file>
+        <file>assets/icons/temperature.svg</file>
+        <file>assets/icons/temperature-low.svg</file>
+        <file>assets/icons/temperature-high.svg</file>
 
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>

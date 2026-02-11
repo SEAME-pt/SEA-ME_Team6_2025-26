@@ -7,8 +7,8 @@ import ClusterTheme 1.0
 
 Item {
     id: root
-    width: 275
-    height: 275
+    width: 300
+    height: 300
     property real centerValue: 0
     property real centerMinValue: 0
     property real centerMaxValue: 1000
@@ -39,27 +39,14 @@ Item {
         return endAngle * t
     }
 
-    // Inner background circle
+    // Inner circle
     Rectangle {
         id: innerCircle
         anchors.centerIn: parent
-        width: parent.width - 50
-        height: parent.height - 50
+        width: 245
+        height: 245
         radius: width / 2
         color: "#0a0a0a"
-    }
-    
-    // Inner background circle shadow
-    MultiEffect {
-        source: innerCircle
-        anchors.fill: innerCircle
-        shadowEnabled: true
-        shadowColor: "#b0b0b0"
-        shadowBlur: 1.0
-        shadowOpacity: 0.35
-        shadowScale: 1.28
-        shadowVerticalOffset: 0
-        shadowHorizontalOffset: 0
     }
 
     // Background Center Arc
@@ -167,7 +154,7 @@ Item {
         Text {
             text: Math.round(root.centerValue)
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 75
+            font.pixelSize: 70
             font.bold: true
             color: "white"
             
