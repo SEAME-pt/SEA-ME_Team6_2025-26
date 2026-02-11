@@ -51,7 +51,12 @@
         <file>assets/icons/temperature.svg</file>
         <file>assets/icons/temperature-low.svg</file>
         <file>assets/icons/temperature-high.svg</file>
-
+        <file>assets/icons/compass.svg</file>
+        <file>assets/icons/left-arrow.png</file>
+        <file>assets/icons/right-arrow.png</file>
+        <file>assets/icons/left-arrow-active.png</file>
+        <file>assets/icons/right-arrow-active.png</file>
+    
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>
         <file>assets/images/critical-techworks-logo.png</file>

@@ -15,7 +15,12 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        TopBar {}
+        TopBar {
+            id: topbar
+            leftBlinkerActive: false
+            magnetometerValue: 67
+            rightBlinkerActive: true
+        }
 
         Item {
             Layout.fillWidth: true

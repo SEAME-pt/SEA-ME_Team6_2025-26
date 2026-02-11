@@ -11,7 +11,7 @@ QtObject {
     //? Neutrals
     readonly property color white: "#EBE8E7"
 
-    //readonly property color black: "#212529"
+    //readonly property color black: "#151618"
     readonly property color black: "#000000"
     readonly property color blackLight: "#191a1a"
 

@@ -17,53 +17,94 @@ Item {
         anchors.fill: parent
         spacing: 0
 
+        // Total Distance
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            Text {
-                text: "67 Km"
-                font.pixelSize: 12
-                color: "white"
+            ColumnLayout {
                 anchors.centerIn: parent
-            }
-        }
+                spacing: 4
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            Text {
-                text: clock.currTime
-                font.pixelSize: 14
-                color: "white"
-                anchors.centerIn: parent
-            }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            RowLayout {
-                anchors.centerIn: parent
-                anchors.alignWhenCentered: false
-                spacing: 6
-
-                Image {
-                    source: "qrc:/assets/icons/temperature.svg"
-                    fillMode: Image.PreserveAspectFit
-                    smooth: true
-                    mipmap: true
-                    sourceSize.width: 22
-                    sourceSize.height: 22
-                    opacity: 1
+                Text {
+                    text: "Total"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
                 }
 
                 Text {
-                    text: "67 C"
+                    text: "67 Km"
                     font.pixelSize: 12
                     color: "white"
+                    Layout.alignment: Qt.AlignHCenter
+                }
+            }
+        }
+
+        // Time
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: "Time"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: clock.currTime
+                    font.pixelSize: 14
+                    color: "white"
+                    Layout.alignment: Qt.AlignHCenter
+                }
+            }
+        }
+
+        // Temperature
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: "Temp"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                RowLayout {
+                    spacing: 4
+                    Layout.alignment: Qt.AlignHCenter
+
+                    Image {
+                        source: "qrc:/assets/icons/temperature.svg"
+                        fillMode: Image.PreserveAspectFit
+                        smooth: true
+                        mipmap: true
+                        sourceSize.width: 22
+                        sourceSize.height: 22
+                        opacity: 1
+                    }
+
+                    Text {
+                        text: "67 C"
+                        font.pixelSize: 12
+                        color: "white"
+                    }
                 }
             }
         }
