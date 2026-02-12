@@ -24,6 +24,9 @@ jobs:
       - name: Pull test image
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
+      # -------------------------
+      # Configure + Build + Run unified tests
+      # -------------------------
       - name: Configure + Build + Run tests
         run: |
           docker run --rm \
@@ -32,12 +35,29 @@ jobs:
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
               rm -rf build && \
-              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
+              cmake -S . -B build -G Ninja \
+                -DCMAKE_BUILD_TYPE=Debug \
+                -DENABLE_CPP_TESTS=ON \
+                -DENABLE_PYTHON_TESTS=ON \
+                -DENABLE_COVERAGE=ON && \
               cmake --build build && \
-              ctest --test-dir build --output-on-failure
+              ctest --test-dir build \
+                --output-on-failure \
+                --output-junit test-results.xml
             '
 
-      # OPTIONAL coverage report (HTML)
+      # -------------------------
+      # Upload unified test report
+      # -------------------------
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: src/tests/test-results.xml
+
+      # -------------------------
+      # Coverage report
+      # -------------------------
       - name: Generate coverage HTML
         run: |
           docker run --rm \
