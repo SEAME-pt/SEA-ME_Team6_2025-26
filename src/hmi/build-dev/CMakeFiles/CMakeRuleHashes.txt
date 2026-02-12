@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+3f78c63d6cda80e3eb7a349ac71d05b5 CMakeFiles/HelloQt6Qml_autogen
+47691ff366ec057aae6bf73717de13f9 HelloQt6Qml_autogen/EWIEGA46WW/qrc_qml.cpp
+c6234712aba82a5f851c85051500ca69 HelloQt6Qml_autogen/timestamp

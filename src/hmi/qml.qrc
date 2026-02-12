@@ -7,6 +7,8 @@
         <file>qml/screens/BaseScreen.qml</file>
 	
         <!-- QML Components -->
+        <file>qml/components/Navbar.qml</file>
+        <file>qml/components/NavButton.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
@@ -34,8 +36,11 @@
         <file>src/backend/reader.hpp</file>
 
         <!-- Icons  -->
-        <!-- <file>assets/icons/battery-empty-solid-full.svg</file> -->
-        
+        <file>assets/icons/car.svg</file>
+        <file>assets/icons/controller.svg</file>
+        <file>assets/icons/grid.svg</file>
+        <file>assets/icons/statistics.svg</file>
+
         <!-- Images  -->
     </qresource>
 </RCC>

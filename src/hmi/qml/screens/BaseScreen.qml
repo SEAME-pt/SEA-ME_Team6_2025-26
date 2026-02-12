@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import ClusterTheme 1.0
-// import "../components"
+import "../components"
 
 Rectangle {
     id: baseScreen
@@ -13,24 +13,12 @@ Rectangle {
         anchors.fill: parent
         spacing: 0
 
-        // Top bar
-        //TopBar {}
-
-        // Middle content
-        RowLayout {
+        Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 0
-
-            Text {
-                text: "HMI bonito para caralho"
-                font.pixelSize: 12
-                color: "white"
-                anchors.centerIn: parent
-            }
+            color: '#4a8ca0'
         }
 
-        // Bottom bar
-        // BottomBar {}
+        Navbar {  }
     }
 }
