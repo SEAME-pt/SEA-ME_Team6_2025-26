@@ -46,14 +46,15 @@ jobs:
               set -e
 
               # -------------------------
-              # Install Python + pip + dependencies
+              # Install Python, pip, and Python dependencies
               # -------------------------
               apt-get update && \
               apt-get install -y python3 python3-pip && \
-              pip3 install -r unit/python/requirements.txt && \
+              python3 -m pip install --upgrade pip && \
+              python3 -m pip install -r unit/python/requirements.txt
 
               # -------------------------
-              # Build and run C++ + Python tests
+              # Build C++ code
               # -------------------------
               rm -rf build && \
               cmake -S . -B build -G Ninja \
@@ -61,14 +62,16 @@ jobs:
                 -DENABLE_CPP_TESTS=ON \
                 -DENABLE_PYTHON_TESTS=ON \
                 -DENABLE_COVERAGE=ON && \
-              cmake --build build && \
-              ctest --test-dir build \
-                --output-on-failure \
-                --output-junit test-results.xml
+              cmake --build build
+
+              # -------------------------
+              # Run Python tests
+              # -------------------------
+              python3 -m pytest --junitxml=test-results.xml
             '
 
       # -------------------------
-      # Upload unified test results
+      # Upload test results
       # -------------------------
       - name: Upload test results
         uses: actions/upload-artifact@v4
