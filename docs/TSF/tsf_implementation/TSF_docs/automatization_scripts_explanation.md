@@ -1,210 +1,410 @@
-docs/TSF/tsf_implementation/
-
 # TSF Automation Scripts — Technical Documentation
 
-## 🚦 Automated Process (2025/26)
+This document explains the automation scripts used for TSF management in the SEA:ME Team 6 project.
 
-**Central script:** `sync_tsf_requirements_table.py` (Layer 1 Manager)
-
-docs/TSF/tsf_implementation/
-├── scripts/
-│   ├── sync_tsf_manager.py          # 🎯 Main orchestrator script
-│   ├── modules/
-│   │   ├── __init__.py
-│   │   ├── detectors.py             # Detects changes (LO_requirements + sprints)
-│   │   ├── generators.py            # Creates EXPECT/ASSERT/EVID/ASSUMP
-│   │   ├── sync_evidence.py         # Syncs sprint → EVID
-│   │   ├── ai_generator.py          # 3 AI methods (manual/ollama/api)
-│   │   ├── validators.py            # Wrapper for validate_items_formatation.py
-│   │   └── trudag_runner.py         # DEPRECATED: Use setup_trudag_clean.sh instead
-│   └── config.yaml                  # Configuration
-├── backups/
-│   └── items_backup1.tar.gz         # Numbered backups
-└── validators/
-    └── validate_items_formatation.py  # Already exists ✅
-
-    PHASE 1 (first 40 min):
-
-✅ detectors.py - Detects changes
-✅ ai_generator.py - 3 AI methods
-✅ generators.py - Creates all 4 files (EXPECT/ASSERT/EVID/ASSUMP)
-✅ sync_tsf_manager.py - Main orchestrator
-✅ config.yaml - Configuration
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ sync_tsf_requirements_table.py (Layer 1 Manager)           │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ 1. DETECT changes in the table:                            │
-│    - New requirements (ID + Requirement filled)            │
-│    - Acceptance/Verification empty or incomplete           │
-│                                                             │
-│ 2. GENERATE with AI (if configured):                       │
-│    - Acceptance Criteria (based on Requirement)            │
-│    - Verification Method (based on category)               │
-│    ⚠️  If LLM not available: leaves empty                  │
-│                                                             │
-│ 3. SYNC Evidence (automatic):                              │
-│    - Reads EVID-L0-X.md from items/evidences/              │
-│    - Extracts all references (type: url)                   │
-│    - Updates Evidence column in the table                  │
-│                                                             │
-│ 4. WRITE updated table:                                    │
-│    - Preserves markdown formatting                         │
-│    - Keeps other columns intact                            │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Note:** AI generation only occurs if an external API (OpenAI, etc.) or manual Copilot Chat input is configured. Otherwise, Acceptance/Verification fields remain empty and the script generates a pending report.
-
-**Sync is unidirectional:** from the table to items/ and evidences. Never the other way around.
+**Last Updated:** February 2026
 
 ---
 
-## 🚦 Official Pipeline for Layer 3 (.trudag_items/)
+## Table of Contents
 
-**The only supported and canonical pipeline for generating and validating `.trudag_items/` is:**
-
-    ./scripts/setup_trudag_clean.sh
-
-Use this script for all local and CI/CD (GitHub Actions) automation. It:
-- Cleans generated files (preserves items/ as source of truth)
-- Generates the dependency graph
-- Initializes the trudag database
-- Copies and transforms all items from items/ to .trudag_items/ (with deduplication, reference correction, and ID/path fixes)
-- Applies logical links
-- Marks all items as reviewed
-- Runs trudag lint
-
-**Do not use `trudag_runner.py` or any other pipeline script.**
-`trudag_runner.py` is deprecated and kept only for historical reference.
-
-Update all documentation and automation to reference only `setup_trudag_clean.sh`.
-
----
-
-
-**Project:** SEA-ME Team 6 2025-26  
-**Purpose:** Automated generation and synchronization of TSF items  
-**Created:** December 15, 2025  
-**Last Updated:** December 17, 2025
+1. [Overview](#overview)
+2. [Main Automation Script](#main-automation-script)
+3. [TruDAG Setup Script](#trudag-setup-script)
+4. [Configuration](#configuration)
+5. [Module Reference](#module-reference)
+6. [Workflow Diagram](#workflow-diagram)
 
 ---
 
 ## Overview
 
-This directory contains a modular automation system that detects new requirements in `tsf-requirements-table.md`, generates corresponding TSF items (EXPECT/ASSERT/EVID/ASSUMP), synchronizes evidence from sprint files, and validates all items using TruDAG.
-
----
-
-## 🏗️ Three-Layer Architecture
+### Directory Structure
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ LAYER 1: tsf-requirements-table.md (PRIMARY SOURCE OF TRUTH)   │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ├─── Column "ID" + "Requirement"                              │
-│  │    └─→ MANUAL (human writes)                                 │
-│  │                                                             │
-│  ├─── Column "Acceptance Criteria" + "Verification Method"     │
-│  │    └─→ AI GENERATED (automatically when new Requirement)     │
-│  │                                                             │
-│  └─── Column "Evidence"                                        │
-│       └─→ AUTOMATIC (scan of sprints/*.md)                      │
-│           • detectors.py::scan_sprint_evidence()                │
-│           • Extracts links from EXPECT-L0-X                      │
-│           • Adds to the table automatically                      │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ LAYER 2: items/ (SECONDARY SOURCE OF TRUTH)                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  • generator_items_second_source_of_truth.py generates/updates  │
-│  • Structure: expectations/ assertions/ evidences/ assumptions/ │
-│  • Format: EXPECT-L0-X.md, ASSERT-L0-X.md, etc.                │
-│  • ⚠️  NEVER edit manually!                                    │
-│  • ✅ CRUD operations: Create, Update, Delete, Sync             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ LAYER 3: .trudag_items/ (TRUDAG DATABASE)                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  • Regenerable with setup_trudag_clean.sh                       │
-│  • Internal TruDAG format (EXPECTATIONS/EXPECT_L0_X/)           │
-│  • Auto-generated: graph.dot, .dotstop.dot                      │
-│  • Commands: trudag manage, lint, score, publish, plot          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+docs/TSF/tsf_implementation/
+├── scripts/
+│   ├── open_check_sync_update_validate_run_publish_tsfrequirements.py  # Main script
+│   ├── setup_trudag_clean.sh          # TruDAG operations
+│   ├── config.yaml                     # Configuration
+│   └── modules/
+│       ├── __init__.py
+│       ├── validate_items_formatation.py  # YAML validation
+│       └── ...
+├── items/                              # Source TSF items (editable)
+│   ├── assertions/
+│   ├── assumptions/
+│   ├── evidences/
+│   └── expectations/
+├── .trudag_items/                      # Generated items (do not edit)
+├── graph/
+│   └── graph.dot                       # Dependency graph
+└── tools/
+    └── generate_graph_from_heuristics.py
 ```
 
-**Key Principles:**
-1. **Single Source of Truth:** `tsf-requirements-table.md` is the PRIMARY source
-2. **Automatic Propagation:** Changes flow down automatically (Layer 1 → 2 → 3)
-3. **Never Edit Manually:** `items/` and `.trudag_items/` are auto-generated
-4. **Unidirectional Evidence Sync:** Evidence flows from the table to items/ and evidences (never the other way around)
-
 ---
 
-## Workflow
+## Main Automation Script
 
-1. **Detect** → New requirements or empty Acceptance/Verification (sync_tsf_requirements_table.py)
-2. **Generate** → Generates Acceptance/Verification with AI (if configured)
-3. **Sync** → Updates Evidence column by reading evidences from items/evidences/
-4. **Validate** → Format validation + TruDAG score
-5. **Backup** → Sequential backups before modifying
+**File:** `open_check_sync_update_validate_run_publish_tsfrequirements.py`
 
----
+### Purpose
 
-## Scripts Documentation
+Unified script that handles the complete TSF workflow:
+- Parsing requirements table
+- Detecting new/removed requirements
+- Syncing evidence from sprints
+- Generating TSF items
+- Running TruDAG validation
+- Publishing reports
 
-### 1. `modules/detectors.py`
-
-**Status:** ✅ Complete (400 lines)  
-**Purpose:** Detection and evidence extraction engine
-
-## Scripts
-
-### `sync_tsf_requirements_table.py` (new)
-Unified script that:
-1. Detects changes in the table (new requirements, empty Acceptance/Verification)
-2. Generates Acceptance/Verification with AI (if configured)
-3. Synchronizes evidences by reading items/evidences/
-4. Updates the table preserving formatting
-
-### Deprecated scripts
-- `generator_items_second_source_of_truth.py` (removed)
-- `detectors.py` (removed)
-- `validate_items_formatation.py` (removed)
-
-### How to use
+### Usage
 
 ```bash
-# Run full synchronization:
-python3 docs/TSF/tsf_implementation/scripts/sync_tsf_requirements_table.py
+# Always activate virtual environment first
+source .venv/bin/activate
+
+# Check current state (read-only)
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync and update items
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Validate and publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Run all stages
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+### Command-Line Options
+
+| Option | Description |
+|--------|-------------|
+| `--check` | Verify table completeness, detect orphans, validate content |
+| `--sync` | Generate missing items, update content with AI |
+| `--validate` | Run TruDAG setup, scoring, and publish |
+| `--all` | Run all stages in sequence |
+
+### Key Classes
+
+#### `Config`
+Loads and manages configuration from `config.yaml`:
+- Path resolution
+- AI method settings
+- Evidence patterns
+
+#### `TableRow`
+Represents a row in the requirements table:
+- ID, requirement, acceptance criteria, verification method, evidence
+- Methods for completeness checking
+
+#### `EvidenceLink`
+Represents an evidence link from sprint files:
+- EXPECT ID, description, URL, source file
+
+#### `EvidenceParser`
+Parses sprint files to extract evidence:
+- Handles various markdown formats
+- Extracts URLs and file paths
+
+#### `TableParser`
+Parses the requirements table:
+- Markdown table parsing
+- Row extraction
+
+#### `ItemFileManager`
+Manages TSF item files:
+- Finds existing items
+- Creates new items
+- Detects orphans
+- Removes orphan files (with confirmation)
+
+### Three Stages
+
+#### Stage 1: open_check()
+```python
+def open_check(config: Config) -> Dict[str, Any]:
+    """
+    1. Parse requirements table
+    2. Check for incomplete fields
+    3. Parse sprint files for evidence
+    4. Check item files existence
+    5. Fix structural issues
+    6. Validate content
+    7. Detect orphan files
+    8. Identify sync needs
+    """
+```
+
+#### Stage 2: sync_update()
+```python
+def sync_update(config: Config, check_results: Dict) -> Dict[str, Any]:
+    """
+    1. Generate missing item files
+    2. Update EXPECT headers from table
+    3. Update EVID references from sprints
+    4. AI content generation (if enabled)
+    5. Remove orphan files (with confirmation)
+    """
+```
+
+#### Stage 3: validate_run_publish()
+```python
+def validate_run_publish(config: Config) -> Dict[str, Any]:
+    """
+    1. Check required symlinks
+    2. Run item validation
+    3. Execute TruDAG (setup_trudag_clean.sh)
+    4. Verify scores
+    """
 ```
 
 ---
 
-## Frequently Asked Questions
+## TruDAG Setup Script
 
-**How does AI generation work?**
-It only works if you configure an external API (OpenAI, etc.) or use Copilot Chat/manual. Otherwise, Acceptance/Verification fields remain empty and the script generates a pending report.
+**File:** `setup_trudag_clean.sh`
 
-**Is the sync bidirectional?**
-No. Sync is always from the table to items/ and evidences.
+### Purpose
+
+The canonical script for all TruDAG operations. Called by the main Python script during `--validate`.
+
+### Steps Performed
+
+```bash
+# Step 0: Clean generated files (preserve items/ source)
+rm -f graph/graph.dot
+rm -f .dotstop.dot
+rm -rf .trudag_items/
+
+# Step 1: Generate graph.dot
+python3 tools/generate_graph_from_heuristics.py --items items/ --out graph/graph.dot
+
+# Step 2: Initialize TruDAG database
+trudag init
+
+# Step 3: Create items from source
+# (copies items/ to .trudag_items/ with transformations)
+
+# Step 4: Fix file reference paths and IDs
+
+# Step 5: Create logical links from graph.dot
+trudag manage link ITEM1 ITEM2
+
+# Step 6: Mark items as reviewed
+trudag manage set-item ITEM_ID --links
+
+# Step 7: Run lint
+trudag lint
+
+# Step 8: Calculate scores
+trudag score --validate
+
+# Step 9: Publish reports
+trudag publish --output-dir ../../../docs/doorstop --validate --all-bodies
+```
+
+### Usage
+
+```bash
+# Run directly (from tsf_implementation directory)
+cd docs/TSF/tsf_implementation
+bash scripts/setup_trudag_clean.sh
+
+# Or via the main script
+source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+```
 
 ---
 
-**Last update:** December 17, 2025
+## Configuration
+
+**File:** `config.yaml`
+
+### Structure
+
+```yaml
+# Paths Configuration
+paths:
+  repo_root: "/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
+  tsf_implementation: "${paths.repo_root}/docs/TSF/tsf_implementation"
+  items_dir: "${paths.tsf_implementation}/items"
+  scripts_dir: "${paths.tsf_implementation}/scripts"
+  sprints_dir: "${paths.repo_root}/docs/sprints"
+  requirements_table: "${paths.repo_root}/docs/TSF/requirements/tsf-requirements-table.md"
+
+# AI Configuration
+ai:
+  primary_method: "manual"  # Option G: VSCode/Claude
+  fallbacks: ["copilot_cli"]  # Option C: gh copilot CLI
+  
+  manual:
+    open_in_vscode: true
+    show_prompt_suggestion: true
+    wait_for_user_confirmation: true
+    
+  copilot:
+    timeout: 30
+
+# Evidence Sync Configuration
+evidence_sync:
+  sprint_files:
+    - "sprint1.md"
+    - "sprint2.md"
+    - "sprint3.md"
+    - "sprint4.md"
+    - "sprint5.md"
+    - "sprint6.md"
+    - "sprint7.md"
+  evidence_patterns:
+    image: '!\[([^\]]*)\]\(([^)]+)\)'
+    link: '\[([^\]]+)\]\(([^)]+)\)'
+```
 
 ---
 
-**Branch:** feature/TSF/automatize-tsf-in-github  
-**Related PR:** feature/TSF/integrate-tsf-in-github → development
+## Module Reference
+
+### validate_items_formatation.py
+
+Validates YAML structure in TSF item files:
+
+```python
+def validate_front_matter(file_path: Path) -> List[str]:
+    """Validate YAML front-matter structure."""
+    
+def validate_references(file_path: Path) -> List[str]:
+    """Validate reference paths exist."""
+    
+def run_validation(items_dir: Path) -> Tuple[bool, List[str]]:
+    """Run complete validation on all items."""
+```
+
+### generate_graph_from_heuristics.py
+
+Generates the dependency graph:
+
+```python
+def generate_graph(items_dir: Path) -> str:
+    """Generate DOT graph from item relationships."""
+    
+def write_graph(graph: str, output_path: Path):
+    """Write graph to file."""
+```
+
+---
+
+## Workflow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    TSF AUTOMATION WORKFLOW                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   SPRINTS       │    │  REQUIREMENTS   │    │    ITEMS        │
+│   (source)      │    │     TABLE       │    │   (source)      │
+│                 │    │   (source)      │    │                 │
+│ sprint1.md      │    │ tsf-require-    │    │ EXPECT-L0-X.md  │
+│ sprint2.md      │    │ ments-table.md  │    │ ASSERT-L0-X.md  │
+│ ...             │    │                 │    │ EVID-L0-X.md    │
+│ sprint7.md      │    │                 │    │ ASSUMP-L0-X.md  │
+└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
+         │                      │                      │
+         │                      ▼                      │
+         │            ┌─────────────────┐              │
+         └──────────► │   --check       │ ◄────────────┘
+                      │                 │
+                      │ Parse table     │
+                      │ Extract evidence│
+                      │ Validate items  │
+                      │ Detect orphans  │
+                      └────────┬────────┘
+                               │
+                               ▼
+                      ┌─────────────────┐
+                      │   --sync        │
+                      │                 │
+                      │ Generate items  │
+                      │ Update content  │
+                      │ AI generation   │
+                      │ Remove orphans  │
+                      └────────┬────────┘
+                               │
+                               ▼
+                      ┌─────────────────┐
+                      │  --validate     │
+                      │                 │
+                      │ setup_trudag_   │
+                      │ clean.sh        │
+                      │                 │
+                      │ • Generate graph│
+                      │ • Init DB       │
+                      │ • Create items  │
+                      │ • Apply links   │
+                      │ • Run lint      │
+                      │ • Score         │
+                      │ • Publish       │
+                      └────────┬────────┘
+                               │
+                               ▼
+                      ┌─────────────────┐
+                      │    OUTPUTS      │
+                      │                 │
+                      │ .trudag_items/  │
+                      │ graph/graph.dot │
+                      │ .dotstop.dot    │
+                      │ docs/doorstop/  │
+                      │  ├── ASSERTIONS │
+                      │  ├── ASSUMPTIONS│
+                      │  ├── EVIDENCES  │
+                      │  ├── EXPECTATIONS│
+                      │  └── dashboard  │
+                      └─────────────────┘
+```
+
+---
+
+## Best Practices
+
+### Before Making Changes
+
+1. Always run `--check` first to see current state
+2. Backup items if making significant changes
+3. Review orphan files before deletion
+
+### Adding New Requirements
+
+1. Add row to `tsf-requirements-table.md`
+2. Run `--sync` to generate item files
+3. Edit generated items to add content
+4. Run `--validate` to verify
+
+### Removing Requirements
+
+1. Remove row from `tsf-requirements-table.md`
+2. Run `--check` to detect orphan files
+3. Run `--sync` to remove orphans (with confirmation)
+
+### Updating Evidence
+
+1. Add evidence links to sprint files (use `<!-- EXPECT-L0-X -->` comments)
+2. Run `--check` to see extracted evidence
+3. Run `--sync` to update EVID files
+
+---
+
+## Deprecated Scripts
+
+The following scripts are deprecated and kept only for historical reference:
+
+- `sync_tsf_manager.py` - Replaced by unified script
+- `sync_tsf_requirements_table.py` - Replaced by unified script
+- `trudag_runner.py` - Replaced by `setup_trudag_clean.sh`
+
+**Always use the unified script:**
+```bash
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
+```
