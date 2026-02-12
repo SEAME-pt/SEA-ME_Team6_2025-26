@@ -21,8 +21,8 @@ Item {
     property real bottomValue: 0
     property real bottomMinValue: 9
     property real bottomMaxValue: 13
-    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 30
-    property real bottomSweepAngle: 360 - root.centerEndAngle - 60
+    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 25
+    property real bottomSweepAngle: 360 - root.centerEndAngle - 50
     property string middleIcon: ""
     property string middleText: ""
 
@@ -46,7 +46,7 @@ Item {
         width: 245
         height: 245
         radius: width / 2
-        color: "#0a0a0a"
+        color: BaseTheme.blackLight
     }
 
     // Background Center Arc
@@ -217,7 +217,7 @@ Item {
             text: root.middleText
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 12
-            font.weight: Font.Medium
+            font.weight: Font.Bold
             color: getMiddleColor(root.middleIcon)
             opacity: 0.8
 
@@ -229,13 +229,6 @@ Item {
                 shadowHorizontalOffset: 0
                 shadowVerticalOffset: 0
             }
-        }
-    }
-
-    Behavior on middleIcon {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutQuad
         }
     }
 
@@ -304,9 +297,9 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 16
         anchors.left: parent.left
-        anchors.leftMargin: root.width * 0.26
+        anchors.leftMargin: root.width * 0.24
         
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -326,9 +319,9 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 16
         anchors.right: parent.right
-        anchors.rightMargin: root.width * 0.26
+        anchors.rightMargin: root.width * 0.24
         
         layer.enabled: true
         layer.effect: MultiEffect {

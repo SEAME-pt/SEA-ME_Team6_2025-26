@@ -1,6 +1,7 @@
 import QtQuick 6.7
 import QtQuick.Controls 6.7
 import QtQuick.Layouts 6.7
+import QtQuick.Effects
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
 
@@ -98,6 +99,16 @@ Item {
                         sourceSize.width: 22
                         sourceSize.height: 22
                         opacity: 1
+
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: true
+                            shadowColor: BaseTheme.white
+                            shadowBlur: 0.3
+                            shadowScale: 1.2
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 0
+                        }
                     }
 
                     Text {

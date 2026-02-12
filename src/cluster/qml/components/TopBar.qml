@@ -45,12 +45,12 @@ Item {
 
                 layer.enabled: root.leftBlinkerActive
                 layer.effect: MultiEffect {
-                    id: leftBlinkerEffect
+                    id: rightBlinkerEffect
                     width: 40
                     height: 40
                     shadowEnabled: true
                     shadowColor: BaseTheme.vibrant
-                    shadowBlur: 0.2
+                    shadowBlur: 0.6
                     shadowScale: 1.35
                     shadowOpacity: root.effectShadowOpacity
                     shadowHorizontalOffset: 0
@@ -113,9 +113,19 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     smooth: true
                     mipmap: true
-                    sourceSize.width: 16
-                    sourceSize.height: 16
+                    sourceSize.width: 22
+                    sourceSize.height: 22
                     opacity: 1
+
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowColor: BaseTheme.white
+                        shadowBlur: 0.3
+                        shadowScale: 1.2
+                        shadowHorizontalOffset: 0
+                        shadowVerticalOffset: 0
+                    }
                 }
 
                 Text {

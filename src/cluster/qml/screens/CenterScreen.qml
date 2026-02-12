@@ -17,9 +17,9 @@ Item {
 
         TopBar {
             id: topbar
-            leftBlinkerActive: false
-            magnetometerValue: 67
-            rightBlinkerActive: true
+            leftBlinkerActive: wheelAngleProvider.isBlinkerLeftActive
+            magnetometerValue: headingProvider.currHeading
+            rightBlinkerActive: wheelAngleProvider.isBlinkerRightActive
         }
 
         Item {
@@ -32,6 +32,9 @@ Item {
                         "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
                         "Voltage: " + voltageProvider.currVoltage + "\n" +
                         "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
+                        "WheelAngle: " + wheelAngleProvider.currWheelAngle + "\n" +
+                        "Blinker Left: " + wheelAngleProvider.isBlinkerLeftActive + "\n" +
+                        "Blinker Right: " + wheelAngleProvider.isBlinkerRightActive + "\n" +
                         "Heading: " + headingProvider.currHeading  
                     font.pixelSize: 12
                     color: "white"
