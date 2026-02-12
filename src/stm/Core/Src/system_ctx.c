@@ -9,6 +9,8 @@ void system_ctx_init(void)
     tx_mutex_create(&g_ctx.printf_mutex, "printf", TX_INHERIT);
     tx_mutex_create(&g_ctx.state_mutex,  "state",  TX_INHERIT);
     tx_mutex_create(&g_ctx.sys_mutex,    "sys",    TX_INHERIT);
+    tx_mutex_create(&g_ctx.i2c1_mutex, "i2c1", TX_INHERIT);
+
 
     g_ctx.system_state = SYSTEM_STATE_INIT;
     g_ctx.drive_mode   = DRIVE_MODE_IDLE;

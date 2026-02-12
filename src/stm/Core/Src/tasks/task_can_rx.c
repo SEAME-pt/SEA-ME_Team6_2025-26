@@ -325,7 +325,7 @@ void task_can_rx_init(SystemCtx* ctx)
 
   sys_log(ctx, "\033[1;36m[CAN_RX] Thread iniciada - Protocolo CAN atualizado!\033[0m");
 
-  s_rx.motor_init_status = Motor_Init(&hi2c1);
+  s_rx.motor_init_status = Motor_Init(ctx, &hi2c1);
   if (s_rx.motor_init_status == HAL_OK)
     sys_log(ctx, "\033[1;32m[CAN_RX] Motor Driver TB6612FNG inicializado!\033[0m");
   else

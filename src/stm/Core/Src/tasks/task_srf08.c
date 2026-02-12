@@ -53,6 +53,54 @@ static TaskSRF08 s_srf;
 
 void task_srf08_init(SystemCtx* ctx)
 {
+    // reset task state etc...
+    s_srf.hsrf08.hi2c = &hi2c1;
+    s_srf.hsrf08.addr = SRF08_DEFAULT_ADDR;
+
+    sys_log(ctx, "[SRF08] init...");
+
+    // (A) check ready
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    HAL_StatusTypeDef st = HAL_I2C_IsDeviceReady(&hi2c1, SRF08_DEFAULT_ADDR, 3, 100);
+    tx_mutex_put(&ctx->i2c1_mutex);
+
+    if (st != HAL_OK) {
+        s_srf.init_status = st;
+        sys_log(ctx, "[SRF08] IsDeviceReady FAIL st=%d", st);
+        return;
+    }
+
+    // sensor stabilizing delay (RTOS-friendly)
+    tx_thread_sleep(100);
+
+    // (B) set gain
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    st = SRF08_SetGain(&s_srf.hsrf08, SRF08_RECOMMENDED_GAIN);
+    tx_mutex_put(&ctx->i2c1_mutex);
+
+    if (st != HAL_OK) { s_srf.init_status = st; sys_log(ctx,"[SRF08] SetGain FAIL st=%d", st); return; }
+    tx_thread_sleep(10);
+
+    // (C) set range
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    st = SRF08_SetRange(&s_srf.hsrf08, SRF08_RECOMMENDED_RANGE);
+    tx_mutex_put(&ctx->i2c1_mutex);
+
+    s_srf.init_status = st;
+    if (st != HAL_OK) { sys_log(ctx,"[SRF08] SetRange FAIL st=%d", st); return; }
+    tx_thread_sleep(10);
+
+    // read version (optional)
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    uint8_t ver = SRF08_GetVersion(&s_srf.hsrf08);
+    tx_mutex_put(&ctx->i2c1_mutex);
+
+    sys_log(ctx, "[SRF08] OK version=%u", ver);
+}
+
+/*
+void task_srf08_init(SystemCtx* ctx)
+{
   (void)ctx;
 
   // reset task state deterministically
@@ -61,7 +109,9 @@ void task_srf08_init(SystemCtx* ctx)
 
   sys_log(ctx, "[SRF08] Thread iniciada (PRIORIDADE ALTA - SAFETY CRITICAL)!");
 
+  tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
   s_srf.init_status = SRF08_Init(&s_srf.hsrf08, &hi2c1, SRF08_DEFAULT_ADDR);
+  tx_mutex_put(&ctx->i2c1_mutex); 
 
   if (s_srf.init_status == HAL_OK)
   {
@@ -78,7 +128,7 @@ void task_srf08_init(SystemCtx* ctx)
   {
     sys_log(ctx, "[SRF08] ERRO init! Status: %d", s_srf.init_status);
   }
-}
+}*/
 
 static uint16_t srf08_apply_filter(uint16_t distance_mm_raw, uint8_t light)
 {
@@ -107,7 +157,9 @@ static uint16_t srf08_apply_filter(uint16_t distance_mm_raw, uint8_t light)
 void task_srf08_step(SystemCtx* ctx)
 {
   // 1) Start ranging
+  tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
   HAL_StatusTypeDef ranging_status = SRF08_StartRanging(&s_srf.hsrf08);
+  tx_mutex_put(&ctx->i2c1_mutex);
 
   if (ranging_status != HAL_OK && ++s_srf.err_log_counter >= 15)
   {
@@ -130,37 +182,42 @@ void task_srf08_step(SystemCtx* ctx)
   while (!ready && poll_attempts < SRF08_MAX_POLLS)
   {
     tx_thread_sleep(SRF08_POLL_SLEEP_TICKS);
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     ready = SRF08_IsReady(&s_srf.hsrf08);
+    tx_mutex_put(&ctx->i2c1_mutex);
     poll_attempts++;
   }
 #endif
 
-  // 3) Timeout warning (same behavior)
+  // 3) Timeout warning
   if (!ready && ++s_srf.timeout_log_counter >= 15)
   {
     s_srf.timeout_log_counter = 0;
 
     uint8_t cmd_reg = 0xFF;
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     (void)HAL_I2C_Mem_Read(
       s_srf.hsrf08.hi2c, s_srf.hsrf08.addr,
       SRF08_REG_COMMAND, 1,
       &cmd_reg, 1, 100
     );
-
+    tx_mutex_put(&ctx->i2c1_mutex);
     sys_log(ctx,
       "\033[1;33m[SRF08] WARNING: Timeout! Polls=%u | CMD_REG=0x%02X (esperado 0x00)\033[0m",
       poll_attempts, cmd_reg
     );
   }
 
-  // 4) Read distance + light (same as original: always read)
+  // 4) Read distance + light
+  tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
   uint16_t distance_cm = SRF08_GetDistanceCm(&s_srf.hsrf08);
   uint8_t  light       = SRF08_GetLight(&s_srf.hsrf08);
+  tx_mutex_put(&ctx->i2c1_mutex);
 
   uint16_t distance_mm_raw = (distance_cm == 0xFFFF) ? 0 : (uint16_t)(distance_cm * 10u);
   uint16_t distance_mm     = srf08_apply_filter(distance_mm_raw, light);
 
-  // 5) Debug log every ~1s (same)
+  // 5) Debug log every ~1s
   if (++s_srf.srf08_log_counter >= 15)
   {
     s_srf.srf08_log_counter = 0;
@@ -172,7 +229,6 @@ void task_srf08_step(SystemCtx* ctx)
     else
     {
       // preserve exact messages/formatting
-      // note: sys_log should behave like printf+mutex
       sys_log(ctx, "\033[1;36m[SRF08] %u mm | L=%u | SpeedLimit=%u%%",
               distance_mm, light, srf08_speed_limit);
 
@@ -186,7 +242,7 @@ void task_srf08_step(SystemCtx* ctx)
     }
   }
 
-  // 6) Speed control (same conditions)
+  // 6) Speed control
   if (distance_mm >= SRF08_SLOWDOWN_THRESHOLD_MM || light == 0)
   {
     srf08_speed_limit = 100;
@@ -200,7 +256,7 @@ void task_srf08_step(SystemCtx* ctx)
     srf08_speed_limit = SRF08_SLOWDOWN_SPEED_PERCENT;
   }
 
-  // 7) Emergency stop logic (preserved)
+  // 7) Emergency stop logic
   EmergencyStopState_t new_state = srf08_emergency_state;
 
   if (distance_mm < SRF08_EMERGENCY_THRESHOLD_MM && light > 0)
@@ -267,7 +323,7 @@ void task_srf08_step(SystemCtx* ctx)
 
   srf08_emergency_state = new_state;
 
-  // 8) Periodic CAN send (same behavior)
+  // 8) Periodic CAN send
   s_srf.can_send_counter++;
 
   if (light > 0 &&
@@ -295,13 +351,13 @@ void task_srf08_step(SystemCtx* ctx)
     }
   }
 
-  // 9) Keep "minimum lag" loop behavior
-  tx_thread_relinquish();
-
   tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
   ctx->state.srf08_distance_mm = distance_mm;
   ctx->state.srf08_light = light;
   ctx->state.srf08_speed_limit = srf08_speed_limit;
   ctx->state.emergency_stop_active = emergency_stop_active;
   tx_mutex_put(&ctx->state_mutex);
+
+  // 9) Keep "minimum lag" loop behavior
+  //tx_thread_relinquish();
 }

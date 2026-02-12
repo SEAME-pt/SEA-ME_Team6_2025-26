@@ -80,7 +80,7 @@ extern VL53L5CX_Configuration Dev;
 extern SPI_HandleTypeDef hspi1;
 
 /* I2C handle for LCD1602 */
-extern I2C_HandleTypeDef hi2c1;
+//extern I2C_HandleTypeDef hi2c1;
 
 /* TIM handle for Servo PWM */
 extern TIM_HandleTypeDef htim1;
@@ -426,7 +426,7 @@ static void SRF08_Thread_Entry(ULONG thread_input)
     while (1) {
         task_srf08_step(ctx);
         /* No extra sleep here: task_srf08_step already waits SRF08_PERIOD_MS */
-        tx_thread_relinquish();
+        //tx_thread_relinquish();
     }
 }
 

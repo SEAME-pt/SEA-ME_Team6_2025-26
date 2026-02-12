@@ -48,13 +48,16 @@ void task_battery_init(SystemCtx* ctx)
     s_batt.cycles = 0;
     s_batt.status = 0;
 
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     s_batt.ina_status = INA226_Init(&hi2c1);
 
     if (s_batt.ina_status == HAL_OK) {
         uint16_t mfg_id = INA226_GetManufacturerID();
         uint16_t die_id = INA226_GetDieID();
+        tx_mutex_put(&ctx->i2c1_mutex);
         sys_log(ctx, "[Battery] INA226 inicializado! MFG=0x%04X DIE=0x%04X", mfg_id, die_id);
     } else {
+        tx_mutex_put(&ctx->i2c1_mutex);
         sys_log(ctx, "[Battery] ERRO ao inicializar INA226! Status: %d", s_batt.ina_status);
     }
 }
@@ -65,8 +68,10 @@ void task_battery_step(SystemCtx* ctx)
     uint8_t battery_status = 0;
 
     if (s_batt.ina_status == HAL_OK) {
+        tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
         HAL_StatusTypeDef rd = INA226_ReadAll(&s_batt.ina);
-
+        tx_mutex_put(&ctx->i2c1_mutex);
+        
         if (rd == HAL_OK && s_batt.ina.valid) {
             s_batt.voltage_mv = (uint16_t)(s_batt.ina.voltage_V * 1000.0f);
             s_batt.current_ma = (int16_t)(s_batt.ina.current_A * 1000.0f);
