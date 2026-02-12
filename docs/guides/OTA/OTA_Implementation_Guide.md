@@ -1,8 +1,8 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** February 2026  
+**Last Updated:** 12 February 2026  
 **Branch:** `feature/OTA/implementation`  
-**Status:** MVP Implemented, RAUC Pending
+**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Pending
 
 ---
 
@@ -115,7 +115,55 @@ Updates firmware on STM32:
 
 ## 3. Architecture Overview
 
-### 3.1 High-Level Architecture
+### 3.1 Multi-Platform Architecture
+
+> **Update (Sprint 8):** The system now supports multi-platform OTA with separate packages for RPi4 (32-bit) and RPi5 (64-bit).
+
+```
+┌─────────────────────────┐         ┌─────────────────────────┐
+│        RPi4             │  WiFi/  │       RPi5 (AGL)        │
+│       (32-bit)          │ Network │        (64-bit)         │
+│  ┌─────────────────┐    │◄───────►│    ┌─────────────────┐  │
+│  │    Cluster      │    │         │    │     KUKSA       │  │
+│  │   (Qt6 UI)      │    │         │    │   (CAN→VSS)     │  │
+│  └─────────────────┘    │         │    └─────────────────┘  │
+│  OTA: update-rpi4.tar.gz│         │  OTA: update-rpi5.tar.gz│
+└─────────────────────────┘         └─────────────────────────┘
+            │                                   │
+            └───────────────┬───────────────────┘
+                            ▼
+                    GitHub Releases
+                    ┌─────────────────┐
+                    │ update-rpi4.tar │
+                    │ update-rpi5.tar │
+                    │ update.tar.gz   │
+                    └─────────────────┘
+                            ▲
+                            │
+                    GitHub Actions
+                    (Multi-Platform Build)
+                    ┌─────────────────────────────┐
+                    │ build-cluster-rpi4 (32-bit) │
+                    │ build-kuksa-rpi5 (64-bit)   │
+                    │ release (package & upload)  │
+                    └─────────────────────────────┘
+```
+
+### 3.2 Platform Details
+
+| Platform | Architecture | Component | Service | Docker SDK |
+|----------|--------------|-----------|---------|------------|
+| **RPi4** | ARM 32-bit (armv7l) | Qt6 Cluster UI | `helloqt-app.service` | `souzitaaaa/team6-agl-sdk:latest` |
+| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `can-to-kuksa.service` | `souzitaaaa/team6-r5-agl-sdk:latest` |
+
+### 3.3 Test Results (12 February 2026)
+
+| Device | IP | `uname -m` | Package | Service | Status |
+|--------|-----|------------|---------|---------|--------|
+| RPi5 | 10.21.220.191 | `aarch64` | `update-rpi5.tar.gz` (260KB) | `can-to-kuksa.service` | ✅ Active, 0 restarts |
+| RPi4 | 10.21.220.192 | `armv7l` | `update-rpi4.tar.gz` (4.6MB) | `helloqt-app.service` | ✅ Active, 0 restarts |
+
+### 3.3 High-Level Architecture (Legacy Single-Platform)
 
 ```
 ┌──────────────────┐
@@ -237,14 +285,16 @@ We chose a **phased approach**:
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **Phase A** | OTA Manual with systemd | ✅ Complete |
-| **Phase B** | SWUpdate / Enhanced rollback | 🔜 Next |
-| **Phase C** | RAUC (A/B rootfs) | 📋 Planned |
+| **Phase B** | SWUpdate / Enhanced rollback | ✅ Complete |
+| **Phase C** | Atomic symlinks + auto-polling | ✅ Complete |
+| **Phase D** | RAUC (A/B rootfs) | 📋 Planned |
 
 ### 4.2 Why This Order?
 
-1. **Phase A** (Manual) — Proves the concept works
-2. **Phase B** (Enhanced) — Adds robustness
-3. **Phase C** (RAUC) — Production-grade
+1. **Phase A** (Manual) — Proves the concept works with hello-ota test
+2. **Phase B** (Enhanced) — Real binaries (KUKSA + Qt Cluster) with rollback
+3. **Phase C** (Production) — Atomic symlinks + automatic polling
+4. **Phase D** (RAUC) — A/B rootfs for full system updates
 
 This approach:
 - ✅ Minimizes risk
@@ -340,24 +390,24 @@ RemainAfterExit=true
 WantedBy=multi-user.target
 ```
 
-### 5.4 Phase B: Next Steps
+### 5.4 Phase B: Enhanced Rollback (✅ Complete)
 
-Before moving to RAUC (Phase C), we need to complete Phase B:
+Phase B replaced the hello-ota proof-of-concept with real binaries:
 
 | Task | Description | Status |
 |------|-------------|--------|
-| Install `kuksa` binary | Replace hello-ota with actual kuksa publisher | ⬜ Not Started |
-| Atomic symlinks | Instant switchover without downtime | ⬜ Not Started |
-| HTTP/D-Bus health checks | Verify service is actually working, not just running | ⬜ Not Started |
-| Automatic trigger | Webhook or timer-based OTA polling | ⬜ Not Started |
-| Dual-install directories | Keep two versions for instant rollback | ⬜ Not Started |
+| Install `kuksa` binary | Replace hello-ota with actual kuksa publisher | ✅ Done |
+| Install Qt Cluster | HelloQt6Qml dashboard application | ✅ Done |
+| CI/CD ARM64 cross-compile | GitHub Actions with Diogo's SDK | ✅ Done |
+| Service-level rollback | Automatic rollback on service failure | ✅ Done |
+| Version file tracking | `/etc/ota-version` with version history | ✅ Done |
 
-**Phase B Checklist:**
-- [ ] Build and package `kuksa` binary for OTA
-- [ ] Create symlink-based atomic update script
-- [ ] Implement health check endpoint
-- [ ] Configure automatic OTA polling (timer or webhook)
-- [ ] Test rollback with actual kuksa service
+**Phase B Deliverables:**
+- [x] KUKSA `can_to_kuksa_publisher` (856KB ARM binary)
+- [x] Qt Cluster `HelloQt6Qml` (13.5MB ARM binary)
+- [x] GitHub Actions workflow with 3 parallel jobs
+- [x] `ota-update.sh` script with backup/restore
+- [x] v1.5.0 deployed on AGL
 
 ### 5.5 Phase A.2: Current Progress (Real-time Tracking)
 
@@ -761,11 +811,171 @@ Update     Rollback
 version    to backup
 ```
 
+### 7.3 Enhanced Health Check Features (Sprint 8)
+
+> **New in Sprint 8:** The OTA script now includes architecture verification and restart loop detection.
+
+#### 7.3.1 Architecture Verification
+
+The script verifies that binaries match the system architecture before installation:
+
+```bash
+verify_binary_arch() {
+    local binary="$1"
+    local expected_arch=$(uname -m)  # e.g., "aarch64" or "armv7l"
+    
+    # Use file command to check binary architecture
+    local file_output=$(file "$binary")
+    
+    case "$expected_arch" in
+        aarch64)
+            if [[ ! "$file_output" =~ "ARM aarch64" ]]; then
+                log "ERROR" "Binary is not ARM 64-bit!"
+                return 1
+            fi
+            ;;
+        armv7l|armv7*)
+            if [[ ! "$file_output" =~ "ARM" ]] || [[ "$file_output" =~ "aarch64" ]]; then
+                log "ERROR" "Binary is not ARM 32-bit!"
+                return 1
+            fi
+            ;;
+    esac
+    return 0
+}
+```
+
+**Why this matters:**
+- Prevents installing 32-bit binaries on 64-bit systems (and vice versa)
+- Catches CI/CD misconfigurations early
+- Avoids `status=203/EXEC` service failures
+
+#### 7.3.2 Restart Loop Detection
+
+The script detects services stuck in restart loops:
+
+```bash
+check_service_health() {
+    local service="$1"
+    local max_wait=30     # Max seconds to wait
+    local restart_window=10  # Window to check for restart loops
+    local max_restarts=3     # Max restarts before failure
+    
+    sleep 3  # Initial wait for service to start
+    
+    # Check if active
+    if ! systemctl is-active --quiet "$service"; then
+        return 1
+    fi
+    
+    # Check for restart loop
+    local restarts=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+    sleep "$restart_window"
+    local restarts_after=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+    
+    local restart_diff=$((restarts_after - restarts))
+    if [ "$restart_diff" -ge "$max_restarts" ]; then
+        log "ERROR" "Service in restart loop ($restart_diff restarts in ${restart_window}s)"
+        return 1
+    fi
+    
+    return 0
+}
+```
+
+**Why this matters:**
+- Services with `Restart=always` can appear "active" even while crashing repeatedly
+- Simple `systemctl is-active` misses restart loops
+- Early detection prevents running broken software
+
+#### 7.3.3 OTA Update Flow (v2)
+
+The updated flow now includes 10 steps:
+
+```
+1. Download package from GitHub Release
+         ↓
+2. Verify SHA-256 hash
+         ↓
+3. Extract to /opt/ota/releases/vX.X.X
+         ↓
+4. Stop services
+         ↓
+5. Record previous version
+         ↓
+6. Update symlink atomically
+         ↓
+7. Verify binary architecture ← NEW
+         ↓
+8. Install binaries
+         ↓
+9. Start services
+         ↓
+10. Health check (restart loop detection) ← NEW
+         ↓
+   ┌─────┴─────┐
+   │           │
+  OK?        FAIL?
+   │           │
+   ▼           ▼
+Update     Rollback
+version    to backup
+```
+
 ---
 
 ## 8. CI/CD Pipeline
 
-### 8.1 GitHub Actions Workflow
+### 8.0 Multi-Platform Workflow (Sprint 8)
+
+> **Updated:** The workflow now supports building for both RPi4 (32-bit) and RPi5 (64-bit) platforms.
+
+**Location:** `.github/workflows/ota.yml`
+
+```yaml
+name: OTA Build & Release (Multi-Platform)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Target platform'
+        type: choice
+        options:
+          - both
+          - rpi4
+          - rpi5
+        default: 'both'
+
+env:
+  SDK_IMAGE_RPI4: souzitaaaa/team6-agl-sdk:rpi4
+  SDK_IMAGE_RPI5: souzitaaaa/team6-agl-sdk:rpi5
+
+jobs:
+  build-kuksa-rpi5:    # ARM 64-bit (aarch64)
+  build-cluster-rpi4:  # ARM 32-bit (armv7)
+  release:             # Package and upload
+```
+
+### 8.0.1 Multi-Platform Build Jobs
+
+| Job | Platform | Architecture | SDK Image | Output |
+|-----|----------|--------------|-----------|--------|
+| `build-kuksa-rpi5` | RPi5 | aarch64 (64-bit) | `team6-agl-sdk:rpi5` | `can_to_kuksa_publisher` |
+| `build-cluster-rpi4` | RPi4 | armv7 (32-bit) | `team6-agl-sdk:rpi4` | `HelloQt6Qml` |
+
+### 8.0.2 Release Packages
+
+| Package | Contents | Platform |
+|---------|----------|----------|
+| `update-rpi4.tar.gz` | Qt6 Cluster binary | RPi4 (32-bit) |
+| `update-rpi5.tar.gz` | KUKSA binary + VSS | RPi5 (64-bit) |
+| `update.tar.gz` | Both platforms | Combined |
+
+### 8.1 GitHub Actions Workflow (Legacy)
 
 **Location:** `.github/workflows/ota.yml`
 
@@ -1231,15 +1441,25 @@ cat /var/log/hello-ota.log
 
 ## 11. Future Roadmap
 
-### 11.1 Phase B: Enhanced OTA (SWUpdate)
+### 11.1 Phase B: Enhanced OTA ✅ Complete
 
-- [ ] Symlink-based atomic updates
-- [ ] Dual-install directories
-- [ ] HTTP health checks
-- [ ] D-Bus integration
-- [ ] Webhook triggers
+Real binaries with CI/CD cross-compilation:
+- [x] KUKSA `can_to_kuksa_publisher` binary
+- [x] Qt Cluster `HelloQt6Qml` application
+- [x] GitHub Actions ARM64 workflow
+- [x] Service-level rollback
+- [x] Version tracking in `/etc/ota-version`
 
-### 11.2 Phase C: RAUC Integration
+### 11.2 Phase C: Atomic Symlinks + Auto-polling ✅ Complete
+
+Production-ready OTA with zero-downtime updates:
+- [x] Atomic symlink switching
+- [x] systemd timer for automatic polling
+- [x] GitHub API integration for version checks
+- [x] Version history with improved rollback
+- [x] Qt Cluster service (Wayland)
+
+### 11.3 Phase D: RAUC Integration 📋 Planned
 
 - [ ] Yocto layer integration
 - [ ] A/B rootfs partitions
@@ -1247,7 +1467,7 @@ cat /var/log/hello-ota.log
 - [ ] Signed bundles (.raucb)
 - [ ] Full system updates
 
-### 11.3 FOTA for STM32
+### 11.4 FOTA for STM32 📋 Planned
 
 - [ ] Bootloader with A/B slots
 - [ ] UDS over CAN protocol
@@ -1325,6 +1545,195 @@ curl -I https://github.com
 - ISO 14229 (UDS)
 - ISO 26262 (Functional Safety)
 - UNECE WP.29 (Cybersecurity Regulations)
+
+---
+
+## 14. Phase C Implementation (2026-02-10)
+
+Phase C adds production-ready features:
+- **Automatic OTA polling** with systemd timer
+- **Atomic symlinks** for zero-downtime updates
+- **Qt Cluster service** (Wayland-based dashboard)
+- **Version history** with improved rollback
+
+### 14.1 New File Structure
+
+```
+src/ota/
+├── install.sh              # Installation script for AGL
+├── README.md               # OTA documentation
+├── scripts/
+│   ├── ota-check.sh        # GitHub API polling script
+│   └── ota-update.sh       # v2 with atomic symlinks
+└── systemd/
+    ├── cluster.service     # Qt Cluster Dashboard (Wayland)
+    ├── ota-check.service   # OTA check oneshot
+    └── ota-check.timer     # 15-minute polling timer
+```
+
+### 14.2 Qt Cluster Service
+
+The `cluster.service` runs the Qt6 Dashboard on Wayland:
+
+```ini
+[Unit]
+Description=Qt Cluster Dashboard
+After=weston.service graphical.target
+Wants=weston.service
+
+[Service]
+Type=simple
+User=root
+Environment=XDG_RUNTIME_DIR=/run/user/0
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=QT_QPA_PLATFORM=wayland
+ExecStart=/opt/cluster/current/HelloQt6Qml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
+```
+
+### 14.3 Automatic OTA Polling
+
+The `ota-check.timer` polls GitHub every 15 minutes for new releases:
+
+```ini
+[Unit]
+Description=OTA Update Check Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+RandomizedDelaySec=30
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+The `ota-check.sh` script:
+1. Reads current version from `/etc/ota-version`
+2. Queries GitHub API for latest release
+3. Compares versions
+4. If newer, downloads and runs `ota-update.sh`
+
+### 14.4 Atomic Symlinks
+
+Phase C introduces atomic symlink switching for zero-downtime updates:
+
+```bash
+# Directory structure with versioned releases
+/opt/ota/releases/v1.5.0/
+/opt/ota/releases/v1.6.0/
+/opt/ota/current -> releases/v1.6.0  # Atomic symlink
+
+/opt/cluster/releases/v1.5.0/HelloQt6Qml
+/opt/cluster/releases/v1.6.0/HelloQt6Qml
+/opt/cluster/current -> releases/v1.6.0  # Atomic symlink
+```
+
+**Update Flow:**
+1. Download new version to `/opt/ota/releases/v1.6.0/`
+2. Verify integrity with SHA-256 hash
+3. Atomic symlink switch: `ln -sfn releases/v1.6.0 current`
+4. Reload affected services
+
+### 14.5 Version History
+
+Phase C maintains a version history file:
+
+```bash
+$ cat /opt/ota/version-history.log
+2026-02-10T14:30:00Z v1.5.0 installed
+2026-02-10T16:45:00Z v1.6.0 installed
+```
+
+### 14.6 Improved Rollback
+
+If update fails, rollback uses atomic symlink:
+
+```bash
+# Get previous version
+PREV=$(sed -n '2p' /opt/ota/version-history.log | awk '{print $2}')
+
+# Atomic rollback
+ln -sfn "releases/$PREV" current
+
+# Restart services
+systemctl restart cluster can-to-kuksa
+```
+
+### 14.7 Installation on AGL
+
+```bash
+# On development machine
+scp -r src/ota/* root@10.21.220.191:/tmp/ota-install/
+
+# On AGL (Raspberry Pi 5)
+cd /tmp/ota-install
+chmod +x install.sh
+./install.sh
+
+# Enable services
+systemctl enable --now cluster.service
+systemctl enable --now ota-check.timer
+```
+
+### 14.8 Phase C Status
+
+| Component | File | Status |
+|-----------|------|--------|
+| Qt Cluster Service | `systemd/cluster.service` | ✅ Created |
+| OTA Check Timer | `systemd/ota-check.timer` | ✅ Active |
+| OTA Check Service | `systemd/ota-check.service` | ✅ Working |
+| Polling Script | `scripts/ota-check.sh` | ✅ Tested |
+| Atomic Symlinks | `scripts/ota-update.sh` | ✅ Tested |
+| Install Script | `install.sh` | ✅ Created |
+| Documentation | `README.md` | ✅ Created |
+| Deploy to AGL | - | ✅ **Complete** |
+
+### 14.9 Phase C Validation (2026-02-10 18:13 UTC)
+
+**Automatic OTA Update v1.5.0 → v1.6.0:**
+
+```
+✅ [1/8] Download do package
+✅ [2/8] Hash verified OK  
+✅ [3/8] Extracting to /opt/ota/releases/v1.6.0
+✅ [4/8] Stopping services
+✅ [5/8] Previous version: v1.5.0
+✅ [6/8] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.6.0
+✅ [7/8] Installing binaries
+✅ [8/8] Starting services
+✅ === Update to v1.6.0 successful ===
+```
+
+**Phase C Features Validated:**
+
+| Feature | Status |
+|---------|--------|
+| Timer automático (15 min) | ✅ |
+| GitHub API polling | ✅ |
+| Auto-download | ✅ |
+| Hash verification | ✅ |
+| Atomic symlink switch | ✅ |
+| Service restart | ✅ |
+| Version history | ✅ |
+| Rollback capability | ✅ |
+
+**Verification:**
+```bash
+$ cat /etc/ota-version
+v1.6.0
+
+$ ls -la /opt/ota/current
+lrwxrwxrwx 1 root root 26 Feb 10 18:13 /opt/ota/current -> /opt/ota/releases/v1.6.0
+
+$ ls /opt/ota/releases/
+v1.0.1  v1.5.0  v1.6.0
+```
 
 ---
 
