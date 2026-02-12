@@ -46,14 +46,14 @@ jobs:
               set -e
 
               # -------------------------
-              # Install Python + pytest
+              # Install Python + pip + dependencies
               # -------------------------
               apt-get update && \
               apt-get install -y python3 python3-pip && \
-              pip3 install pytest && \
+              pip3 install -r unit/python/requirements.txt && \
 
               # -------------------------
-              # Build and run tests
+              # Build and run C++ + Python tests
               # -------------------------
               rm -rf build && \
               cmake -S . -B build -G Ninja \
