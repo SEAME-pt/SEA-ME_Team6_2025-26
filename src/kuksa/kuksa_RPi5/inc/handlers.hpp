@@ -14,7 +14,7 @@ void handleHeartbeat(const can_frame& frame, IKuksaClient& kuksa);
 
 void handleImuAccel(const can_frame& frame, IKuksaClient& kuksa);
 void handleImuGyro(const can_frame& frame, IKuksaClient& kuksa);
-//void handleImuMag(const can_frame& frame, IKuksaClient& kuksa);
+void handleImuMag(const can_frame& frame, IKuksaClient& kuksa);
 
 void handleToFDistance(const can_frame& frame, IKuksaClient& kuksa);
 void handleBattery(const can_frame& frame, IKuksaClient& kuksa);
