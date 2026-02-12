@@ -109,8 +109,72 @@ mv -Tf "$TEMP_LINK" "$CURRENT_LINK" 2>/dev/null || {
 
 log "Symlink updated: $CURRENT_LINK -> $RELEASE_DIR"
 
+# -------- VERIFY BINARY ARCHITECTURE --------
+log "[7/9] Verifying binary architecture..."
+
+SYSTEM_ARCH=$(uname -m)
+ARCH_OK=1
+
+verify_binary_arch() {
+    local binary="$1"
+    local name="$2"
+    
+    if [ ! -f "$binary" ]; then
+        log "WARN: $name not found in package"
+        return 0
+    fi
+    
+    local file_info=$(file "$binary" 2>/dev/null || echo "unknown")
+    
+    case "$SYSTEM_ARCH" in
+        aarch64)
+            if echo "$file_info" | grep -q "64-bit.*ARM\|ARM aarch64"; then
+                log "$name: architecture OK (64-bit ARM)"
+                return 0
+            elif echo "$file_info" | grep -q "32-bit.*ARM"; then
+                log "ERROR: $name is 32-bit but system is 64-bit (aarch64)"
+                return 1
+            fi
+            ;;
+        armv7l|armhf)
+            if echo "$file_info" | grep -q "32-bit.*ARM"; then
+                log "$name: architecture OK (32-bit ARM)"
+                return 0
+            elif echo "$file_info" | grep -q "64-bit"; then
+                log "ERROR: $name is 64-bit but system is 32-bit (armv7)"
+                return 1
+            fi
+            ;;
+    esac
+    
+    log "WARN: Could not verify $name architecture: $file_info"
+    return 0
+}
+
+# Verify KUKSA binary
+if [ -f "$CURRENT_LINK/kuksa/bin/can_to_kuksa_publisher" ]; then
+    if ! verify_binary_arch "$CURRENT_LINK/kuksa/bin/can_to_kuksa_publisher" "can_to_kuksa_publisher"; then
+        ARCH_OK=0
+    fi
+fi
+
+# Verify Cluster binary
+if [ -f "$CURRENT_LINK/cluster/HelloQt6Qml" ]; then
+    if ! verify_binary_arch "$CURRENT_LINK/cluster/HelloQt6Qml" "HelloQt6Qml"; then
+        ARCH_OK=0
+    fi
+fi
+
+if [ $ARCH_OK -eq 0 ]; then
+    log "ERROR: Binary architecture mismatch detected!"
+    log "System architecture: $SYSTEM_ARCH"
+    log "Aborting update to prevent installing incompatible binaries."
+    log "Please ensure OTA package is built for $SYSTEM_ARCH"
+    exit 1
+fi
+
 # -------- INSTALL BINARIES --------
-log "[7/8] Installing binaries from current symlink..."
+log "[8/9] Installing binaries from current symlink..."
 
 # KUKSA publisher
 if [ -f "$CURRENT_LINK/kuksa/bin/can_to_kuksa_publisher" ]; then
@@ -132,30 +196,76 @@ if [ -f "$CURRENT_LINK/cluster/HelloQt6Qml" ]; then
 fi
 
 # -------- START SERVICES --------
-log "[8/8] Starting services..."
+log "[9/10] Starting services..."
 systemctl start can-to-kuksa.service 2>/dev/null || log "WARN: can-to-kuksa.service not found"
 systemctl start cluster.service 2>/dev/null || log "WARN: cluster.service not found"
 
 # -------- HEALTH CHECK --------
-sleep 3
+log "[10/10] Performing health check..."
+
+# Function to check if service is healthy (not in restart loop)
+check_service_health() {
+    local service="$1"
+    local max_restarts=3
+    local check_interval=2
+    local total_wait=10
+    
+    if ! systemctl is-enabled "$service" 2>/dev/null; then
+        log "SKIP: $service is not enabled"
+        return 0
+    fi
+    
+    log "Checking $service health..."
+    
+    # Wait a bit for service to stabilize
+    sleep $check_interval
+    
+    # Get initial restart count
+    local initial_restarts=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+    
+    # Wait and check for restart loop
+    local elapsed=0
+    while [ $elapsed -lt $total_wait ]; do
+        sleep $check_interval
+        elapsed=$((elapsed + check_interval))
+        
+        local current_restarts=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+        local restart_diff=$((current_restarts - initial_restarts))
+        
+        if [ $restart_diff -ge $max_restarts ]; then
+            log "ERROR: $service is in restart loop ($restart_diff restarts in ${elapsed}s)"
+            return 1
+        fi
+        
+        if systemctl is-active --quiet "$service"; then
+            log "$service: active and stable (restarts: $restart_diff)"
+            return 0
+        fi
+    done
+    
+    # Final check
+    if systemctl is-active --quiet "$service"; then
+        log "$service: active"
+        return 0
+    else
+        local status=$(systemctl is-active "$service" 2>/dev/null || echo "unknown")
+        log "ERROR: $service is not running (status: $status)"
+        return 1
+    fi
+}
+
 FAILED=0
 
-if systemctl is-enabled can-to-kuksa.service 2>/dev/null; then
-    if ! systemctl is-active --quiet can-to-kuksa.service; then
-        log "ERROR: can-to-kuksa.service failed to start"
-        FAILED=1
-    else
-        log "can-to-kuksa.service: active"
-    fi
+# Check KUKSA service
+if ! check_service_health "can-to-kuksa.service"; then
+    log "CRITICAL: can-to-kuksa.service failed health check"
+    FAILED=1
 fi
 
-if systemctl is-enabled cluster.service 2>/dev/null; then
-    if ! systemctl is-active --quiet cluster.service; then
-        log "WARN: cluster.service failed to start"
-        # Don't fail on cluster, it might need display
-    else
-        log "cluster.service: active"
-    fi
+# Check Cluster service (critical for this update)
+if ! check_service_health "cluster.service"; then
+    log "CRITICAL: cluster.service failed health check"
+    FAILED=1
 fi
 
 # -------- ROLLBACK IF FAILED --------

@@ -115,7 +115,48 @@ Updates firmware on STM32:
 
 ## 3. Architecture Overview
 
-### 3.1 High-Level Architecture
+### 3.1 Multi-Platform Architecture
+
+> **Update (Sprint 8):** The system now supports multi-platform OTA with separate packages for RPi4 (32-bit) and RPi5 (64-bit).
+
+```
+┌─────────────────────────┐         ┌─────────────────────────┐
+│        RPi4             │  WiFi/  │       RPi5 (AGL)        │
+│       (32-bit)          │ Network │        (64-bit)         │
+│  ┌─────────────────┐    │◄───────►│    ┌─────────────────┐  │
+│  │    Cluster      │    │         │    │     KUKSA       │  │
+│  │   (Qt6 UI)      │    │         │    │   (CAN→VSS)     │  │
+│  └─────────────────┘    │         │    └─────────────────┘  │
+│  OTA: update-rpi4.tar.gz│         │  OTA: update-rpi5.tar.gz│
+└─────────────────────────┘         └─────────────────────────┘
+            │                                   │
+            └───────────────┬───────────────────┘
+                            ▼
+                    GitHub Releases
+                    ┌─────────────────┐
+                    │ update-rpi4.tar │
+                    │ update-rpi5.tar │
+                    │ update.tar.gz   │
+                    └─────────────────┘
+                            ▲
+                            │
+                    GitHub Actions
+                    (Multi-Platform Build)
+                    ┌─────────────────────────────┐
+                    │ build-cluster-rpi4 (32-bit) │
+                    │ build-kuksa-rpi5 (64-bit)   │
+                    │ release (package & upload)  │
+                    └─────────────────────────────┘
+```
+
+### 3.2 Platform Details
+
+| Platform | Architecture | Component | Docker SDK |
+|----------|--------------|-----------|------------|
+| **RPi4** | ARM 32-bit (armv7) | Qt6 Cluster UI | `souzitaaaa/team6-agl-sdk:rpi4` |
+| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `souzitaaaa/team6-agl-sdk:rpi5` |
+
+### 3.3 High-Level Architecture (Legacy Single-Platform)
 
 ```
 ┌──────────────────┐
@@ -763,11 +804,171 @@ Update     Rollback
 version    to backup
 ```
 
+### 7.3 Enhanced Health Check Features (Sprint 8)
+
+> **New in Sprint 8:** The OTA script now includes architecture verification and restart loop detection.
+
+#### 7.3.1 Architecture Verification
+
+The script verifies that binaries match the system architecture before installation:
+
+```bash
+verify_binary_arch() {
+    local binary="$1"
+    local expected_arch=$(uname -m)  # e.g., "aarch64" or "armv7l"
+    
+    # Use file command to check binary architecture
+    local file_output=$(file "$binary")
+    
+    case "$expected_arch" in
+        aarch64)
+            if [[ ! "$file_output" =~ "ARM aarch64" ]]; then
+                log "ERROR" "Binary is not ARM 64-bit!"
+                return 1
+            fi
+            ;;
+        armv7l|armv7*)
+            if [[ ! "$file_output" =~ "ARM" ]] || [[ "$file_output" =~ "aarch64" ]]; then
+                log "ERROR" "Binary is not ARM 32-bit!"
+                return 1
+            fi
+            ;;
+    esac
+    return 0
+}
+```
+
+**Why this matters:**
+- Prevents installing 32-bit binaries on 64-bit systems (and vice versa)
+- Catches CI/CD misconfigurations early
+- Avoids `status=203/EXEC` service failures
+
+#### 7.3.2 Restart Loop Detection
+
+The script detects services stuck in restart loops:
+
+```bash
+check_service_health() {
+    local service="$1"
+    local max_wait=30     # Max seconds to wait
+    local restart_window=10  # Window to check for restart loops
+    local max_restarts=3     # Max restarts before failure
+    
+    sleep 3  # Initial wait for service to start
+    
+    # Check if active
+    if ! systemctl is-active --quiet "$service"; then
+        return 1
+    fi
+    
+    # Check for restart loop
+    local restarts=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+    sleep "$restart_window"
+    local restarts_after=$(systemctl show "$service" --property=NRestarts --value 2>/dev/null || echo "0")
+    
+    local restart_diff=$((restarts_after - restarts))
+    if [ "$restart_diff" -ge "$max_restarts" ]; then
+        log "ERROR" "Service in restart loop ($restart_diff restarts in ${restart_window}s)"
+        return 1
+    fi
+    
+    return 0
+}
+```
+
+**Why this matters:**
+- Services with `Restart=always` can appear "active" even while crashing repeatedly
+- Simple `systemctl is-active` misses restart loops
+- Early detection prevents running broken software
+
+#### 7.3.3 OTA Update Flow (v2)
+
+The updated flow now includes 10 steps:
+
+```
+1. Download package from GitHub Release
+         ↓
+2. Verify SHA-256 hash
+         ↓
+3. Extract to /opt/ota/releases/vX.X.X
+         ↓
+4. Stop services
+         ↓
+5. Record previous version
+         ↓
+6. Update symlink atomically
+         ↓
+7. Verify binary architecture ← NEW
+         ↓
+8. Install binaries
+         ↓
+9. Start services
+         ↓
+10. Health check (restart loop detection) ← NEW
+         ↓
+   ┌─────┴─────┐
+   │           │
+  OK?        FAIL?
+   │           │
+   ▼           ▼
+Update     Rollback
+version    to backup
+```
+
 ---
 
 ## 8. CI/CD Pipeline
 
-### 8.1 GitHub Actions Workflow
+### 8.0 Multi-Platform Workflow (Sprint 8)
+
+> **Updated:** The workflow now supports building for both RPi4 (32-bit) and RPi5 (64-bit) platforms.
+
+**Location:** `.github/workflows/ota.yml`
+
+```yaml
+name: OTA Build & Release (Multi-Platform)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Target platform'
+        type: choice
+        options:
+          - both
+          - rpi4
+          - rpi5
+        default: 'both'
+
+env:
+  SDK_IMAGE_RPI4: souzitaaaa/team6-agl-sdk:rpi4
+  SDK_IMAGE_RPI5: souzitaaaa/team6-agl-sdk:rpi5
+
+jobs:
+  build-kuksa-rpi5:    # ARM 64-bit (aarch64)
+  build-cluster-rpi4:  # ARM 32-bit (armv7)
+  release:             # Package and upload
+```
+
+### 8.0.1 Multi-Platform Build Jobs
+
+| Job | Platform | Architecture | SDK Image | Output |
+|-----|----------|--------------|-----------|--------|
+| `build-kuksa-rpi5` | RPi5 | aarch64 (64-bit) | `team6-agl-sdk:rpi5` | `can_to_kuksa_publisher` |
+| `build-cluster-rpi4` | RPi4 | armv7 (32-bit) | `team6-agl-sdk:rpi4` | `HelloQt6Qml` |
+
+### 8.0.2 Release Packages
+
+| Package | Contents | Platform |
+|---------|----------|----------|
+| `update-rpi4.tar.gz` | Qt6 Cluster binary | RPi4 (32-bit) |
+| `update-rpi5.tar.gz` | KUKSA binary + VSS | RPi5 (64-bit) |
+| `update.tar.gz` | Both platforms | Combined |
+
+### 8.1 GitHub Actions Workflow (Legacy)
 
 **Location:** `.github/workflows/ota.yml`
 
