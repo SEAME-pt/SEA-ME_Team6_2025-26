@@ -13,19 +13,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -------------------------
+      # Checkout the repository
+      # -------------------------
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: false
 
+      # -------------------------
+      # Login to GitHub Container Registry
+      # -------------------------
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
+      # -------------------------
+      # Pull test image
+      # -------------------------
       - name: Pull test image
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
       # -------------------------
-      # Configure + Build + Run unified tests
+      # Configure + Build + Run unified tests (C++ + Python)
       # -------------------------
       - name: Configure + Build + Run tests
         run: |
@@ -34,6 +43,18 @@ jobs:
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
+              set -e
+
+              # -------------------------
+              # Install Python + pytest
+              # -------------------------
+              apt-get update && \
+              apt-get install -y python3 python3-pip && \
+              pip3 install pytest && \
+
+              # -------------------------
+              # Build and run tests
+              # -------------------------
               rm -rf build && \
               cmake -S . -B build -G Ninja \
                 -DCMAKE_BUILD_TYPE=Debug \
@@ -47,7 +68,7 @@ jobs:
             '
 
       # -------------------------
-      # Upload unified test report
+      # Upload unified test results
       # -------------------------
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -56,7 +77,7 @@ jobs:
           path: src/tests/test-results.xml
 
       # -------------------------
-      # Coverage report
+      # Generate coverage report (HTML)
       # -------------------------
       - name: Generate coverage HTML
         run: |
@@ -65,12 +86,16 @@ jobs:
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
+              set -e
               rm -rf coverage_html coverage.info coverage_filtered.info && \
               lcov --directory build --capture --output-file coverage.info && \
               lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" --output-file coverage_filtered.info && \
               genhtml coverage_filtered.info --output-directory coverage_html
             '
 
+      # -------------------------
+      # Upload coverage HTML artifact
+      # -------------------------
       - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
         with:
