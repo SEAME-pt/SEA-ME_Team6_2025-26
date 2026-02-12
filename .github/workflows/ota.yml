@@ -24,11 +24,11 @@ permissions:
   contents: write
 
 env:
-  # Docker images for each platform
+  # Docker images for each platform (Diogo's builds)
+  # RPi4: 32-bit ARM (armv7) - Qt6 Cluster
   SDK_IMAGE_RPI4: souzitaaaa/team6-agl-sdk:latest
+  # RPi5: 64-bit ARM (aarch64) - KUKSA Publisher
   SDK_IMAGE_RPI5: souzitaaaa/team6-r5-agl-sdk:latest
-  # Fallback to latest if specific tags don't exist yet
-  SDK_IMAGE_FALLBACK: souzitaaaa/team6-agl-sdk:latest
 
 jobs:
   # ============================================================
@@ -44,18 +44,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull RPi5 SDK (64-bit)
-        run: |
-          docker pull ${{ env.SDK_IMAGE_RPI5 }} || docker pull ${{ env.SDK_IMAGE_FALLBACK }}
+        run: docker pull ${{ env.SDK_IMAGE_RPI5 }}
 
       - name: Build KUKSA publisher (aarch64)
         run: |
-          # Use rpi5 image, fallback to latest
-          IMAGE=${{ env.SDK_IMAGE_RPI5 }}
-          docker image inspect $IMAGE > /dev/null 2>&1 || IMAGE=${{ env.SDK_IMAGE_FALLBACK }}
-          
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
-            $IMAGE \
+            ${{ env.SDK_IMAGE_RPI5 }} \
             bash -c '
               set -e
               
@@ -105,18 +100,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull RPi4 SDK (32-bit)
-        run: |
-          docker pull ${{ env.SDK_IMAGE_RPI4 }} || docker pull ${{ env.SDK_IMAGE_FALLBACK }}
+        run: docker pull ${{ env.SDK_IMAGE_RPI4 }}
 
       - name: Build Qt Cluster (armv7)
         run: |
-          # Use rpi4 image, fallback to latest
-          IMAGE=${{ env.SDK_IMAGE_RPI4 }}
-          docker image inspect $IMAGE > /dev/null 2>&1 || IMAGE=${{ env.SDK_IMAGE_FALLBACK }}
-          
           docker run --rm \
             -v ${{ github.workspace }}/src:/workspace \
-            $IMAGE \
+            ${{ env.SDK_IMAGE_RPI4 }} \
             bash -c '
               set -e
               
