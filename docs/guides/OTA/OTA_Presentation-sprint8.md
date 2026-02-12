@@ -65,8 +65,8 @@
 ```
 
 **Docker Images:**
-- `souzitaaaa/team6-agl-sdk:rpi4` — ARM 32-bit (armv7)
-- `souzitaaaa/team6-agl-sdk:rpi5` — ARM 64-bit (aarch64)
+- `souzitaaaa/team6-agl-sdk:latest` — ARM 32-bit (armv7) for RPi4
+- `souzitaaaa/team6-r5-agl-sdk:latest` — ARM 64-bit (aarch64) for RPi5
 
 ---
 
@@ -143,6 +143,19 @@ v1.5.0  v1.6.0  v1.7.0  v1.8.0
 $ systemctl is-active can-to-kuksa.service
 active
 ```
+
+---
+
+## ✅ Test Results (12 February 2026)
+
+| Device | IP | Architecture | Package | Service | Status |
+|--------|-----|--------------|---------|---------|--------|
+| **RPi5** | 10.21.220.191 | `aarch64` (64-bit) | `update-rpi5.tar.gz` | `can-to-kuksa.service` | ✅ Active |
+| **RPi4** | 10.21.220.192 | `armv7l` (32-bit) | `update-rpi4.tar.gz` | `helloqt-app.service` | ✅ Active |
+
+**Binaries Installed:**
+- RPi5: `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` + `vss_min.json`
+- RPi4: `/opt/cluster/HelloQt6Qml`
 
 ---
 

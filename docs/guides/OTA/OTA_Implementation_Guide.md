@@ -1,8 +1,8 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** February 2026  
+**Last Updated:** 12 February 2026  
 **Branch:** `feature/OTA/implementation`  
-**Status:** MVP Implemented, RAUC Pending
+**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Pending
 
 ---
 
@@ -151,10 +151,17 @@ Updates firmware on STM32:
 
 ### 3.2 Platform Details
 
-| Platform | Architecture | Component | Docker SDK |
-|----------|--------------|-----------|------------|
-| **RPi4** | ARM 32-bit (armv7) | Qt6 Cluster UI | `souzitaaaa/team6-agl-sdk:rpi4` |
-| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `souzitaaaa/team6-agl-sdk:rpi5` |
+| Platform | Architecture | Component | Service | Docker SDK |
+|----------|--------------|-----------|---------|------------|
+| **RPi4** | ARM 32-bit (armv7l) | Qt6 Cluster UI | `helloqt-app.service` | `souzitaaaa/team6-agl-sdk:latest` |
+| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `can-to-kuksa.service` | `souzitaaaa/team6-r5-agl-sdk:latest` |
+
+### 3.3 Test Results (12 February 2026)
+
+| Device | IP | `uname -m` | Package | Service | Status |
+|--------|-----|------------|---------|---------|--------|
+| RPi5 | 10.21.220.191 | `aarch64` | `update-rpi5.tar.gz` (260KB) | `can-to-kuksa.service` | ✅ Active, 0 restarts |
+| RPi4 | 10.21.220.192 | `armv7l` | `update-rpi4.tar.gz` (4.6MB) | `helloqt-app.service` | ✅ Active, 0 restarts |
 
 ### 3.3 High-Level Architecture (Legacy Single-Platform)
 

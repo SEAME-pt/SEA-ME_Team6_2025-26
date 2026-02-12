@@ -44,10 +44,17 @@
 
 ## Components
 
-| Device | Architecture | Components | OTA Package |
-|--------|-------------|------------|-------------|
-| **RPi4** | ARM 32-bit (armv7) | Qt6 Cluster UI | `update-rpi4.tar.gz` |
-| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `update-rpi5.tar.gz` |
+| Device | Architecture | Components | Service | OTA Package |
+|--------|-------------|------------|---------|-------------|
+| **RPi4** | ARM 32-bit (armv7l) | Qt6 Cluster UI | `helloqt-app.service` | `update-rpi4.tar.gz` |
+| **RPi5** | ARM 64-bit (aarch64) | KUKSA CAN→VSS | `can-to-kuksa.service` | `update-rpi5.tar.gz` |
+
+## Test Results (12 February 2026)
+
+| Device | IP | `uname -m` | Package Size | Service Status |
+|--------|-----|------------|--------------|----------------|
+| **RPi5** | 10.21.220.191 | `aarch64` | 260 KB | ✅ Active, 0 restarts |
+| **RPi4** | 10.21.220.192 | `armv7l` | 4.6 MB | ✅ Active, 0 restarts |
 
 ## Communication
 
@@ -85,10 +92,10 @@ GitHub Actions (CI/CD)
 
 ```bash
 # For RPi4 (32-bit)
-souzitaaaa/team6-agl-sdk:rpi4    # armv7vet2hf-neon-vfpv4-raspberrypi4
+souzitaaaa/team6-agl-sdk:latest       # armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
 
 # For RPi5 (64-bit)
-souzitaaaa/team6-agl-sdk:rpi5    # aarch64-raspberrypi5
+souzitaaaa/team6-r5-agl-sdk:latest    # aarch64-agl-linux
 ```
 
 ## OTA Script Features (v2)

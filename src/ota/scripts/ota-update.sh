@@ -137,7 +137,7 @@ find "$RELEASE_DIR" -type f | tee -a "$LOG"
 # -------- STOP SERVICES --------
 log "[4/10] Stopping services..."
 systemctl stop can-to-kuksa.service 2>/dev/null || true
-systemctl stop cluster.service 2>/dev/null || true
+systemctl stop helloqt-app.service 2>/dev/null || true
 
 # Ensure processes are really stopped (workaround for systemd not always killing properly)
 sleep 1
@@ -308,11 +308,11 @@ case "$PLATFORM" in
         systemctl start can-to-kuksa.service 2>/dev/null || log "WARN: can-to-kuksa.service not found"
         ;;
     rpi4)
-        systemctl start cluster.service 2>/dev/null || log "WARN: cluster.service not found"
+        systemctl start helloqt-app.service 2>/dev/null || log "WARN: helloqt-app.service not found"
         ;;
     *)
         systemctl start can-to-kuksa.service 2>/dev/null || log "WARN: can-to-kuksa.service not found"
-        systemctl start cluster.service 2>/dev/null || log "WARN: cluster.service not found"
+        systemctl start helloqt-app.service 2>/dev/null || log "WARN: helloqt-app.service not found"
         ;;
 esac
 
@@ -381,8 +381,8 @@ case "$PLATFORM" in
         fi
         ;;
     rpi4)
-        if ! check_service_health "cluster.service"; then
-            log "CRITICAL: cluster.service failed health check"
+        if ! check_service_health "helloqt-app.service"; then
+            log "CRITICAL: helloqt-app.service failed health check"
             FAILED=1
         fi
         ;;
@@ -391,8 +391,8 @@ case "$PLATFORM" in
             log "CRITICAL: can-to-kuksa.service failed health check"
             FAILED=1
         fi
-        if ! check_service_health "cluster.service"; then
-            log "CRITICAL: cluster.service failed health check"
+        if ! check_service_health "helloqt-app.service"; then
+            log "CRITICAL: helloqt-app.service failed health check"
             FAILED=1
         fi
         ;;
@@ -403,7 +403,7 @@ if [ $FAILED -eq 1 ] && [ "$PREVIOUS_VERSION" != "none" ]; then
     log "Rolling back to $PREVIOUS_VERSION..."
     
     systemctl stop can-to-kuksa.service 2>/dev/null || true
-    systemctl stop cluster.service 2>/dev/null || true
+    systemctl stop helloqt-app.service 2>/dev/null || true
     
     # Atomic rollback - just switch symlink back
     PREV_RELEASE_DIR="$RELEASES_DIR/$PREVIOUS_VERSION"
@@ -420,7 +420,7 @@ if [ $FAILED -eq 1 ] && [ "$PREVIOUS_VERSION" != "none" ]; then
             cp "$CURRENT_LINK/cluster/HelloQt6Qml" "$CLUSTER_DIR/"
         
         systemctl start can-to-kuksa.service 2>/dev/null || true
-        systemctl start cluster.service 2>/dev/null || true
+        systemctl start helloqt-app.service 2>/dev/null || true
         
         echo "$PREVIOUS_VERSION" > /etc/ota-version
         log "Rollback to $PREVIOUS_VERSION complete"
