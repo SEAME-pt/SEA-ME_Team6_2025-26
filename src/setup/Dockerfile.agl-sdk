@@ -3,12 +3,15 @@
 #   DOCKER_BUILDKIT=1 docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
 #
 # Requirement: The SDK file must to be on the same directory:
-#   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
+#   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-armv7vet2hf-neon-vfpv4-raspberrypi4-toolchain-20.0.2.sh
+#
+# Execute (on the src):
+#   sudo docker run -it --rm -v $(pwd):/workspace team6-agl-sdk:latest
 
 FROM souzitaaaa/team6-base:bookworm
 
 ARG SDK_VERSION=20.0.2
-ARG SDK_INSTALLER=poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-${SDK_VERSION}.sh
+ARG SDK_INSTALLER=poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-armv7vet2hf-neon-vfpv4-raspberrypi4-toolchain-${SDK_VERSION}.sh
 ARG SDK_INSTALL_DIR=/opt/agl-sdk
 
 # SDK instalation
@@ -44,7 +47,7 @@ RUN /usr/local/bin/verify-sdk.sh
 # Environment Variables definition
 ENV AGL_SDK_PATH=${SDK_INSTALL_DIR}
 ENV AGL_SDK_VERSION=${SDK_VERSION}
-ENV AGL_ENV_SCRIPT=${SDK_INSTALL_DIR}/environment-setup-aarch64-agl-linux
+ENV AGL_ENV_SCRIPT=${SDK_INSTALL_DIR}/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
 ENV AGL_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
 ENV QT_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
 

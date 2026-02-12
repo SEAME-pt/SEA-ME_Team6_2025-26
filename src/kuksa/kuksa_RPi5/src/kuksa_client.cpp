@@ -4,25 +4,43 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
 #include "../generated/kuksa/val/v2/val.grpc.pb.h"
 #include "../generated/kuksa/val/v2/types.pb.h"
 
 using kuksa::val::v2::VAL;
 
+static std::string read_file(const std::string& path)
+{
+    std::ifstream f(path.c_str(), std::ios::in | std::ios::binary);
+    if (!f.is_open())
+        throw std::runtime_error("Failed to open file: " + path);
+
+    std::ostringstream ss;
+    ss << f.rdbuf();
+    return ss.str();
+}
+
 struct KuksaClient::Impl {
     std::shared_ptr<grpc::Channel> channel;
     std::unique_ptr<VAL::Stub> stub;
+    std::string jwt;
 
-    explicit Impl(const std::string& addr)
+    Impl(const std::string& addr, const std::string& ca_cert_path)
     {
-        channel = grpc::CreateChannel(addr, grpc::InsecureChannelCredentials());
+        grpc::SslCredentialsOptions ssl_opts; 
+        ssl_opts.pem_root_certs = read_file(ca_cert_path); // Load CA cert
+        jwt = read_file("/etc/kuksa/jwt/publisher.jwt"); // Load JWT from file
+        channel = grpc::CreateChannel(addr, grpc::SslCredentials(ssl_opts));
         stub = VAL::NewStub(channel);
     }
 };
 
 KuksaClient::KuksaClient(const std::string& addr)
-: impl_(new Impl(addr))
+: impl_(new Impl(addr, "/etc/kuksa/tls/ca.crt"))
 {
 }
 
@@ -31,6 +49,7 @@ KuksaClient::~KuksaClient() = default;
 void KuksaClient::publishDouble(const std::string& path, double value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt);
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -47,6 +66,7 @@ void KuksaClient::publishDouble(const std::string& path, double value)
 void KuksaClient::publishInt32(const std::string& path, std::int32_t value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -63,6 +83,7 @@ void KuksaClient::publishInt32(const std::string& path, std::int32_t value)
 void KuksaClient::publishBool(const std::string& path, bool value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -79,6 +100,7 @@ void KuksaClient::publishBool(const std::string& path, bool value)
 void KuksaClient::publishFloat(const std::string& path, float value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 
@@ -95,6 +117,7 @@ void KuksaClient::publishFloat(const std::string& path, float value)
 void KuksaClient::publishUint32(const std::string& path, std::uint32_t value)
 {
     grpc::ClientContext ctx;
+    ctx.AddMetadata("authorization", std::string("Bearer ") + impl_->jwt); // Add JWT for authentication
     kuksa::val::v2::PublishValueRequest req;
     kuksa::val::v2::PublishValueResponse resp;
 

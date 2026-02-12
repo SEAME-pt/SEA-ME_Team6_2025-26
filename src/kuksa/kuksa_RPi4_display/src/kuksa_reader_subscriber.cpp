@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
 #include <grpcpp/grpcpp.h>
 #include "kuksa/val/v2/val.grpc.pb.h"
 #include "kuksa/val/v2/types.pb.h"
@@ -14,9 +16,23 @@ using kuksa::val::v2::VAL;
 
 // Create a stub object that binds to the channel
 // the stub is like the wrapper that allows to call remote methods
-static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port)
+static std::string read_file(const std::string& path)
 {
-    auto channel = grpc::CreateChannel(host_port, grpc::InsecureChannelCredentials());
+    std::ifstream f(path.c_str(), std::ios::in | std::ios::binary);
+    if (!f.is_open())
+        throw std::runtime_error("Failed to open file: " + path);
+
+    std::ostringstream ss;
+    ss << f.rdbuf();
+    return ss.str();
+}
+
+static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& addr)
+{
+    grpc::SslCredentialsOptions ssl_opts;
+    ssl_opts.pem_root_certs = read_file("/etc/kuksa/tls/ca.crt");
+
+    auto channel = grpc::CreateChannel(addr, grpc::SslCredentials(ssl_opts));
     return VAL::NewStub(channel);
 }
 

@@ -39,6 +39,7 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS
     Quick 
     QuickControls2 
     DBus
+    Svg
 )
 
 # ============================================================================
@@ -90,6 +91,7 @@ add_executable(HelloQt6Qml
     src/backend/frontdistanceprovider.cpp
     src/backend/wheelspeedprovider.cpp
     src/backend/voltageprovider.cpp
+    src/backend/headingprovider.cpp
     src/backend/ipcclient.cpp
     src/backend/reader.cpp
     
@@ -120,6 +122,7 @@ target_link_libraries(HelloQt6Qml PRIVATE
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::DBus
+    Qt6::Svg
 )
 
 # ============================================================================

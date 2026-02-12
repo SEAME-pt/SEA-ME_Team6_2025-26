@@ -14,7 +14,7 @@ Rectangle {
         spacing: 0
 
         // Top bar
-        TopBar {}
+        //TopBar {}
 
         // Middle content
         RowLayout {
@@ -30,6 +30,6 @@ Rectangle {
         }
 
         // Bottom bar
-        BottomBar {}
+        // BottomBar {}
     }
 }
