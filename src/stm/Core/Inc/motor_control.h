@@ -9,6 +9,7 @@
 #define INC_MOTOR_CONTROL_H_
 
 #include "stm32u5xx_hal.h"
+#include "system_ctx.h"
 #include <stdint.h>
 
 /* TB6612FNG I2C Address - CONFIRMED by I2C scan! */
@@ -41,7 +42,7 @@ typedef enum {
 } MotorDirection_t;
 
 /* Function Prototypes */
-HAL_StatusTypeDef Motor_Init(I2C_HandleTypeDef *hi2c);
+HAL_StatusTypeDef Motor_Init(SystemCtx* ctx, I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef Motor_Stop(void);
 HAL_StatusTypeDef Motor_Forward(uint8_t speed);
 HAL_StatusTypeDef Motor_Backward(uint8_t speed);

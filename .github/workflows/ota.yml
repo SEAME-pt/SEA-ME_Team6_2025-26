@@ -1,4 +1,4 @@
-name: OTA Build & Release (ARM64)
+name: OTA Build & Release (Multi-Platform)
 
 on:
   push:
@@ -10,123 +10,140 @@ on:
         description: 'Version tag (e.g., v1.0.3)'
         required: true
         default: 'v1.0.3'
+      platform:
+        description: 'Target platform (rpi4, rpi5, or both)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - rpi4
+          - rpi5
 
 permissions:
   contents: write
 
+env:
+  # Docker images for each platform (Diogo's builds)
+  # RPi4: 32-bit ARM (armv7) - Qt6 Cluster
+  SDK_IMAGE_RPI4: souzitaaaa/team6-agl-sdk:latest
+  # RPi5: 64-bit ARM (aarch64) - KUKSA Publisher
+  SDK_IMAGE_RPI5: souzitaaaa/team6-r5-agl-sdk:latest
+
 jobs:
-  build-kuksa:
-    name: Build KUKSA Publisher (ARM64)
+  # ============================================================
+  # RPi5 Build (64-bit) - KUKSA Publisher
+  # ============================================================
+  build-kuksa-rpi5:
+    name: Build KUKSA (RPi5 - 64-bit)
     runs-on: ubuntu-22.04
+    if: ${{ github.event.inputs.platform != 'rpi4' }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull Team6 AGL SDK
-        run: docker pull souzitaaaa/team6-agl-sdk:latest
+      - name: Pull RPi5 SDK (64-bit)
+        run: docker pull ${{ env.SDK_IMAGE_RPI5 }}
 
-      - name: Build KUKSA publisher with cross-compiler
+      - name: Build KUKSA publisher (aarch64)
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
-            souzitaaaa/team6-agl-sdk:latest \
+            ${{ env.SDK_IMAGE_RPI5 }} \
             bash -c '
               set -e
               
-              echo "=== SDK Environment Info ==="
-              uname -m
-              echo "Looking for cross-compiler..."
+              echo "=== Building KUKSA for RPi5 (aarch64) ==="
+              echo "SDK Environment:"
               
-              # Source the SDK environment if available
-              if [ -f /opt/agl-sdk/environment-setup-* ]; then
-                echo "Sourcing AGL SDK environment..."
+              # Source the SDK environment
+              if [ -f /opt/agl-sdk/environment-setup-aarch64-agl-linux ]; then
+                echo "Using aarch64 SDK"
+                source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+              elif [ -f /opt/agl-sdk/environment-setup-* ]; then
+                echo "Using available SDK"
                 source /opt/agl-sdk/environment-setup-*
-                echo "CC=$CC"
-                echo "CXX=$CXX"
-              elif [ -f /opt/poky/*/environment-setup-* ]; then
-                echo "Sourcing Poky SDK environment..."
-                source /opt/poky/*/environment-setup-*
               fi
+              
+              echo "CC=$CC"
+              echo "CXX=$CXX"
               
               cd /workspace/src/kuksa/kuksa_RPi5
               
-              echo "=== Building KUKSA publisher ==="
               make clean || true
               make
               
-              echo "=== Verifying binary ==="
-              ls -la bin/
+              echo "=== Verifying binary architecture ==="
               file bin/can_to_kuksa_publisher
+              file bin/can_to_kuksa_publisher | grep -q "64-bit\|aarch64" && echo "✅ Binary is 64-bit" || echo "⚠️ Binary may not be 64-bit"
             '
 
-      - name: Upload KUKSA artifact
+      - name: Upload KUKSA artifact (RPi5)
         uses: actions/upload-artifact@v4
         with:
-          name: kuksa-publisher
+          name: kuksa-rpi5
           path: |
             src/kuksa/kuksa_RPi5/bin/can_to_kuksa_publisher
             src/kuksa/kuksa_RPi5/vss_min.json
 
-  build-cluster:
-    name: Build Qt Cluster (ARM64)
+  # ============================================================
+  # RPi4 Build (32-bit) - Qt Cluster
+  # ============================================================
+  build-cluster-rpi4:
+    name: Build Cluster (RPi4 - 32-bit)
     runs-on: ubuntu-22.04
+    if: ${{ github.event.inputs.platform != 'rpi5' }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull Team6 AGL SDK
-        run: docker pull souzitaaaa/team6-agl-sdk:latest
+      - name: Pull RPi4 SDK (32-bit)
+        run: docker pull ${{ env.SDK_IMAGE_RPI4 }}
 
-      - name: Build Qt Cluster with cross-compiler
+      - name: Build Qt Cluster (armv7)
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/src:/workspace \
-            souzitaaaa/team6-agl-sdk:latest \
+            ${{ env.SDK_IMAGE_RPI4 }} \
             bash -c '
               set -e
-              echo "=== Building Qt6 Cluster ==="
+              
+              echo "=== Building Qt Cluster for RPi4 (armv7) ==="
+              
+              # Source the SDK environment
+              if [ -f /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi ]; then
+                echo "Using armv7 SDK"
+                source /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
+              elif [ -f /opt/agl-sdk/environment-setup-* ]; then
+                echo "Using available SDK"
+                source /opt/agl-sdk/environment-setup-*
+              fi
+              
               qt6-build.sh /workspace/cluster/
               
-              echo "=== Verifying binary ==="
-              ls -la /workspace/cluster/build-arm/
+              echo "=== Verifying binary architecture ==="
               file /workspace/cluster/build-arm/HelloQt6Qml
+              file /workspace/cluster/build-arm/HelloQt6Qml | grep -q "32-bit\|ARM" && echo "✅ Binary is 32-bit ARM" || echo "⚠️ Check binary architecture"
             '
 
-      - name: Upload Cluster artifact
+      - name: Upload Cluster artifact (RPi4)
         uses: actions/upload-artifact@v4
         with:
-          name: qt-cluster
+          name: cluster-rpi4
           path: src/cluster/build-arm/HelloQt6Qml
 
+  # ============================================================
+  # Release - Create separate packages for each platform
+  # ============================================================
   release:
-    name: Create OTA Release
-    needs: [build-kuksa, build-cluster]
+    name: Create OTA Releases
+    needs: [build-kuksa-rpi5, build-cluster-rpi4]
+    if: always() && (needs.build-kuksa-rpi5.result == 'success' || needs.build-cluster-rpi4.result == 'success')
     runs-on: ubuntu-22.04
     
     steps:
-      - name: Download KUKSA artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: kuksa-publisher
-          path: ota/kuksa
-
-      - name: Download Cluster artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: qt-cluster
-          path: ota/cluster
-
-      - name: Package OTA
-        run: |
-          echo "=== OTA Package Contents ==="
-          find ota -type f
-          tar -czf update.tar.gz -C ota .
-          
-      - name: Generate hash
-        run: sha256sum update.tar.gz > hash.txt
-
       - name: Get version
         id: version
         run: |
@@ -136,28 +153,94 @@ jobs:
             echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           fi
 
+      # --- RPi5 Package ---
+      - name: Download KUKSA artifact (RPi5)
+        if: needs.build-kuksa-rpi5.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: kuksa-rpi5
+          path: ota-rpi5/kuksa
+
+      - name: Package OTA for RPi5
+        if: needs.build-kuksa-rpi5.result == 'success'
+        run: |
+          echo "=== RPi5 OTA Package Contents ==="
+          find ota-rpi5 -type f
+          tar -czf update-rpi5.tar.gz -C ota-rpi5 .
+          sha256sum update-rpi5.tar.gz > hash-rpi5.txt
+
+      # --- RPi4 Package ---
+      - name: Download Cluster artifact (RPi4)
+        if: needs.build-cluster-rpi4.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: cluster-rpi4
+          path: ota-rpi4/cluster
+
+      - name: Package OTA for RPi4
+        if: needs.build-cluster-rpi4.result == 'success'
+        run: |
+          echo "=== RPi4 OTA Package Contents ==="
+          find ota-rpi4 -type f
+          tar -czf update-rpi4.tar.gz -C ota-rpi4 .
+          sha256sum update-rpi4.tar.gz > hash-rpi4.txt
+
+      # --- Combined Package (legacy support) ---
+      - name: Create combined package
+        run: |
+          mkdir -p ota-combined
+          [ -d ota-rpi4 ] && cp -r ota-rpi4/* ota-combined/ || true
+          [ -d ota-rpi5 ] && cp -r ota-rpi5/* ota-combined/ || true
+          
+          echo "=== Combined OTA Package Contents ==="
+          find ota-combined -type f
+          tar -czf update.tar.gz -C ota-combined .
+          sha256sum update.tar.gz > hash.txt
+
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.version }}
           name: "OTA Release ${{ steps.version.outputs.version }}"
           body: |
-            ## OTA Update Package
+            ## OTA Update Package (Multi-Platform)
             
-            ### Included Binaries (ARM64/aarch64)
+            ### 📦 Available Packages
             
-            | Binary | Description | Target Path |
-            |--------|-------------|-------------|
-            | `can_to_kuksa_publisher` | KUKSA CAN publisher | `/home/kuksa_RPi5/bin/` |
-            | `vss_min.json` | VSS configuration | `/home/kuksa_RPi5/` |
-            | `HelloQt6Qml` | Qt6 Cluster UI | `/opt/cluster/` |
+            | Package | Platform | Architecture | Contents |
+            |---------|----------|--------------|----------|
+            | `update-rpi4.tar.gz` | Raspberry Pi 4 | ARM 32-bit (armv7) | Qt6 Cluster |
+            | `update-rpi5.tar.gz` | Raspberry Pi 5 (AGL) | ARM 64-bit (aarch64) | KUKSA Publisher |
+            | `update.tar.gz` | Combined | Both | All binaries |
             
-            **Target:** Raspberry Pi 5 (AGL)
+            ### 🎯 Target Paths
             
-            ### Installation on AGL
+            | Binary | Device | Target Path |
+            |--------|--------|-------------|
+            | `HelloQt6Qml` | RPi4 | `/opt/cluster/` |
+            | `can_to_kuksa_publisher` | RPi5 | `/home/kuksa_RPi5/bin/` |
+            | `vss_min.json` | RPi5 | `/home/kuksa_RPi5/` |
+            
+            ### 📥 Installation
+            
+            **On RPi4:**
             ```bash
             /opt/ota/ota-update.sh ${{ steps.version.outputs.version }}
             ```
+            
+            **On RPi5 (AGL):**
+            ```bash
+            /opt/ota/ota-update.sh ${{ steps.version.outputs.version }}
+            ```
+            
+            ### ⚠️ Architecture Notes
+            - RPi4 binaries are **32-bit ARM** (armv7)
+            - RPi5 binaries are **64-bit ARM** (aarch64)
+            - Do not install wrong architecture on wrong device!
           files: |
             update.tar.gz
             hash.txt
+            update-rpi4.tar.gz
+            hash-rpi4.txt
+            update-rpi5.tar.gz
+            hash-rpi5.txt

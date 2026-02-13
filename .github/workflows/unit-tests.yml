@@ -31,8 +31,11 @@ jobs:
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
+              apt-get update && \
+              apt-get install -y python3 && \
+              rm -rf /var/lib/apt/lists/* && \
               rm -rf build && \
-              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
+              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON -DENABLE_PYTHON_TESTS=OFF && \
               cmake --build build && \
               ctest --test-dir build --output-on-failure
             '

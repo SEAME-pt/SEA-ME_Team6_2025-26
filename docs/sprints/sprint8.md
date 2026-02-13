@@ -31,11 +31,10 @@
 
 ## 📈 Actual Progress
 
-- ## Sprint 8 points: 97/100
+- ## Sprint 8 points: 97/100 + 13 (HMI bonus Task)
 
 - ## Undone:
 .  - [ ] Reorganize and Update documentation (3)  
-.  - [ ] Integrate RAUC
 
 ---
 
@@ -82,9 +81,12 @@ VI. Epic — Documentation - #54
     - EXPECT_L0_25 - "Instrument Cluster availability (Qt on Raspberry Pi 4)"
     - EXPECT_L0_12 - "Wireless DCI Display"
     - EXPECT_L0_7 - "QT Crosscompilation should be achieved"
-      - https://github.com/user-attachments/assets/c83fda50-2420-4e96-836c-1df1c79a8fcd
+      - https://github.com/user-attachments/assets/c314c7d2-9d90-4050-bd97-62242da6b3f4
   - HMI
-    - https://github.com/user-attachments/assets/7c20d35f-e41d-41df-9ad1-ca6b90f5dcd8
+    - EXPECT_L0_25 - "Instrument Cluster availability (Qt on Raspberry Pi 4)"
+    - EXPECT_L0_12 - "Wireless DCI Display"
+    - EXPECT_L0_7 - "QT Crosscompilation should be achieved"
+      - https://github.com/user-attachments/assets/53ffe2f4-6700-45fd-8489-94153fdf760e 
 
 - **Docs updated**:
   - `docs/guides/OTA/OTA_Implementation_Guide.md`
@@ -106,7 +108,7 @@ VI. Epic — Documentation - #54
 # 🔎 Retrospective
 - ## **Went well**:
   - #### Good end of Module and preparation for the next one!
-  - #### Inclusion of Bonus Tasks
+  - #### Inclusion of Bonus Tasks!
 
   - ### Bonus Tasks:
     - #### Another DCI Display setup for the HMI

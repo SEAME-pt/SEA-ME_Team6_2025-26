@@ -11,9 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// External mutex for printf protection
-extern TX_MUTEX printf_mutex;
-
 // Pulse counting variables
 volatile uint32_t pulse_count = 0;
 GPIO_PinState estado_anterior = GPIO_PIN_RESET;
@@ -27,16 +24,14 @@ uint32_t last_calculation_time = 0;
   * @brief  Initialize speedometer
   * @retval None
   */
-void Speedometer_Init(void)
+void Speedometer_Init(SystemCtx* ctx)
 {
     pulse_count = 0;
     estado_anterior = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
     last_calculation_time = HAL_GetTick();
 
-    tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-    printf("[Speedometer] Inicializado - Encoder: %d furos, Roda: %.2f mm\r\n",
+    sys_log(ctx, "[Speedometer] Inicializado - Encoder: %d furos, Roda: %.2f mm",
            ENCODER_HOLES, WHEEL_DIAMETER * 1000);
-    tx_mutex_put(&printf_mutex);
 }
 
 /**

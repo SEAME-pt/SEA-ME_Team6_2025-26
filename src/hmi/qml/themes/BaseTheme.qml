@@ -3,13 +3,17 @@ import QtQuick 2.15
 
 QtObject {
     //? Primary Palette
-    readonly property color primary: "#12768A"
+    readonly property color primary: "#3484F0"
     readonly property color primaryLight: "#6DADBE"
     readonly property color primaryExtraLight: "#CEDADB"
     readonly property color primaryDark: "#0B3F43"
 
+    //? Secondary Palette
+    readonly property color secondary: "#C4DBFA"
+
     //? Neutrals
-    readonly property color white: "#EBE8E7"
+    readonly property color white: "#F7F7F7"
+    readonly property color gray:   "#757575"
 
     //readonly property color black: "#212529"
     readonly property color black: "#000000"

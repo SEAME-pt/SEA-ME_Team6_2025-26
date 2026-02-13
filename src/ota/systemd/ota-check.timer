@@ -1,0 +1,21 @@
+[Unit]
+Description=OTA Update Check Timer - Runs every 15 minutes
+Documentation=https://github.com/SEAME-pt/SEA-ME_Team6_2025-26
+
+[Timer]
+# Run 2 minutes after boot
+OnBootSec=2min
+
+# Then every 15 minutes
+OnUnitActiveSec=15min
+
+# Add randomized delay to avoid thundering herd
+RandomizedDelaySec=60
+
+# Persist timer across reboots
+Persistent=true
+
+Unit=ota-check.service
+
+[Install]
+WantedBy=timers.target
