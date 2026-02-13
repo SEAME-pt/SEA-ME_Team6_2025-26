@@ -430,3 +430,4 @@ extern "C" void mock_tim_reset(void)
     mock_tim_pwm_started = false;
     mock_tim_moe_enabled = false;
 }
+
