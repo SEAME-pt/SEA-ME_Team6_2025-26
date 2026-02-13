@@ -73,6 +73,8 @@ VI. Epic — Documentation - #54
   - BONUS: VSS tree file documentation for easy understading
 
 - **Demos**:
+  - Temperature Benchmark
+    -  ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/rpi5-thermal-stress-test-.png)
   - OTA
     - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Release.png)
     - ![Image](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png)
