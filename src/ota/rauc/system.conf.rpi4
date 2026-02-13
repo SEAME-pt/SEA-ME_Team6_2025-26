@@ -1,0 +1,30 @@
+# RAUC System Configuration for Raspberry Pi 4 (32-bit)
+# SEA:ME Team 6 - AGL A/B Update System
+
+[system]
+compatible=seame-team6-rpi4
+bootloader=custom
+bundle-formats=-plain
+
+# Status/mark file for boot selection
+statusfile=/data/rauc.status
+
+[keyring]
+path=/etc/rauc/ca.cert.pem
+
+[handlers]
+# Custom bootloader backend for Raspberry Pi native bootloader
+bootloader-custom-backend=/usr/lib/rauc/bootloader-custom-backend.sh
+
+# Post-install handler for additional operations
+post-install=/usr/lib/rauc/post-install.sh
+
+[slot.rootfs.0]
+device=/dev/mmcblk0p2
+type=ext4
+bootname=A
+
+[slot.rootfs.1]
+device=/dev/mmcblk0p3
+type=ext4
+bootname=B
