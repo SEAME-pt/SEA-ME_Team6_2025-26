@@ -31,11 +31,10 @@
 
 ## 📈 Actual Progress
 
-- ## Sprint 8 points: 97/100
+- ## Sprint 8 points: 97/100 + 13 (HMI bonus Task)
 
 - ## Undone:
 .  - [ ] Reorganize and Update documentation (3)  
-.  - [ ] Integrate RAUC
 
 ---
 
