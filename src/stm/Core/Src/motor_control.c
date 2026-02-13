@@ -12,6 +12,7 @@
 /* Private Variables */
 static I2C_HandleTypeDef *motor_i2c;
 static uint8_t current_speed = 0;
+static TX_MUTEX *motor_i2c_mutex = NULL;
 
 // Debug flag - set to 1 to see I2C writes (disabled now that it works)
 #define MOTOR_DEBUG_ENABLED 0
@@ -29,7 +30,9 @@ extern TX_MUTEX printf_mutex;
 static HAL_StatusTypeDef Motor_SendCommand(uint8_t cmd, uint8_t channel, uint8_t speed)
 {
     uint8_t data[3] = {cmd, channel, speed};
+    tx_mutex_get(motor_i2c_mutex, TX_WAIT_FOREVER);
     HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(motor_i2c, MOTOR_I2C_ADDR, data, 3, 100);
+    tx_mutex_put(motor_i2c_mutex);
 
 #if MOTOR_DEBUG_ENABLED
     tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
@@ -51,7 +54,9 @@ static HAL_StatusTypeDef Motor_SendCommand(uint8_t cmd, uint8_t channel, uint8_t
 static HAL_StatusTypeDef Motor_SendSimpleCommand(uint8_t cmd, uint8_t value)
 {
     uint8_t data[2] = {cmd, value};
+    tx_mutex_get(motor_i2c_mutex, TX_WAIT_FOREVER);
     HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(motor_i2c, MOTOR_I2C_ADDR, data, 2, 100);
+    tx_mutex_put(motor_i2c_mutex);
 
 #if MOTOR_DEBUG_ENABLED
     tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
@@ -70,10 +75,11 @@ static HAL_StatusTypeDef Motor_SendSimpleCommand(uint8_t cmd, uint8_t value)
   * @retval HAL status
   * @note   Simplified init - just store I2C handle, no commands sent
   */
-HAL_StatusTypeDef Motor_Init(I2C_HandleTypeDef *hi2c)
+HAL_StatusTypeDef Motor_Init(SystemCtx* ctx, I2C_HandleTypeDef *hi2c)
 {
     motor_i2c = hi2c;
     current_speed = 0;
+    motor_i2c_mutex = &ctx->i2c1_mutex;
 
     HAL_Delay(100); // Wait for motor driver power-up
 
@@ -195,6 +201,7 @@ HAL_StatusTypeDef Motor_SetStandby(uint8_t standby)
   * @param  hi2c: pointer to I2C handle
   * @retval None
   */
+/*
 void Motor_HardwareTest(I2C_HandleTypeDef *hi2c)
 {
     HAL_StatusTypeDef status;
@@ -285,3 +292,4 @@ void Motor_HardwareTest(I2C_HandleTypeDef *hi2c)
     printf("   Se os motores andaram, o protocolo esta correto!\r\n");
     printf("========================================\r\n\r\n");
 }
+*/

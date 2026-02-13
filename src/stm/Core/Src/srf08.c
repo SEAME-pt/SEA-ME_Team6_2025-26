@@ -23,21 +23,21 @@ HAL_StatusTypeDef SRF08_InitWithConfig(SRF08_HandleTypeDef *hsrf, I2C_HandleType
     }
 
     // 2. Aguardar sensor estabilizar após power-on
-    HAL_Delay(100);
+    //HAL_Delay(100);
 
     // 3. Configurar Gain
     status = SRF08_SetGain(hsrf, gain);
     if (status != HAL_OK) {
         return status;
     }
-    HAL_Delay(10);  // Delay entre comandos
+    //HAL_Delay(10);  // Delay entre comandos
 
     // 4. Configurar Range
     status = SRF08_SetRange(hsrf, range);
     if (status != HAL_OK) {
         return status;
     }
-    HAL_Delay(10);
+    //HAL_Delay(10);
 
     return HAL_OK;
 }
@@ -51,8 +51,9 @@ uint8_t SRF08_GetVersion(SRF08_HandleTypeDef *hsrf)
 
 uint8_t SRF08_GetLight(SRF08_HandleTypeDef *hsrf)
 {
-    uint8_t light = 0;
-    HAL_I2C_Mem_Read(hsrf->hi2c, hsrf->addr, SRF08_REG_LIGHT, 1, &light, 1, 100);
+    uint8_t light = 0xFF;
+    HAL_StatusTypeDef st = HAL_I2C_Mem_Read(hsrf->hi2c, hsrf->addr, SRF08_REG_LIGHT, 1, &light, 1, 100);
+    if (st != HAL_OK) return 0xFF;
     return light;
 }
 
