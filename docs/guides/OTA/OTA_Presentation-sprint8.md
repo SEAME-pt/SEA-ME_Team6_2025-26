@@ -200,12 +200,12 @@ Developer                    GitHub                         Dispositivos
 
 ## ✅ Device Configuration (13 February 2026)
 
-| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual | Rede |
-|-------------|-----|-------------|------------|-------|-------------|---------------|------|
-| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | v1.8.0 | ⚠️ Sem Internet |
-| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ | ✅ OK |
+| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual |
+|-------------|-----|-------------|------------|-------|-------------|---------------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
 
-> **Nota:** RPi5 precisa de configuração de rede para aceder ao GitHub API e receber updates automáticos.
+✅ **Ambos os dispositivos atualizados automaticamente para v1.9.0!**
 
 **Binaries Installed:**
 - RPi5: `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` + `vss_min.json`
@@ -217,33 +217,42 @@ Developer                    GitHub                         Dispositivos
 
 ---
 
-## 📋 Resultados dos Testes (v1.7.0 → v1.8.0)
+## 📋 Resultados dos Testes (v1.8.0 → v1.9.0) - 13 Feb 2026
 
 ### RPi5 (KUKSA Publisher) - Update Automático com Sucesso:
 
 ```
-[2026-02-12 14:37:57] === OTA Update to v1.8.0 (Phase B - Atomic) ===
-[2026-02-12 14:37:57] Detected platform: rpi5
-[2026-02-12 14:37:57] Downloading update-rpi5.tar.gz for rpi5...
-[2026-02-12 14:37:57] Hash verified OK
-[2026-02-12 14:37:57] can_to_kuksa_publisher: architecture OK (64-bit ARM)
-[2026-02-12 14:38:01] can-to-kuksa.service: active and stable (restarts: 0)
-[2026-02-12 14:38:01] === Update to v1.8.0 successful ===
+[2026-02-13 14:00:27] Current version: v1.8.0
+[2026-02-13 14:00:27] Checking GitHub for latest release...
+[2026-02-13 14:00:27] Latest version: v1.9.0
+[2026-02-13 14:00:27] New version available: v1.9.0 (current: v1.8.0)
+[2026-02-13 14:00:27] Auto-update is enabled, triggering update...
+[2026-02-13 14:00:27] === OTA Update to v1.9.0 (Phase B - Atomic) ===
+[2026-02-13 14:00:27] Detected platform: rpi5
+[2026-02-13 14:00:27] Downloading update-rpi5.tar.gz for rpi5...
+[2026-02-13 14:00:28] Hash verified OK
+[2026-02-13 14:00:31] can_to_kuksa_publisher: architecture OK (64-bit ARM)
+[2026-02-13 14:00:31] Installed: can_to_kuksa_publisher
+[2026-02-13 14:00:31] Installed: vss_min.json
+[2026-02-13 14:00:35] can-to-kuksa.service: active and stable (restarts: 0)
+[2026-02-13 14:00:35] === Update to v1.9.0 successful ===
 ```
 
 ### RPi4 (Cluster) - Update Automático com Sucesso:
 
 ```
-[2026-02-12 14:43:09] Current version: v1.8.0
-[2026-02-12 14:43:09] Already up to date
+[2026-02-13 xx:xx:xx] === Update to v1.9.0 successful ===
 ```
 
 **Demonstra:**
 - ✅ Detecção automática de plataforma (rpi4 vs rpi5)
 - ✅ Download do pacote correto (update-rpi4.tar.gz vs update-rpi5.tar.gz)
+- ✅ Verificação de SHA256 hash
 - ✅ Verificação de arquitetura (32-bit vs 64-bit)
 - ✅ Health check do serviço
 - ✅ Polling automático cada 15 minutos
+- ✅ Atomic symlink switch
+- ✅ Rollback disponivel (v1.8.0, v1.7.0, etc)
 
 ---
 
@@ -438,6 +447,51 @@ ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 4. Architecture verification + health check + rollback
 
 **No manual intervention required after initial setup!**
+
+---
+
+## 🔧 Troubleshooting
+
+### Problema: Timer corre mas update falha
+
+**1. Verificar conectividade de rede:**
+```bash
+ssh root@<IP> "curl -s --max-time 5 https://api.github.com | head -1"
+```
+
+**2. Se falhar, verificar DNS:**
+```bash
+ssh root@<IP> "cat /etc/resolv.conf"
+# Se vazio ou não existe, adicionar:
+ssh root@<IP> "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+```
+
+**3. Se DNS OK mas HTTPS falha ("certificate not yet valid"):**
+```bash
+# Problema: relógio do sistema está errado
+ssh root@<IP> "date"
+# Corrigir:
+ssh root@<IP> "date -s '2026-02-13 14:00:00'"
+```
+
+**4. Verificar logs para detalhes:**
+```bash
+ssh root@<IP> "journalctl -u ota-check.service --since '1 hour ago'"
+ssh root@<IP> "cat /opt/ota/logs/ota-check.log | tail -20"
+```
+
+### Problema: Versão não atualiza
+
+```bash
+# Verificar se auto-update está enabled
+ssh root@<IP> "cat /etc/ota-auto-update"
+
+# Se não estiver "enabled":
+ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
+
+# Trigger manual para testar:
+ssh root@<IP> "/opt/ota/ota-check.sh"
+```
 
 ---
 

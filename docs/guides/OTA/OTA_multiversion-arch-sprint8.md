@@ -83,12 +83,12 @@ Developer                    GitHub                         Dispositivos
 
 ## Device Configuration (13 February 2026)
 
-| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual | Rede |
-|-------------|-----|-------------|------------|-------|-------------|---------------|------|
-| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | v1.8.0 | ⚠️ Sem Internet |
-| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ | ✅ OK |
+| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual |
+|-------------|-----|-------------|------------|-------|-------------|---------------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
 
-> **Nota:** O RPi5 requer configuração de rede (DNS/gateway) para aceder ao GitHub API e receber updates OTA automáticos.
+✅ **Ambos os dispositivos atualizados automaticamente para v1.9.0!**
 
 ### Troubleshooting - Verificar conectividade:
 
@@ -398,28 +398,31 @@ ssh root@10.21.220.192 "cat /etc/ota-version"   # RPi4 (Cluster)
 ### Exemplo de log de update bem sucedido (ota.log):
 
 ```
-[2026-02-12 14:37:56] === OTA Update to v1.8.0 (Phase B - Atomic) ===
-[2026-02-12 14:37:56] System architecture: aarch64
-[2026-02-12 14:37:56] Device model: Raspberry Pi 5 Model B Rev 1.1
-[2026-02-12 14:37:56] Detected platform: rpi5
-[2026-02-12 14:37:56] [1/10] Downloading package from GitHub Release...
-[2026-02-12 14:37:56] Downloading update-rpi5.tar.gz for rpi5...
-[2026-02-12 14:37:57] [2/10] Verifying SHA256 hash...
-[2026-02-12 14:37:57] Hash verified OK
-[2026-02-12 14:37:57] [3/10] Extracting to /opt/ota/releases/v1.8.0...
-[2026-02-12 14:37:57] [4/10] Stopping services...
-[2026-02-12 14:37:57] [5/10] Previous version: v1.7.0
-[2026-02-12 14:37:57] [6/10] Performing atomic symlink switch...
-[2026-02-12 14:37:57] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.8.0
-[2026-02-12 14:37:57] [7/10] Verifying binary architecture...
-[2026-02-12 14:37:57] can_to_kuksa_publisher: architecture OK (64-bit ARM)
-[2026-02-12 14:37:57] [8/10] Installing binaries for rpi5...
-[2026-02-12 14:37:57] Installed: can_to_kuksa_publisher
-[2026-02-12 14:37:57] Installed: vss_min.json
-[2026-02-12 14:37:57] [9/10] Starting services for rpi5...
-[2026-02-12 14:37:57] [10/10] Performing health check...
-[2026-02-12 14:38:01] can-to-kuksa.service: active and stable (restarts: 0)
-[2026-02-12 14:38:01] === Update to v1.8.0 successful ===
+[2026-02-13 14:00:27] Current version: v1.8.0
+[2026-02-13 14:00:27] Checking GitHub for latest release...
+[2026-02-13 14:00:27] Latest version: v1.9.0
+[2026-02-13 14:00:27] New version available: v1.9.0 (current: v1.8.0)
+[2026-02-13 14:00:27] Auto-update is enabled, triggering update...
+[2026-02-13 14:00:27] === OTA Update to v1.9.0 (Phase B - Atomic) ===
+[2026-02-13 14:00:27] Detected platform: rpi5
+[2026-02-13 14:00:27] [1/10] Downloading package from GitHub Release...
+[2026-02-13 14:00:27] Downloading update-rpi5.tar.gz for rpi5...
+[2026-02-13 14:00:28] [2/10] Verifying SHA256 hash...
+[2026-02-13 14:00:28] Hash verified OK
+[2026-02-13 14:00:29] [3/10] Extracting to /opt/ota/releases/v1.9.0...
+[2026-02-13 14:00:31] [4/10] Stopping services...
+[2026-02-13 14:00:31] [5/10] Previous version: v1.8.0
+[2026-02-13 14:00:31] [6/10] Performing atomic symlink switch...
+[2026-02-13 14:00:31] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.9.0
+[2026-02-13 14:00:31] [7/10] Verifying binary architecture...
+[2026-02-13 14:00:31] can_to_kuksa_publisher: architecture OK (64-bit ARM)
+[2026-02-13 14:00:31] [8/10] Installing binaries for rpi5...
+[2026-02-13 14:00:31] Installed: can_to_kuksa_publisher
+[2026-02-13 14:00:31] Installed: vss_min.json
+[2026-02-13 14:00:31] [9/10] Starting services for rpi5...
+[2026-02-13 14:00:31] [10/10] Performing health check...
+[2026-02-13 14:00:35] can-to-kuksa.service: active and stable (restarts: 0)
+[2026-02-13 14:00:35] === Update to v1.9.0 successful ===
 ```
 
 ---
@@ -436,6 +439,51 @@ ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
 
 # Verify timer is active
 ssh root@<IP> "systemctl list-timers | grep ota"
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Problema: Timer corre mas update falha
+
+**1. Verificar conectividade de rede:**
+```bash
+ssh root@<IP> "curl -s --max-time 5 https://api.github.com | head -1"
+```
+
+**2. Se falhar, verificar DNS:**
+```bash
+ssh root@<IP> "cat /etc/resolv.conf"
+# Se vazio ou não existe, adicionar:
+ssh root@<IP> "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+```
+
+**3. Se DNS OK mas HTTPS falha ("certificate not yet valid"):**
+```bash
+# Problema: relógio do sistema está errado
+ssh root@<IP> "date"
+# Corrigir:
+ssh root@<IP> "date -s '2026-02-13 14:00:00'"
+```
+
+**4. Verificar logs para detalhes:**
+```bash
+ssh root@<IP> "journalctl -u ota-check.service --since '1 hour ago'"
+ssh root@<IP> "cat /opt/ota/logs/ota-check.log | tail -20"
+```
+
+### Problema: Versão não atualiza
+
+```bash
+# Verificar se auto-update está enabled
+ssh root@<IP> "cat /etc/ota-auto-update"
+
+# Se não estiver "enabled":
+ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
+
+# Trigger manual para testar:
+ssh root@<IP> "/opt/ota/ota-check.sh"
 ```
 
 ---
