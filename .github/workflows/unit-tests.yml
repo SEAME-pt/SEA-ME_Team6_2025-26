@@ -14,7 +14,7 @@ jobs:
 
     steps:
       # -------------------------
-      # Checkout the repository
+      # Checkout repository
       # -------------------------
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
       # -------------------------
-      # Configure + Build + Run unified tests (C++ + Python)
+      # Build + Run C++ and Python tests
       # -------------------------
       - name: Configure + Build + Run tests
         run: |
@@ -46,14 +46,15 @@ jobs:
               set -e
 
               # -------------------------
-              # Install Python + pip + dependencies
+              # Install Python dependencies
               # -------------------------
               apt-get update && \
               apt-get install -y python3 python3-pip && \
-              pip3 install -r unit/python/requirements.txt && \
+              python3 -m pip install --upgrade pip && \
+              python3 -m pip install -r unit/python/requirements.txt
 
               # -------------------------
-              # Build and run C++ + Python tests
+              # Configure project
               # -------------------------
               rm -rf build && \
               cmake -S . -B build -G Ninja \
@@ -61,14 +62,21 @@ jobs:
                 -DENABLE_CPP_TESTS=ON \
                 -DENABLE_PYTHON_TESTS=ON \
                 -DENABLE_COVERAGE=ON && \
-              cmake --build build && \
-              ctest --test-dir build \
-                --output-on-failure \
-                --output-junit test-results.xml
+              cmake --build build
+
+              # -------------------------
+              # Run C++ tests
+              # -------------------------
+              ctest --test-dir build --output-on-failure --parallel $(nproc)
+
+              # -------------------------
+              # Run Python tests
+              # -------------------------
+              python3 -m pytest --junitxml=test-results.xml
             '
 
       # -------------------------
-      # Upload unified test results
+      # Upload Python JUnit results
       # -------------------------
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -77,7 +85,7 @@ jobs:
           path: src/tests/test-results.xml
 
       # -------------------------
-      # Generate coverage report (HTML)
+      # Generate C++ coverage report
       # -------------------------
       - name: Generate coverage HTML
         run: |
@@ -87,14 +95,17 @@ jobs:
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
               set -e
-              rm -rf coverage_html coverage.info coverage_filtered.info && \
-              lcov --directory build --capture --output-file coverage.info && \
-              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" --output-file coverage_filtered.info && \
+
+              rm -rf coverage_html coverage.info coverage_filtered.info
+
+              lcov --directory build --capture --output-file coverage.info
+              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" \
+                   --output-file coverage_filtered.info
               genhtml coverage_filtered.info --output-directory coverage_html
             '
 
       # -------------------------
-      # Upload coverage HTML artifact
+      # Upload coverage artifact
       # -------------------------
       - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
