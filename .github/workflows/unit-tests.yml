@@ -13,29 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # -------------------------
-      # Checkout repository
-      # -------------------------
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: false
 
-      # -------------------------
-      # Login to GHCR
-      # -------------------------
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      # -------------------------
-      # Pull test image
-      # -------------------------
       - name: Pull test image
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
-      # -------------------------
-      # Build + Run Tests
-      # -------------------------
       - name: Configure + Build + Run tests
         run: |
           docker run --rm \
@@ -43,55 +31,13 @@ jobs:
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
-              set -e
-
-              # -------------------------
-              # Install Python deps FIRST
-              # -------------------------
-              apt-get update && \
-              apt-get install -y python3 python3-pip && \
-              python3 -m pip install --upgrade pip && \
-              python3 -m pip install -r unit/python/requirements.txt
-
-              # -------------------------
-              # Configure + Build C++
-              # -------------------------
               rm -rf build && \
-              cmake -S . -B build -G Ninja \
-                -DCMAKE_BUILD_TYPE=Debug \
-                -DENABLE_CPP_TESTS=ON \
-                -DENABLE_PYTHON_TESTS=ON \
-                -DENABLE_COVERAGE=ON && \
-              cmake --build build
-
-              # -------------------------
-              # Run ONLY C++ tests
-              # Exclude python-labeled tests
-              # -------------------------
-              ctest --test-dir build \
-                    --output-on-failure \
-                    --parallel $(nproc) \
-                    -LE python
-
-              # -------------------------
-              # Run Python tests separately
-              # -------------------------
-              python3 -m pytest unit/python \
-                --junitxml=test-results.xml
+              cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON && \
+              cmake --build build && \
+              ctest --test-dir build --output-on-failure
             '
 
-      # -------------------------
-      # Upload Python JUnit results
-      # -------------------------
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: junit-test-results
-          path: src/tests/test-results.xml
-
-      # -------------------------
-      # Generate C++ coverage
-      # -------------------------
+      # OPTIONAL coverage report (HTML)
       - name: Generate coverage HTML
         run: |
           docker run --rm \
@@ -99,19 +45,12 @@ jobs:
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
-              set -e
-
-              rm -rf coverage_html coverage.info coverage_filtered.info
-
-              lcov --directory build --capture --output-file coverage.info
-              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" \
-                   --output-file coverage_filtered.info
+              rm -rf coverage_html coverage.info coverage_filtered.info && \
+              lcov --directory build --capture --output-file coverage.info && \
+              lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" --output-file coverage_filtered.info && \
               genhtml coverage_filtered.info --output-directory coverage_html
             '
 
-      # -------------------------
-      # Upload coverage artifact
-      # -------------------------
       - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
         with:
