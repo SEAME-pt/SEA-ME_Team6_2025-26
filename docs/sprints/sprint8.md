@@ -106,7 +106,7 @@ VI. Epic — Documentation - #54
 # 🔎 Retrospective
 - ## **Went well**:
   - #### Good end of Module and preparation for the next one!
-  - #### Inclusion of Bonus Tasks
+  - #### Inclusion of Bonus Tasks!
 
   - ### Bonus Tasks:
     - #### Another DCI Display setup for the HMI
