@@ -19,6 +19,7 @@
 #include "backend/wheelspeedprovider.hpp"
 #include "backend/voltageprovider.hpp"
 #include "backend/headingprovider.hpp"
+#include "backend/wheelangleprovider.hpp"
 #include "backend/ipcclient.hpp"
 #include "backend/reader.hpp"
 
@@ -31,6 +32,7 @@ void ipcConnections(QQmlApplicationEngine *engine)
     auto wheelSpeedProvider = new WheelSpeedProvider;
     auto voltageProvider = new VoltageProvider;
     auto headingProvider = new HeadingProvider;
+    auto wheelAngleProvider = new WheelAngleProvider;
     auto ipcClient = new IpcClient;
     auto readerC = new Reader;
 
@@ -110,6 +112,16 @@ void ipcConnections(QQmlApplicationEngine *engine)
     engine->rootContext()->setContextProperty(
         "headingProvider",
         headingProvider);
+
+    QObject::connect(
+        readerC,
+        &Reader::wheelAngleReceived,
+        wheelAngleProvider,
+        &WheelAngleProvider::setWheelAngle);
+
+    engine->rootContext()->setContextProperty(
+        "wheelAngleProvider",
+        wheelAngleProvider);
 }
 
 int main(int argc, char *argv[])

@@ -16,11 +16,16 @@ to_delete
 
 # Local testing
 src/cluster/CMakeLists.txt.user
+src/hmi/CMakeLists.txt.user
 src/cluster/build/
 src/cluster/build-arm/
 src/cluster/build-arm
 src/cluster/build-dev/
 src/cluster/build-dev
+src/hmi/build-arm/
+src/hmi/build-arm
+src/hmi/build-dev/
+src/hmi/build-dev
 src/cluster/build-host/
 src/cluster/build-host
 src/cluster/build

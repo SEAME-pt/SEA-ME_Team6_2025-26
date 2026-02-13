@@ -6,70 +6,209 @@ import Cluster.Backend 1.0
 import QtQuick.Effects
 
 Item {
-    id: topBar
-    Layout.preferredHeight: 40
+    id: root
+    height: 48
     Layout.fillWidth: true
+    Layout.margins: 0
 
-    TimeProvider {
-        id: clock
-    }
+    property var leftBlinkerActive: false
+    property real magnetometerValue: 0
+    property var rightBlinkerActive: false
 
-    Rectangle {
-        id: base
-        width: parent.width / 2
-        height: 32
-        anchors.horizontalCenter: parent.horizontalCenter
-        color: BaseTheme.blackLight
-        bottomLeftRadius: 16
-        bottomRightRadius: 16
+    property real effectShadowOpacity: 0.8
 
-        RowLayout {
-            id: row
-            anchors.fill: parent
-            spacing: 0
+    TimeProvider { id: clock }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
+    RowLayout {
+        id: row
+        anchors.fill: parent
+        spacing: 0
 
-                Text {
-                    text: clock.currDate
-                    font.pixelSize: 10
-                    color: "white"
-                    anchors.centerIn: parent
+        // Left BLinker
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Image {
+                id: leftBlinker
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                anchors.top: parent.top
+                anchors.topMargin: 32
+                source: root.leftBlinkerActive ? "qrc:/assets/icons/left-arrow-active.png" : "qrc:/assets/icons/left-arrow.png"
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
+                sourceSize.width: 32
+                sourceSize.height: 32
+                opacity: root.leftBlinkerActive ? 1 : 0.2
+
+                layer.enabled: root.leftBlinkerActive
+                layer.effect: MultiEffect {
+                    id: rightBlinkerEffect
+                    width: 40
+                    height: 40
+                    shadowEnabled: true
+                    shadowColor: BaseTheme.vibrant
+                    shadowBlur: 0.6
+                    shadowScale: 1.35
+                    shadowOpacity: root.effectShadowOpacity
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                }
+
+                SequentialAnimation {
+                    running: root.leftBlinkerActive
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: leftBlinker
+                        property: "opacity"
+                        to: 1
+                        duration: 0
+                    }
+                    PauseAnimation { duration: 500 }
+                    NumberAnimation {
+                        target: leftBlinker
+                        property: "opacity"
+                        to: 0.3
+                        duration: 150
+                    }
+                    PauseAnimation { duration: 500 }
+                }
+
+                SequentialAnimation {
+                    running: root.leftBlinkerActive
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: root
+                        property: "effectShadowOpacity"
+                        to: 0.8
+                        duration: 0
+                    }
+                    PauseAnimation { duration: 500 }
+                    NumberAnimation {
+                        target: root
+                        property: "effectShadowOpacity"
+                        to: 0
+                        duration: 150
+                    }
+                    PauseAnimation { duration: 500 }
                 }
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
+        // Compass
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            RowLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Image {
+                    source: "qrc:/assets/icons/compass.svg"
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                    mipmap: true
+                    sourceSize.width: 22
+                    sourceSize.height: 22
+                    opacity: 1
+
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowColor: BaseTheme.white
+                        shadowBlur: 0.3
+                        shadowScale: 1.2
+                        shadowHorizontalOffset: 0
+                        shadowVerticalOffset: 0
+                    }
+                }
+
                 Text {
-                    text: clock.currTime
-                    font.pixelSize: 14
+                    text: root.magnetometerValue + "°"
+                    font.pixelSize: 12
                     color: "white"
-                    anchors.centerIn: parent
                 }
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
+        // Right BLinker
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Image {
+                id: rightBlinker
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                anchors.top: parent.top
+                anchors.topMargin: 32
+                source: root.rightBlinkerActive ? "qrc:/assets/icons/right-arrow-active.png" : "qrc:/assets/icons/right-arrow.png"
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
+                sourceSize.width: 32
+                sourceSize.height: 32
+                opacity: root.rightBlinkerActive ? 1 : 0.2
+
+                layer.enabled: root.rightBlinkerActive
+                layer.effect: MultiEffect {
+                    id: rightBlinkerEffect
+                    width: 40
+                    height: 40
+                    shadowEnabled: true
+                    shadowColor: BaseTheme.vibrant
+                    shadowBlur: 0.6
+                    shadowScale: 1.35
+                    shadowOpacity: root.effectShadowOpacity
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                }
+
+                SequentialAnimation {
+                    running: root.rightBlinkerActive
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: rightBlinker
+                        property: "opacity"
+                        to: 1
+                        duration: 0
+                    }
+                    PauseAnimation { duration: 500 }
+                    NumberAnimation {
+                        target: rightBlinker
+                        property: "opacity"
+                        to: 0.3
+                        duration: 150
+                    }
+                    PauseAnimation { duration: 500 }
+                }
+
+                SequentialAnimation {
+                    running: root.rightBlinkerActive
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: root
+                        property: "effectShadowOpacity"
+                        to: 0.8
+                        duration: 0
+                    }
+                    PauseAnimation { duration: 500 }
+                    NumberAnimation {
+                        target: root
+                        property: "effectShadowOpacity"
+                        to: 0
+                        duration: 150
+                    }
+                    PauseAnimation { duration: 500 }
+                }
             }
         }
     }
-
-    MultiEffect {
-        source: base
-        anchors.fill: base
-        shadowEnabled: true
-        shadowColor: "#90ffffff"
-        shadowScale: 1
-        shadowOpacity: 0.8
-        shadowVerticalOffset: 6
-        shadowBlur: 1
-    }
-
 }

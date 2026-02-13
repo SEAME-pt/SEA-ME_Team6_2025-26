@@ -89,6 +89,7 @@ add_executable(HelloQt6Qml
     src/backend/distanceprovider.cpp
     src/backend/frontdistanceprovider.cpp
     src/backend/wheelspeedprovider.cpp
+    src/backend/wheelangleprovider.cpp
     src/backend/headingprovider.cpp
     src/backend/voltageprovider.cpp
     src/backend/ipcclient.cpp
