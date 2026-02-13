@@ -1,4 +1,4 @@
-name: unit-tests
+name: cpp-unit-tests
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   packages: read
 
 jobs:
-  tests:
+  cpp-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,60 +34,33 @@ jobs:
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
       # -------------------------
-      # Configure + Build + Run tests
+      # Build + Run C++ tests
       # -------------------------
-      - name: Configure + Build + Run tests
+      - name: Build + Run C++ tests
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
-            -w /work \
+            -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -c "
               set -e
 
               # -------------------------
-              # Install system packages + Python deps
-              # -------------------------
-              apt-get update && \
-              apt-get install -y python3 python3-pip python3-dev build-essential libffi-dev && \
-              python3 -m pip install --upgrade pip && \
-              python3 -m pip install --no-cache-dir -r src/tests/unit/python/requirements.txt
-
-              # -------------------------
-              # Debug: confirm 'can' installed
-              # -------------------------
-              python3 -c 'import can; print(\"python-can version:\", can.__version__)'
-
-              # -------------------------
               # Build C++ tests
               # -------------------------
-              rm -rf src/tests/build && \
-              cmake -S src/tests -B src/tests/build -G Ninja \
+              rm -rf build && \
+              cmake -S . -B build -G Ninja \
                 -DCMAKE_BUILD_TYPE=Debug \
                 -DENABLE_CPP_TESTS=ON \
-                -DENABLE_PYTHON_TESTS=ON \
+                -DENABLE_PYTHON_TESTS=OFF \
                 -DENABLE_COVERAGE=ON && \
-              cmake --build src/tests/build
+              cmake --build build
 
               # -------------------------
-              # Run only C++ tests
+              # Run ONLY C++ tests
               # -------------------------
-              ctest --test-dir src/tests/build --output-on-failure --parallel \$(nproc) -LE python
-
-              # -------------------------
-              # Run Python tests
-              # -------------------------
-              python3 -m pytest src/tests/unit/python --junitxml=src/tests/test-results.xml
+              ctest --test-dir build --output-on-failure --parallel \$(nproc)
             "
-
-      # -------------------------
-      # Upload Python JUnit results
-      # -------------------------
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: junit-test-results
-          path: src/tests/test-results.xml
 
       # -------------------------
       # Generate C++ coverage
