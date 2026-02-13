@@ -1,8 +1,8 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** 12 February 2026  
+**Last Updated:** 13 February 2026  
 **Branch:** `feature/OTA/implementation`  
-**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Pending
+**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Configured
 
 ---
 
@@ -287,7 +287,7 @@ We chose a **phased approach**:
 | **Phase A** | OTA Manual with systemd | ✅ Complete |
 | **Phase B** | SWUpdate / Enhanced rollback | ✅ Complete |
 | **Phase C** | Atomic symlinks + auto-polling | ✅ Complete |
-| **Phase D** | RAUC (A/B rootfs) | 📋 Planned |
+| **Phase D** | RAUC (A/B rootfs) | ✅ Configured |
 
 ### 4.2 Why This Order?
 
@@ -924,9 +924,211 @@ version    to backup
 
 ---
 
-## 8. CI/CD Pipeline
+## 8. Complete OTA Workflow
 
-### 8.0 Multi-Platform Workflow (Sprint 8)
+### 8.0 Workflow Overview
+
+O sistema OTA é **semi-automático**:
+- **CI/CD (GitHub Actions):** ✅ Automático quando fazes `git push --tags`
+- **Dispositivo (AGL):** Manual ou Automático (com timer polling)
+
+### 8.1 Workflow Visual
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PARTE 1: CI/CD (GitHub Actions) - AUTOMÁTICO                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  Developer                    GitHub Actions              GitHub Releases│
+│      │                              │                           │       │
+│      │  git tag v1.9.0              │                           │       │
+│      │  git push origin v1.9.0      │                           │       │
+│      │ ────────────────────────────►│                           │       │
+│      │                              │                           │       │
+│      │                        ┌─────┴─────┐                     │       │
+│      │                        │ TRIGGER:  │                     │       │
+│      │                        │ on: push  │                     │       │
+│      │                        │   tags:   │                     │       │
+│      │                        │   - "v*"  │                     │       │
+│      │                        └─────┬─────┘                     │       │
+│      │                              │                           │       │
+│      │                        build-rpi4 (32-bit)               │       │
+│      │                        build-rpi5 (64-bit)               │       │
+│      │                              │                           │       │
+│      │                              │ upload artifacts          │       │
+│      │                              │──────────────────────────►│       │
+│      │                              │                           │       │
+│      │                              │       update-rpi4.tar.gz  │       │
+│      │                              │       update-rpi5.tar.gz  │       │
+│      │                              │       hash-*.txt          │       │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PARTE 2: Dispositivo (AGL) - MANUAL ou AUTOMÁTICO                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│                    GitHub Releases                    AGL Device        │
+│                          │                                │             │
+│  ┌───────────────────────┼────────────────────────────────┼───────────┐ │
+│  │ OPÇÃO A: MANUAL       │                                │           │ │
+│  │                       │      ssh + run script          │           │ │
+│  │                       │◄───────────────────────────────│           │ │
+│  │                       │  /opt/ota/ota-update.sh v1.9.0 │           │ │
+│  └───────────────────────┼────────────────────────────────┼───────────┘ │
+│                          │                                │             │
+│  ┌───────────────────────┼────────────────────────────────┼───────────┐ │
+│  │ OPÇÃO B: AUTOMÁTICO   │                                │           │ │
+│  │ (timer polling)       │      ota-check.timer           │           │ │
+│  │                       │◄───────────────────────────────│(15 min)   │ │
+│  │                       │      checks GitHub API         │           │ │
+│  │                       │      for new releases          │           │ │
+│  └───────────────────────┼────────────────────────────────┼───────────┘ │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 8.2 Component Status
+
+| Componente | Ficheiro | Status | Descrição |
+|------------|----------|--------|-----------|
+| **CI/CD Build** | `.github/workflows/ota.yml` | ✅ Automático | Trigger em tags `v*` |
+| **Update Script** | `/opt/ota/ota-update.sh` | ✅ Funciona | Download, install, rollback |
+| **Polling Timer** | `ota-check.timer` | ⚠️ Precisa ativar | Verifica GitHub a cada 15 min |
+| **Polling Script** | `ota-check.sh` | ⚠️ Precisa instalar | Script que chama o update |
+
+### 8.3 Detailed Flow (4 Phases)
+
+#### FASE 1: Developer faz alterações
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. DEVELOPER                                                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   $ git add .                                                           │
+│   $ git commit -m "Fix bug in cluster UI"                               │
+│   $ git push origin feature/OTA/implementation                          │
+│                                                                         │
+│   # Quando pronto para release:                                         │
+│   $ git tag v1.9.0                                                      │
+│   $ git push origin v1.9.0    ◄─── ISTO DISPARA O WORKFLOW!             │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+#### FASE 2: GitHub Actions (Automático)
+
+```yaml
+# .github/workflows/ota.yml
+on:
+  push:
+    tags:
+      - "v*"   # ◄─── Dispara quando tag v* é pushed
+```
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 2. GITHUB ACTIONS (automático quando tag é pushed)                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────────────┐    ┌─────────────────────┐                   │
+│   │ build-cluster-rpi4  │    │  build-kuksa-rpi5   │                   │
+│   │    (parallel)       │    │    (parallel)       │                   │
+│   ├─────────────────────┤    ├─────────────────────┤                   │
+│   │ • Pull SDK (32-bit) │    │ • Pull SDK (64-bit) │                   │
+│   │ • qt6-build.sh      │    │ • make              │                   │
+│   │ • HelloQt6Qml       │    │ • can_to_kuksa_pub  │                   │
+│   │ • Upload artifact   │    │ • Upload artifact   │                   │
+│   └─────────┬───────────┘    └──────────┬──────────┘                   │
+│             │                           │                               │
+│             └───────────┬───────────────┘                               │
+│                         ▼                                               │
+│              ┌──────────────────────┐                                   │
+│              │      release         │                                   │
+│              ├──────────────────────┤                                   │
+│              │ • Download artifacts │                                   │
+│              │ • Create tar.gz      │                                   │
+│              │ • Generate SHA256    │                                   │
+│              │ • Upload to Release  │                                   │
+│              └──────────────────────┘                                   │
+│                         │                                               │
+│                         ▼                                               │
+│   GitHub Releases: v1.9.0                                               │
+│   ├── update-rpi4.tar.gz (4.6 MB)                                       │
+│   ├── hash-rpi4.txt                                                     │
+│   ├── update-rpi5.tar.gz (260 KB)                                       │
+│   ├── hash-rpi5.txt                                                     │
+│   ├── update.tar.gz (combined)                                          │
+│   └── hash.txt                                                          │
+│                                                                         │
+│   Tempo estimado: ~3-5 minutos                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+#### FASE 3: Dispositivo AGL (Polling Automático)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 3. AGL DEVICE - POLLING (automático cada 15 minutos)                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   systemd timer: ota-check.timer                                        │
+│   ├── OnBootSec=2min          (2 min após boot)                         │
+│   ├── OnUnitActiveSec=15min   (cada 15 min depois)                      │
+│   └── RandomizedDelaySec=60   (evitar "thundering herd")                │
+│                         │                                               │
+│                         ▼                                               │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │ /opt/ota/ota-check.sh                                           │   │
+│   ├─────────────────────────────────────────────────────────────────┤   │
+│   │ 1. Ler /etc/ota-version              → "v1.8.0"                 │   │
+│   │ 2. Chamar GitHub API                                            │   │
+│   │    curl https://api.github.com/repos/.../releases/latest        │   │
+│   │ 3. Extrair tag_name                  → "v1.9.0"                 │   │
+│   │ 4. Comparar versões                                             │   │
+│   │    "v1.8.0" != "v1.9.0" → NOVA VERSÃO!                          │   │
+│   │ 5. Verificar /etc/ota-auto-update                               │   │
+│   │    └── Se "enabled" → /opt/ota/ota-update.sh v1.9.0             │   │
+│   └─────────────────────────────────────────────────────────────────┘   │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+#### FASE 4: Update Script (Automático se auto-update enabled)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 4. OTA UPDATE (/opt/ota/ota-update.sh v1.9.0)                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  [1/10] Detect platform (rpi4 ou rpi5 via uname -m)                     │
+│  [2/10] Download update-rpi4.tar.gz ou update-rpi5.tar.gz               │
+│  [3/10] Verify SHA256 hash                                              │
+│  [4/10] Extract to /opt/ota/releases/v1.9.0/                            │
+│  [5/10] Stop service (helloqt-app.service ou can-to-kuksa.service)      │
+│  [6/10] Atomic symlink: /opt/ota/current → /opt/ota/releases/v1.9.0     │
+│  [7/10] Verify binary architecture                                      │
+│  [8/10] Copy binary to target path                                      │
+│  [9/10] Start service                                                   │
+│  [10/10] Health check (restart loop detection)                          │
+│                                                                         │
+│  ┌────────────────────┐     ┌────────────────────┐                      │
+│  │ SUCCESS            │     │ FAILURE            │                      │
+│  ├────────────────────┤     ├────────────────────┤                      │
+│  │ Write v1.9.0 to    │     │ Rollback symlink   │                      │
+│  │ /etc/ota-version   │     │ to previous version│                      │
+│  │ Log success        │     │ Restart old binary │                      │
+│  └────────────────────┘     └────────────────────┘                      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 9. Multi-Platform CI/CD Pipeline
+
+### 9.0 Multi-Platform Workflow (Sprint 8)
 
 > **Updated:** The workflow now supports building for both RPi4 (32-bit) and RPi5 (64-bit) platforms.
 
@@ -1408,6 +1610,56 @@ systemctl status hello-ota
 cat /var/log/hello-ota.log
 ```
 
+### 9.4 Device Setup (One-Time)
+
+Para configurar o OTA automático num dispositivo AGL, usa o script de setup:
+
+**Opção A: Script de Setup Automático (Recomendado)**
+
+```bash
+# Do teu Mac, copia e executa o script de setup:
+scp /path/to/project/src/ota/scripts/setup-ota-device.sh root@<DEVICE_IP>:/tmp/
+ssh root@<DEVICE_IP> "chmod +x /tmp/setup-ota-device.sh && /tmp/setup-ota-device.sh"
+```
+
+**Opção B: Setup Manual**
+
+```bash
+# SSH para o dispositivo
+ssh root@<DEVICE_IP>
+
+# Criar directórios
+mkdir -p /opt/ota/{logs,downloads,releases,backup}
+
+# Copiar scripts (do Mac)
+scp src/ota/scripts/ota-update.sh root@<IP>:/opt/ota/
+scp src/ota/scripts/ota-check.sh root@<IP>:/opt/ota/
+scp src/ota/systemd/ota-check.service root@<IP>:/etc/systemd/system/
+scp src/ota/systemd/ota-check.timer root@<IP>:/etc/systemd/system/
+
+# No dispositivo, ativar o timer
+chmod +x /opt/ota/*.sh
+systemctl daemon-reload
+systemctl enable ota-check.timer
+systemctl start ota-check.timer
+
+# Ativar auto-update automático
+echo "enabled" > /etc/ota-auto-update
+```
+
+**Verificar setup:**
+
+```bash
+# Ver próxima execução do timer
+systemctl list-timers | grep ota
+
+# Ver logs do polling
+journalctl -u ota-check.service -f
+
+# Testar manualmente
+/opt/ota/ota-check.sh
+```
+
 ---
 
 ## 10. Security Considerations
@@ -1459,13 +1711,54 @@ Production-ready OTA with zero-downtime updates:
 - [x] Version history with improved rollback
 - [x] Qt Cluster service (Wayland)
 
-### 11.3 Phase D: RAUC Integration 📋 Planned
+### 11.3 Phase D: RAUC Integration ✅ Configured (13 Feb 2026)
 
-- [ ] Yocto layer integration
-- [ ] A/B rootfs partitions
-- [ ] Automatic rollback on boot failure
-- [ ] Signed bundles (.raucb)
-- [ ] Full system updates
+RAUC A/B rootfs update system is now configured on both devices:
+
+**What is RAUC?**
+- Robust Auto-Update Controller for atomic system updates
+- Uses A/B partition scheme for safe updates
+- Automatic rollback on boot failure
+
+**Current Configuration:**
+- [x] RAUC installed (v1.15.1) on both devices
+- [x] Partitions prepared (rootfs-A at p2, rootfs-B at p3)
+- [x] Custom bootloader backend for native RPi bootloader
+- [x] Configuration files deployed
+- [x] SSL certificates generated for bundle signing
+- [ ] Bundle creation workflow (next step)
+- [ ] Full A/B switch test with reboot
+
+**Device Status:**
+
+| Device | Compatible | Active Slot | Boot Status |
+|--------|------------|-------------|-------------|
+| RPi5 | seame-team6-rpi5 | rootfs.0 (A) | ✅ good |
+| RPi4 | seame-team6-rpi4 | rootfs.0 (A) | ✅ good |
+
+**Files Created:**
+```
+src/ota/rauc/
+├── system.conf.rpi4              # RAUC config for RPi4
+├── system.conf.rpi5              # RAUC config for RPi5
+├── bootloader-custom-backend.sh  # Custom backend for RPi bootloader
+├── post-install.sh               # Post-install handler
+├── setup-rauc.sh                 # Device setup script
+├── create-bundle.sh              # Bundle creation script
+├── ca.cert.pem                   # CA certificate
+├── dev-cert.pem                  # Dev signing certificate
+├── dev-key.pem                   # Dev signing key
+└── README.md                     # Documentation
+```
+
+**RAUC vs Current OTA:**
+
+| Feature | Current OTA (Phase C) | RAUC (Phase D) |
+|---------|----------------------|----------------|
+| Scope | Application binaries | Full rootfs |
+| Downtime | ~6 seconds | Reboot required |
+| Rollback | Version directory | A/B partition |
+| Use case | Frequent app updates | Major releases |
 
 ### 11.4 FOTA for STM32 📋 Planned
 
