@@ -83,21 +83,21 @@ Developer                    GitHub                         Dispositivos
 
 ## Device Configuration (13 February 2026)
 
-| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual |
-|-------------|-----|-------------|------------|-------|-------------|---------------|
-| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
-| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ |
+| Device | IP | Architecture | Platform | Timer | Auto-Update | Current Version |
+|--------|-----|--------------|----------|-------|-------------|------------------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Active | ✅ Enabled | **v1.9.0** ✅ |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Active | ✅ Enabled | **v1.9.0** ✅ |
 
-✅ **Ambos os dispositivos atualizados automaticamente para v1.9.0!**
+✅ **Both devices automatically updated to v1.9.0!**
 
-### Troubleshooting - Verificar conectividade:
+### Troubleshooting - Check Connectivity:
 
 ```bash
-# Testar se o dispositivo consegue aceder ao GitHub
+# Test if device can access GitHub
 ssh root@10.21.220.191 "curl -s --max-time 5 https://api.github.com/repos/SEAME-pt/SEA-ME_Team6_2025-26/releases/latest | grep tag_name"
 ssh root@10.21.220.192 "curl -s --max-time 5 https://api.github.com/repos/SEAME-pt/SEA-ME_Team6_2025-26/releases/latest | grep tag_name"
 
-# Se falhar, verificar DNS
+# If it fails, check DNS
 ssh root@<IP> "ping -c 1 api.github.com"
 ssh root@<IP> "cat /etc/resolv.conf"
 ```
@@ -125,28 +125,28 @@ ssh root@<IP> "cat /etc/resolv.conf"
 
 ---
 
-## ⏱️ Timer e Polling (Localização nos Dispositivos AGL)
+## ⏱️ Timer and Polling (Location on AGL Devices)
 
-O timer de polling está instalado **nos dispositivos AGL** (não no GitHub). São ficheiros systemd:
+The polling timer is installed **on the AGL devices** (not on GitHub). These are systemd files:
 
-| Ficheiro | Localização Completa | Função |
-|----------|----------------------|--------|
-| `ota-check.timer` | `/etc/systemd/system/ota-check.timer` | Define QUANDO executar (cada 15 min) |
-| `ota-check.service` | `/etc/systemd/system/ota-check.service` | Define O QUE executar (/opt/ota/ota-check.sh) |
+| File | Full Path | Function |
+|------|-----------|----------|
+| `ota-check.timer` | `/etc/systemd/system/ota-check.timer` | Defines WHEN to execute (every 15 min) |
+| `ota-check.service` | `/etc/systemd/system/ota-check.service` | Defines WHAT to execute (/opt/ota/ota-check.sh) |
 
-### Como visualizar os ficheiros:
+### How to view the files:
 
 ```bash
-# Ver conteúdo do timer
+# View timer contents
 ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.timer"
 ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.timer"
 
-# Ver conteúdo do service
+# View service contents
 ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.service"
 ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.service"
 ```
 
-### Conteúdo esperado do `ota-check.timer`:
+### Expected content of `ota-check.timer`:
 
 ```ini
 [Unit]
@@ -161,12 +161,12 @@ RandomizedDelaySec=60
 WantedBy=timers.target
 ```
 
-**Explicação:**
-- `OnBootSec=2min` → Primeira execução 2 minutos após boot
-- `OnUnitActiveSec=15min` → Repetir cada 15 minutos após cada execução
-- `RandomizedDelaySec=60` → Adiciona até 60 segundos de delay aleatório (evita "thundering herd")
+**Explanation:**
+- `OnBootSec=2min` → First execution 2 minutes after boot
+- `OnUnitActiveSec=15min` → Repeat every 15 minutes after each execution
+- `RandomizedDelaySec=60` → Adds up to 60 seconds random delay (avoids "thundering herd")
 
-### Conteúdo esperado do `ota-check.service`:
+### Expected content of `ota-check.service`:
 
 ```ini
 [Unit]
@@ -177,9 +177,9 @@ Type=oneshot
 ExecStart=/opt/ota/ota-check.sh
 ```
 
-**Explicação:**
-- `Type=oneshot` → Executa uma vez e termina
-- `ExecStart=/opt/ota/ota-check.sh` → Script que verifica nova versão no GitHub
+**Explanation:**
+- `Type=oneshot` → Executes once and terminates
+- `ExecStart=/opt/ota/ota-check.sh` → Script that checks for new version on GitHub
 
 ---
 
@@ -371,7 +371,7 @@ ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 ssh root@10.21.220.192 "journalctl -u ota-check.service --since '30 min ago'"
 ```
 
-### Verificar a versão atual (confirmar se atualizou):
+### Check current version (confirm if updated):
 
 ```bash
 ssh root@10.21.220.191 "cat /etc/ota-version"   # RPi5 (KUKSA)
@@ -445,50 +445,50 @@ ssh root@<IP> "systemctl list-timers | grep ota"
 
 ## 🔧 Troubleshooting
 
-### Problema: Timer corre mas update falha
+### Problem: Timer runs but update fails
 
-**1. Verificar conectividade de rede:**
+**1. Check network connectivity:**
 ```bash
 ssh root@<IP> "curl -s --max-time 5 https://api.github.com | head -1"
 ```
 
-**2. Se falhar, verificar DNS:**
+**2. If it fails, check DNS:**
 ```bash
 ssh root@<IP> "cat /etc/resolv.conf"
-# Se vazio ou não existe, adicionar:
+# If empty or doesn't exist, add:
 ssh root@<IP> "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
 ```
 
-**3. Se DNS OK mas HTTPS falha ("certificate not yet valid"):**
+**3. If DNS OK but HTTPS fails ("certificate not yet valid"):**
 ```bash
-# Problema: relógio do sistema está errado
+# Problem: system clock is wrong
 ssh root@<IP> "date"
-# Corrigir:
+# Fix:
 ssh root@<IP> "date -s '2026-02-13 14:00:00'"
 ```
 
-**4. Verificar logs para detalhes:**
+**4. Check logs for details:**
 ```bash
 ssh root@<IP> "journalctl -u ota-check.service --since '1 hour ago'"
 ssh root@<IP> "cat /opt/ota/logs/ota-check.log | tail -20"
 ```
 
-### Problema: Versão não atualiza
+### Problem: Version doesn't update
 
 ```bash
-# Verificar se auto-update está enabled
+# Check if auto-update is enabled
 ssh root@<IP> "cat /etc/ota-auto-update"
 
-# Se não estiver "enabled":
+# If not "enabled":
 ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
 
-# Trigger manual para testar:
+# Manual trigger to test:
 ssh root@<IP> "/opt/ota/ota-check.sh"
 ```
 
 ---
 
-## 🔙 Teste de Rollback (v1.9.0 → v1.8.0)
+## 🔙 Rollback Test (v1.9.0 → v1.8.0)
 
 ```bash
 root@seame-agl:~# /opt/ota/ota-update.sh v1.8.0
@@ -504,25 +504,78 @@ root@seame-agl:~# /opt/ota/ota-update.sh v1.8.0
 [2026-02-13 15:22:20] === Update to v1.8.0 successful ===
 ```
 
-**Rollback demonstra:**
-- ✅ Pode reverter para qualquer versão anterior
-- ✅ Histórico mantido em `/opt/ota/releases/`
-- ✅ Mesmo processo de verificação (hash, arquitetura, health check)
+**Rollback demonstrates:**
+- ✅ Can revert to any previous version
+- ✅ History maintained in `/opt/ota/releases/`
+- ✅ Same verification process (hash, architecture, health check)
 
 ---
 
 ## 🗺️ Roadmap
 
-| Phase | Description | Status | Data |
+| Phase | Description | Status | Date |
 |-------|-------------|--------|------|
-| **A.1** | OTA com hello-ota (proof of concept) | ✅ Complete | Jan 2026 |
-| **A.2** | OTA com binários reais (KUKSA + Qt Cluster), CI/CD ARM Cross-compile | ✅ Complete | 10 Feb 2026 |
+| **A.1** | OTA with hello-ota (proof of concept) | ✅ Complete | Jan 2026 |
+| **A.2** | OTA with real binaries (KUKSA + Qt Cluster), CI/CD ARM Cross-compile | ✅ Complete | 10 Feb 2026 |
 | **B** | Enhanced rollback, backup/restore, service-level health check | ✅ Complete | 10 Feb 2026 |
 | **C** | Atomic symlinks, triggers (timer 15m, auto-polling), health checks | ✅ Complete | 12 Feb 2026 |
 | **C.2** | Multi-platform (RPi4 32-bit + RPi5 64-bit) | ✅ Complete | 12 Feb 2026 |
-| **C.3** | 100% Automatic (timer + auto-update) | ✅ **Complete** | 13 Feb 2026 |
-| **D** | RAUC (A/B rootfs partitions) | 📋 Planned | - |
-| **FOTA** | Firmware OTA para STM32 via CAN/UART | 📋 Planned | - |
+| **C.3** | 100% Automatic (timer + auto-update) | ✅ Complete | 13 Feb 2026 |
+| **D** | RAUC (A/B rootfs partitions) | ✅ **Configured** | 13 Feb 2026 |
+| **FOTA** | Firmware OTA for STM32 via CAN/UART | 📋 Planned | - |
+
+---
+
+## 🔧 Phase D: RAUC A/B Rootfs Update System
+
+### What is RAUC?
+
+**RAUC** (Robust Auto-Update Controller) is an update framework that uses A/B partitions to ensure atomic and safe updates of the complete operating system.
+
+### A/B Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       SD Card Layout (AGL Device)                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│  mmcblk0p1  │  /boot     │  333 MB  │  Boot partition (config.txt)     │
+│  mmcblk0p2  │  /         │  5.2 GB  │  rootfs-A (active) ← CURRENT     │
+│  mmcblk0p3  │  (unused)  │  4.0 GB  │  rootfs-B (standby)              │
+│  mmcblk0p4  │  /data     │  512 MB  │  Persistent data                 │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Current Status (RAUC Configured)
+
+```bash
+# Check RAUC status on devices
+ssh root@10.21.220.191 "rauc status"    # RPi5
+ssh root@10.21.220.192 "rauc status"    # RPi4
+```
+
+| Device | Compatible | Active Slot | Boot Status |
+|--------|------------|-------------|-------------|
+| **RPi5** | seame-team6-rpi5 | rootfs.0 (A) | ✅ good |
+| **RPi4** | seame-team6-rpi4 | rootfs.0 (A) | ✅ good |
+
+### RAUC Files
+
+| File | Location | Description |
+|------|----------|-------------|
+| `system.conf` | `/etc/rauc/system.conf` | RAUC configuration |
+| `ca.cert.pem` | `/etc/rauc/ca.cert.pem` | Certificate for bundle verification |
+| `bootloader-custom-backend.sh` | `/usr/lib/rauc/` | Backend for RPi bootloader |
+| `post-install.sh` | `/usr/lib/rauc/` | Post-installation hook |
+
+### RAUC Update Flow
+
+```
+1. Download: rauc bundle (.raucb) from GitHub
+2. Install:  RAUC writes to inactive partition (B)
+3. Switch:   RAUC marks B as primary boot
+4. Reboot:   System boots from B
+5. Verify:   If OK, mark as "good"; if fail, return to A
+```
 
 ---
 

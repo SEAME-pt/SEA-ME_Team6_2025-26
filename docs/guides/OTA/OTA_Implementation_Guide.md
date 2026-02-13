@@ -1,8 +1,8 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** 12 February 2026  
+**Last Updated:** 13 February 2026  
 **Branch:** `feature/OTA/implementation`  
-**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Pending
+**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Configured
 
 ---
 
@@ -287,7 +287,7 @@ We chose a **phased approach**:
 | **Phase A** | OTA Manual with systemd | ✅ Complete |
 | **Phase B** | SWUpdate / Enhanced rollback | ✅ Complete |
 | **Phase C** | Atomic symlinks + auto-polling | ✅ Complete |
-| **Phase D** | RAUC (A/B rootfs) | 📋 Planned |
+| **Phase D** | RAUC (A/B rootfs) | ✅ Configured |
 
 ### 4.2 Why This Order?
 
@@ -1711,13 +1711,54 @@ Production-ready OTA with zero-downtime updates:
 - [x] Version history with improved rollback
 - [x] Qt Cluster service (Wayland)
 
-### 11.3 Phase D: RAUC Integration 📋 Planned
+### 11.3 Phase D: RAUC Integration ✅ Configured (13 Feb 2026)
 
-- [ ] Yocto layer integration
-- [ ] A/B rootfs partitions
-- [ ] Automatic rollback on boot failure
-- [ ] Signed bundles (.raucb)
-- [ ] Full system updates
+RAUC A/B rootfs update system is now configured on both devices:
+
+**What is RAUC?**
+- Robust Auto-Update Controller for atomic system updates
+- Uses A/B partition scheme for safe updates
+- Automatic rollback on boot failure
+
+**Current Configuration:**
+- [x] RAUC installed (v1.15.1) on both devices
+- [x] Partitions prepared (rootfs-A at p2, rootfs-B at p3)
+- [x] Custom bootloader backend for native RPi bootloader
+- [x] Configuration files deployed
+- [x] SSL certificates generated for bundle signing
+- [ ] Bundle creation workflow (next step)
+- [ ] Full A/B switch test with reboot
+
+**Device Status:**
+
+| Device | Compatible | Active Slot | Boot Status |
+|--------|------------|-------------|-------------|
+| RPi5 | seame-team6-rpi5 | rootfs.0 (A) | ✅ good |
+| RPi4 | seame-team6-rpi4 | rootfs.0 (A) | ✅ good |
+
+**Files Created:**
+```
+src/ota/rauc/
+├── system.conf.rpi4              # RAUC config for RPi4
+├── system.conf.rpi5              # RAUC config for RPi5
+├── bootloader-custom-backend.sh  # Custom backend for RPi bootloader
+├── post-install.sh               # Post-install handler
+├── setup-rauc.sh                 # Device setup script
+├── create-bundle.sh              # Bundle creation script
+├── ca.cert.pem                   # CA certificate
+├── dev-cert.pem                  # Dev signing certificate
+├── dev-key.pem                   # Dev signing key
+└── README.md                     # Documentation
+```
+
+**RAUC vs Current OTA:**
+
+| Feature | Current OTA (Phase C) | RAUC (Phase D) |
+|---------|----------------------|----------------|
+| Scope | Application binaries | Full rootfs |
+| Downtime | ~6 seconds | Reboot required |
+| Rollback | Version directory | A/B partition |
+| Use case | Frequent app updates | Major releases |
 
 ### 11.4 FOTA for STM32 📋 Planned
 

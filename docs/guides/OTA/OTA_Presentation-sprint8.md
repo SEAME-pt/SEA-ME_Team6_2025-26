@@ -412,16 +412,174 @@ ssh root@10.21.220.192 "cat /etc/ota-version"   # RPi4
 
 ## 🗺️ Roadmap
 
-| Phase | Description | Status | Data |
+| Phase | Description | Status | Date |
 |-------|-------------|--------|------|
-| **A.1** | OTA com hello-ota (proof of concept) | ✅ Complete | Jan 2026 |
-| **A.2** | OTA com binários reais (KUKSA + Qt Cluster), CI/CD ARM Cross-compile | ✅ Complete | 10 Feb 2026 |
+| **A.1** | OTA with hello-ota (proof of concept) | ✅ Complete | Jan 2026 |
+| **A.2** | OTA with real binaries (KUKSA + Qt Cluster), CI/CD ARM Cross-compile | ✅ Complete | 10 Feb 2026 |
 | **B** | Enhanced rollback, backup/restore, service-level health check | ✅ Complete | 10 Feb 2026 |
 | **C** | Atomic symlinks, triggers (timer 15m, auto-polling), health checks | ✅ Complete | 12 Feb 2026 |
 | **C.2** | Multi-platform (RPi4 32-bit + RPi5 64-bit) | ✅ Complete | 12 Feb 2026 |
-| **C.3** | 100% Automatic (timer + auto-update) | ✅ **Complete** | 13 Feb 2026 |
-| **D** | RAUC (A/B rootfs partitions) | 📋 Planned | - |
-| **FOTA** | Firmware OTA para STM32 via CAN/UART | 📋 Planned | - |
+| **C.3** | 100% Automatic (timer + auto-update) | ✅ Complete | 13 Feb 2026 |
+| **D** | RAUC (A/B rootfs partitions) | ✅ **Configured** | 13 Feb 2026 |
+| **FOTA** | Firmware OTA for STM32 via CAN/UART | 📋 Planned | - |
+
+---
+
+## 🔧 Phase D: RAUC A/B Rootfs Updates
+
+### What is RAUC?
+
+**RAUC** = **R**obust **A**uto-**U**pdate **C**ontroller
+
+An open-source update framework for embedded Linux that provides:
+- Atomic A/B partition updates
+- Automatic rollback on boot failure
+- Cryptographically signed update bundles
+- Zero-downtime system updates
+
+---
+
+### Why A/B Partitions?
+
+```
+Traditional Update (Single Partition):
+┌──────────────────────────────────────────────────────────┐
+│ 1. System running normally                               │
+│ 2. Update starts... SYSTEM STOPS!                        │
+│ 3. Power failure or error → BRICKED DEVICE 💀           │
+│ 4. Requires physical access to repair                    │
+└──────────────────────────────────────────────────────────┘
+
+A/B Update (RAUC):
+┌──────────────────────────────────────────────────────────┐
+│ 1. System running on Partition A                         │
+│ 2. Update writes to Partition B (system continues!)      │
+│ 3. Reboot to Partition B                                 │
+│ 4. If failure → automatically boots back to A ✅         │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Partition Layout
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       RASPBERRY PI SD CARD                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌───────────┐  │
+│   │    p1       │   │     p2      │   │     p3      │   │    p4     │  │
+│   │   /boot     │   │  rootfs-A   │   │  rootfs-B   │   │   /data   │  │
+│   │   333 MB    │   │   5.2 GB    │   │   4.0 GB    │   │  512 MB   │  │
+│   │             │   │  ACTIVE ✅   │   │   STANDBY   │   │           │  │
+│   └─────────────┘   └─────────────┘   └─────────────┘   └───────────┘  │
+│                            │                │                           │
+│                     Currently booted   Next update                      │
+│                                        goes here                        │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Update Process
+
+```
+   BEFORE UPDATE                      AFTER UPDATE
+   =============                      ============
+   
+   Slot A: v1.9.0 ← ACTIVE           Slot A: v1.9.0
+   Slot B: (empty)                   Slot B: v2.0.0 ← ACTIVE
+   
+   
+   STEP 1: Download bundle (.raucb)
+   ─────────────────────────────────
+   GitHub Release → update-rpi5.raucb
+   
+   STEP 2: RAUC installs to Slot B
+   ───────────────────────────────
+   $ rauc install update-rpi5.raucb
+   
+   (System continues running on Slot A during installation!)
+   
+   STEP 3: Reboot
+   ──────────────
+   $ reboot
+   
+   STEP 4: System boots from Slot B
+   ────────────────────────────────
+   If OK → mark Slot B as "good"
+   If FAIL → next boot returns to Slot A
+```
+
+---
+
+### Current Device Status (RAUC Configured)
+
+```bash
+# Check RAUC status
+ssh root@10.21.220.191 "rauc status"    # RPi5
+ssh root@10.21.220.192 "rauc status"    # RPi4
+```
+
+**RPi5 Output:**
+```
+=== System Info ===
+Compatible:  seame-team6-rpi5
+Booted from: rootfs.0 (/dev/mmcblk0p2)
+
+=== Bootloader ===
+Activated: rootfs.0 (A)
+
+=== Slot States ===
+o [rootfs.1] (/dev/mmcblk0p3, ext4, inactive)
+      bootname: B
+      boot status: bad           ← Not yet used
+
+x [rootfs.0] (/dev/mmcblk0p2, ext4, booted)
+      bootname: A
+      mounted: /
+      boot status: good          ← Current slot, marked as good
+```
+
+| Device | Compatible | Active Slot | Boot Status |
+|--------|------------|-------------|-------------|
+| **RPi5** | seame-team6-rpi5 | rootfs.0 (A) | ✅ good |
+| **RPi4** | seame-team6-rpi4 | rootfs.0 (A) | ✅ good |
+
+---
+
+### RAUC vs Current OTA - When to Use Each?
+
+| Feature | Current OTA (Phase C) | RAUC (Phase D) |
+|---------|----------------------|----------------|
+| **Scope** | Application binaries only | Full rootfs image |
+| **Downtime** | ~6 seconds | Reboot required (~30s) |
+| **Risk** | Low (apps only) | Medium (full system) |
+| **Rollback** | Version directory | A/B partition switch |
+| **Use case** | Frequent, small updates | Major releases |
+| **Example** | "Fix bug in Cluster" | "Upgrade AGL Ricefish to Quillback" |
+
+**Conclusion:** We use BOTH!
+- Current OTA → app updates (fast, frequent)
+- RAUC → system updates (less frequent, safer)
+
+---
+
+### RAUC Files Created
+
+| File | Description |
+|------|-------------|
+| `system.conf.rpi4` | RAUC config for RPi4 (32-bit) |
+| `system.conf.rpi5` | RAUC config for RPi5 (64-bit) |
+| `bootloader-custom-backend.sh` | Boot slot selection script |
+| `post-install.sh` | Post-installation handler |
+| `setup-rauc.sh` | Device setup script |
+| `create-bundle.sh` | Bundle creation script |
+| `ca.cert.pem` | Certificate for bundle verification |
+
+**Location:** `src/ota/rauc/`
 
 ---
 
@@ -439,14 +597,14 @@ ssh root@10.21.220.191 "cat /etc/ota-version"  # RPi5 (KUKSA)
 ssh root@10.21.220.192 "cat /etc/ota-version"  # RPi4 (Cluster)
 ```
 
-### Verificar estado do timer:
+### Check timer status:
 ```bash
-# Ver quando vai correr novamente
+# See when it will run next
 ssh root@10.21.220.191 "systemctl list-timers | grep ota"
 ssh root@10.21.220.192 "systemctl list-timers | grep ota"
 ```
 
-### Manual trigger (sem esperar pelo timer):
+### Manual trigger (without waiting for timer):
 ```bash
 ssh root@10.21.220.191 "/opt/ota/ota-check.sh"
 ssh root@10.21.220.192 "/opt/ota/ota-check.sh"
@@ -454,15 +612,15 @@ ssh root@10.21.220.192 "/opt/ota/ota-check.sh"
 
 ### View logs:
 ```bash
-# Logs de polling
+# Polling logs
 ssh root@10.21.220.191 "cat /opt/ota/logs/ota-check.log"
 ssh root@10.21.220.192 "cat /opt/ota/logs/ota-check.log"
 
-# Logs de update
+# Update logs
 ssh root@10.21.220.191 "cat /opt/ota/logs/ota.log"
 ssh root@10.21.220.192 "cat /opt/ota/logs/ota.log"
 
-# Via journalctl (últimos 30 min)
+# Via journalctl (last 30 min)
 ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 ```
 
@@ -483,44 +641,44 @@ ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 
 ## 🔧 Troubleshooting
 
-### Problema: Timer corre mas update falha
+### Problem: Timer runs but update fails
 
-**1. Verificar conectividade de rede:**
+**1. Check network connectivity:**
 ```bash
 ssh root@<IP> "curl -s --max-time 5 https://api.github.com | head -1"
 ```
 
-**2. Se falhar, verificar DNS:**
+**2. If it fails, check DNS:**
 ```bash
 ssh root@<IP> "cat /etc/resolv.conf"
-# Se vazio ou não existe, adicionar:
+# If empty or doesn't exist, add:
 ssh root@<IP> "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
 ```
 
-**3. Se DNS OK mas HTTPS falha ("certificate not yet valid"):**
+**3. If DNS OK but HTTPS fails ("certificate not yet valid"):**
 ```bash
-# Problema: relógio do sistema está errado
+# Problem: system clock is wrong
 ssh root@<IP> "date"
-# Corrigir:
+# Fix:
 ssh root@<IP> "date -s '2026-02-13 14:00:00'"
 ```
 
-**4. Verificar logs para detalhes:**
+**4. Check logs for details:**
 ```bash
 ssh root@<IP> "journalctl -u ota-check.service --since '1 hour ago'"
 ssh root@<IP> "cat /opt/ota/logs/ota-check.log | tail -20"
 ```
 
-### Problema: Versão não atualiza
+### Problem: Version doesn't update
 
 ```bash
-# Verificar se auto-update está enabled
+# Check if auto-update is enabled
 ssh root@<IP> "cat /etc/ota-auto-update"
 
-# Se não estiver "enabled":
+# If not "enabled":
 ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
 
-# Trigger manual para testar:
+# Manual trigger to test:
 ssh root@<IP> "/opt/ota/ota-check.sh"
 ```
 
