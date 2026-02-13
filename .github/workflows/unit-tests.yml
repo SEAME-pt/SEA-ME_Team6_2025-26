@@ -48,10 +48,12 @@ jobs:
               # -------------------------
               # Install Python deps FIRST
               # -------------------------
+
               apt-get update && \
-              apt-get install -y python3 python3-pip && \
+              apt-get install -y python3 python3-pip python3-dev build-essential libffi-dev && \
               python3 -m pip install --upgrade pip && \
-              python3 -m pip install -r unit/python/requirements.txt
+              python3 -m pip install --no-cache-dir -r unit/python/requirements.txt
+
 
               # -------------------------
               # Configure + Build C++
