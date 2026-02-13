@@ -34,53 +34,51 @@ jobs:
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
       # -------------------------
-      # Build + Run Tests
+      # Configure + Build + Run tests
       # -------------------------
       - name: Configure + Build + Run tests
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
-            -w /work/src/tests \
+            -w /work \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
-            bash -lc '
+            bash -c "
               set -e
 
               # -------------------------
-              # Install Python deps FIRST
+              # Install system packages + Python deps
               # -------------------------
-
               apt-get update && \
               apt-get install -y python3 python3-pip python3-dev build-essential libffi-dev && \
               python3 -m pip install --upgrade pip && \
-              python3 -m pip install --no-cache-dir -r unit/python/requirements.txt
-
+              python3 -m pip install --no-cache-dir -r src/tests/unit/python/requirements.txt
 
               # -------------------------
-              # Configure + Build C++
+              # Debug: confirm 'can' installed
               # -------------------------
-              rm -rf build && \
-              cmake -S . -B build -G Ninja \
+              python3 -c 'import can; print(\"python-can version:\", can.__version__)'
+
+              # -------------------------
+              # Build C++ tests
+              # -------------------------
+              rm -rf src/tests/build && \
+              cmake -S src/tests -B src/tests/build -G Ninja \
                 -DCMAKE_BUILD_TYPE=Debug \
                 -DENABLE_CPP_TESTS=ON \
                 -DENABLE_PYTHON_TESTS=ON \
                 -DENABLE_COVERAGE=ON && \
-              cmake --build build
+              cmake --build src/tests/build
 
               # -------------------------
-              # Run ONLY C++ tests
-              # Exclude python-labeled tests
+              # Run only C++ tests
               # -------------------------
-              ctest --test-dir build \
-                    --output-on-failure \
-                    --parallel $(nproc) \
-                    -LE python
+              ctest --test-dir src/tests/build --output-on-failure --parallel \$(nproc) -LE python
 
               # -------------------------
-              # Run Python tests separately
+              # Run Python tests
               # -------------------------
-              python3 -m pytest unit/python \
-                --junitxml=test-results.xml
-            '
+              python3 -m pytest src/tests/unit/python --junitxml=src/tests/test-results.xml
+            "
 
       # -------------------------
       # Upload Python JUnit results
@@ -100,11 +98,9 @@ jobs:
             -v "${{ github.workspace }}:/work" \
             -w /work/src/tests \
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
-            bash -lc '
+            bash -c '
               set -e
-
               rm -rf coverage_html coverage.info coverage_filtered.info
-
               lcov --directory build --capture --output-file coverage.info
               lcov --remove coverage.info "/usr/*" "*/_deps/*" "*/src/tests/*" "*/inc/*" \
                    --output-file coverage_filtered.info
