@@ -26,7 +26,8 @@ enum HandlerSlot {
   H_TOF,
   H_BATT,
   H_EMERG,
-  H_COUNT
+  H_COUNT,
+  H_MAG
 };
 
 static int g_calls[H_COUNT];
@@ -49,6 +50,7 @@ void handleImuGyro(const can_frame&, IKuksaClient&)       { ++g_calls[H_GYRO]; }
 void handleToFDistance(const can_frame&, IKuksaClient&)   { ++g_calls[H_TOF]; }
 void handleBattery(const can_frame&, IKuksaClient&)       { ++g_calls[H_BATT]; }
 void handleEmergencyStop(const can_frame&, IKuksaClient&) { ++g_calls[H_EMERG]; }
+void handleImuMag(const can_frame&, IKuksaClient&)        { ++g_calls[H_MAG]; }
 
 // ---------- Tests ----------
 
@@ -92,6 +94,7 @@ static DispatchCase kCases[] = {
   { CAN_ID_HEARTBEAT_STM32, H_HB,    "HEARTBEAT" },
   { CAN_ID_IMU_ACCEL,       H_ACCEL, "IMU_ACCEL" },
   { CAN_ID_IMU_GYRO,        H_GYRO,  "IMU_GYRO" },
+  { CAN_ID_IMU_MAG,         H_MAG,   "IMU_MAG" },
   { CAN_ID_TOF_DISTANCE,    H_TOF,   "TOF_DISTANCE" },
   { CAN_ID_BATTERY,         H_BATT,  "BATTERY" },
   { CAN_ID_EMERGENCY_STOP,  H_EMERG, "EMERGENCY_STOP" },

@@ -54,8 +54,7 @@ static int open_can_socket(const std::string& ifname)
 int main(int argc, char** argv)
 {
     std::string can_if   = "can1";
-    std::string kuksa_at = "127.0.0.1:55555";
-    //std::string kuksa_at = "0.0.0.0:55555";
+    std::string kuksa_at = "10.21.220.191:55555";
 
     if (argc >= 2) can_if = argv[1];
     if (argc >= 3) kuksa_at = argv[2];

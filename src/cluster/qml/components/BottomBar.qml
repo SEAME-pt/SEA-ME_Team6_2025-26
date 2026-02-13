@@ -1,81 +1,121 @@
 import QtQuick 6.7
 import QtQuick.Controls 6.7
 import QtQuick.Layouts 6.7
+import QtQuick.Effects
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
 
 Item {
     id: bottomBar
-    Layout.preferredHeight: 40
+    Layout.preferredHeight: 48
     Layout.fillWidth: true
     Layout.margins: 0
 
-    TimeProvider {
-        id: clock
-    }
+    TimeProvider { id: clock }
 
-    Rectangle {
-        id: base
-        width: parent.width / 2
-        height: 32
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        color: BaseTheme.blackLight
+    RowLayout {
+        id: row
+        anchors.fill: parent
+        spacing: 0
 
-        RowLayout {
-            id: row
-            anchors.fill: parent
-            spacing: 12
+        // Total Distance
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/critical-techworks-logo.png"
-                    sourceSize.width: 22
-                    sourceSize.height: 22
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: "Total"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "x Km"
+                    font.pixelSize: 12
+                    color: "white"
+                    Layout.alignment: Qt.AlignHCenter
                 }
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/seame-logo.png"
-                    sourceSize.width: 16
-                    sourceSize.height: 16
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+        // Time
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: "Time"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: clock.currTime
+                    font.pixelSize: 14
+                    color: "white"
+                    Layout.alignment: Qt.AlignHCenter
                 }
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/eclipse-fundation-logo.png"
-                    sourceSize.width: 16
-                    sourceSize.height: 16
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+        // Temperature
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 4
+
+                Text {
+                    text: "Temp"
+                    font.pixelSize: 12
+                    font.bold: true
+                    color: BaseTheme.white
+                    Layout.alignment: Qt.AlignHCenter
                 }
-            }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                Image {
-                    source: "qrc:/assets/images/brisa-logo.png"
-                    sourceSize.width: 22
-                    sourceSize.height: 22
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+                RowLayout {
+                    spacing: 4
+                    Layout.alignment: Qt.AlignHCenter
+
+                    Image {
+                        source: "qrc:/assets/icons/temperature.svg"
+                        fillMode: Image.PreserveAspectFit
+                        smooth: true
+                        mipmap: true
+                        sourceSize.width: 22
+                        sourceSize.height: 22
+                        opacity: 1
+
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: true
+                            shadowColor: BaseTheme.white
+                            shadowBlur: 0.3
+                            shadowScale: 1.2
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 0
+                        }
+                    }
+
+                    Text {
+                        text: "x C"
+                        font.pixelSize: 12
+                        color: "white"
+                    }
                 }
             }
         }

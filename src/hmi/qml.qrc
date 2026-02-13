@@ -1,0 +1,63 @@
+<RCC>
+    <qresource prefix="/">
+        <!-- QML -->
+        <file>qml/main.qml</file>
+        
+        <!-- QML Screens -->
+        <file>qml/screens/BaseScreen.qml</file>
+        <file>qml/screens/CarScreen.qml</file>
+        <file>qml/screens/ControllerScreen.qml</file>
+        <file>qml/screens/HomeScreen.qml</file>
+        <file>qml/screens/SettingsScreen.qml</file>
+        <file>qml/screens/StatisticsScreen.qml</file>
+	
+        <!-- QML Components -->
+        <file>qml/components/Navbar.qml</file>
+        <file>qml/components/NavButton.qml</file>
+        <file>qml/components/Topbar.qml</file>
+        
+        <!-- QML Themes -->
+        <file>qml/themes/BaseTheme.qml</file>
+
+        <!-- Backend C++ files -->
+        <file>src/backend/timeprovider.cpp</file>
+        <file>src/backend/timeprovider.hpp</file>
+        <file>src/backend/systemstatus.cpp</file>
+        <file>src/backend/systemstatus.hpp</file>
+        <file>src/backend/speedprovider.cpp</file>
+        <file>src/backend/speedprovider.hpp</file>
+        <file>src/backend/temperatureprovider.cpp</file>
+        <file>src/backend/temperatureprovider.hpp</file>
+        <file>src/backend/distanceprovider.cpp</file>
+        <file>src/backend/distanceprovider.hpp</file>
+        <file>src/backend/frontdistanceprovider.cpp</file>
+        <file>src/backend/frontdistanceprovider.hpp</file>
+        <file>src/backend/wheelspeedprovider.cpp</file>
+        <file>src/backend/wheelspeedprovider.hpp</file>
+        <file>src/backend/wheelangleprovider.cpp</file>
+        <file>src/backend/wheelangleprovider.hpp</file>
+        <file>src/backend/voltageprovider.cpp</file>
+        <file>src/backend/voltageprovider.hpp</file>
+        <file>src/backend/ipcclient.cpp</file>
+        <file>src/backend/ipcclient.hpp</file>
+        <file>src/backend/reader.cpp</file>
+        <file>src/backend/reader.hpp</file>
+
+        <!-- Icons  -->
+        <file>assets/icons/car-active.svg</file>
+        <file>assets/icons/controller-active.svg</file>
+        <file>assets/icons/grid-active.svg</file>
+        <file>assets/icons/statistics-active.svg</file>
+        <file>assets/icons/settings-active.svg</file>
+        <file>assets/icons/car-inactive.svg</file>
+        <file>assets/icons/controller-inactive.svg</file>
+        <file>assets/icons/grid-inactive.svg</file>
+        <file>assets/icons/statistics-inactive.svg</file>
+        <file>assets/icons/settings-inactive.svg</file>
+        <file>assets/icons/battery.svg</file>
+        <file>assets/icons/wifi.svg</file>
+        <file>assets/icons/bluetooth.svg</file>
+
+        <!-- Images  -->
+    </qresource>
+</RCC>

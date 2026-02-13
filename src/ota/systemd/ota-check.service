@@ -1,0 +1,15 @@
+[Unit]
+Description=OTA Update Check Service
+Documentation=https://github.com/SEAME-pt/SEA-ME_Team6_2025-26
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ota/ota-check.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ota-check
+
+# Run as root for system updates
+User=root

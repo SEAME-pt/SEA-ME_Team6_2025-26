@@ -8,8 +8,8 @@ import "../components"
 
 Item {
     id: leftScreen
+    Layout.preferredWidth: 350
     Layout.fillHeight: true
-    Layout.fillWidth: true
     Layout.margins: 0
 
     Rectangle {
@@ -17,32 +17,26 @@ Item {
         anchors.fill: parent
         color: BaseTheme.black
 
-
-        /*Row {
-            anchors.verticalCenter: parent.verticalCenter
+        Item {
+            id: gaugeContainer
             anchors.centerIn: parent
-            spacing: 8
+            width: 300
+            height: 300
 
-            Text {
-                text: speedProvider.currSpeed
-                font.pixelSize: 64
-                font.bold: true
-                color: BaseTheme.white
+            Gauge {
+                id: speedGauge
+                anchors.centerIn: parent
+                centerValue: speedProvider.currSpeed
+                centerMaxValue: 1000
+                centerTicks: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+                centerUnit: "m/h"
+                showBottom: true
+                bottomValue: voltageProvider.currVoltage
+                bottomMinValue: 9
+                bottomMaxValue: 13
+                middleIcon: voltageProvider.voltageIcon
+                middleText: "x m"
             }
-
-            Text {
-                text: "m/h"
-                font.pixelSize: 12
-                color: BaseTheme.white
-            }
-        }*/
-        SpeedGauge {
-            anchors.centerIn: parent
-            value: speedProvider.currSpeed
-            minValue: 0
-            maxValue: 1000
-            startAngle: 135
-            endAngle: 270
         }
     }
 }

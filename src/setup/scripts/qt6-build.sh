@@ -6,12 +6,22 @@
 
 set -e
 
-source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+# Try aarch64 (ARM64) first, fall back to armv7 if not available
+if [ -f /opt/agl-sdk/environment-setup-aarch64-agl-linux ]; then
+    echo "Using aarch64 (ARM64) SDK"
+    source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+elif [ -f /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi ]; then
+    echo "WARNING: Using armv7 (32-bit) SDK - binaries may not work on ARM64 systems!"
+    source /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
+else
+    echo "ERROR: No AGL SDK environment found in /opt/agl-sdk/"
+    ls -la /opt/agl-sdk/ 2>/dev/null || echo "Directory does not exist"
+    exit 1
+fi
 
 PROJECT_DIR="${1:-.}"
 BUILD_TYPE="${2:-Release}"
 
-# Convert project dir to absolute path
 PROJECT_DIR="$(realpath "${PROJECT_DIR}")"
 BUILD_DIR="${PROJECT_DIR}/build-arm"
 

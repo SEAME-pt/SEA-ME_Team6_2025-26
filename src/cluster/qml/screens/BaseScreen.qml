@@ -9,27 +9,16 @@ Rectangle {
     color: BaseTheme.black
     anchors.fill: parent
 
-    ColumnLayout {
+    RowLayout {
         anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         spacing: 0
 
-        // Top bar
-        TopBar {}
+        LeftScreen {}
 
-        // Middle content
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 0
+        CenterScreen {}
 
-            LeftScreen {}
-
-            CenterScreen {}
-
-            RightScreen {}
-        }
-
-        // Bottom bar
-        BottomBar {}
+        RightScreen {}
     }
 }

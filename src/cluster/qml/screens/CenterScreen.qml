@@ -4,42 +4,44 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import ClusterTheme 1.0
 import Cluster.Backend 1.0
+import "../components"
 
 Item {
     id: centerScreen
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
 
-    Text {
-        text: "Speed: " + speedProvider.currSpeed + "\n" +
-              "Temperature: " + temperatureProvider.currTemperature + "\n" +
-              "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
-              "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
-              "Voltage: " + voltageProvider.currVoltage
-        font.pixelSize: 16
-        color: "white"
-        anchors.centerIn: parent
+        TopBar {
+            id: topbar
+            leftBlinkerActive: wheelAngleProvider.isBlinkerLeftActive
+            magnetometerValue: headingProvider.currHeading
+            rightBlinkerActive: wheelAngleProvider.isBlinkerRightActive
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+                // Text {
+                //     text: "Speed: " + speedProvider.currSpeed + "\n" +
+                //         "Temperature: " + temperatureProvider.currTemperature + "\n" +
+                //         "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
+                //         "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
+                //         "Voltage: " + voltageProvider.currVoltage + "\n" +
+                //         "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
+                //         "WheelAngle: " + wheelAngleProvider.currWheelAngle + "\n" +
+                //         "Blinker Left: " + wheelAngleProvider.isBlinkerLeftActive + "\n" +
+                //         "Blinker Right: " + wheelAngleProvider.isBlinkerRightActive + "\n" +
+                //         "Heading: " + headingProvider.currHeading  
+                //     font.pixelSize: 12
+                //     color: "white"
+                //     anchors.centerIn: parent
+                // }
+        }
+
+        BottomBar {}
     }
-
-
-    /*Rectangle {
-        anchors.centerIn: parent
-        width: 60
-        height: 60
-        radius: 10
-        color: "steelblue"
-        id: normalRect
-    }
-
-    MultiEffect {
-        source: normalRect
-        anchors.fill: normalRect
-        shadowEnabled: true
-        shadowColor: "#90ffffff"
-        shadowScale: 1
-        shadowOpacity: 0.8
-        shadowVerticalOffset: 6
-        shadowBlur: 1
-    }*/
 }

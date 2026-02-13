@@ -1,0 +1,27 @@
+[Unit]
+Description=Qt6 Cluster Dashboard
+Documentation=https://github.com/SEAME-pt/SEA-ME_Team6_2025-26
+After=graphical.target weston.service
+Wants=graphical.target
+
+[Service]
+Type=simple
+Environment=QT_QPA_PLATFORM=wayland
+Environment=XDG_RUNTIME_DIR=/run/user/0
+Environment=WAYLAND_DISPLAY=wayland-0
+ExecStart=/opt/cluster/HelloQt6Qml
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=30
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=80%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cluster
+
+[Install]
+WantedBy=graphical.target

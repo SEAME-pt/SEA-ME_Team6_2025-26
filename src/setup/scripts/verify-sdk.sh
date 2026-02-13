@@ -3,7 +3,7 @@
 # verify-sdk.sh - Verification of the AGL SDK
 # ===========================================================================
 
-source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+source /opt/agl-sdk/environment-setup-armv7vet2hf-neon-vfpv4-agl-linux-gnueabi
 
 SDK_VERSION="${AGL_SDK_VERSION:-20.0.2}"
 
@@ -27,13 +27,13 @@ which grpc_cpp_plugin
 echo ""
 
 echo ">>> Qt6 Libraries:"
-ls /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/libQt6Core.so* 2>/dev/null
+ls /opt/agl-sdk/sysroots/armv7vet2hf-neon-vfpv4-agl-linux-gnueabi/usr/lib/libQt6Core.so* 2>/dev/null
 echo ""
 
 echo ">>> Qt6 Modules disponíveis:"
-ls /opt/agl-sdk/sysroots/aarch64-agl-linux/usr/lib/cmake/ 2>/dev/null | grep -i "^Qt6" | head -15
+ls /opt/agl-sdk/sysroots/armv7vet2hf-neon-vfpv4-agl-linux-gnueabi/usr/lib/cmake/ 2>/dev/null | grep -i "^Qt6" | head -15
 echo ""
 
 echo "==========================================================="
-echo "SDK ready cross-compilation!"
+echo "SDK ready for cross-compilation!"
 echo "==========================================================="

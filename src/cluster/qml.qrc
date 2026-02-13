@@ -12,7 +12,7 @@
         <!-- QML Components -->
         <file>qml/components/TopBar.qml</file>
         <file>qml/components/BottomBar.qml</file>
-        <file>qml/components/SpeedGauge.qml</file>
+        <file>qml/components/Gauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
@@ -38,20 +38,25 @@
         <file>src/backend/ipcclient.hpp</file>
         <file>src/backend/reader.cpp</file>
         <file>src/backend/reader.hpp</file>
+        <file>src/backend/headingprovider.cpp</file>
+        <file>src/backend/headingprovider.hpp</file>
 
         <!-- Icons  -->
-        <file>assets/icons/battery-empty-solid-full.svg</file>
-        <file>assets/icons/battery-quarter-solid-full.svg</file>
-        <file>assets/icons/battery-half-solid-full.svg</file>
-        <file>assets/icons/battery-three-quarters-solid-full.svg</file>
-        <file>assets/icons/battery-full-solid-full.svg</file>
-        <file>assets/icons/car-solid-full.svg</file>
-        <file>assets/icons/car-active-solid-full.svg</file>
-        <file>assets/icons/gear-solid-full.svg</file>
-        <file>assets/icons/gear-active-solid-full.svg</file>
-        <file>assets/icons/house-solid-full.svg</file>
-        <file>assets/icons/house-active-solid-full.svg</file>
-        
+        <file>assets/icons/flash.svg</file>
+        <file>assets/icons/flash-warning.svg</file>
+        <file>assets/icons/flash-danger.svg</file>
+        <file>assets/icons/danger.svg</file>
+        <file>assets/icons/danger-warning.svg</file>
+        <file>assets/icons/danger-danger.svg</file>
+        <file>assets/icons/temperature.svg</file>
+        <file>assets/icons/temperature-low.svg</file>
+        <file>assets/icons/temperature-high.svg</file>
+        <file>assets/icons/compass.svg</file>
+        <file>assets/icons/left-arrow.png</file>
+        <file>assets/icons/right-arrow.png</file>
+        <file>assets/icons/left-arrow-active.png</file>
+        <file>assets/icons/right-arrow-active.png</file>
+    
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>
         <file>assets/images/critical-techworks-logo.png</file>
