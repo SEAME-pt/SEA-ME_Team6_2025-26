@@ -256,6 +256,36 @@ Developer                    GitHub                         Dispositivos
 
 ---
 
+## 🔙 Teste de Rollback (v1.9.0 → v1.8.0) - 13 Feb 2026
+
+### RPi5 - Rollback Manual com Sucesso:
+
+```bash
+root@seame-agl:~# /opt/ota/ota-update.sh v1.8.0
+```
+
+```
+[2026-02-13 15:22:12] === OTA Update to v1.8.0 (Phase B - Atomic) ===
+[2026-02-13 15:22:12] Detected platform: rpi5
+[2026-02-13 15:22:12] Downloading update-rpi5.tar.gz for rpi5...
+[2026-02-13 15:22:13] Hash verified OK
+[2026-02-13 15:22:15] Previous version: v1.9.0
+[2026-02-13 15:22:15] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.8.0
+[2026-02-13 15:22:15] can_to_kuksa_publisher: architecture OK (64-bit ARM)
+[2026-02-13 15:22:16] Installed: can_to_kuksa_publisher
+[2026-02-13 15:22:16] Installed: vss_min.json
+[2026-02-13 15:22:20] can-to-kuksa.service: active and stable (restarts: 0)
+[2026-02-13 15:22:20] === Update to v1.8.0 successful ===
+```
+
+**Rollback demonstra:**
+- ✅ Pode reverter para qualquer versão anterior (v1.8.0, v1.7.0, v1.6.0, etc)
+- ✅ Mantém histórico de todas as versões em `/opt/ota/releases/`
+- ✅ Mesmo processo de verificação (hash, arquitetura, health check)
+- ✅ Zero downtime com atomic symlink switch
+
+---
+
 ## 🛡️ Safety Features
 
 | Feature | Description | Status |
@@ -382,15 +412,16 @@ ssh root@10.21.220.192 "cat /etc/ota-version"   # RPi4
 
 ## 🗺️ Roadmap
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| **A.1** | hello-ota PoC | ✅ Complete |
-| **A.2** | Real binaries (kuksa + cluster) | ✅ Complete |
-| **B** | Enhanced rollback, CI/CD | ✅ Complete |
-| **C** | Atomic symlinks, auto-polling | ✅ Complete |
-| **C.2** | Multi-platform (RPi4 + RPi5) | ✅ Complete |
-| **C.3** | 100% Automatic (timer + auto-update) | ✅ **Complete** |
-| **D** | RAUC (A/B rootfs) | 📋 Planned |
+| Phase | Description | Status | Data |
+|-------|-------------|--------|------|
+| **A.1** | OTA com hello-ota (proof of concept) | ✅ Complete | Jan 2026 |
+| **A.2** | OTA com binários reais (KUKSA + Qt Cluster), CI/CD ARM Cross-compile | ✅ Complete | 10 Feb 2026 |
+| **B** | Enhanced rollback, backup/restore, service-level health check | ✅ Complete | 10 Feb 2026 |
+| **C** | Atomic symlinks, triggers (timer 15m, auto-polling), health checks | ✅ Complete | 12 Feb 2026 |
+| **C.2** | Multi-platform (RPi4 32-bit + RPi5 64-bit) | ✅ Complete | 12 Feb 2026 |
+| **C.3** | 100% Automatic (timer + auto-update) | ✅ **Complete** | 13 Feb 2026 |
+| **D** | RAUC (A/B rootfs partitions) | 📋 Planned | - |
+| **FOTA** | Firmware OTA para STM32 via CAN/UART | 📋 Planned | - |
 
 ---
 
