@@ -7,8 +7,8 @@ import ClusterTheme 1.0
 
 Item {
     id: root
-    width: 275
-    height: 275
+    width: 300
+    height: 300
     property real centerValue: 0
     property real centerMinValue: 0
     property real centerMaxValue: 1000
@@ -21,8 +21,8 @@ Item {
     property real bottomValue: 0
     property real bottomMinValue: 9
     property real bottomMaxValue: 13
-    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 30
-    property real bottomSweepAngle: 360 - root.centerEndAngle - 60
+    property real bottomStartAngle: (root.centerStartAngle + root.centerEndAngle) % 360 + 25
+    property real bottomSweepAngle: 360 - root.centerEndAngle - 50
     property string middleIcon: ""
     property string middleText: ""
 
@@ -39,27 +39,14 @@ Item {
         return endAngle * t
     }
 
-    // Inner background circle
+    // Inner circle
     Rectangle {
         id: innerCircle
         anchors.centerIn: parent
-        width: parent.width - 50
-        height: parent.height - 50
+        width: 245
+        height: 245
         radius: width / 2
-        color: "#0a0a0a"
-    }
-    
-    // Inner background circle shadow
-    MultiEffect {
-        source: innerCircle
-        anchors.fill: innerCircle
-        shadowEnabled: true
-        shadowColor: "#b0b0b0"
-        shadowBlur: 1.0
-        shadowOpacity: 0.35
-        shadowScale: 1.28
-        shadowVerticalOffset: 0
-        shadowHorizontalOffset: 0
+        color: BaseTheme.blackLight
     }
 
     // Background Center Arc
@@ -167,7 +154,7 @@ Item {
         Text {
             text: Math.round(root.centerValue)
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 75
+            font.pixelSize: 70
             font.bold: true
             color: "white"
             
@@ -230,7 +217,7 @@ Item {
             text: root.middleText
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 12
-            font.weight: Font.Medium
+            font.weight: Font.Bold
             color: getMiddleColor(root.middleIcon)
             opacity: 0.8
 
@@ -242,13 +229,6 @@ Item {
                 shadowHorizontalOffset: 0
                 shadowVerticalOffset: 0
             }
-        }
-    }
-
-    Behavior on middleIcon {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutQuad
         }
     }
 
@@ -317,9 +297,9 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 16
         anchors.left: parent.left
-        anchors.leftMargin: root.width * 0.26
+        anchors.leftMargin: root.width * 0.24
         
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -339,9 +319,9 @@ Item {
         color: "white"
         z: 10
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 16
         anchors.right: parent.right
-        anchors.rightMargin: root.width * 0.26
+        anchors.rightMargin: root.width * 0.24
         
         layer.enabled: true
         layer.effect: MultiEffect {

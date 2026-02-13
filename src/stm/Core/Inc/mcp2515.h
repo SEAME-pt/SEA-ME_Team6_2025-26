@@ -3,6 +3,8 @@
 
 #include "main.h"
 #include "stm32u5xx_hal_conf.h"
+#include "system_ctx.h"
+#include "sys_helpers.h"
 // -------------------------------
 // MCP2515 SPI Commands
 // -------------------------------
@@ -69,7 +71,7 @@ uint8_t MCP2515_ReadRegister(uint8_t reg);
 void MCP2515_WriteRegister(uint8_t reg, uint8_t val);
 void MCP2515_BitModify(uint8_t reg, uint8_t mask, uint8_t val);
 void MCP2515_SetNormalMode(void);
-void mcp_init(void);
+void mcp_init(SystemCtx* ctx);
 
 // -------------------------------
 // CAN Message Reception

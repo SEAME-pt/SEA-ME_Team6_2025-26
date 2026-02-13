@@ -51,6 +51,7 @@ APP_SRCS := \
   $(SRC_DIR)/handlers/tof_distance.cpp \
   $(SRC_DIR)/handlers/imu_gyro.cpp \
   $(SRC_DIR)/handlers/imu_accel.cpp \
+  $(SRC_DIR)/handlers/imu_magn.cpp \
   $(SRC_DIR)/handlers/emergency_stop.cpp \
   $(SRC_DIR)/handlers/battery.cpp \
   $(SRC_DIR)/handlers/joystick.cpp

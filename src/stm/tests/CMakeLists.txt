@@ -13,8 +13,8 @@ find_package(GTest QUIET)
 if (GTest_FOUND)
     message(STATUS "Found system GTest: ${GTest_VERSION}")
     include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-        ${CMAKE_CURRENT_SOURCE_DIR}/unit
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
         ${GTEST_INCLUDE_DIRS}
     )
@@ -22,8 +22,8 @@ else()
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/CMakeLists.txt")
         add_subdirectory(external/googletest)
         include_directories(
-            ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-            ${CMAKE_CURRENT_SOURCE_DIR}/unit
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
             ${gtest_SOURCE_DIR}/include
             ${gtest_SOURCE_DIR}
         )
@@ -34,16 +34,16 @@ endif()
 
 # Arquivos de mock (compartilhados por todos os testes)
 set(MOCK_SOURCES
-    mocks/stm32_mocks.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks/stm32_mocks.cpp
 )
 
 # ============================================================================
 # TESTE 1: Speedometer
 # ============================================================================
 add_executable(speedometer_tests
-    unit/speedometer_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/speedometer_testable.c
     ${MOCK_SOURCES}
-    unit/test_speedometer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_speedometer.cpp
 )
 
 target_link_libraries(speedometer_tests
@@ -56,9 +56,9 @@ target_link_libraries(speedometer_tests
 # TESTE 2: Motor Control
 # ============================================================================
 add_executable(motor_control_tests
-    unit/motor_control_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/motor_control_testable.c
     ${MOCK_SOURCES}
-    unit/test_motor_control.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_motor_control.cpp
 )
 
 target_link_libraries(motor_control_tests
@@ -71,9 +71,9 @@ target_link_libraries(motor_control_tests
 # TESTE 3: Emergency Stop
 # ============================================================================
 add_executable(emergency_stop_tests
-    unit/emergency_stop_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/emergency_stop_testable.c
     ${MOCK_SOURCES}
-    unit/test_emergency_stop.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_emergency_stop.cpp
 )
 
 target_link_libraries(emergency_stop_tests
@@ -86,9 +86,9 @@ target_link_libraries(emergency_stop_tests
 # TESTE 4: Servo Control
 # ============================================================================
 add_executable(servo_tests
-    unit/servo_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/servo_testable.c
     ${MOCK_SOURCES}
-    unit/test_servo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_servo.cpp
 )
 
 target_link_libraries(servo_tests
@@ -101,9 +101,9 @@ target_link_libraries(servo_tests
 # TESTE 5: ToF Sensor (VL53L5CX)
 # ============================================================================
 add_executable(tof_tests
-    unit/tof_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/tof_testable.c
     ${MOCK_SOURCES}
-    unit/test_tof.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_tof.cpp
 )
 
 target_link_libraries(tof_tests
@@ -116,13 +116,13 @@ target_link_libraries(tof_tests
 # TESTE 6: Integration Tests
 # ============================================================================
 add_executable(integration_tests
-    unit/speedometer_testable.c
-    unit/motor_control_testable.c
-    unit/emergency_stop_testable.c
-    unit/servo_testable.c
-    unit/tof_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/speedometer_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/motor_control_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/emergency_stop_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/servo_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/tof_testable.c
     ${MOCK_SOURCES}
-    unit/test_integration.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_integration.cpp
 )
 
 target_link_libraries(integration_tests
@@ -137,7 +137,7 @@ target_link_libraries(integration_tests
 add_executable(iis2mdc_tests
     ${MOCK_SOURCES}
     ../Core/Src/iis2mdc.c
-    unit/test_iis2mdc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_iis2mdc.cpp
 )
 
 target_link_libraries(iis2mdc_tests
@@ -150,8 +150,8 @@ add_test(NAME iis2mdc_tests COMMAND iis2mdc_tests)
 
 # Ensure mocks are visible first when compiling the production source
 target_include_directories(iis2mdc_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
@@ -161,7 +161,7 @@ target_include_directories(iis2mdc_tests PRIVATE
 add_executable(ism330dhcx_tests
     ${MOCK_SOURCES}
     ../Core/Src/ism330dhcx.c
-    unit/test_ism330dhcx.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_ism330dhcx.cpp
 )
 
 target_link_libraries(ism330dhcx_tests
@@ -174,8 +174,8 @@ add_test(NAME ism330dhcx_tests COMMAND ism330dhcx_tests)
 
 # Ensure mocks are visible first when compiling the production source
 target_include_directories(ism330dhcx_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
@@ -185,7 +185,7 @@ target_include_directories(ism330dhcx_tests PRIVATE
 add_executable(hts221_tests
     ${MOCK_SOURCES}
     ../Core/Src/hts221.c
-    unit/test_hts221.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_hts221.cpp
 )
 
 target_link_libraries(hts221_tests
@@ -197,8 +197,8 @@ target_link_libraries(hts221_tests
 add_test(NAME hts221_tests COMMAND hts221_tests)
 
 target_include_directories(hts221_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
@@ -208,7 +208,7 @@ target_include_directories(hts221_tests PRIVATE
 add_executable(lps22hh_tests
     ${MOCK_SOURCES}
     ../Core/Src/lps22hh.c
-    unit/test_lps22hh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_lps22hh.cpp
 )
 
 target_link_libraries(lps22hh_tests
@@ -220,8 +220,8 @@ target_link_libraries(lps22hh_tests
 add_test(NAME lps22hh_tests COMMAND lps22hh_tests)
 
 target_include_directories(lps22hh_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
@@ -231,7 +231,7 @@ target_include_directories(lps22hh_tests PRIVATE
 add_executable(veml6030_tests
     ${MOCK_SOURCES}
     ../Core/Src/veml6030.c
-    unit/test_veml6030.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_veml6030.cpp
 )
 
 target_link_libraries(veml6030_tests
@@ -243,8 +243,8 @@ target_link_libraries(veml6030_tests
 add_test(NAME veml6030_tests COMMAND veml6030_tests)
 
 target_include_directories(veml6030_tests PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mocks
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/mocks
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
 )
 
@@ -252,18 +252,18 @@ target_include_directories(veml6030_tests PRIVATE
 # TESTE COMPLETO: Todos os testes juntos
 # ============================================================================
 add_executable(all_tests
-    unit/speedometer_testable.c
-    unit/motor_control_testable.c
-    unit/emergency_stop_testable.c
-    unit/servo_testable.c
-    unit/tof_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/speedometer_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/motor_control_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/emergency_stop_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/servo_testable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/tof_testable.c
     ${MOCK_SOURCES}
-    unit/test_speedometer.cpp
-    unit/test_motor_control.cpp
-    unit/test_emergency_stop.cpp
-    unit/test_servo.cpp
-    unit/test_tof.cpp
-    unit/test_integration.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_speedometer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_motor_control.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_emergency_stop.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_servo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_tof.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../tests/unit/cpp/test_integration.cpp
 )
 
 target_link_libraries(all_tests

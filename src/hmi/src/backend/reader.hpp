@@ -38,6 +38,7 @@ signals:
     void distanceReceived(double distance);
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
+    void wheelAngleReceived(double wheelAngle);
     void voltageReceived(double voltage);
     void voltageLevelReceived(bool status, std::string source);
     void headingReceived(double heading);
@@ -66,6 +67,7 @@ signals:
     void distanceReceived(double distance);
     void frontDistanceReceived(double frontDistance);
     void wheelSpeedReceived(double wheelSpeed);
+    void wheelAngleReceived(double wheelAngle);
     void voltageReceived(double voltage);
     void voltageLevelReceived(bool status, std::string source);
     void headingReceived(double heading);

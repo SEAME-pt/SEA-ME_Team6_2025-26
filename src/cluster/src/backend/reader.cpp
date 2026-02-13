@@ -54,6 +54,7 @@ void ReaderWorker::startReading()
         paths.push_back("Vehicle.CurrentLocation.Heading");
         paths.push_back("Vehicle.Powertrain.TractionBattery.IsCritical");
         paths.push_back("Vehicle.Powertrain.TractionBattery.IsLevelLow");
+        paths.push_back("Vehicle.Chassis.SteeringWheel.Angle");
 
         kuksa::val::v2::SubscribeRequest req;
         for (size_t i = 0; i < paths.size(); ++i)
@@ -87,22 +88,17 @@ void ReaderWorker::startReading()
                 }
                 
                 // Emit signals to main thread
-                if (path == "Vehicle.Speed")
-                {
+                if (path == "Vehicle.Speed") {
                     double speed = dp.value().double_();
                     qDebug() << "[ReaderWorker] Speed:" << speed << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit speedReceived(speed);
-                }
-                else if (path == "Vehicle.Exterior.AirTemperature")
-                {
+                } else if (path == "Vehicle.Exterior.AirTemperature") {
                     double temp = dp.value().double_();
                     qDebug() << "[ReaderWorker] Temperature:" << temp << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit temperatureReceived(temp);
-                } 
-                else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") 
-                {
+                } else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") {
                     double frontDistance = dp.value().float_();
                     qDebug() << "[ReaderWorker] Front Distance:" << frontDistance << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
@@ -112,9 +108,7 @@ void ReaderWorker::startReading()
                     qDebug() << "[ReaderWorker] Voltage:" << voltage << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit voltageReceived(voltage);
-                }
-                else if (path == "Vehicle.Powertrain.ElectricMotor.Speed") 
-                {
+                } else if (path == "Vehicle.Powertrain.ElectricMotor.Speed") {
                     double wheelSpeed = static_cast<double>(dp.value().int32());
                     qDebug() << "[ReaderWorker] Wheel Speed:" << wheelSpeed << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
@@ -134,6 +128,11 @@ void ReaderWorker::startReading()
                     qDebug() << "[ReaderWorker] IsCritical:" << status << "  | " 
                             << QString::fromStdString(value_to_string(dp.value()));
                     emit voltageLevelReceived(status, "critical");
+                } else if (path == "Vehicle.Chassis.SteeringWheel.Angle") {
+                    double wheelAngle = static_cast<double>(dp.value().int32());
+                    qDebug() << "[ReaderWorker] Wheel Angle:" << wheelAngle << "  | " 
+                            << QString::fromStdString(value_to_string(dp.value()));
+                    emit wheelAngleReceived(wheelAngle);
                 }
             }
         }
@@ -210,6 +209,7 @@ Reader::Reader(QObject *parent) : QObject(parent)
     connect(_worker, &ReaderWorker::distanceReceived, this, &Reader::distanceReceived);
     connect(_worker, &ReaderWorker::frontDistanceReceived, this, &Reader::frontDistanceReceived);
     connect(_worker, &ReaderWorker::wheelSpeedReceived, this, &Reader::wheelSpeedReceived);
+    connect(_worker, &ReaderWorker::wheelAngleReceived, this, &Reader::wheelAngleReceived);
     connect(_worker, &ReaderWorker::voltageReceived, this, &Reader::voltageReceived);
     connect(_worker, &ReaderWorker::voltageLevelReceived, this, &Reader::voltageLevelReceived);
     connect(_worker, &ReaderWorker::headingReceived, this, &Reader::headingReceived);

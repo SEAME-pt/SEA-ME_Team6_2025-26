@@ -3,9 +3,6 @@
 #include "tx_api.h"
 #include <stdio.h>
 
-// External mutex for printf protection
-extern TX_MUTEX printf_mutex;
-
 // External SPI handle (from CubeMX generated code)
 extern SPI_HandleTypeDef hspi1;
 
@@ -99,82 +96,56 @@ void MCP2515_SetNormalMode(void)
     }
 }
 
-void mcp_init(void)
+void mcp_init(SystemCtx* ctx)
 {
-	uint8_t test_val;
+  uint8_t test_val;
 
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] Iniciando...\r\n");
-	tx_mutex_put(&printf_mutex);
+  sys_log(ctx, "[MCP2515] Iniciando...");
 
-	// Reset MCP2515
-	MCP2515_Reset();
-	tx_thread_sleep(10);  // Wait after reset
+  MCP2515_Reset();
+  tx_thread_sleep(10);
 
-	// Test SPI communication - read CANSTAT after reset
-	test_val = MCP2515_ReadRegister(REG_CANSTAT);
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] CANSTAT após reset: 0x%02X (esperado: 0x80)\r\n", test_val);
-	tx_mutex_put(&printf_mutex);
+  test_val = MCP2515_ReadRegister(REG_CANSTAT);
+  sys_log(ctx, "[MCP2515] CANSTAT após reset: 0x%02X (esperado: 0x80)", test_val);
 
-	// Enter config mode
-	MCP2515_WriteRegister(REG_CANCTRL, 0x80); // Config mode
-	tx_thread_sleep(5);
+  MCP2515_WriteRegister(REG_CANCTRL, 0x80);
+  tx_thread_sleep(5);
 
-	// Verify config mode
-	test_val = MCP2515_ReadRegister(REG_CANCTRL);
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] CANCTRL após config: 0x%02X (esperado: 0x87)\r\n", test_val);
-	tx_mutex_put(&printf_mutex);
+  test_val = MCP2515_ReadRegister(REG_CANCTRL);
+  sys_log(ctx, "[MCP2515] CANCTRL após config: 0x%02X (esperado: 0x87)", test_val);
 
-    // MCP2515 with 8 MHz crystal → 500 kbps
-	MCP2515_WriteRegister(REG_CNF1, 0x00); // BRP = 1  (TQ = 2*1/8MHz = 250ns)
-	MCP2515_WriteRegister(REG_CNF2, 0x90); // BTLMODE=1, SAM=0, PHSEG1=4, PRSEG=1
-	MCP2515_WriteRegister(REG_CNF3, 0x02); // PHSEG2=6
+  MCP2515_WriteRegister(REG_CNF1, 0x00);
+  MCP2515_WriteRegister(REG_CNF2, 0x90);
+  MCP2515_WriteRegister(REG_CNF3, 0x02);
 
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] Bitrate 500 kbps configurado\r\n");
-	tx_mutex_put(&printf_mutex);
+  sys_log(ctx, "[MCP2515] Bitrate 500 kbps configurado");
 
-	MCP2515_WriteRegister(0X60, 0x60); //RXB0CTRL
-	MCP2515_WriteRegister(0X70, 0x60); //RXB1CTRL
+  MCP2515_WriteRegister(0x60, 0x60);
+  MCP2515_WriteRegister(0x70, 0x60);
 
-	//Mask = 0 (accept all)
-	MCP2515_WriteRegister(0X20, 0x00);
-	MCP2515_WriteRegister(0X21, 0x00);
-	MCP2515_WriteRegister(0X24, 0x00);
-	MCP2515_WriteRegister(0X25, 0x00);
+  MCP2515_WriteRegister(0x20, 0x00);
+  MCP2515_WriteRegister(0x21, 0x00);
+  MCP2515_WriteRegister(0x24, 0x00);
+  MCP2515_WriteRegister(0x25, 0x00);
 
-	//Clear interrupt flags
-	MCP2515_WriteRegister(0X2C, 0x00);
+  MCP2515_WriteRegister(0x2C, 0x00);
+  MCP2515_WriteRegister(0x2B, 0x03);
 
-	//Enable RX0IE + RX1IE
-	MCP2515_WriteRegister(0x2B, 0x03);
+  MCP2515_WriteRegister(REG_CANCTRL, 0x00);
+  tx_thread_sleep(5);
 
-	// Enter normal mode
-	MCP2515_WriteRegister(REG_CANCTRL, 0x00); // Normal mode
-	tx_thread_sleep(5);
+  test_val = MCP2515_ReadRegister(REG_CANCTRL);
+  sys_log(ctx, "[MCP2515] CANCTRL em normal mode: 0x%02X (esperado: 0x00 ou 0x07)", test_val);
 
-	// Verify normal mode
-	test_val = MCP2515_ReadRegister(REG_CANCTRL);
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] CANCTRL em normal mode: 0x%02X (esperado: 0x00 ou 0x07)\r\n", test_val);
-	tx_mutex_put(&printf_mutex);
+  test_val = MCP2515_ReadRegister(REG_CANSTAT);
+  sys_log(ctx, "[MCP2515] CANSTAT em normal mode: 0x%02X", test_val);
 
-	// Read CANSTAT to check mode
-	test_val = MCP2515_ReadRegister(REG_CANSTAT);
-	tx_mutex_get(&printf_mutex, TX_WAIT_FOREVER);
-	printf("[MCP2515] CANSTAT em normal mode: 0x%02X\r\n", test_val);
-	if ((test_val & 0xE0) == 0x00)
-	{
-		printf("[MCP2515] ✓ Inicialização OK - Modo Normal Ativo!\r\n");
-	}
-	else
-	{
-		printf("[MCP2515] ✗ ERRO: MCP2515 não entrou em modo normal!\r\n");
-	}
-	tx_mutex_put(&printf_mutex);
+  if ((test_val & 0xE0) == 0x00)
+    sys_log(ctx, "[MCP2515] ✓ Inicialização OK - Modo Normal Ativo!");
+  else
+    sys_log(ctx, "[MCP2515] ✗ ERRO: MCP2515 não entrou em modo normal!");
 }
+
 
 // ----------------------------------------
 // Check if a CAN message is available

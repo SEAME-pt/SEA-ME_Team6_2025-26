@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(SEA_ME_Team6_Tests LANGUAGES CXX)
+project(SEA_ME_Team6_Tests LANGUAGES C CXX)
 
 # -----------------------
 # C++ standard
@@ -25,6 +25,28 @@ include(CTest)
 enable_testing()
 
 # -----------------------
+# Python tests integration
+# -----------------------
+if(ENABLE_PYTHON_TESTS)
+  # Require an interpreter (we will call pytest via -m pytest)
+  find_package(Python COMPONENTS Interpreter REQUIRED)
+
+  # Add a CTest entry that runs pytest for the python unit tests folder.
+  # This keeps python tests visible to ctest and to CI that calls ctest.
+  add_test(NAME PyTests
+    COMMAND ${Python_EXECUTABLE} -m pytest -q ${CMAKE_SOURCE_DIR}/unit/python
+  )
+  set_tests_properties(PyTests PROPERTIES LABELS "python")
+
+  # Also provide a convenience build target so devs can run: cmake --build . --target pytests
+  add_custom_target(pytests
+    COMMAND ${Python_EXECUTABLE} -m pytest -q ${CMAKE_SOURCE_DIR}/unit/python
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/unit/python
+    VERBATIM
+  )
+endif()
+
+# -----------------------
 # GoogleTest
 # -----------------------
 include(FetchContent)
@@ -36,6 +58,202 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
+
+# ---------------------------------------------------------------------------
+# STM unit tests (inlined here so this single CMake controls all tests)
+# ---------------------------------------------------------------------------
+
+# Enable UNIT_TESTING define for production sources compiled for host
+add_compile_definitions(UNIT_TESTING)
+
+find_package(Threads REQUIRED)
+
+# Shared mocks implementation used by STM tests
+set(MOCK_SOURCES
+  ${CMAKE_SOURCE_DIR}/unit/mocks/stm32_mocks.cpp
+)
+
+# Helper macro to reduce repetition for adding simple STM tests
+function(add_stm_test name)
+  add_executable(${name} ${ARGN} ${MOCK_SOURCES})
+  target_link_libraries(${name} PRIVATE
+    GTest::gtest
+    GTest::gtest_main
+    Threads::Threads
+  )
+  # default include order: mocks -> unit cpp -> stm core include
+  target_include_directories(${name} PRIVATE
+    ${CMAKE_SOURCE_DIR}/unit/mocks
+    ${CMAKE_SOURCE_DIR}/unit/cpp
+    ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+  )
+  gtest_discover_tests(${name})
+endfunction()
+
+# ==========================================================================
+# STM: simple test executables that exercise testable C wrappers
+# ==========================================================================
+add_stm_test(speedometer_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/speedometer_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_speedometer.cpp
+)
+
+add_stm_test(motor_control_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/motor_control_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_motor_control.cpp
+)
+
+add_stm_test(emergency_stop_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/emergency_stop_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_emergency_stop.cpp
+)
+
+add_stm_test(servo_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/servo_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_servo.cpp
+)
+
+add_stm_test(tof_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/tof_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_tof.cpp
+)
+
+# Integration / all_tests that compile multiple "testable" C files together
+add_executable(integration_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/speedometer_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/motor_control_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/emergency_stop_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/servo_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/tof_testable.c
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_integration.cpp
+)
+target_link_libraries(integration_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(integration_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(integration_tests)
+
+# ==========================================================================
+# STM sensor driver unit tests (compile production C driver with mocks)
+# ==========================================================================
+add_executable(iis2mdc_tests
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Src/iis2mdc.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_iis2mdc.cpp
+)
+target_link_libraries(iis2mdc_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(iis2mdc_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(iis2mdc_tests)
+
+add_executable(ism330dhcx_tests
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Src/ism330dhcx.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_ism330dhcx.cpp
+)
+target_link_libraries(ism330dhcx_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(ism330dhcx_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(ism330dhcx_tests)
+
+add_executable(hts221_tests
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Src/hts221.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_hts221.cpp
+)
+target_link_libraries(hts221_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(hts221_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(hts221_tests)
+
+add_executable(lps22hh_tests
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Src/lps22hh.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_lps22hh.cpp
+)
+target_link_libraries(lps22hh_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(lps22hh_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(lps22hh_tests)
+
+add_executable(veml6030_tests
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Src/veml6030.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_veml6030.cpp
+)
+target_link_libraries(veml6030_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(veml6030_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(veml6030_tests)
+
+# Composite test that compiles all testable C files together
+add_executable(all_tests
+  ${CMAKE_SOURCE_DIR}/unit/cpp/speedometer_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/motor_control_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/emergency_stop_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/servo_testable.c
+  ${CMAKE_SOURCE_DIR}/unit/cpp/tof_testable.c
+  ${MOCK_SOURCES}
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_speedometer.cpp
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_motor_control.cpp
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_emergency_stop.cpp
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_servo.cpp
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_tof.cpp
+  ${CMAKE_SOURCE_DIR}/unit/cpp/test_integration.cpp
+)
+target_link_libraries(all_tests PRIVATE
+  GTest::gtest
+  GTest::gtest_main
+  Threads::Threads
+)
+target_include_directories(all_tests PRIVATE
+  ${CMAKE_SOURCE_DIR}/unit/mocks
+  ${CMAKE_SOURCE_DIR}/unit/cpp
+  ${CMAKE_SOURCE_DIR}/../stm/Core/Inc
+)
+gtest_discover_tests(all_tests)
 
 # -----------------------
 # Qt6

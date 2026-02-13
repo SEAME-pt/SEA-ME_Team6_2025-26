@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "main.h"
+#include "system_ctx.h"
+#include "sys_helpers.h"
 
 // Speedometer constants
 #define PI 3.14159265
@@ -24,7 +26,7 @@ extern float current_speed_kmh;
 extern float current_rpm;
 
 // Function prototypes
-void Speedometer_Init(void);
+void Speedometer_Init(SystemCtx* ctx);
 void Speedometer_CountPulse(void);
 void Speedometer_CalculateSpeed(void);
 float Speedometer_GetSpeed(void);
