@@ -200,10 +200,12 @@ Developer                    GitHub                         Dispositivos
 
 ## ✅ Device Configuration (13 February 2026)
 
-| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update |
-|-------------|-----|-------------|------------|-------|-------------|
-| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled |
-| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled |
+| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual | Rede |
+|-------------|-----|-------------|------------|-------|-------------|---------------|------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | v1.8.0 | ⚠️ Sem Internet |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ | ✅ OK |
+
+> **Nota:** RPi5 precisa de configuração de rede para aceder ao GitHub API e receber updates automáticos.
 
 **Binaries Installed:**
 - RPi5: `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` + `vss_min.json`
@@ -212,6 +214,36 @@ Developer                    GitHub                         Dispositivos
 **Services:**
 - RPi5: `can-to-kuksa.service`
 - RPi4: `helloqt-app.service`
+
+---
+
+## 📋 Resultados dos Testes (v1.7.0 → v1.8.0)
+
+### RPi5 (KUKSA Publisher) - Update Automático com Sucesso:
+
+```
+[2026-02-12 14:37:57] === OTA Update to v1.8.0 (Phase B - Atomic) ===
+[2026-02-12 14:37:57] Detected platform: rpi5
+[2026-02-12 14:37:57] Downloading update-rpi5.tar.gz for rpi5...
+[2026-02-12 14:37:57] Hash verified OK
+[2026-02-12 14:37:57] can_to_kuksa_publisher: architecture OK (64-bit ARM)
+[2026-02-12 14:38:01] can-to-kuksa.service: active and stable (restarts: 0)
+[2026-02-12 14:38:01] === Update to v1.8.0 successful ===
+```
+
+### RPi4 (Cluster) - Update Automático com Sucesso:
+
+```
+[2026-02-12 14:43:09] Current version: v1.8.0
+[2026-02-12 14:43:09] Already up to date
+```
+
+**Demonstra:**
+- ✅ Detecção automática de plataforma (rpi4 vs rpi5)
+- ✅ Download do pacote correto (update-rpi4.tar.gz vs update-rpi5.tar.gz)
+- ✅ Verificação de arquitetura (32-bit vs 64-bit)
+- ✅ Health check do serviço
+- ✅ Polling automático cada 15 minutos
 
 ---
 
@@ -237,9 +269,91 @@ Developer                    GitHub                         Dispositivos
 | AGL | `/opt/ota/ota-update.sh` | Main update script (10 steps) |
 | AGL | `/opt/ota/ota-check.sh` | Polling script (GitHub API) |
 | AGL | `/etc/systemd/system/ota-check.timer` | 15-min timer |
+| AGL | `/etc/systemd/system/ota-check.service` | Service triggered by timer |
 | AGL | `/etc/ota-version` | Current version |
 | AGL | `/etc/ota-auto-update` | "enabled" for auto-update |
 | Repo | `src/ota/scripts/setup-ota-device.sh` | One-time device setup |
+
+---
+
+## ⏱️ Timer e Polling (Localização nos Dispositivos AGL)
+
+O timer de polling está instalado **nos dispositivos AGL** (não no GitHub). São ficheiros systemd:
+
+| Ficheiro | Localização no Dispositivo | Função |
+|----------|---------------------------|--------|
+| `ota-check.timer` | `/etc/systemd/system/ota-check.timer` | Dispara o serviço cada 15 minutos |
+| `ota-check.service` | `/etc/systemd/system/ota-check.service` | Executa o `/opt/ota/ota-check.sh` |
+
+### Como visualizar os ficheiros:
+
+```bash
+# Ver conteúdo do timer
+ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.timer"
+ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.timer"
+
+# Ver conteúdo do service
+ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.service"
+ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.service"
+```
+
+### O que cada ficheiro faz:
+
+**`ota-check.timer`** - Define QUANDO o polling acontece:
+- `OnBootSec=2min` → Primeira execução 2 min após boot
+- `OnUnitActiveSec=15min` → Repetir cada 15 minutos
+- `RandomizedDelaySec=60` → Adiciona até 60s de delay aleatório (evita "thundering herd")
+
+**`ota-check.service`** - Define O QUE executa:
+- Executa `/opt/ota/ota-check.sh`
+- Verifica versão atual vs GitHub API
+- Se nova versão disponível → chama `ota-update.sh`
+
+---
+
+## 🔍 Verificar se o Timer está a funcionar
+
+### Ver quando o timer correu e quando vai correr novamente:
+
+```bash
+ssh root@10.21.220.191 "systemctl list-timers | grep ota"
+ssh root@10.21.220.192 "systemctl list-timers | grep ota"
+```
+
+**Output esperado:**
+```
+NEXT                        LEFT          LAST                        PASSED       UNIT              ACTIVATES
+Fri 2026-02-13 13:30:00 UTC 2min 30s left Fri 2026-02-13 13:15:00 UTC 12min ago    ota-check.timer   ota-check.service
+```
+
+**Significado das colunas:**
+- `NEXT` = Próxima execução agendada
+- `LEFT` = Tempo até próxima execução
+- `LAST` = Última vez que correu
+- `PASSED` = Há quanto tempo correu
+
+### Ver os logs do polling:
+
+```bash
+# Logs do ota-check.sh (polling)
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota-check.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota-check.log"
+
+# Logs do ota-update.sh (update real)
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota.log"
+
+# Ou via journalctl (últimos 30 min)
+ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
+ssh root@10.21.220.192 "journalctl -u ota-check.service --since '30 min ago'"
+```
+
+### Verificar a versão atual (confirmar se atualizou):
+
+```bash
+ssh root@10.21.220.191 "cat /etc/ota-version"   # RPi5
+ssh root@10.21.220.192 "cat /etc/ota-version"   # RPi4
+```
 
 ---
 
@@ -275,17 +389,24 @@ Developer                    GitHub                         Dispositivos
 
 ### Trigger new release:
 ```bash
-git tag v1.9.0
-git push origin v1.9.0
+git tag v1.10.0
+git push origin v1.10.0
 ```
 
 ### Check device versions:
 ```bash
-ssh root@10.21.220.191 "cat /etc/ota-version"  # RPi5
-ssh root@10.21.220.192 "cat /etc/ota-version"  # RPi4
+ssh root@10.21.220.191 "cat /etc/ota-version"  # RPi5 (KUKSA)
+ssh root@10.21.220.192 "cat /etc/ota-version"  # RPi4 (Cluster)
 ```
 
-### Manual trigger (without waiting for timer):
+### Verificar estado do timer:
+```bash
+# Ver quando vai correr novamente
+ssh root@10.21.220.191 "systemctl list-timers | grep ota"
+ssh root@10.21.220.192 "systemctl list-timers | grep ota"
+```
+
+### Manual trigger (sem esperar pelo timer):
 ```bash
 ssh root@10.21.220.191 "/opt/ota/ota-check.sh"
 ssh root@10.21.220.192 "/opt/ota/ota-check.sh"
@@ -293,8 +414,16 @@ ssh root@10.21.220.192 "/opt/ota/ota-check.sh"
 
 ### View logs:
 ```bash
+# Logs de polling
 ssh root@10.21.220.191 "cat /opt/ota/logs/ota-check.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota-check.log"
+
+# Logs de update
 ssh root@10.21.220.191 "cat /opt/ota/logs/ota.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota.log"
+
+# Via journalctl (últimos 30 min)
+ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 ```
 
 ---

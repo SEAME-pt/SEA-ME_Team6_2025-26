@@ -83,10 +83,24 @@ Developer                    GitHub                         Dispositivos
 
 ## Device Configuration (13 February 2026)
 
-| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update |
-|-------------|-----|-------------|------------|-------|-------------|
-| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled |
-| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled |
+| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update | Versão Atual | Rede |
+|-------------|-----|-------------|------------|-------|-------------|---------------|------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled | v1.8.0 | ⚠️ Sem Internet |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled | **v1.9.0** ✅ | ✅ OK |
+
+> **Nota:** O RPi5 requer configuração de rede (DNS/gateway) para aceder ao GitHub API e receber updates OTA automáticos.
+
+### Troubleshooting - Verificar conectividade:
+
+```bash
+# Testar se o dispositivo consegue aceder ao GitHub
+ssh root@10.21.220.191 "curl -s --max-time 5 https://api.github.com/repos/SEAME-pt/SEA-ME_Team6_2025-26/releases/latest | grep tag_name"
+ssh root@10.21.220.192 "curl -s --max-time 5 https://api.github.com/repos/SEAME-pt/SEA-ME_Team6_2025-26/releases/latest | grep tag_name"
+
+# Se falhar, verificar DNS
+ssh root@<IP> "ping -c 1 api.github.com"
+ssh root@<IP> "cat /etc/resolv.conf"
+```
 
 ---
 
@@ -108,6 +122,64 @@ Developer                    GitHub                         Dispositivos
 | **ota-check.timer** | `/etc/systemd/system/` | systemd timer (15 min) |
 | **ota-check.service** | `/etc/systemd/system/` | systemd service unit |
 | **setup-ota-device.sh** | `src/ota/scripts/` | One-time device setup |
+
+---
+
+## ⏱️ Timer e Polling (Localização nos Dispositivos AGL)
+
+O timer de polling está instalado **nos dispositivos AGL** (não no GitHub). São ficheiros systemd:
+
+| Ficheiro | Localização Completa | Função |
+|----------|----------------------|--------|
+| `ota-check.timer` | `/etc/systemd/system/ota-check.timer` | Define QUANDO executar (cada 15 min) |
+| `ota-check.service` | `/etc/systemd/system/ota-check.service` | Define O QUE executar (/opt/ota/ota-check.sh) |
+
+### Como visualizar os ficheiros:
+
+```bash
+# Ver conteúdo do timer
+ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.timer"
+ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.timer"
+
+# Ver conteúdo do service
+ssh root@10.21.220.191 "cat /etc/systemd/system/ota-check.service"
+ssh root@10.21.220.192 "cat /etc/systemd/system/ota-check.service"
+```
+
+### Conteúdo esperado do `ota-check.timer`:
+
+```ini
+[Unit]
+Description=OTA Update Check Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target
+```
+
+**Explicação:**
+- `OnBootSec=2min` → Primeira execução 2 minutos após boot
+- `OnUnitActiveSec=15min` → Repetir cada 15 minutos após cada execução
+- `RandomizedDelaySec=60` → Adiciona até 60 segundos de delay aleatório (evita "thundering herd")
+
+### Conteúdo esperado do `ota-check.service`:
+
+```ini
+[Unit]
+Description=OTA Update Check Service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ota/ota-check.sh
+```
+
+**Explicação:**
+- `Type=oneshot` → Executa uma vez e termina
+- `ExecStart=/opt/ota/ota-check.sh` → Script que verifica nova versão no GitHub
 
 ---
 
@@ -258,6 +330,96 @@ src/ota/
 
 .github/workflows/
 └── ota.yml                 # Multi-platform CI/CD
+```
+
+---
+
+## 🔍 Comandos de Verificação do Timer
+
+### Ver quando o timer correu e quando vai correr novamente:
+
+```bash
+ssh root@10.21.220.191 "systemctl list-timers | grep ota"
+ssh root@10.21.220.192 "systemctl list-timers | grep ota"
+```
+
+**Output esperado:**
+```
+NEXT                        LEFT          LAST                        PASSED       UNIT              ACTIVATES
+Fri 2026-02-13 13:30:00 UTC 2min 30s left Fri 2026-02-13 13:15:00 UTC 12min ago    ota-check.timer   ota-check.service
+```
+
+**Significado das colunas:**
+- `NEXT` = Próxima execução agendada
+- `LEFT` = Tempo restante até próxima execução
+- `LAST` = Última vez que executou
+- `PASSED` = Há quanto tempo executou
+
+### Ver os logs do que o timer fez:
+
+```bash
+# Logs do polling (ota-check.sh)
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota-check.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota-check.log"
+
+# Logs do update (ota-update.sh) - se houve update
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota.log"
+ssh root@10.21.220.192 "cat /opt/ota/logs/ota.log"
+
+# Ou ver via journalctl (últimos 30 minutos)
+ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
+ssh root@10.21.220.192 "journalctl -u ota-check.service --since '30 min ago'"
+```
+
+### Verificar a versão atual (confirmar se atualizou):
+
+```bash
+ssh root@10.21.220.191 "cat /etc/ota-version"   # RPi5 (KUKSA)
+ssh root@10.21.220.192 "cat /etc/ota-version"   # RPi4 (Cluster)
+```
+
+---
+
+## 📋 Resultados dos Testes (v1.7.0 → v1.8.0) - 12/13 Feb 2026
+
+### Exemplo de log de polling (ota-check.log):
+
+```
+[2026-02-12 13:09:58] Current version: v1.7.0
+[2026-02-12 13:09:59] Checking GitHub for latest release...
+[2026-02-12 13:09:59] Latest version: v1.8.0
+[2026-02-12 13:09:59] New version available: v1.8.0 (current: v1.7.0)
+[2026-02-12 13:09:59] Auto-update is enabled, triggering update...
+...
+[2026-02-12 14:43:09] Current version: v1.8.0
+[2026-02-12 14:43:09] Already up to date
+```
+
+### Exemplo de log de update bem sucedido (ota.log):
+
+```
+[2026-02-12 14:37:56] === OTA Update to v1.8.0 (Phase B - Atomic) ===
+[2026-02-12 14:37:56] System architecture: aarch64
+[2026-02-12 14:37:56] Device model: Raspberry Pi 5 Model B Rev 1.1
+[2026-02-12 14:37:56] Detected platform: rpi5
+[2026-02-12 14:37:56] [1/10] Downloading package from GitHub Release...
+[2026-02-12 14:37:56] Downloading update-rpi5.tar.gz for rpi5...
+[2026-02-12 14:37:57] [2/10] Verifying SHA256 hash...
+[2026-02-12 14:37:57] Hash verified OK
+[2026-02-12 14:37:57] [3/10] Extracting to /opt/ota/releases/v1.8.0...
+[2026-02-12 14:37:57] [4/10] Stopping services...
+[2026-02-12 14:37:57] [5/10] Previous version: v1.7.0
+[2026-02-12 14:37:57] [6/10] Performing atomic symlink switch...
+[2026-02-12 14:37:57] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.8.0
+[2026-02-12 14:37:57] [7/10] Verifying binary architecture...
+[2026-02-12 14:37:57] can_to_kuksa_publisher: architecture OK (64-bit ARM)
+[2026-02-12 14:37:57] [8/10] Installing binaries for rpi5...
+[2026-02-12 14:37:57] Installed: can_to_kuksa_publisher
+[2026-02-12 14:37:57] Installed: vss_min.json
+[2026-02-12 14:37:57] [9/10] Starting services for rpi5...
+[2026-02-12 14:37:57] [10/10] Performing health check...
+[2026-02-12 14:38:01] can-to-kuksa.service: active and stable (restarts: 0)
+[2026-02-12 14:38:01] === Update to v1.8.0 successful ===
 ```
 
 ---
