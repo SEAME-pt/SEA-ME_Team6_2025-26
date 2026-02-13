@@ -1,6 +1,6 @@
 # 📡 OTA Implementation — SEA:ME Team 6
 
-## Sprint 8 Demo — February 2026
+## Sprint 8 Demo — 13 February 2026
 
 ---
 
@@ -39,123 +39,179 @@
                     └─────────────────┘
 ```
 
-### OTA Script Features (v2):
-| Feature | Description |
-|---------|-------------|
-| **Arch Verification** | Validates binary matches system architecture |
-| **Restart Loop Detection** | Detects 3+ restarts in 10s → triggers rollback |
-| **SHA256 Hash** | Verifies package integrity |
-| **Atomic Symlinks** | Zero-downtime version switching |
-
 ---
 
-## 🔄 CI/CD Pipeline (Multi-Platform)
-
-### Trigger: `git tag v1.8.0 && git push origin v1.8.0`
+## 🔄 Complete OTA Workflow (100% Automatic)
 
 ```
-┌─────────────────────┐   ┌─────────────────────┐   ┌────────────────────┐
-│  build-cluster-rpi4 │   │  build-kuksa-rpi5   │   │      release       │
-│     (32-bit ARM)    │   │    (64-bit ARM)     │   │   (multi-package)  │
-├─────────────────────┤   ├─────────────────────┤   ├────────────────────┤
-│ SDK: team6-agl-sdk  │   │ SDK: team6-agl-sdk  │   │ update-rpi4.tar.gz │
-│      :rpi4          │   │      :rpi5          │   │ update-rpi5.tar.gz │
-│ Qt6 Cluster 13.5MB  │   │ KUKSA 856KB         │   │ update.tar.gz      │
-└─────────────────────┘   └─────────────────────┘   └────────────────────┘
-```
-
-**Docker Images:**
-- `souzitaaaa/team6-agl-sdk:latest` — ARM 32-bit (armv7) for RPi4
-- `souzitaaaa/team6-r5-agl-sdk:latest` — ARM 64-bit (aarch64) for RPi5
-
----
-
-## 📦 OTA Package Contents
-
-### RPi4 Package (`update-rpi4.tar.gz`)
-```
-cluster/
-└── HelloQt6Qml                  # Qt6 Dashboard UI (32-bit)
-```
-
-### RPi5 Package (`update-rpi5.tar.gz`)
-```
-kuksa/
-├── bin/
-│   └── can_to_kuksa_publisher   # CAN→KUKSA bridge (64-bit)
-└── vss_min.json                 # Vehicle Signal Spec
-```
-
-**Verification:** SHA256 hash + Architecture verification
-
----
-
-## 🚀 Demo: OTA Update with Health Check (v2)
-
-### Enhanced Update Flow (10 Steps):
-```
-✅ [1/10] Download do package
-✅ [2/10] Hash verified OK  
-✅ [3/10] Extracting to /opt/ota/releases/v1.8.0
-✅ [4/10] Stopping services
-✅ [5/10] Previous version: v1.7.0
-✅ [6/10] Symlink updated: /opt/ota/current -> /opt/ota/releases/v1.8.0
-✅ [7/10] Verifying binary architecture (aarch64) ← NEW!
-✅ [8/10] Installing binaries
-✅ [9/10] Starting services
-✅ [10/10] Health check (restart loop detection) ← NEW!
-✅ === Update to v1.8.0 successful ===
-```
-
-### Architecture Verification Example:
-```bash
-# Script verifies binary matches system architecture
-$ uname -m
-aarch64
-
-$ file /home/kuksa_RPi5/bin/can_to_kuksa_publisher
-ELF 64-bit LSB pie executable, ARM aarch64...  ✅
-
-# If mismatch → abort update before installing!
-```
-
-### Timer-based Polling:
-```bash
-$ systemctl list-timers | grep ota
-NEXT                          LEFT    LAST                          PASSED
-Tue 2026-02-10 18:28:00 UTC   15min   Tue 2026-02-10 18:13:02 UTC   2s ago   ota-check.timer
+Developer                    GitHub                         Dispositivos
+    │                           │                               │
+    │  git tag v1.9.0           │                               │
+    │  git push origin v1.9.0   │                               │
+    │ ─────────────────────────►│                               │
+    │                           │                               │
+    │                     [Build & Release]                     │
+    │                     (3-5 minutos)                         │
+    │                           │                               │
+    │                           │◄──────────────────────────────│
+    │                           │    ota-check.timer            │
+    │                           │    (cada 15 min)              │
+    │                           │                               │
+    │                           │  "Nova versão v1.9.0!"        │
+    │                           │──────────────────────────────►│
+    │                           │                               │
+    │                           │                    [Auto-Update]
+    │                           │                    [Health Check]
+    │                           │                    [Rollback se falhar]
+    │                           │                               │
+    │                           │               ✅ Atualizado!   │
 ```
 
 ---
 
-## ✅ Verification
+## 📋 System Components
 
-```bash
-$ cat /etc/ota-version
-v1.8.0
+| Componente | Ficheiro | Status | Descrição |
+|------------|----------|--------|-----------|
+| **CI/CD Build** | `.github/workflows/ota.yml` | ✅ Automático | Trigger em tags `v*` |
+| **Update Script** | `/opt/ota/ota-update.sh` | ✅ Automático | Download, install, rollback |
+| **Polling Timer** | `ota-check.timer` | ✅ Ativo | Verifica GitHub cada 15 min |
+| **Polling Script** | `/opt/ota/ota-check.sh` | ✅ Ativo | Compara versões, trigger update |
+| **Setup Script** | `setup-ota-device.sh` | ✅ Novo | Configura dispositivo automaticamente |
 
-$ ls -la /opt/ota/current
-lrwxrwxrwx 1 root root 26 /opt/ota/current -> /opt/ota/releases/v1.8.0
+---
 
-$ ls /opt/ota/releases/
-v1.5.0  v1.6.0  v1.7.0  v1.8.0
+## 🔄 Workflow Detalhado (4 Fases)
 
-$ systemctl is-active can-to-kuksa.service
-active
+### FASE 1: Developer faz alterações
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. DEVELOPER                                                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   $ git add .                                                           │
+│   $ git commit -m "Fix bug in cluster UI"                               │
+│   $ git push origin feature/OTA/implementation                          │
+│                                                                         │
+│   # Quando pronto para release:                                         │
+│   $ git tag v1.9.0                                                      │
+│   $ git push origin v1.9.0    ◄─── ISTO DISPARA O WORKFLOW!             │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### FASE 2: GitHub Actions (Automático)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 2. GITHUB ACTIONS (automático quando tag é pushed)                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────────────┐    ┌─────────────────────┐                   │
+│   │ build-cluster-rpi4  │    │  build-kuksa-rpi5   │                   │
+│   │    (parallel)       │    │    (parallel)       │                   │
+│   ├─────────────────────┤    ├─────────────────────┤                   │
+│   │ • Pull SDK (32-bit) │    │ • Pull SDK (64-bit) │                   │
+│   │ • qt6-build.sh      │    │ • make              │                   │
+│   │ • HelloQt6Qml       │    │ • can_to_kuksa_pub  │                   │
+│   │ • Upload artifact   │    │ • Upload artifact   │                   │
+│   └─────────┬───────────┘    └──────────┬──────────┘                   │
+│             │                           │                               │
+│             └───────────┬───────────────┘                               │
+│                         ▼                                               │
+│              ┌──────────────────────┐                                   │
+│              │      release         │                                   │
+│              ├──────────────────────┤                                   │
+│              │ • Download artifacts │                                   │
+│              │ • Create tar.gz      │                                   │
+│              │ • Generate SHA256    │                                   │
+│              │ • Upload to Release  │                                   │
+│              └──────────────────────┘                                   │
+│                         │                                               │
+│   GitHub Releases: v1.9.0                                               │
+│   ├── update-rpi4.tar.gz (4.6 MB)                                       │
+│   ├── update-rpi5.tar.gz (260 KB)                                       │
+│   └── hash-*.txt                                                        │
+│                                                                         │
+│   Tempo estimado: ~3-5 minutos                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### FASE 3: Dispositivo AGL (Polling Automático)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 3. AGL DEVICE - POLLING (automático cada 15 minutos)                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   systemd timer: ota-check.timer                                        │
+│   ├── OnBootSec=2min          (2 min após boot)                         │
+│   ├── OnUnitActiveSec=15min   (cada 15 min depois)                      │
+│   └── RandomizedDelaySec=60   (evitar "thundering herd")                │
+│                         │                                               │
+│                         ▼                                               │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │ /opt/ota/ota-check.sh                                           │   │
+│   ├─────────────────────────────────────────────────────────────────┤   │
+│   │ 1. Ler /etc/ota-version              → "v1.8.0"                 │   │
+│   │ 2. Chamar GitHub API                                            │   │
+│   │    curl https://api.github.com/repos/.../releases/latest        │   │
+│   │ 3. Extrair tag_name                  → "v1.9.0"                 │   │
+│   │ 4. Comparar versões                                             │   │
+│   │    "v1.8.0" != "v1.9.0" → NOVA VERSÃO!                          │   │
+│   │ 5. Verificar /etc/ota-auto-update                               │   │
+│   │    └── Se "enabled" → /opt/ota/ota-update.sh v1.9.0             │   │
+│   └─────────────────────────────────────────────────────────────────┘   │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### FASE 4: Update Script (Automático)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 4. OTA UPDATE (/opt/ota/ota-update.sh v1.9.0)                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  [1/10] Detect platform (rpi4 ou rpi5 via uname -m)                     │
+│  [2/10] Download update-rpi4.tar.gz ou update-rpi5.tar.gz               │
+│  [3/10] Verify SHA256 hash                                              │
+│  [4/10] Extract to /opt/ota/releases/v1.9.0/                            │
+│  [5/10] Stop service (helloqt-app.service ou can-to-kuksa.service)      │
+│  [6/10] Atomic symlink: /opt/ota/current → /opt/ota/releases/v1.9.0     │
+│  [7/10] Verify binary architecture                                      │
+│  [8/10] Copy binary to target path                                      │
+│  [9/10] Start service                                                   │
+│  [10/10] Health check (restart loop detection)                          │
+│                                                                         │
+│  ┌────────────────────┐     ┌────────────────────┐                      │
+│  │ SUCCESS            │     │ FAILURE            │                      │
+│  ├────────────────────┤     ├────────────────────┤                      │
+│  │ Write v1.9.0 to    │     │ Rollback symlink   │                      │
+│  │ /etc/ota-version   │     │ to previous version│                      │
+│  │ Log success        │     │ Restart old binary │                      │
+│  └────────────────────┘     └────────────────────┘                      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ✅ Test Results (12 February 2026)
+## ✅ Device Configuration (13 February 2026)
 
-| Device | IP | Architecture | Package | Service | Status |
-|--------|-----|--------------|---------|---------|--------|
-| **RPi5** | 10.21.220.191 | `aarch64` (64-bit) | `update-rpi5.tar.gz` | `can-to-kuksa.service` | ✅ Active |
-| **RPi4** | 10.21.220.192 | `armv7l` (32-bit) | `update-rpi4.tar.gz` | `helloqt-app.service` | ✅ Active |
+| Dispositivo | IP | Arquitetura | Plataforma | Timer | Auto-Update |
+|-------------|-----|-------------|------------|-------|-------------|
+| **RPi5** | 10.21.220.191 | `aarch64` | rpi5 | ✅ Ativo | ✅ Enabled |
+| **RPi4** | 10.21.220.192 | `armv7l` | rpi4 | ✅ Ativo | ✅ Enabled |
 
 **Binaries Installed:**
 - RPi5: `/home/kuksa_RPi5/bin/can_to_kuksa_publisher` + `vss_min.json`
 - RPi4: `/opt/cluster/HelloQt6Qml`
+
+**Services:**
+- RPi5: `can-to-kuksa.service`
+- RPi4: `helloqt-app.service`
 
 ---
 
@@ -164,12 +220,26 @@ active
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **Hash verification** | SHA256 before install | ✅ |
-| **Architecture verification** | Check binary matches system | ✅ NEW |
-| **Restart loop detection** | 3+ restarts in 10s = failure | ✅ NEW |
-| **Backup** | Previous version saved | ✅ |
+| **Architecture verification** | Check binary matches system | ✅ |
+| **Restart loop detection** | 3+ restarts in 10s = failure | ✅ |
+| **Atomic symlinks** | Zero-downtime switching | ✅ |
 | **Health check** | Verify service starts | ✅ |
-| **Rollback** | Auto-restore if failed | ✅ |
+| **Auto-rollback** | Restore previous on failure | ✅ |
 | **Logging** | All operations logged | ✅ |
+
+---
+
+## 📁 Key Files
+
+| Location | File | Description |
+|----------|------|-------------|
+| GitHub | `.github/workflows/ota.yml` | CI/CD multi-platform workflow |
+| AGL | `/opt/ota/ota-update.sh` | Main update script (10 steps) |
+| AGL | `/opt/ota/ota-check.sh` | Polling script (GitHub API) |
+| AGL | `/etc/systemd/system/ota-check.timer` | 15-min timer |
+| AGL | `/etc/ota-version` | Current version |
+| AGL | `/etc/ota-auto-update` | "enabled" for auto-update |
+| Repo | `src/ota/scripts/setup-ota-device.sh` | One-time device setup |
 
 ---
 
@@ -177,10 +247,13 @@ active
 
 | Metric | Value |
 |--------|-------|
-| Package size | 4.8 MB |
+| CI/CD build time | ~3-5 minutes |
+| Package size (RPi4) | 4.6 MB |
+| Package size (RPi5) | 260 KB |
 | Download time | ~1 second |
 | Install time | ~5 seconds |
 | Total OTA time | ~6 seconds |
+| Polling interval | 15 minutes |
 
 ---
 
@@ -192,45 +265,50 @@ active
 | **A.2** | Real binaries (kuksa + cluster) | ✅ Complete |
 | **B** | Enhanced rollback, CI/CD | ✅ Complete |
 | **C** | Atomic symlinks, auto-polling | ✅ Complete |
-| **C.2** | Multi-platform (RPi4 + RPi5) | ✅ **Complete** |
+| **C.2** | Multi-platform (RPi4 + RPi5) | ✅ Complete |
+| **C.3** | 100% Automatic (timer + auto-update) | ✅ **Complete** |
 | **D** | RAUC (A/B rootfs) | 📋 Planned |
-
-### Phase C.2 Features (NEW):
-
-| Feature | Status |
-|---------|--------|
-| Multi-platform workflow | ✅ |
-| ARM 32-bit (RPi4) support | ✅ |
-| ARM 64-bit (RPi5) support | ✅ |
-| Architecture verification | ✅ |
-| Restart loop detection | ✅ |
-| Separate packages per platform | ✅ |
-| Docker SDK images (rpi4/rpi5) | ✅ |
 
 ---
 
-## 📁 Key Files
+## 🚀 Demo Commands
 
-| Location | File |
-|----------|------|
-| GitHub | `.github/workflows/ota.yml` |
-| AGL | `/opt/ota/ota-update.sh` |
-| AGL | `/etc/ota-version` |
-| Docs | `docs/guides/OTA_Implementation_Guide.md` |
+### Trigger new release:
+```bash
+git tag v1.9.0
+git push origin v1.9.0
+```
+
+### Check device versions:
+```bash
+ssh root@10.21.220.191 "cat /etc/ota-version"  # RPi5
+ssh root@10.21.220.192 "cat /etc/ota-version"  # RPi4
+```
+
+### Manual trigger (without waiting for timer):
+```bash
+ssh root@10.21.220.191 "/opt/ota/ota-check.sh"
+ssh root@10.21.220.192 "/opt/ota/ota-check.sh"
+```
+
+### View logs:
+```bash
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota-check.log"
+ssh root@10.21.220.191 "cat /opt/ota/logs/ota.log"
+```
 
 ---
 
 ## 🎉 Summary
 
-✅ **Complete Multi-Platform OTA pipeline**
-- Developer pushes tag → GitHub builds 32-bit & 64-bit → AGL auto-installs
-- Timer polls GitHub every 15 minutes
-- Atomic symlink switching for zero-downtime
-- Architecture verification + restart loop detection + rollback
+✅ **Complete 100% Automatic OTA Pipeline**
 
-**Delivered:** Phases A, B, C, C.2 complete
+1. Developer pushes tag → GitHub builds 32-bit & 64-bit
+2. Timer polls GitHub every 15 minutes
+3. Auto-detects new version → triggers update
+4. Architecture verification + health check + rollback
 
-**Next:** Phase D - RAUC (A/B rootfs)
+**No manual intervention required after initial setup!**
 
 ---
 
