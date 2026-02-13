@@ -36,7 +36,7 @@ Item {
                 }
 
                 Text {
-                    text: "67 Km"
+                    text: "x Km"
                     font.pixelSize: 12
                     color: "white"
                     Layout.alignment: Qt.AlignHCenter
@@ -112,7 +112,7 @@ Item {
                     }
 
                     Text {
-                        text: "67 C"
+                        text: "x C"
                         font.pixelSize: 12
                         color: "white"
                     }

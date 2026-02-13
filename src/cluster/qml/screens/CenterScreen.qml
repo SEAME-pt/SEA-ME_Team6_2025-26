@@ -25,21 +25,21 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-                Text {
-                    text: "Speed: " + speedProvider.currSpeed + "\n" +
-                        "Temperature: " + temperatureProvider.currTemperature + "\n" +
-                        "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
-                        "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
-                        "Voltage: " + voltageProvider.currVoltage + "\n" +
-                        "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
-                        "WheelAngle: " + wheelAngleProvider.currWheelAngle + "\n" +
-                        "Blinker Left: " + wheelAngleProvider.isBlinkerLeftActive + "\n" +
-                        "Blinker Right: " + wheelAngleProvider.isBlinkerRightActive + "\n" +
-                        "Heading: " + headingProvider.currHeading  
-                    font.pixelSize: 12
-                    color: "white"
-                    anchors.centerIn: parent
-                }
+                // Text {
+                //     text: "Speed: " + speedProvider.currSpeed + "\n" +
+                //         "Temperature: " + temperatureProvider.currTemperature + "\n" +
+                //         "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
+                //         "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
+                //         "Voltage: " + voltageProvider.currVoltage + "\n" +
+                //         "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
+                //         "WheelAngle: " + wheelAngleProvider.currWheelAngle + "\n" +
+                //         "Blinker Left: " + wheelAngleProvider.isBlinkerLeftActive + "\n" +
+                //         "Blinker Right: " + wheelAngleProvider.isBlinkerRightActive + "\n" +
+                //         "Heading: " + headingProvider.currHeading  
+                //     font.pixelSize: 12
+                //     color: "white"
+                //     anchors.centerIn: parent
+                // }
         }
 
         BottomBar {}

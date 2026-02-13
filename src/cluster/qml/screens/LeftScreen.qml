@@ -35,7 +35,7 @@ Item {
                 bottomMinValue: 9
                 bottomMaxValue: 13
                 middleIcon: voltageProvider.voltageIcon
-                middleText: "67 m"
+                middleText: "x m"
             }
         }
     }

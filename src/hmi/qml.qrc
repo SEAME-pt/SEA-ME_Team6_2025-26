@@ -34,6 +34,8 @@
         <file>src/backend/frontdistanceprovider.hpp</file>
         <file>src/backend/wheelspeedprovider.cpp</file>
         <file>src/backend/wheelspeedprovider.hpp</file>
+        <file>src/backend/wheelangleprovider.cpp</file>
+        <file>src/backend/wheelangleprovider.hpp</file>
         <file>src/backend/voltageprovider.cpp</file>
         <file>src/backend/voltageprovider.hpp</file>
         <file>src/backend/ipcclient.cpp</file>
