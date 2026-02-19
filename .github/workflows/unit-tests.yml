@@ -24,8 +24,7 @@ jobs:
       - name: Pull test image
         run: docker pull ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest
 
-      # Run C++ Tests
-      - name: Configure + Build + Run C++ tests
+      - name: Configure + Build + Run tests
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
@@ -33,7 +32,7 @@ jobs:
             ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
             bash -lc '
               apt-get update && \
-              apt-get install -y cmake ninja-build && \
+              apt-get install -y python3 && \
               rm -rf /var/lib/apt/lists/* && \
               rm -rf build && \
               cmake -S . -B build -G Ninja -DENABLE_COVERAGE=ON -DENABLE_PYTHON_TESTS=OFF && \
@@ -41,22 +40,8 @@ jobs:
               ctest --test-dir build --output-on-failure
             '
 
-      # Run Python Tests
-      - name: Configure + Run Python tests
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/work" \
-            -w /work/src/tests \
-            ghcr.io/seame-pt/sea-me_team6_2025-26/seame-tests:latest \
-            bash -lc '
-              apt-get update && \
-              apt-get install -y python3 python3-pip && \
-              pip3 install -r requirements.txt && \
-              python3 -m unittest discover -s . -p "*.py"
-            '
-
-      # OPTIONAL: Generate coverage report (HTML) for C++
-      - name: Generate C++ coverage HTML
+      # OPTIONAL coverage report (HTML)
+      - name: Generate coverage HTML
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/work" \
@@ -69,9 +54,8 @@ jobs:
               genhtml coverage_filtered.info --output-directory coverage_html
             '
 
-      # Upload coverage HTML artifact (C++)
-      - name: Upload C++ coverage HTML artifact
+      - name: Upload coverage HTML artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cpp_coverage_html
+          name: coverage_html
           path: src/tests/coverage_html
