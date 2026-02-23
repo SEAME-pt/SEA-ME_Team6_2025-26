@@ -9,7 +9,6 @@
   - [ ] Reformulation of physical car architecture — Version 3.1 (13)
       - Final physical layout design
       - Camera and sensor positioning optimization for ADAS
-      - Wiring and power distribution review for new components
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [ ] OTA implementation with RAUC (continuation) (13)
@@ -31,23 +30,18 @@
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [ ] ADAS Spike — Perception, Control & Path Planning (13)
       - Study AEB, LDW, ACC, TSR concepts and feasibility
-      - Evaluate sensor requirements for each feature
       - Map features to project hardware capabilities
   - [ ] AI/ML Model Survey (13)
       - Research open-source models for object detection and obstacle avoidance
-      - Evaluate model compatibility with Hailo-8 (26 TOPS)
       - Prepare ADR (Architecture Decision Record) foundation for model selection
   - [ ] AI Spike — GenAI applied to ADAS (13)
       - Study GenAI tools for data augmentation and scenario generation
       - Evaluate GANs, diffusion models, transformers for ADAS context
-      - Prototype basic inference pipeline with Hailo-8
-
+  
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [ ] TSF refinement — complete pending tasks from previous module (8)
       - Review and close open TSF requirements
       - Refine TSF automation algorithm
-      - Define new ADAS module L0 requirements
-
 ---
 
 ## 📊 Sprint Points Summary
@@ -60,9 +54,12 @@
 | **Vasco** | ADAS Spike (13) + AI/ML Model Survey (13) | **26** |
 | **Diogo** | Qt HMI & Cluster (21) + Qt Backend refactoring (8) | **29** |
 
-**Total Sprint Points: ~115**
+**Total Sprint Points: 115**
 
 ---
+
+
+
 
 ## 🗺️ ADAS Module Roadmap (12 weeks — 6 sprints)
 
