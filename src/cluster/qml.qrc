@@ -13,6 +13,7 @@
         <file>qml/components/TopBar.qml</file>
         <file>qml/components/BottomBar.qml</file>
         <file>qml/components/Gauge.qml</file>
+        <file>qml/components/MiddleGauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
