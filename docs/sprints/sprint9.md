@@ -16,8 +16,8 @@
       - Validate OTA update flow end-to-end
       - Multi-version deployment support
   - [ ] AEB — Automatic Emergency Braking initial implementation (13)
-      - Design AEB architecture (sensor fusion: ToF + camera)
-      - Implement progressive braking algorithm on STM32 (ThreadX)
+      - Design AEB architecture
+      - Implement progressive braking algorithm on ThreadX
       - Define safety thresholds and response times
   - [ ] Qt HMI & Cluster continued development (21)
       - HMI design improvements and new ADAS-related displays
