@@ -1,6 +1,6 @@
 # 🏁 Sprint 9 — (23/02/2026 → 06/03/2026)
 
-> ## **Sprint Goal**: *MUDAR ESTA PARTE *Kickstart the ADAS module — establish AI/perception foundations, begin AEB implementation, and finalize car physical architecture (v3.1)
+> ## **Sprint Goal**: Kickstart the ADAS module
 ---
 
 ## 📌 Epics
