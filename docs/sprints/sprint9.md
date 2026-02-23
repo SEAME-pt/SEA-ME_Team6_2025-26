@@ -26,6 +26,9 @@
   - [ ] Qt Backend refactoring (8)
       - Code restructuring for scalability
       - Improve data model and KUKSA integration
+  - [ ] CAN Bus Simulation - Signal Emulation Layer (8)
+      - Set up virtual CAN interface
+      - Implement signals and realistic CAN frames
 
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [ ] ADAS Spike — Perception, Control & Path Planning (13)
@@ -50,9 +53,9 @@
 | **Ruben** | Car Architecture v3.1 (13) + AEB implementation (13) | **26** |
 | **David** | AEB implementation (shared with Ruben) + ThreadX ADAS support | **~13** |
 | **Vasco** | ADAS Spike (13) + AI/ML Model Survey (13) | **26** |
-| **Diogo** | Qt HMI & Cluster (21) + Qt Backend refactoring (8) | **29** |
+| **Diogo** | Qt HMI & Cluster (21) + Qt Backend refactoring (8) | **37** |
 
-**Total Sprint Points: 115**
+**Total Sprint Points: 123**
 
 ---
 
@@ -89,7 +92,7 @@
 
 ## 📈 Actual Progress
 
-- Sprint 9 points: **___ / ~115**
+- Sprint 9 points: **___ / 123**
 
 - ❌ Undone: 
 
