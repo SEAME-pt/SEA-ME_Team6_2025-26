@@ -1,6 +1,6 @@
 # 📡 OTA Implementation — SEA:ME Team 6
 
-## Sprint 8 Demo — 13 February 2026
+## Sprint 8 Demo — 24 February 2026
 
 ---
 
@@ -8,11 +8,11 @@
 
 **Over-the-Air (OTA)** = Update software remotely without physical access
 
-| Type | Description | Our Status |
-|------|-------------|------------|
-| **SOTA** | Software updates (binaries, apps) | ✅ Implemented |
-| **COTA** | Configuration updates (JSON, configs) | ✅ Implemented |
-| **FOTA** | Firmware updates (STM32) | 📋 Planned |
+| Type | Description | Our Status | Details |
+|------|-------------|------------|----------|
+| **SOTA** | Software updates (binaries, apps) | ✅ Implemented | `can_to_kuksa_publisher`, `HelloQt6Qml` |
+| **COTA** | Configuration updates (JSON, configs) | ✅ Implemented | `vss_min.json` included in packages |
+| **FOTA** | Firmware updates (STM32) | 📋 Planned | Requires STM32 custom bootloader |
 
 ---
 
@@ -556,7 +556,8 @@ x [rootfs.0] (/dev/mmcblk0p2, ext4, booted)
 |---------|----------------------|----------------|
 | **Scope** | Application binaries only | Full rootfs image |
 | **Downtime** | ~6 seconds | Reboot required (~30s) |
-| **Risk** | Low (apps only) | Medium (full system) |
+| **Package Size** | 260KB - 4.6MB | 1-5GB |
+| **Risk** | Low (apps only) | Very low (A/B failsafe) |
 | **Rollback** | Version directory | A/B partition switch |
 | **Use case** | Frequent, small updates | Major releases |
 | **Example** | "Fix bug in Cluster" | "Upgrade AGL Ricefish to Quillback" |
@@ -564,6 +565,18 @@ x [rootfs.0] (/dev/mmcblk0p2, ext4, booted)
 **Conclusion:** We use BOTH!
 - Current OTA → app updates (fast, frequent)
 - RAUC → system updates (less frequent, safer)
+
+### Dual Implementation Strategy (Academic Exercise)
+
+For this project, we implement **both methods** to:
+1. Maintain tar.gz (OTA scripts) → fast, lightweight app updates
+2. Add RAUC bundles in parallel → full system updates with A/B safety
+3. **Document comparative tests** (time, size, rollback, etc.)
+
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| **Production** (limited 4G) | OTA scripts for patches, RAUC for major releases |
+| **Development** (fast network) | Can use only RAUC if simplicity is preferred |
 
 ---
 
@@ -639,6 +652,43 @@ ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 
 ---
 
+## 🚗 Vehicle State During Updates
+
+| Update Type | Vehicle State | Reason |
+|-------------|---------------|--------|
+| **COTA** (configs) | ✅ Can be moving | Only config files, no restart |
+| **SOTA** (apps) | ⚠️ Recommended stopped | Service restart may affect UI |
+| **RAUC** (rootfs) | ✅ **Must be stopped** | Requires full reboot |
+| **FOTA** (STM32) | ✅ **Must be stopped** | Microcontroller controls CAN! |
+
+**Automotive Industry Practice:**
+- Updates scheduled when vehicle is parked
+- Usually at night, connected to charger (EVs)
+- Critical updates require driver consent
+
+---
+
+## 🧪 Testing Strategy
+
+### Current Tests Implemented
+
+| Test | Purpose | Status |
+|------|---------|--------|
+| Hash verification | Package integrity | ✅ SHA256 |
+| Architecture check | Binary matches CPU | ✅ `file` command |
+| Health check | Service starts OK | ✅ Restart loop detection |
+| Rollback test | Reversion works | ✅ Tested v1.9→v1.8 |
+
+### Planned Tests
+
+| Test | Description |
+|------|-------------|
+| **Smoke Test** | Automatic post-update verification (service running? process exists?) |
+| **Canary Deployment** | RPi5 updates first, if OK then RPi4 |
+| **A/B Comparison** | Benchmark OTA Scripts vs RAUC (time, size, rollback) |
+
+---
+
 ## 🔧 Troubleshooting
 
 ### Problem: Timer runs but update fails
@@ -687,3 +737,5 @@ ssh root@<IP> "/opt/ota/ota-check.sh"
 # Questions?
 
 📡 **Team 6 — SEA:ME 2025-26**
+
+*Last Updated: 24 February 2026**

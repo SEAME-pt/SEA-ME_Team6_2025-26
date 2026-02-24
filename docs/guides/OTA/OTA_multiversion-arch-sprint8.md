@@ -1,6 +1,6 @@
 # OTA Multi-Version Architecture - Sprint 8
 
-**Last Updated:** 13 February 2026
+**Last Updated:** 24 February 2026
 
 ---
 
@@ -439,6 +439,94 @@ ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
 
 # Verify timer is active
 ssh root@<IP> "systemctl list-timers | grep ota"
+```
+
+---
+
+## 🚗 Vehicle State During Updates
+
+**Can updates be performed while the vehicle is moving?**
+
+| Update Type | Vehicle State | Reason |
+|-------------|---------------|--------|
+| **COTA** (configs) | ✅ Can be moving | Only config files, no service restart |
+| **SOTA** (apps) | ⚠️ Recommended stopped | Service restart may affect UI |
+| **RAUC** (rootfs) | ✅ **Must be stopped** | Requires full system reboot |
+| **FOTA** (STM32) | ✅ **Must be stopped** | Microcontroller controls CAN! |
+
+**Automotive Industry Practice:**
+- Updates scheduled when vehicle is parked
+- Usually at night, connected to charger (EVs)
+- Critical updates require driver consent
+
+---
+
+## 📊 Dual Implementation: OTA Scripts + RAUC
+
+For academic purposes, we implement **both** update methods:
+
+| Feature | OTA Scripts (tar.gz) | RAUC (.raucb) |
+|---------|---------------------|---------------|
+| **Scope** | Application binaries only | Full rootfs image |
+| **Downtime** | ~6 seconds | ~30-60s (reboot) |
+| **Package Size** | 260KB - 4.6MB | 1-5GB |
+| **Risk** | Low (apps only) | Very low (A/B failsafe) |
+| **Rollback** | Version directory switch | A/B partition switch |
+| **Use Case** | Frequent, small updates | Major system releases |
+| **Example** | "Fix bug in Cluster UI" | "Upgrade AGL version" |
+
+**We use BOTH:**
+- OTA Scripts → Fast app updates (daily/weekly)
+- RAUC → System updates (monthly/quarterly)
+
+---
+
+## 🧪 Testing Strategy
+
+### Current Tests
+
+| Test | Purpose | Status |
+|------|---------|--------|
+| Hash verification (SHA256) | Package integrity | ✅ Implemented |
+| Architecture check | Binary matches CPU | ✅ Implemented |
+| Health check | Service starts OK | ✅ Implemented |
+| Rollback test | Reversion works | ✅ Tested (v1.9→v1.8) |
+| Signature verification | Bundle not tampered | ⚠️ RAUC only |
+
+### Planned: Smoke Test
+
+Automatic post-update verification:
+```bash
+smoke_test() {
+    systemctl is-active can-to-kuksa.service || return 1
+    pgrep -f can_to_kuksa_publisher || return 1
+    restarts=$(systemctl show can-to-kuksa.service -p NRestarts --value)
+    [ "$restarts" -lt 3 ] || return 1
+    return 0
+}
+```
+
+### Planned: Canary Deployment
+
+For our 2 devices:
+- **Canary**: RPi5 receives update first
+- Wait and verify functionality
+- If OK → Update RPi4
+- If NOT OK → Investigate before updating RPi4
+
+### Planned: A/B Comparison Test
+
+Benchmark script to compare both methods:
+```bash
+#!/bin/bash
+# benchmark-ota.sh - Compare OTA Scripts vs RAUC
+
+VERSION="v1.10.0"
+echo "=== OTA Scripts Benchmark ==="
+time /opt/ota/ota-update.sh $VERSION
+
+echo "=== RAUC Benchmark ==="
+time rauc install /tmp/update.raucb
 ```
 
 ---
