@@ -200,7 +200,7 @@ This layer decides how the decisions should be executed.
 
 **Sensors:**
 
-  - Forward facing camera (main sensor)
+  - **Forward facing camera** (main sensor)
     1. Camera captures front road image
     2. image processing/ CNN detect lane lines
     3. System estimates lane center
@@ -220,7 +220,7 @@ This layer decides how the decisions should be executed.
   - ENet
   - Deeplab
 
-**Adaptive Cruise Control(ACC)**
+**Adaptive Cruise Control (ACC)**
 
   - Adaptive Cruise Control uses radar, lasers, or cameras to automatically adjust a vehicle's speed to maintain a safe, driver-defined distance from the car in front.
 
@@ -234,7 +234,7 @@ This layer decides how the decisions should be executed.
 
 **Sensors:**
 
-  - Forward Facing Radar (Main Sensor)
+  - **Forward Facing Radar** (Main Sensor)
     1. Emits radio waves
     2. receives reflected signals from the object ahead
     3. calculates distance, relative speed and direction
@@ -252,3 +252,190 @@ This layer decides how the decisions should be executed.
   - Faster R-CNN
   - SSD
   - Kalman filter
+
+**Automatic Emergency Break (AEB)**
+
+  - an advanced vehicle safety feature that uses sensors to monitor for potential front-end collisions with vehicles, pedestrians, or obstacles.
+
+![autonomous-emergency-braking-2](https://github.com/user-attachments/assets/5ca35a90-2736-4c1a-b11b-4b9f2896494c)
+
+**How it works**
+
+  - **Detection:** The system uses sensors such as radar, cameras, or LiDAR to identify obstacles like vehicles, pedestrians, or cyclists.
+  - **Warning:** Before intervening, most systems provide a Forward Collision Warning (FCW) through audible beeps, visual dashboard alerts, or haptic feedback.
+  - **Intervention:** If the driver does not brake or applies insufficient pressure, the AEB engages to avoid the crash or reduce the impact speed.
+
+**sensors**
+
+  - **Radar** (main sensor)
+    1. It emits radio waves that bounce off objects to measure their distance and relative speed.
+    
+  - **Cameras**
+    1. High-resolution cameras capture visual data, which specialized software analyzes to classify objects.
+   
+  - **LiDAR**
+    1. It uses pulsed laser beams to create a highly accurate 3D map of the surroundings.
+
+  - **Ultrasonic Sensors**
+    1. They use high-frequency sound waves to detect objects very close to the car.
+
+**Limitations**
+
+  - Speed Constraints
+  - Object Recognition Gaps
+  - Weather Factors
+  - Technical Failures(False positives)
+
+**AI Models**
+
+  - Yolo
+  - SSD
+  - Transformers (Vision Transformers - ViT)
+
+**Parking Assist Systems**
+
+  - advanced driver-assistance technologies that automate, or assist with, maneuvering vehicles into parallel or perpendicular spots using sensors and cameras to detect obstacles and spaces.
+
+![1690960808641975](https://github.com/user-attachments/assets/3a0d2378-915f-4847-94a2-6595f9596cf4)
+
+**How it works**
+
+  - **Activation:** The driver activates the automatic parking assist system by pressing a button or through the vehicle's information system.
+  - **Search for parking locations:** The system uses various sensors to scan the surrounding environment and identify potential parking spaces.
+  - **Detecting obstacles:** Sensors continuously monitor the area around the car, detecting obstacles such as walls, pedestrians and other vehicles.
+  - **Calculate parking path:** When a suitable parking space is detected, the system calculates the trajectory and necessary steering input to guide the vehicle into the parking space.
+  - **Steering assist:** The automatic parking assist system takes control of the steering wheel and starts driving the vehicle.
+  - **Visual and auditory prompts:** During the driver's parking process, the system will provide visual and auditory prompts to guide the driver.
+  - **Monitoring and intervention:** During the parking process, the system will always monitor the surrounding environment. If any unexpected obstacles appear, the system may pause or stop the parking process.
+  - **Complete parking:** When the vehicle is successfully parked in the parking space, the automatic parking assist system will send out a parking completion signal.
+
+**Sensors**
+
+  - **Ultrasonic Sensors**
+    1. hey use echolocation emitting high-frequency sound waves that bounce off obstacles.
+
+  - **Electromagnetic Sensors**
+    1. They create an electromagnetic field around the bumper.
+
+  - **Cameras**
+    1. Cameras provide the "eyes" for the driver or the automated system.
+
+  - **Radar**
+    1. Used in high-end vehicles or fully autonomous parking systems, mmWave radar sensors are more resistant to rain, fog, and dirt than ultrasonic sensors and can detect objects from much further away.
+
+  - **LIDAR**
+    1. Uses laser pulses to create a high-resolution 3D map of the environment, allowing the car to identify specific types of obstacles.
+   
+  - **Side Sensors**
+    1. Scan for a gap large enough for the car to fit in as you drive past potential spaces.
+   
+**Limitations**
+
+  - Blind Spots
+  - Weather Conditions
+  - Sound Absorption
+  - Speed Restrictions
+  - Low Light
+
+**AI Models**
+
+  - Yolo
+  - ResNet
+  - Dijkstra(calcula a trajetoria ideal)
+
+
+# Sensors Technologies
+
+**Camera based perception systems**
+
+
+
+
+
+
+# ADAS architecture overview
+
+**Sensor Layer**
+
+  - this layer is tasked with collecting raw environmental and vehicle data.
+
+
+**Common sensors**
+
+  -   Cameras
+  -   Radar
+  -   LIDAR
+  -   Ultrasonic sensors
+  -   IMU
+  -   GPS
+  -   Wheel speed sensors
+
+<img width="850" height="395" alt="Typical-types-of-sensors-for-ADAS" src="https://github.com/user-attachments/assets/9d491a2a-6dbe-4f91-89e0-852b218d1dd0" />
+
+**Output**
+
+  - Raw sensor data streams.
+
+
+**Sensor interface and Preprocessing Layer**
+
+  - This layer is tasked with preparing the raw data collected for the perception algorithms.
+
+**Key functions**
+
+  - Signal conditioning
+  - Timestamp synchronization
+  - Calibration
+  - Noise filtering
+  - Image enhancement
+  - Radar/LiDAR clustering
+  - Coordinate transformation
+
+**Output**
+
+  - Clean, synchronized, sructured sensor data.
+
+**Sensor Fusion Layer**
+
+  - This layer is tasked with combining data from multiple sensors for robust environmental understanding.
+
+**Fusion types**
+
+  - Low level (raw data fusion)
+  - Mid level (feature fusion)
+  - High level (object level fusion)
+
+**Techniques**
+
+  - Deep learning based fusion
+  - Particle filters
+  - Bayesian Networks
+
+**Output**
+
+  - Unified environmental model
+
+
+**Perception Layer**
+
+  - this layer is tasked with detecting and classifying objects in the environment.
+
+
+**Functions**
+
+  - Object detection
+  - Lane detection
+  - Traffic sign recognition
+  - Traffic light recognition
+  - Drivable area detection
+  - Free-space estimation
+
+**Common AI models**
+
+  - CNNs
+  - YOLO variants
+  - Transformer-based vision models
+
+**Output**
+
+  - annoted scene with tracked objects and semantics.
