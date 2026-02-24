@@ -1,4 +1,4 @@
-name: OTA Build & Release (Multi-Platform)
+name: OTA Build & Release (Multi-Platform + RAUC)
 
 on:
   push:
@@ -19,6 +19,11 @@ on:
           - both
           - rpi4
           - rpi5
+      build_rauc:
+        description: 'Build RAUC bundles (in addition to tar.gz)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -207,11 +212,11 @@ jobs:
             
             ### 📦 Available Packages
             
-            | Package | Platform | Architecture | Contents |
-            |---------|----------|--------------|----------|
-            | `update-rpi4.tar.gz` | Raspberry Pi 4 | ARM 32-bit (armv7) | Qt6 Cluster |
-            | `update-rpi5.tar.gz` | Raspberry Pi 5 (AGL) | ARM 64-bit (aarch64) | KUKSA Publisher |
-            | `update.tar.gz` | Combined | Both | All binaries |
+            | Package | Platform | Architecture | Contents | Method |
+            |---------|----------|--------------|----------|--------|
+            | `update-rpi4.tar.gz` | Raspberry Pi 4 | ARM 32-bit (armv7) | Qt6 Cluster | OTA Scripts |
+            | `update-rpi5.tar.gz` | Raspberry Pi 5 (AGL) | ARM 64-bit (aarch64) | KUKSA Publisher | OTA Scripts |
+            | `update.tar.gz` | Combined | Both | All binaries | OTA Scripts |
             
             ### 🎯 Target Paths
             
@@ -223,15 +228,20 @@ jobs:
             
             ### 📥 Installation
             
-            **On RPi4:**
+            **OTA Scripts (tar.gz) - Automatic polling every 15 min:**
             ```bash
+            # Manual trigger if needed
             /opt/ota/ota-update.sh ${{ steps.version.outputs.version }}
             ```
             
-            **On RPi5 (AGL):**
-            ```bash
-            /opt/ota/ota-update.sh ${{ steps.version.outputs.version }}
-            ```
+            ### 🔄 Update Methods Comparison
+            
+            | Feature | OTA Scripts (tar.gz) | RAUC (.raucb) |
+            |---------|---------------------|---------------|
+            | Scope | App binaries only | Full rootfs |
+            | Downtime | ~6 seconds | ~30s (reboot) |
+            | Package Size | 260KB - 4.6MB | 1-5GB |
+            | Use Case | Frequent updates | Major releases |
             
             ### ⚠️ Architecture Notes
             - RPi4 binaries are **32-bit ARM** (armv7)
