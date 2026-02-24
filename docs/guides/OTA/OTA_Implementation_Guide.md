@@ -2247,6 +2247,58 @@ Execute **both update methods** and compare metrics:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### 13.5 Testing Scripts (Created and Ready to Use)
+
+| Script | Location | Purpose | Status |
+|--------|----------|---------|--------|
+| `smoke-test.sh` | `src/ota/scripts/` | 7+ automated post-update tests | ✅ Created |
+| `canary-check.sh` | `src/ota/scripts/` | Canary deployment support | ✅ Created |
+| `benchmark-ota.sh` | `src/ota/scripts/` | Performance comparison tar.gz vs RAUC | ✅ Created |
+
+#### How to Deploy and Use the Testing Scripts
+
+**Step 1: Copy scripts to devices**
+```bash
+# Copy all test scripts to RPi5
+scp src/ota/scripts/smoke-test.sh src/ota/scripts/canary-check.sh \
+    root@10.21.220.191:/opt/ota/
+
+# Copy all test scripts to RPi4
+scp src/ota/scripts/smoke-test.sh src/ota/scripts/canary-check.sh \
+    root@10.21.220.192:/opt/ota/
+
+# Make them executable
+ssh root@10.21.220.191 "chmod +x /opt/ota/*.sh"
+ssh root@10.21.220.192 "chmod +x /opt/ota/*.sh"
+```
+
+**Step 2: Run smoke test after an update**
+```bash
+# On RPi5
+ssh root@10.21.220.191 "/opt/ota/smoke-test.sh"
+
+# On RPi4
+ssh root@10.21.220.192 "/opt/ota/smoke-test.sh"
+```
+
+**Step 3: Configure canary deployment**
+```bash
+# Set RPi5 as canary (receives updates first)
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh set-role canary"
+
+# Set RPi4 as production (waits 24h after canary)
+ssh root@10.21.220.192 "/opt/ota/canary-check.sh set-role production"
+
+# Check status
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh status"
+```
+
+**Step 4: Run benchmark comparison**
+```bash
+# Run from development machine (requires SSH access)
+./src/ota/scripts/benchmark-ota.sh v1.10.0 rpi5
+```
+
 ---
 
 ## 14. FAQ - Frequently Asked Questions

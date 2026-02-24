@@ -679,13 +679,28 @@ ssh root@10.21.220.191 "journalctl -u ota-check.service --since '30 min ago'"
 | Health check | Service starts OK | ✅ Restart loop detection |
 | Rollback test | Reversion works | ✅ Tested v1.9→v1.8 |
 
-### Planned Tests
+### Testing Scripts Created
 
-| Test | Description |
-|------|-------------|
-| **Smoke Test** | Automatic post-update verification (service running? process exists?) |
-| **Canary Deployment** | RPi5 updates first, if OK then RPi4 |
-| **A/B Comparison** | Benchmark OTA Scripts vs RAUC (time, size, rollback) |
+| Script | Location | Purpose | Status |
+|--------|----------|---------|--------|
+| `smoke-test.sh` | `src/ota/scripts/` | 7+ automated post-update tests | ✅ Created |
+| `canary-check.sh` | `src/ota/scripts/` | Canary deployment (RPi5 first) | ✅ Created |
+| `benchmark-ota.sh` | `src/ota/scripts/` | Compare tar.gz vs RAUC | ✅ Created |
+
+### Quick Start: Deploy and Test
+
+```bash
+# 1. Copy scripts to devices
+scp src/ota/scripts/*.sh root@10.21.220.191:/opt/ota/
+scp src/ota/scripts/*.sh root@10.21.220.192:/opt/ota/
+
+# 2. Run smoke test
+ssh root@10.21.220.191 "/opt/ota/smoke-test.sh"
+
+# 3. Configure canary
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh set-role canary"
+ssh root@10.21.220.192 "/opt/ota/canary-check.sh set-role production"
+```
 
 ---
 
