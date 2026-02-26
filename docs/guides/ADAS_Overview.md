@@ -661,3 +661,20 @@ AI models estimate:
   - Risk probability of collision
 
 This predictive capability is critical for proactive safety systems such as Automatic Emergency Braking.
+
+
+**Decision Automation**
+
+Decision automation in ADAS refers to the ability to select appropriate driving behavior, prioritaze actions and menage risk under uncertainty.
+
+**Behavior Selection**
+
+  - Lane change decisions
+
+  - Overtaking logic
+
+  - Adaptive cruise control adjustments
+
+all of this AI based decisions are combined with rule based safety layers to ensure determinism and compliance.
+
+**Risk Assessment**
