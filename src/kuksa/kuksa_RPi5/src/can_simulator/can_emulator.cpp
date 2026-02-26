@@ -32,13 +32,10 @@
 #endif
 
 #include "../../inc/can_id.h"
+#include "inc/helpers.hpp"
+#include "inc/sim_state.hpp"
+#include "inc/app_context.hpp"
 
-static std::atomic<bool> g_tx_enabled(true);
-
-// -----------------------------
-// CRC8 (poly 0x07, init 0x00)
-// NOTE: If STM32 uses a different CRC8, align this function.
-// -----------------------------
 static uint8_t crc8(const uint8_t* data, size_t len)
 {
   uint8_t crc = 0x00;
@@ -103,6 +100,7 @@ static bool send_payload8(int sock, uint32_t can_id, const void* payload8)
 // -----------------------------
 // Sim state (latest values)
 // -----------------------------
+/*
 struct SimState {
   // Heartbeat
   uint8_t hb_state  = SYSTEM_STATE_RUNNING;
@@ -155,7 +153,7 @@ struct SimState {
   uint16_t motor_current_ma = 0;
   int8_t   motor_driver_temp = 30;
   uint8_t  motor_pwm = 0;
-};
+};*/
 
 static int16_t clamp_i16(long v) {
   if (v > 32767) return 32767;
@@ -167,22 +165,6 @@ static uint8_t clamp_u8(long v) {
   if (v > 255) return 255;
   return static_cast<uint8_t>(v);
 }
-
-// -----------------------------
-// Scenario model
-// -----------------------------
-struct Event {
-  uint32_t t_ms = 0;
-  std::vector<std::pair<std::string,std::string>> kv;
-};
-
-struct Scenario {
-  std::string name;   // filename
-  std::string path;   // full path
-  std::vector<std::pair<std::string,std::string>> init_kv;
-  std::vector<Event> events;
-  uint32_t duration_ms = 0;
-};
 
 static std::string trim(const std::string& s)
 {
@@ -508,6 +490,7 @@ static uint64_t now_ms()
 // -----------------------------
 // Global shared state
 // -----------------------------
+/*
 static std::mutex g_state_mtx;
 static SimState g_state;
 static const SimState g_defaults; // value-initialized defaults
@@ -524,88 +507,82 @@ static std::mutex g_play_mtx;
 static Playback g_play;
 static std::vector<Scenario> g_scenarios;
 static std::string g_scenario_dir;
-
-static std::atomic<bool> g_running(true);
+*/
 
 // Apply init + any t=0 events to current state (caller holds g_state_mtx)
-static void apply_scenario_start_locked(const Scenario& sc)
+static void apply_scenario_start_locked(AppContext& ctx, const Scenario& sc)
 {
-  g_state = g_defaults;
-  for (const auto& kv : sc.init_kv) apply_kv(g_state, kv.first, kv.second);
+
+  ctx.state = ctx.defaults;
+  for (const auto& kv : sc.init_kv) apply_kv(ctx.state, kv.first, kv.second);
   // Apply t=0 events
   for (const auto& ev : sc.events) {
     if (ev.t_ms != 0) break;
-    for (const auto& kv : ev.kv) apply_kv(g_state, kv.first, kv.second);
+    for (const auto& kv : ev.kv) apply_kv(ctx.state, kv.first, kv.second);
   }
 }
 
 // -----------------------------
 // Scenario player thread
 // -----------------------------
-static void scenario_player_loop()
+static void scenario_player_loop(AppContext& ctx)
 {
-  while (g_running.load()) {
-    Scenario sc;
+  while (ctx.running.load()) {
     Playback pb;
 
     {
-      std::lock_guard<std::mutex> lk(g_play_mtx);
-      pb = g_play;
-      if (!pb.playing || g_scenarios.empty() || pb.scenario_index >= g_scenarios.size()) {
-        // idle
-        // (keep last state; do not reset)
-        // Sleep small and retry
-        //
-        // Note: we copy pb above so we can avoid holding mutex while sleeping
-      }
+      std::lock_guard<std::mutex> lk(ctx.play_mtx);
+      pb = ctx.play;
     }
 
-    if (!pb.playing || g_scenarios.empty() || pb.scenario_index >= g_scenarios.size()) {
+    // Check if we should be playing
+    // If not, sleep a bit and check again
+    if (!pb.playing || ctx.scenarios.empty() || pb.scenario_index >= ctx.scenarios.size()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(20));
       continue;
     }
 
-    sc = g_scenarios[pb.scenario_index];
+    // Playing a scenario, get it
+    const Scenario& sc = ctx.scenarios[pb.scenario_index];
 
     const uint64_t now = now_ms();
     const uint32_t elapsed = static_cast<uint32_t>(now - pb.start_ms);
 
-    // Apply due events
+    // Apply due events to ctx.state (under lock)
     bool reached_end = false;
     {
-      std::lock_guard<std::mutex> lk_state(g_state_mtx);
+      std::lock_guard<std::mutex> lk_state(ctx.state_mtx);
 
       size_t i = pb.next_event_idx;
       while (i < sc.events.size() && sc.events[i].t_ms <= elapsed) {
-        for (const auto& kv : sc.events[i].kv) apply_kv(g_state, kv.first, kv.second);
+        for (const auto& kv : sc.events[i].kv) apply_kv(ctx.state, kv.first, kv.second);
         i++;
       }
-
+      reached_end = (i >= sc.events.size());
       // write back next_event_idx
       {
-        std::lock_guard<std::mutex> lk_play(g_play_mtx);
+        std::lock_guard<std::mutex> lk_play(ctx.play_mtx);
         // scenario might have changed; only write if still same one and playing
-        if (g_play.playing && g_play.scenario_index == pb.scenario_index) {
-          g_play.next_event_idx = i;
+        if (ctx.play.playing && ctx.play.scenario_index == pb.scenario_index) {
+          ctx.play.next_event_idx = i;
         }
       }
-
-      reached_end = (i >= sc.events.size());
     }
 
+    // handle end of scenario
     if (reached_end) {
       const uint32_t GRACE_MS = 1000;
       if (elapsed >= sc.duration_ms + GRACE_MS) {
-        std::lock_guard<std::mutex> lk(g_play_mtx);
-        if (g_play.playing && g_play.scenario_index == pb.scenario_index) {
-          if (g_play.loop) {
-            g_play.start_ms = now_ms();
-            g_play.next_event_idx = 0;
+        std::lock_guard<std::mutex> lk(ctx.play_mtx);
+        if (ctx.play.playing && ctx.play.scenario_index == pb.scenario_index) {
+          if (ctx.play.loop) {
+            ctx.play.start_ms = now_ms();
+            ctx.play.next_event_idx = 0;
             // reset state to defaults + init
-            std::lock_guard<std::mutex> lk_state(g_state_mtx);
-            apply_scenario_start_locked(sc);
+            std::lock_guard<std::mutex> lk_state(ctx.state_mtx);
+            apply_scenario_start_locked(ctx, sc);
           } else {
-            g_play.playing = false;
+            ctx.play.playing = false;
           }
         }
       }
@@ -618,19 +595,8 @@ static void scenario_player_loop()
 // -----------------------------
 // CAN sender thread
 // -----------------------------
-struct Periods {
-  uint32_t motor = CAN_PERIOD_MOTOR_STATUS_MS;
-  uint32_t imu_fast = CAN_PERIOD_IMU_FAST_MS;
-  uint32_t imu_mag  = CAN_PERIOD_IMU_MAG_MS;
-  uint32_t wheel = CAN_PERIOD_WHEEL_SPEED_MS;
-  uint32_t tof = CAN_PERIOD_TOF_MS;
-  uint32_t env = CAN_PERIOD_ENVIRONMENT_MS;
-  uint32_t batt = CAN_PERIOD_BATTERY_MS;
-  uint32_t hb = CAN_PERIOD_HEARTBEAT_MS;
-  uint32_t estop = CAN_PERIOD_HEARTBEAT_MS; // default: same as heartbeat
-};
 
-static void can_sender_loop(int sock, Periods P)
+static void can_sender_loop(int sock, AppContext& ctx)
 {
   uint64_t t0 = now_ms();
 
@@ -646,21 +612,21 @@ static void can_sender_loop(int sock, Periods P)
 
   uint8_t motor_counter = 0;
 
-  while (g_running.load()) {
-
-    if (!g_tx_enabled.load()) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(20));
-      continue;
-    }
+  while (ctx.running.load()) {
     const uint64_t now = now_ms();
     const uint32_t uptime = static_cast<uint32_t>(now - t0);
 
+    // snapshot the latest state (under lock)
     SimState st;
     {
-      std::lock_guard<std::mutex> lk(g_state_mtx);
-      st = g_state;
+      std::lock_guard<std::mutex> lk(ctx.play_mtx);
+      st = ctx.state;
     }
+    // snapshot the periods (no lock needed since they are const)
+    const Periods& P = ctx.periods;
 
+    // Send frames - check each one
+    // if the time passed is equal or greater than the scheduled
     if (now >= next_motor) {
       MotorStatus_t m = make_motor_status(st, motor_counter++);
       send_payload8(sock, CAN_ID_MOTOR_STATUS, &m);
@@ -741,20 +707,20 @@ static void print_help()
     "  quit\n";
 }
 
-static void cmd_list()
+static void cmd_list(AppContext& ctx)
 {
-  if (g_scenarios.empty()) {
+  if (ctx.scenarios.empty()) {
     std::cout << "(no scenarios loaded)\n";
     return;
   }
-  for (size_t i = 0; i < g_scenarios.size(); ++i) {
-    std::cout << i << ") " << g_scenarios[i].name
-              << "  (events=" << g_scenarios[i].events.size()
-              << ", duration=" << g_scenarios[i].duration_ms << "ms)\n";
+  for (size_t i = 0; i < ctx.scenarios.size(); ++i) {
+    std::cout << i << ") " << ctx.scenarios[i].name
+              << "  (events=" << ctx.scenarios[i].events.size()
+              << ", duration=" << ctx.scenarios[i].duration_ms << "ms)\n";
   }
 }
 
-static bool parse_index_or_name(const std::string& s, size_t& out_idx)
+static bool parse_index_or_name(AppContext& ctx, const std::string& s, size_t& out_idx)
 {
   // try integer
   char* end = nullptr;
@@ -766,84 +732,84 @@ static bool parse_index_or_name(const std::string& s, size_t& out_idx)
   }
 
   // try name match
-  for (size_t i = 0; i < g_scenarios.size(); ++i) {
-    if (g_scenarios[i].name == s) { out_idx = i; return true; }
+  for (size_t i = 0; i < ctx.scenarios.size(); ++i) {
+    if (ctx.scenarios[i].name == s) { out_idx = i; return true; }
   }
   return false;
 }
 
-static void cmd_play(const std::string& arg)
+static void cmd_play(const std::string& arg, AppContext& ctx)
 {
-  if (g_scenarios.empty()) {
+  if (ctx.scenarios.empty()) {
     std::cout << "No scenarios loaded. Use 'reload' or check the folder.\n";
     return;
   }
 
   size_t idx = 0;
-  if (!parse_index_or_name(arg, idx) || idx >= g_scenarios.size()) {
+  if (!parse_index_or_name(ctx, arg, idx) || idx >= ctx.scenarios.size()) {
     std::cout << "Unknown scenario: " << arg << "\n";
     return;
   }
 
-  const Scenario& sc = g_scenarios[idx];
+  const Scenario& sc = ctx.scenarios[idx];
 
   {
-    std::lock_guard<std::mutex> lk_state(g_state_mtx);
-    apply_scenario_start_locked(sc);
+    std::lock_guard<std::mutex> lk_state(ctx.state_mtx);
+    apply_scenario_start_locked(ctx, sc);
   }
 
   {
-    std::lock_guard<std::mutex> lk(g_play_mtx);
-    g_play.playing = true;
-    g_play.scenario_index = idx;
-    g_play.next_event_idx = 0;
-    g_play.start_ms = now_ms();
+    std::lock_guard<std::mutex> lk(ctx.play_mtx);
+    ctx.play.playing = true;
+    ctx.play.scenario_index = idx;
+    ctx.play.next_event_idx = 0;
+    ctx.play.start_ms = now_ms();
   }
 
-  std::cout << "[OK] Playing " << sc.name << " (loop=" << (g_play.loop ? "on" : "off") << ")\n";
+  std::cout << "[OK] Playing " << sc.name << " (loop=" << (ctx.play.loop ? "on" : "off") << ")\n";
 }
 
-static void cmd_stop()
+static void cmd_stop(AppContext& ctx)
 {
-  std::lock_guard<std::mutex> lk(g_play_mtx);
-  g_play.playing = false;
+  std::lock_guard<std::mutex> lk(ctx.play_mtx);
+  ctx.play.playing = false;
   std::cout << "[OK] Stopped\n";
 }
 
-static void cmd_loop(const std::string& arg)
+static void cmd_loop(const std::string& arg, AppContext& ctx)
 {
   bool on = (arg == "on" || arg == "1" || arg == "true");
   {
-    std::lock_guard<std::mutex> lk(g_play_mtx);
-    g_play.loop = on;
+    std::lock_guard<std::mutex> lk(ctx.play_mtx);
+    ctx.play.loop = on;
   }
   std::cout << "[OK] loop=" << (on ? "on" : "off") << "\n";
 }
 
-static void cmd_status()
+static void cmd_status(AppContext& ctx)
 {
   Playback pb;
   {
-    std::lock_guard<std::mutex> lk(g_play_mtx);
-    pb = g_play;
+    std::lock_guard<std::mutex> lk(ctx.play_mtx);
+    pb = ctx.play;
   }
 
   std::cout << "playing=" << (pb.playing ? "yes" : "no")
             << " loop=" << (pb.loop ? "on" : "off");
 
-  if (pb.playing && !g_scenarios.empty() && pb.scenario_index < g_scenarios.size()) {
-    std::cout << " scenario=" << g_scenarios[pb.scenario_index].name
+  if (pb.playing && !ctx.scenarios.empty() && pb.scenario_index < ctx.scenarios.size()) {
+    std::cout << " scenario=" << ctx.scenarios[pb.scenario_index].name
               << " next_event_idx=" << pb.next_event_idx;
   }
   std::cout << "\n";
 }
 
-static void cmd_show()
+static void cmd_show(AppContext& ctx)
 {
   SimState st;
   {
-    std::lock_guard<std::mutex> lk(g_state_mtx);
-    st = g_state;
+    std::lock_guard<std::mutex> lk(ctx.state_mtx);
+    st = ctx.state;
   }
 
   std::cout
@@ -866,72 +832,71 @@ static void cmd_show()
     << "\n";
 }
 
-static void cmd_reset()
+static void cmd_reset(AppContext& ctx)
 {
   {
-    std::lock_guard<std::mutex> lk_state(g_state_mtx);
-    g_state = g_defaults;
+    std::lock_guard<std::mutex> lk_state(ctx.state_mtx);
+    ctx.state = ctx.defaults;
   }
   std::cout << "[OK] State reset to defaults\n";
 }
 
-static void cmd_reload()
+static void cmd_reload(AppContext& ctx)
 {
   try {
-    g_scenarios = load_scenarios_dir(g_scenario_dir);
-    std::cout << "[OK] Reloaded scenarios (" << g_scenarios.size() << ") from " << g_scenario_dir << "\n";
+    ctx.scenarios = load_scenarios_dir(ctx.scenario_dir);
+    std::cout << "[OK] Reloaded scenarios (" << ctx.scenarios.size() << ") from " << ctx.scenario_dir << "\n";
   } catch (const std::exception& e) {
     std::cout << "[ERR] " << e.what() << "\n";
   }
 }
 
-static void cli_loop()
+static void cli_loop(AppContext& ctx)
 {
   print_help();
   std::string line;
 
-  while (g_running.load()) {
+  // Main CLI loop
+  while (ctx.running.load()) {
+    // Prompt
     std::cout << "emu> " << std::flush;
+    // Read line
     if (!std::getline(std::cin, line)) {
-      g_running.store(false);
+      ctx.running.store(false);
       break;
     }
 
+    // Trim and skip empty
     line = trim(line);
     if (line.empty()) continue;
 
+    // Parse command
     std::istringstream iss(line);
     std::string cmd;
     iss >> cmd;
 
+    // Handle commands
     if (cmd == "help") print_help();
-    else if (cmd == "list") cmd_list();
+    else if (cmd == "list") cmd_list(ctx);
     else if (cmd == "play") {
       std::string arg; iss >> arg;
       if (arg.empty()) {
         std::cout << "usage: play <index|name>\n";
-        g_tx_enabled.store(true);
       }
-      else cmd_play(arg);
+      else cmd_play(arg, ctx);
     }
-    else if (cmd == "stop") cmd_stop();
+    else if (cmd == "stop") cmd_stop(ctx);
     else if (cmd == "loop") {
       std::string arg; iss >> arg;
       if (arg.empty()) std::cout << "usage: loop on|off\n";
-      else cmd_loop(arg);
+      else cmd_loop(arg, ctx);
     }
-    else if (cmd == "status") cmd_status();
-    else if (cmd == "show") cmd_show();
-    else if (cmd == "reset") cmd_reset();
-    else if (cmd == "reload") cmd_reload();
-    else if (cmd == "tx") {
-      std::string arg; iss >> arg;
-      if (arg == "on") {g_tx_enabled.store(true); std::cout << "[OK] tx=on\n";}
-      else if (arg == "off") { g_tx_enabled.store(false); std::cout << "[OK] tx=off\n"; }
-      else std::cout << "usage: tx on|off\n";
-    }
+    else if (cmd == "status") cmd_status(ctx);
+    else if (cmd == "show") cmd_show(ctx);
+    else if (cmd == "reset") cmd_reset(ctx);
+    else if (cmd == "reload") cmd_reload(ctx);
     else if (cmd == "quit" || cmd == "exit") {
-      g_running.store(false);
+      ctx.running.store(false);
       break;
     }
     else {
@@ -949,8 +914,74 @@ static void usage(const char* prog)
 
 int main(int argc, char** argv)
 {
-  if (argc < 3) { usage(argv[0]); return 1; }
+  if (argc != 1) {
+    usage(argv[0]);
+    return 1;
+  }
 
+  const std::string iface = "vcan0"; // default interface
+
+  AppContext ctx; // create context to hold shared state and config
+
+  // hardcoded scenario directory
+  ctx.scenario_dir = "./scenarios";
+
+  // load scenarios (fail if folder missing)
+  try {
+    ctx.scenarios = load_scenarios_dir(ctx.scenario_dir);
+  } catch (const std::exception& e) {
+    std::cerr << "[EMU] " << e.what() << "\n";
+    return 1;
+  }
+  if (ctx.scenarios.empty()) {
+    std::cerr << "[EMU] No scenarios found in: " << ctx.scenario_dir << "\n";
+    return 1;
+  }
+
+  std::cout << "[EMU] Loaded " << ctx.scenarios.size()
+            << " scenario(s) from " << ctx.scenario_dir << "\n";
+
+  std::cout << "[EMU] IDs (from can_id.h): wheel=0x" << std::hex << CAN_ID_WHEEL_SPEED
+            << " imu_acc=0x" << CAN_ID_IMU_ACCEL
+            << " imu_gyro=0x" << CAN_ID_IMU_GYRO
+            << " imu_mag=0x" << CAN_ID_IMU_MAG
+            << " env=0x" << CAN_ID_ENVIRONMENT
+            << " batt=0x" << CAN_ID_BATTERY
+            << " tof=0x" << CAN_ID_TOF_DISTANCE
+            << " hb=0x" << CAN_ID_HEARTBEAT_STM32
+            << " estop=0x" << CAN_ID_EMERGENCY_STOP
+            << " motor_status=0x" << CAN_ID_MOTOR_STATUS
+            << std::dec << "\n";
+
+  const int sock = open_can_tx_socket(iface);
+  if (sock < 0) return 1;
+
+  // Threads (IMPORTANT: pass ctx by reference using std::ref)
+  std::thread t_player(scenario_player_loop, std::ref(ctx));
+  std::thread t_sender(can_sender_loop, sock, std::ref(ctx));
+
+  // Main thread = CLI
+  cli_loop(ctx);
+
+  // Shutdown
+  ctx.running.store(false);
+  if (t_player.joinable()) t_player.join();
+  if (t_sender.joinable()) t_sender.join();
+
+  ::close(sock);
+  std::cout << "[EMU] Bye.\n";
+  return 0;
+}
+
+/*
+int main(int argc, char** argv)
+{
+  AppContext ctx;
+  if (argc < 3) { usage(argv[0]); return 1; } // (required args: iface, scenario_dir)
+
+  ctx.scenario_dir = argv[2]; // give the scenario dir to the CLI
+
+  ctx.iface = argv[1];
   const std::string iface = argv[1];
   g_scenario_dir = argv[2];
 
@@ -958,22 +989,6 @@ int main(int argc, char** argv)
   auto parse_u32 = [](const std::string& s)->uint32_t {
     return static_cast<uint32_t>(std::strtoul(s.c_str(), nullptr, 10));
   };
-
-  for (int i = 3; i < argc; ++i) {
-    std::string a = argv[i];
-    if (a.rfind("--p-motor=",0)==0) P.motor = parse_u32(a.substr(10));
-    else if (a.rfind("--p-imu=",0)==0)   P.imu_fast = parse_u32(a.substr(8));
-    else if (a.rfind("--p-mag=",0)==0)   P.imu_mag  = parse_u32(a.substr(8));
-    else if (a.rfind("--p-wheel=",0)==0) P.wheel = parse_u32(a.substr(10));
-    else if (a.rfind("--p-tof=",0)==0)   P.tof   = parse_u32(a.substr(8));
-    else if (a.rfind("--p-env=",0)==0)   P.env   = parse_u32(a.substr(8));
-    else if (a.rfind("--p-batt=",0)==0)  P.batt  = parse_u32(a.substr(9));
-    else if (a.rfind("--p-hb=",0)==0)    P.hb    = parse_u32(a.substr(7));
-    else if (a.rfind("--p-estop=",0)==0) P.estop = parse_u32(a.substr(10));
-    else {
-      std::cerr << "[EMU] Unknown arg: " << a << "\n";
-    }
-  }
 
   try {
     g_scenarios = load_scenarios_dir(g_scenario_dir);
@@ -999,7 +1014,7 @@ int main(int argc, char** argv)
   if (sock < 0) return 1;
 
   // threads
-  std::thread t_player(scenario_player_loop);
+  std::thread t_player(scenario_player_loop, ctx);
   std::thread t_sender(can_sender_loop, sock, P);
 
   // main thread = CLI
@@ -1014,3 +1029,4 @@ int main(int argc, char** argv)
   std::cout << "[EMU] Bye.\n";
   return 0;
 }
+*/
