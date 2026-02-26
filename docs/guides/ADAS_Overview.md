@@ -600,3 +600,64 @@ Cloud processing is not used for real-time control decisions due to latency, con
 **Artificial Intelligence in ADAS**
 
   - In the context of ADAS, Artificial Intelligence refers to computational methods that enable systems to learn from data, recognize patterns, make predictions, and improve performance without being explicitly programmed for every scenario.
+
+So how does Ai helps us in our project ?
+
+  - AI helps our project by enabling the system to learn from large amounts of real-world data instead of following fixed rules. It can adapt to complex inputs such as traffic patterns, pedestrians, and road conditions and how we do this you may ask? . We achieve this using machine learning techniques, including deep learning, convolutional neural networks (CNNs) for image recognition, and recurrent neural networks (RNNs) for sequential data like sensor readings. Finally, the AI predicts and chooses the safest and most effective actions for the vehicle in real time.
+
+
+**Object Detection and Classification**
+
+AI models identify and classify:
+
+  - Vehicles
+
+  - Pedestrians
+
+  - Cyclists
+
+  - Traffic signs
+
+  - Traffic lights
+
+  - Road boundaries
+
+This is done by Deep neural Networks that process camera images to produce semantic labels and confidence scores.
+
+**Semantic Segmentation**
+
+AI is used to classify each pixel of an image into categories such as:
+
+  - Road
+ 
+  - Sidewalk
+
+  - Lane markings
+
+  - Obstacles
+
+  - Drivable area
+
+This enables accurate lane keeping and path planning.
+
+**Sensor Fusion Enhancement**
+
+AI can improve fusion by:
+
+  - Learning cross-sensor feature relationships
+
+  - Enhancing object tracking robustness
+
+  - Compensating for sensor noise and occlusion
+
+**Prediction of Dynamic Objects**
+
+AI models estimate:
+
+  - Future trajectories of surrounding vehicles
+
+  - Pedestrian movement intention
+
+  - Risk probability of collision
+
+This predictive capability is critical for proactive safety systems such as Automatic Emergency Braking.
