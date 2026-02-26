@@ -12,3 +12,4 @@
 
 std::vector<Scenario> load_scenarios_dir(const std::string& dir);
 Scenario load_scenario_file(const fs::path& p);
+void apply_scenario_start_locked(AppContext& ctx, const Scenario& sc);

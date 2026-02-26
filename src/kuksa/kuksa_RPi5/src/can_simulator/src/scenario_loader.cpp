@@ -90,3 +90,15 @@ std::vector<Scenario> load_scenarios_dir(const std::string& dir)
 
   return out;
 }
+
+// Apply init + any t=0 events to current state (caller holds g_state_mtx)
+void apply_scenario_start_locked(AppContext& ctx, const Scenario& sc)
+{
+  ctx.state = ctx.defaults;
+  for (const auto& kv : sc.init_kv) apply_kv(ctx.state, kv.first, kv.second);
+  // Apply t=0 events
+  for (const auto& ev : sc.events) {
+    if (ev.t_ms != 0) break;
+    for (const auto& kv : ev.kv) apply_kv(ctx.state, kv.first, kv.second);
+  }
+}

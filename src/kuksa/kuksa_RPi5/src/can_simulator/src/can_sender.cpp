@@ -47,3 +47,98 @@ bool send_payload8(int sock, uint32_t can_id, const void* payload8)
   }
   return true;
 }
+
+// -----------------------------
+// CAN sender thread
+// -----------------------------
+
+void can_sender_loop(int sock, AppContext& ctx)
+{
+  uint64_t t0 = now_ms();
+
+  uint64_t next_motor = t0;
+  uint64_t next_imu   = t0;
+  uint64_t next_mag   = t0;
+  uint64_t next_wheel = t0;
+  uint64_t next_tof   = t0;
+  uint64_t next_env   = t0;
+  uint64_t next_batt  = t0;
+  uint64_t next_hb    = t0;
+  uint64_t next_estop = t0;
+
+  uint8_t motor_counter = 0;
+
+  while (ctx.running.load()) {
+    const uint64_t now = now_ms();
+    const uint32_t uptime = static_cast<uint32_t>(now - t0);
+
+    // snapshot the latest state (under lock)
+    SimState st;
+    {
+      std::lock_guard<std::mutex> lk(ctx.play_mtx);
+      st = ctx.state;
+    }
+    // snapshot the periods (no lock needed since they are const)
+    const Periods& P = ctx.periods;
+
+    // Send frames - check each one
+    // if the time passed is equal or greater than the scheduled
+    if (now >= next_motor) {
+      MotorStatus_t m = make_motor_status(st, motor_counter++);
+      send_payload8(sock, CAN_ID_MOTOR_STATUS, &m);
+      next_motor += P.motor;
+    }
+
+    if (now >= next_imu) {
+      ImuAccel_t a = make_accel(st);
+      ImuGyro_t  g = make_gyro(st);
+      send_payload8(sock, CAN_ID_IMU_ACCEL, &a);
+      send_payload8(sock, CAN_ID_IMU_GYRO,  &g);
+      next_imu += P.imu_fast;
+    }
+
+    if (now >= next_mag) {
+      ImuMag_t m = make_mag(st);
+      send_payload8(sock, CAN_ID_IMU_MAG, &m);
+      next_mag += P.imu_mag;
+    }
+
+    if (now >= next_wheel) {
+      WheelSpeed_t w = make_wheel(st);
+      send_payload8(sock, CAN_ID_WHEEL_SPEED, &w);
+      next_wheel += P.wheel;
+    }
+
+    if (now >= next_tof) {
+      ToFDistance_t t = make_tof(st);
+      send_payload8(sock, CAN_ID_TOF_DISTANCE, &t);
+      next_tof += P.tof;
+    }
+
+    if (now >= next_env) {
+      Environment_t e = make_env(st);
+      send_payload8(sock, CAN_ID_ENVIRONMENT, &e);
+      next_env += P.env;
+    }
+
+    if (now >= next_batt) {
+      BatteryStatus_t b = make_batt(st);
+      send_payload8(sock, CAN_ID_BATTERY, &b);
+      next_batt += P.batt;
+    }
+
+    if (now >= next_hb) {
+      Heartbeat_t h = make_hb(st, uptime);
+      send_payload8(sock, CAN_ID_HEARTBEAT_STM32, &h);
+      next_hb += P.hb;
+    }
+
+    if (now >= next_estop) {
+      EmergencyStop_t e = make_estop(st);
+      send_payload8(sock, CAN_ID_EMERGENCY_STOP, &e);
+      next_estop += P.estop;
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+  }
+}
