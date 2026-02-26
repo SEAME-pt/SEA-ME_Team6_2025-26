@@ -359,6 +359,7 @@ This layer decides how the decisions should be executed.
 
   - this layer is tasked with collecting raw environmental and vehicle data.
 
+<img width="850" height="395" alt="Typical-types-of-sensors-for-ADAS" src="https://github.com/user-attachments/assets/9d491a2a-6dbe-4f91-89e0-852b218d1dd0" />
 
 **Common sensors**
 
@@ -370,7 +371,6 @@ This layer decides how the decisions should be executed.
   -   GPS
   -   Wheel speed sensors
 
-<img width="850" height="395" alt="Typical-types-of-sensors-for-ADAS" src="https://github.com/user-attachments/assets/9d491a2a-6dbe-4f91-89e0-852b218d1dd0" />
 
 **Output**
 
@@ -391,6 +391,10 @@ This layer decides how the decisions should be executed.
   - Radar/LiDAR clustering
   - Coordinate transformation
 
+**AI usage**
+
+  - Low
+
 **Output**
 
   - Clean, synchronized, sructured sensor data.
@@ -398,6 +402,9 @@ This layer decides how the decisions should be executed.
 **Sensor Fusion Layer**
 
   - This layer is tasked with combining data from multiple sensors for robust environmental understanding.
+
+<img width="960" height="440" alt="Diagram_Recreation_-_Sensors_Chapter_4_Fig1-_960_x_440" src="https://github.com/user-attachments/assets/6bdd22f5-678a-4b28-9c4a-17cbd965b11f" />
+
 
 **Fusion types**
 
@@ -410,6 +417,10 @@ This layer decides how the decisions should be executed.
   - Deep learning based fusion
   - Particle filters
   - Bayesian Networks
+
+**AI usage**
+
+  - High
 
 **Output**
 
@@ -439,3 +450,153 @@ This layer decides how the decisions should be executed.
 **Output**
 
   - annoted scene with tracked objects and semantics.
+
+**Localization & Mapping Layer**
+
+  - this layer is tasked with determining the precise vehicle position.
+
+**inputs**
+
+  - GPS
+  - IMU
+  - HD MAPS
+  - Sensor fusion outputs
+
+**Functions**
+
+  - Slam
+  - Map matching
+  - Ego vehicle outputs
+
+**Output**
+
+  - Vehicle position, orientation and velocity.
+
+**Prediction layer**
+
+  - This tasked with predicting the movement of detected objects.
+
+**Functions**
+
+  - Trajectory prediction
+  - Behavior prediction
+  - Risk assessment
+
+**Output**
+
+  - Future trajectories of surrounding objects.
+
+**Planning layer**
+
+  - This layer is tasked with determining the safest and the most optimal driving behavior.
+
+**Types of planning**
+
+  -  Behavioral planning
+  -  Path planning
+  -  Motion planning
+  -  Speed planning
+
+**AI usage**
+
+  - Medium
+
+**Output**
+
+  - Desired trajectory + velocity profile
+
+**Control Layer**
+
+  - This layer is tasked with executing the planned maneuvers.
+
+**Function**
+
+  - steering control
+  - Brake control
+  - Throttle control
+
+**Techniques**
+
+  - PID control
+  - Model Predictive Control
+
+**AI usage**
+
+  - Low
+
+**Output**
+
+  - Actuator commands
+
+**Vehicle Actuation layer**
+
+  - This layer is taked with the physical execution.
+
+**Components**
+
+  - Eletronic Power Steering
+  - Brake System
+  - Engine/Powertrain control
+
+**AI usage**
+
+  - None
+
+**Result**
+
+  - vehicle module adjustment
+
+**Full Data Flow**
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/8547cd76-2a2d-4332-a22a-c8f8f99847d3" />
+
+
+**Full ADAS system Architecture**
+
+<img width="850" height="430" alt="Hierarchical-architecture-of-the-general-ADAS-systems-vs-end-to-end-approaches" src="https://github.com/user-attachments/assets/aa33336f-18d2-4483-80c3-dbc935d64e33" />
+
+
+**Computational Requirements and Constraints**
+
+  - Advanced Driver Assistance Systems (ADAS) require high-performance, safety-critical computing platforms capable of processing large volumes of sensor data under strict real-time constraints. This section outlines the computational architecture considerations, including edge vs. cloud processing, GPU requirements, latency constraints, and real-time guarantees.
+
+
+**Edge Computing vs. Cloud Computing**
+
+**Edge (Mandatory)**
+
+- Low latency requirements
+- safety-critical decisions
+- No dependency on connectivity
+- Deterministic real-time execution
+- Compliance with functional safety standards
+
+**Typical Edge Hardware**
+
+  - Automotive SoCs (NVIDIA DRIVE, Qualcomm Snapdragon Ride, Mobileye EyeQ)
+  - Multi-core ARM CPUs
+  - Dedicated AI accelerators (NPUs)
+  - Automotive-grade GPUs
+  - Hardware safety monitors (ASIL-compliant MCUs)
+
+**Cloud Computing (Supportive Role)**
+
+Cloud systems are typically used for:
+
+  - HD map updates
+  - Fleet learning
+  - Model training
+  - Data logging and analytics
+  - OTA software updates
+
+Cloud processing is not used for real-time control decisions due to latency, connectivity, and safety limitations.
+
+
+<img width="1280" height="720" alt="1719691178617" src="https://github.com/user-attachments/assets/344d0c7a-f5f7-4e52-9e0d-f54d4b1dc17b" />
+
+
+# AI, MACHINE LEARNING AND DEEP LEARNING IN ADAS
+
+**Artificial Intelligence in ADAS**
+
+  - In the context of ADAS, Artificial Intelligence refers to computational methods that enable systems to learn from data, recognize patterns, make predictions, and improve performance without being explicitly programmed for every scenario.
