@@ -15,7 +15,6 @@
 #define FLASH_WARNING_ICON "qrc:/assets/icons/flash-warning.svg"
 #define FLASH_DANGER_ICON "qrc:/assets/icons/flash-danger.svg"
 
-
 class VoltageProvider : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString currVoltage READ currVoltage NOTIFY voltageChanged)

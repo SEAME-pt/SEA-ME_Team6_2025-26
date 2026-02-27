@@ -6,41 +6,18 @@
         <!-- QML Screens -->
         <file>qml/screens/BaseScreen.qml</file>
         <file>qml/screens/LeftScreen.qml</file>
-	<file>qml/screens/CenterScreen.qml</file>
-	<file>qml/screens/RightScreen.qml</file>
+	    <file>qml/screens/CenterScreen.qml</file>
+	    <file>qml/screens/RightScreen.qml</file>
 	
         <!-- QML Components -->
         <file>qml/components/TopBar.qml</file>
         <file>qml/components/BottomBar.qml</file>
         <file>qml/components/Gauge.qml</file>
         <file>qml/components/MiddleGauge.qml</file>
+        <file>qml/components/LeftGauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
-
-        <!-- Backend C++ files -->
-        <file>src/backend/timeprovider.cpp</file>
-        <file>src/backend/timeprovider.hpp</file>
-        <file>src/backend/systemstatus.cpp</file>
-        <file>src/backend/systemstatus.hpp</file>
-        <file>src/backend/speedprovider.cpp</file>
-        <file>src/backend/speedprovider.hpp</file>
-        <file>src/backend/temperatureprovider.cpp</file>
-        <file>src/backend/temperatureprovider.hpp</file>
-        <file>src/backend/distanceprovider.cpp</file>
-        <file>src/backend/distanceprovider.hpp</file>
-        <file>src/backend/frontdistanceprovider.cpp</file>
-        <file>src/backend/frontdistanceprovider.hpp</file>
-        <file>src/backend/wheelspeedprovider.cpp</file>
-        <file>src/backend/wheelspeedprovider.hpp</file>
-        <file>src/backend/voltageprovider.cpp</file>
-        <file>src/backend/voltageprovider.hpp</file>
-        <file>src/backend/ipcclient.cpp</file>
-        <file>src/backend/ipcclient.hpp</file>
-        <file>src/backend/reader.cpp</file>
-        <file>src/backend/reader.hpp</file>
-        <file>src/backend/headingprovider.cpp</file>
-        <file>src/backend/headingprovider.hpp</file>
 
         <!-- Icons  -->
         <file>assets/icons/flash.svg</file>

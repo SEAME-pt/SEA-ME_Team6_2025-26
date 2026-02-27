@@ -1,0 +1,111 @@
+/**
+ * @author souzitaaaa
+ * @email diogo.nogueirasousa123@gmail.com
+ * @desc Root Source Code for the QT App - Refactored Architecture
+ */
+
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQuickWindow>
+#include <QDebug>
+#include <QQmlContext>
+
+#include "core/reader.hpp"
+#include "core/signalrouter.hpp"
+#include "providers/powertrainprovider.hpp"
+#include "providers/vehicleprovider.hpp"
+#include "providers/exteriorprovider.hpp"
+#include "providers/adasprovider.hpp"
+#include "providers/currentlocationprovider.hpp"
+#include "providers/chassisprovider.hpp"
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    std::vector<std::string> kuksaSignals = {
+        "Vehicle.Speed",
+        "Vehicle.Exterior.AirTemperature",
+        "Vehicle.ADAS.ObstacleDetection.Front.Distance",
+        "Vehicle.Powertrain.TractionBattery.CurrentVoltage",
+        "Vehicle.Powertrain.ElectricMotor.Speed",
+        "Vehicle.Powertrain.TractionBattery.IsCritical",
+        "Vehicle.Powertrain.TractionBattery.IsLevelLow",
+        "Vehicle.CurrentLocation.Heading",
+        "Vehicle.Chassis.SteeringWheel.Angle"
+    };
+
+    qDebug() << "[Main] Initializing application with" << kuksaSignals.size() << "Kuksa signals";
+
+    PowertrainProvider *powertrain = new PowertrainProvider(&app);
+    VehicleProvider *vehicle = new VehicleProvider(&app);
+    ExteriorProvider *exterior = new ExteriorProvider(&app);
+    ADASProvider *adas = new ADASProvider(&app);
+    CurrentLocationProvider *currentLocation = new CurrentLocationProvider(&app);
+    ChassisProvider *chassis = new ChassisProvider(&app);
+
+    qDebug() << "[Main] Created all providers";
+
+    SignalRouter *router = new SignalRouter(&app);
+    router->registerPowertrainProvider(powertrain);
+    router->registerVehicleProvider(vehicle);
+    router->registerExteriorProvider(exterior);
+    router->registerADASProvider(adas);
+    router->registerCurrentLocationProvider(currentLocation);
+    router->registerChassisProvider(chassis);
+
+    qDebug() << "[Main] SignalRouter configured with all providers";
+
+    Reader *reader = new Reader(kuksaSignals, router, &app);
+
+    QObject::connect(reader, &Reader::connectionError,
+                     &app, [](QString error) {
+        qCritical() << "[Main] Kuksa Reader error:" << error;
+    });
+
+    QObject::connect(reader, &Reader::connected,
+                     &app, []() {
+        qDebug() << "[Main] Successfully connected to Kuksa!";
+    });
+
+    qDebug() << "[Main] Reader connected to SignalRouter";
+
+    QQmlApplicationEngine engine;
+
+    engine.addImportPath("qrc:/qml");
+    qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"), 
+                             "ClusterTheme", 1, 0, "BaseTheme");
+
+    // Register legacy providers (TimeProvider, SystemStatus)
+    // qmlRegisterType<TimeProvider>("Cluster.Backend", 1, 0, "TimeProvider");
+    // qmlRegisterType<SystemStatus>("Cluster.Backend", 1, 0, "SystemStatus");
+
+    
+    // New grouped providers
+    engine.rootContext()->setContextProperty("powertrain", powertrain);
+    engine.rootContext()->setContextProperty("exterior", exterior);
+    engine.rootContext()->setContextProperty("vehicle", vehicle);
+    engine.rootContext()->setContextProperty("adas", adas);
+    engine.rootContext()->setContextProperty("currentLocation", currentLocation);
+    engine.rootContext()->setContextProperty("chassis", chassis);
+
+    qDebug() << "[Main] All providers exposed to QML";
+
+    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, 
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+
+    engine.load(url);
+
+    qDebug() << "Qt version:" << QT_VERSION_STR;
+    if (engine.rootObjects().isEmpty()) {
+        qCritical() << "[Main] Failed to load QML!";
+        return -1;
+    }
+
+    qDebug() << "[Main] Application started successfully!";
+    return app.exec();
+}

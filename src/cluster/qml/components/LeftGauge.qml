@@ -7,20 +7,15 @@ import ClusterTheme 1.0
 
 Item {
     id: root
-    width: 375
-    height: 375
+    width: 300
+    height: 300
     //? Data
-    property real currSpeed: 0
-    property real maxSpeed: 320
-    property real currBattery: 0.84
-    property string speedUnit: "m/h"
+    property real currMotorSpeed: 0
+    property real maxMotorSpeed: 120
     //? Helpers
-    property real mainAngleStart: 245
-    property real mainAngleSweep: 230
-    property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep 
-    property real secundaryAngleSweep: 80
-    property real  activeIndex: (currSpeed / maxSpeed) * (innerTotalTicks - 1)
-    property int bottomActiveIndex: Math.round(currBattery * (bottomTotalTicks - 1))
+    property real mainAngleStart: 230
+    property real mainAngleSweep: 260
+    property real activeIndex: (currMotorSpeed / maxMotorSpeed) * (innerTotalTicks - 1)
     //? Outer Circle
     property real outerTotalTicks: 161
     property real outerAngleStep: mainAngleSweep / (outerTotalTicks - 1)
@@ -28,34 +23,13 @@ Item {
     //? Inner Circle
     property real innerTotalTicks: 33
     property real innerAngleStep: mainAngleSweep / (innerTotalTicks - 1)
-    //? Bottom Background Circle
-    property real bottomTotalTicks: 81
-    property real bottomAngleStep: secundaryAngleSweep / (bottomTotalTicks - 1)
-
-    function getBatteryTickColor(index) {
-        if (index === root.bottomTotalTicks - 1)
-            return BaseTheme.gaugeBatteryEmpty
-        else if (index % 20 === 0)
-            return BaseTheme.gaugeMainTextInformation
-        else if (index >= (root.bottomTotalTicks - 1 - root.bottomActiveIndex))
-            return BaseTheme.gaugeBattery
-        return BaseTheme.gaugeTicksInactive
-    }
-
-    function getBatteryOpacity(index) {
-        if (index >= (root.bottomTotalTicks - 1 - root.bottomActiveIndex))
-            return 1.0
-        else if (index % 20 === 0)
-            return 1.0
-        return 0.45
-    }
 
     //? OUTER RING
     Rectangle {
         id: outerCircle
         anchors.centerIn: parent
-        width: 375
-        height: 375
+        width: 300
+        height: 300
         radius: width / 2
         color: BaseTheme.sportBlack
         layer.enabled: true
@@ -74,8 +48,8 @@ Item {
     Rectangle {
         id: innerCircle
         anchors.centerIn: parent
-        width: 350
-        height: 350
+        width: 275
+        height: 275
         radius: width / 2
         color: BaseTheme.darkBlack
         border.color: BaseTheme.blackboard
@@ -148,7 +122,7 @@ Item {
 
             Text {
                 visible: index % 4 === 0
-                text: Math.round((index / (root.innerTotalTicks - 1)) * root.maxSpeed)
+                text: Math.round((index / (root.innerTotalTicks - 1)) * root.maxMotorSpeed)
                 color: index <= root.activeIndex ? BaseTheme.gaugeTicksActive : BaseTheme.gaugeMainTextInformation
                 font.pixelSize: 16
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -158,23 +132,23 @@ Item {
         }
     }
 
-    Behavior on currSpeed {
+    Behavior on currMotorSpeed {
         NumberAnimation {
             duration: 500
             easing.type: Easing.InOutQuad
         }
     }
 
-    //? CENTER ARC INVOLVING THE MAIN TEXT
+    //? CENTER CIRCLE
     Shape {
-        id: centerArc
+        id: centerCircle
         anchors.fill: parent
         antialiasing: true
         opacity: 0.45
 
-        property real radius: 75
-        property real sweepAngle: root.mainAngleSweep + 10
-        property real startAngle: 180 + (180 - sweepAngle) / 2
+        property real radius: 55
+        property real sweepAngle: 360
+        property real startAngle: 0
 
         ShapePath {
             strokeWidth: 1
@@ -184,78 +158,10 @@ Item {
             PathAngleArc {
                 centerX: innerCircle.x + innerCircle.width / 2
                 centerY: innerCircle.y + innerCircle.height / 2
-                radiusX: centerArc.radius
-                radiusY: centerArc.radius
-                startAngle: centerArc.startAngle
-                sweepAngle: centerArc.sweepAngle
-            }
-        }
-    }
-
-    //? CENTER TEXT AND UNIT
-    Column {
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset: 0
-        spacing: 0
-
-        Text {
-            text: Math.round(root.currSpeed)
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 54
-            color: BaseTheme.gaugeMainTextInformation
-        }
-
-        Text {
-            text: root.speedUnit
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 18
-            color: BaseTheme.gaugeMainTextInformation
-            opacity: 0.7
-        }
-    }
-
-    //? BOTTOM TICKS FOR BATTERY
-    Repeater {
-        id: bottomTicks
-        model: bottomTotalTicks
-        delegate: Item {
-            anchors.centerIn: parent
-            width: innerCircle.width
-            height: innerCircle.height
-
-            transform: Rotation {
-                origin.x: width / 2
-                origin.y: height / 2
-                angle: root.secundaryAngleStart + (index * root.bottomAngleStep)
-            }
-
-            Rectangle {
-                width: index % 20 === 0 ? 4 : 2
-                height: index % 20 === 0 ? 18 : 10
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: 12
-                color: getBatteryTickColor(index)
-                opacity: getBatteryOpacity(index)
-                antialiasing: true
-                radius: 1
-            }
-
-            Text {
-                visible: index % 20 === 0
-                text: {
-                    if (index === 0)
-                        return 'F'
-                    else if (index === 40)
-                        return '1/2'
-                    else if (index === root.bottomTotalTicks - 1)
-                        return 'E'
-                    return ''
-                }
-                color: BaseTheme.gaugeMainTextInformation
-                font.pixelSize: 14
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: 36
-                rotation: -(root.secundaryAngleStart + (index * root.bottomAngleStep))
+                radiusX: centerCircle.radius
+                radiusY: centerCircle.radius
+                startAngle: centerCircle.startAngle
+                sweepAngle: centerCircle.sweepAngle
             }
         }
     }

@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import ClusterTheme 1.0
-import Cluster.Backend 1.0
 import "../components"
 
 Item {
@@ -13,6 +12,8 @@ Item {
 
     MiddleGauge {
         anchors.fill: parent
+        currSpeed: 124
+        // currSpeed: powertrain.motorSpeed
     }
 
     // ColumnLayout {
