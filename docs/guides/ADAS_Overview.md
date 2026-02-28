@@ -675,6 +675,126 @@ Decision automation in ADAS refers to the ability to select appropriate driving 
 
   - Adaptive cruise control adjustments
 
-all of this AI based decisions are combined with rule based safety layers to ensure determinism and compliance.
+All of this AI based decisions are combined with rule based safety layers to ensure determinism and compliance.
 
 **Risk Assessment**
+
+   - Estimate collision probability
+   - Evaluate scene complexity
+   - Assess driver attention
+
+So, as we can see, AI will help us a lot in this project by enabling intelligent perception and decision support, transforming raw data into actionable environmental understanding. By doing this, it will improve perception and prediction.
+
+
+
+**Machine learning vs Deep learning**
+
+**Machine learning**
+
+  - Machine learning is a part of artificial intelligence that enables computer systems to learn patterns from data and make predictions or decisions without being programmed by humans.
+
+<img width="943" height="204" alt="image" src="https://github.com/user-attachments/assets/1cf666c9-a2a8-4146-b9f8-96a05f7d5fc9" />
+
+**Types of Machine learning algorithms**
+
+  - **Supervised learning:** the model learns from labelled datasets, where the input and output are clearly defined.
+  - **Unsupervised Learning:** The model identifies patterns in data without any predefined labels.
+  - **Reinforcement Learning:** The system learns by interacting with an environment and receiving rewards or penalties for its actions.
+
+
+
+**Deep Learning**
+
+  - Deep learning uses artificial neural networks with multiple hidden layers that can automatically learn complex patterns from raw data like images, sounds, and text. When is it used? well deep learning is used in applications such as image recognition, natural language processing, and speech recognition.
+
+<img width="929" height="236" alt="image" src="https://github.com/user-attachments/assets/68e79445-ec51-47a6-a25f-8321a4326f0d" />
+
+**Types of Deep learning**
+
+  - **Convolutional Neural Networks:** It is used for image processing tasks. CNNs are designed to adaptively learn spatial hierarchies of features through convolutional layers.
+  - **Recurrent Neural Networks:** Ideal for sequential data. RNNs have loops that allow information to persist, making them effective for tasks like speech recognition and language modeling.
+  - **Long Short-term Memory Networks:** A type of RNN that addresses the vanishing gradient problem. They are used for complex sequences, including text and speech.
+  - **Generative Adversarial Networks:** GANs consist of two neural networks, that are a generator and a discriminator, that compete against each other, creating synthetic data such as images.
+  - **Transformers:** Handles long-range dependencies in data. They are the backbone of models like GPT, used in natural language processing.
+
+
+
+| **Basis**              | **Machine Learning (ML)**                                    | **Deep Learning (DL)**                                                       |
+| ---------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| **Definition**         | Algorithms that learn from data and improve with experience. | Subset of ML using multi-layered neural networks.                            |
+| **Data Requirement**   | Works well with small to medium datasets.                    | Requires large datasets for effective learning.                              |
+| **Feature Extraction** | Manual – features must be selected by experts.               | Automatic – learns features directly from data.                              |
+| **Training Time**      | Faster and less resource-intensive.                          | Slower and needs more computational power.                                   |
+| **Accuracy**           | Depends on feature quality and algorithm.                    | Usually higher with enough data.                                             |
+| **Hardware Needs**     | Can run on CPUs.                                             | Often requires GPUs or TPUs.                                                 |
+| **Interpretability**   | Easier to interpret.                                         | Difficult to interpret (“black box”).                                        |
+| **Examples**           | Spam detection, stock prediction, recommendation systems.    | Image classification, speech recognition, natural language processing (NLP). |
+
+
+**Machine Learning** when data is structured and limited, and interpretability is important.
+**Deep Learning** when working with large unstructured datasets or complex pattern recognition tasks.
+
+**Ruled based vs Learning based Systems**
+
+  - There are two main approaches in Artificial intelligence they are rule-based systems and machine-learning systems. Rule-based systems follow explicit rules created by human experts. They're like a set of instructions given to a computer to follow to make decisions. These systems are good for problems with clear rules and paths. On the other hand, machine learning systems learn from data instead of following explicit rules. They use patterns found in large sets of information to make decisions. These systems can adapt and improve over time as they see more data.
+
+**What is a Rule-Based System?**
+
+  - A rule-based system is a computational framework that relies on a predefined set of explicit rules to make decisions or draw conclusions within a specific domain. In technical terms, these rules are typically formulated as "if-then" statements, where specific conditions trigger corresponding actions. The strength of rule-based systems lies in their transparency and ease of interpretation. However, their drawback is the need for explicit rules, making them less adaptable to complex scenarios or situations where patterns are not easily expressible in rule form.
+
+**Advantages of Rule-based system**
+
+- It provides a clear and understandable way to express logical relationships, enhancing transparency in decision-making.
+- The explicit nature of rules enables users to trace the decision-making process, creating transparency in system actions.
+- Rule-based systems facilitate easy maintenance and debugging in the process.
+- They are scalable and adaptable to changing requirements.
+
+
+**Limitation of Rule-based system**
+
+- Rule-based systems cannot learn from experience, restricting their capacity to adapt and improve over time.
+- Rule-based systems may struggle with uncertain or ambiguous information, leading to potential inaccuracies in decision-making.
+- Managing a large number of rules can become complex, posing challenges in organization.
+
+**What is a Machine Learning System?**
+
+  - A machine learning system is a computational framework that leverages algorithms and statistical models to enable computers to learn and make predictions or decisions without being explicitly programmed for each task. In technical terms, these systems analyze and generalize patterns from large datasets, allowing them to adapt and improve their performance over time. The strength of machine learning systems lies in their ability to handle complex, data-driven problems where explicit rule formulation may be impractical.
+
+**Advantage of Machine learning system**
+
+- Machine learning systems can adapt to changing data patterns, automatically improving their performance as they learn from new information.
+- It excels at automating complex tasks, reducing the need for explicit programming and enabling the handling of intricate problems.
+- Machine learning models can continuously learn and optimize their performance over time, enhancing their ability to make accurate predictions or classifications.
+
+**Limitations of Machine learning system**
+
+- Machine learning models, particularly complex ones, operate as black boxes, making it challenging to interpret their decision-making processes.
+- The effectiveness of machine learning heavily relies on the quality and quantity of training data, and inadequate or biased data can lead to inaccurate predictions.
+- ML models may struggle to generalize well to new, unseen scenarios if the training data does not sufficiently represent the diversity of potential situations, leading to poor performance in real-world applications.
+
+
+**Advantages and Limitations of Deep Learning in ADAS**
+
+**Advantages of Deep Learning in ADAS**
+
+  - Superior Perception Performance
+  - High-Dimensional Data Handling
+  - Generalization to Complex Environments
+  - Reduced Manual Feature Engineering
+  - Continuous Improvement Through Data
+
+**Limitations of Deep Learning in ADAS**
+
+  - Limited Interpretability
+  - Data Dependency
+  - Non-Deterministic Behavior
+  - High Computational Requirements
+  - Safety Certification Challenges
+  - Vulnerability to Edge Cases
+
+
+# Perception Systems
+
+**Object detection**
+
+<img width="720" height="462" alt="image" src="https://github.com/user-attachments/assets/274d68ce-91f8-430d-84ea-8ad11b653dfe" />
