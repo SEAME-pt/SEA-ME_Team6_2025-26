@@ -12,6 +12,7 @@ Item {
     //? Data
     property real currMotorSpeed: 0
     property real maxMotorSpeed: 120
+    property int  currTotalKm: 0
     //? Helpers
     property real mainAngleStart: 230
     property real mainAngleSweep: 260
@@ -163,6 +164,81 @@ Item {
                 startAngle: centerCircle.startAngle
                 sweepAngle: centerCircle.sweepAngle
             }
+        }
+    }
+
+    Image {
+        anchors.centerIn: parent
+        source: "qrc:/assets/images/seame-logo.png"
+        width: 80
+        height: 80
+        sourceSize.width: 80
+        sourceSize.height: 80
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+        mipmap: true
+    }
+
+    //? ODOMETER
+    Item {
+        width: 80
+        height: 22
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 46
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 0
+
+            Repeater {
+                model: 4
+                Rectangle {
+                    width: 16
+                    height: 20
+                    color: BaseTheme.carbon
+                    topLeftRadius: index === 0 ? 4 : 0
+                    bottomLeftRadius: index === 0 ? 4 : 0
+    
+                    Text {
+                        anchors.centerIn: parent
+                        text: Math.floor((root.currTotalKm / Math.pow(10, 4 - index)) % 10)
+                        font.pixelSize: 15
+                        font.bold: true
+                        color: BaseTheme.gaugeMainTextInformation
+                        verticalAlignment: Text.AlignVCenter
+                        opacity: 0.6
+                    }
+                }
+            }
+
+            Rectangle {
+                width: 16
+                height: 20
+                color: BaseTheme.gaugeBatteryEmpty
+                topRightRadius: 4
+                bottomRightRadius: 4
+    
+                Text {
+                    anchors.centerIn: parent
+                    text: Math.floor(root.currTotalKm % 10)
+                    font.pixelSize: 15
+                    font.bold: true
+                    color: BaseTheme.gaugeMainTextInformation
+                    verticalAlignment: Text.AlignVCenter
+                    opacity: 0.75
+                }
+            }
+        }
+
+        Text {
+            text: "km"
+            font.pixelSize: 12
+            color: BaseTheme.gaugeMainTextInformation
+            opacity: 0.7
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.bottom
+            anchors.topMargin: 4
         }
     }
 }

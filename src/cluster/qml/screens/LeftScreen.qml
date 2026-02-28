@@ -15,6 +15,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 75
         currMotorSpeed: 67
+        currTotalKm: 0
         // currMotorSpeed: powertrain.motorSpeed 
     }
 }
