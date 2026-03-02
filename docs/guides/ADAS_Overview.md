@@ -798,3 +798,81 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 **Object detection**
 
 <img width="720" height="462" alt="image" src="https://github.com/user-attachments/assets/274d68ce-91f8-430d-84ea-8ad11b653dfe" />
+
+**Types of object detection**
+
+1. Single object detection
+   - identifying and localizing a single object within an image or a frame.
+
+2. Multi object detection
+   - Detecting and locating multiple objects of different classes within an image or frame
+
+3. Real time object detection
+   - object detection systems optimized for real time processing, this is often used in applications like self driving cars and drones.
+
+4. Instance segmentation
+   - In addition to detect objects this type also involves pixel level segmentation of each object instance within an image
+
+5. Scene understanding
+   - It goes beyond object detection by analyzing the relationships between objects and understanding the context of the scene.
+  
+**Modern object detection techniques**
+
+1. YOLO(v1-v8)
+   - treats object detection as a single regression problem , predicting bounding boxes and class probabilities directly from the full image in one forward pass (known for its real time detection capability)
+
+2. RetinaNet
+   - Introduces Focal loss to adress the class inbalance problem during training, combines the benefits of single stand and two stage detectors.
+
+3. Mask R-CNN
+   - Extends faster R-CNN by adding a branch for predicting segmentation masks, enabling instance segmentation along with object detection.
+
+4. EfficientDet
+   - Uses compound scaling method to improve efficiency and accuracy.
+
+5. Detectron2
+   - A open source library by facebook ai research with implementations of state of the art detection algorithms like faster R-CNN, mask R-CNN, RetinaNet.
+
+6. CenterNet
+   - Uses keypoint estimation to find the center points of bounding boxes and regress the box size and object class.
+
+7. DETR(Detection transformer)
+   - Utilizes transformers for end to end object detection, combining CNNs for feature extraction and tranformers for object detection.
+
+8. Vision transformers for object detection
+   - Applies transformer models directly to sequences of image patches for object detection.
+
+
+**Key Topics**
+
+**Intersection Over Union (IoU)**
+
+  - Intersection over union is a metric used to evaluate the accuracy of an object detection algorithm, it measures the overlap between the predicted bounding box and the ground truth bounding box.
+
+<img width="728" height="736" alt="image" src="https://github.com/user-attachments/assets/26791532-4607-4629-895a-c27981a674f5" />
+
+
+**How do we calculate IoU?**
+
+1. Determine the coordinates of the intersection rectangle
+   - calculate the coordinates of the intersection rectangle by finding the maximum of the left and top coordinates and the minimum of the right and bottom coordinates of the two bounding boxes.
+     
+   - Intersection coordinates:
+  
+       <img width="412" height="214" alt="image" src="https://github.com/user-attachments/assets/11bc29ce-db4f-4d54-aa81-80950425bf4b" />
+
+2. Calculate the intersection area
+
+   <img width="720" height="149" alt="image" src="https://github.com/user-attachments/assets/fafe1a1b-3131-4118-8897-4d63140c0801" />
+
+   - width and height cant be negative otherwise intersection area is zero
+  
+3. Calculate the union area
+
+   <img width="720" height="174" alt="image" src="https://github.com/user-attachments/assets/40af5dae-70c2-47bf-9405-4f19e3dfe6a7" />
+
+4. Calculate IoU
+
+   <img width="255" height="128" alt="image" src="https://github.com/user-attachments/assets/e88b67d7-c763-40ca-8d4d-22e2f96726ef" />
+
+
