@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import ClusterTheme 1.0
+import Cluster.Backend 1.0
 import "../components"
 
 Item {
@@ -10,43 +11,51 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    ExtraProvider { id: clock }
+
+    /*
+    * currSpeed:        vehicle.speed (Current Speed of the vehicle)
+    * currBattery:      powertrain.batteryVoltage (Current Voltage of the Battery)
+    * currBatteryIcon:  powertrain.batterVoltageIcon (Icon for UI)7
+    * isBatteryWarning: powertrain.isBatteryLow (Indicator that the battery is low)
+    * isBatteryDanger:  powertrain.isBatteryCritical (Indicator that the battery is critical)
+    */
     MiddleGauge {
         anchors.fill: parent
-        currSpeed: 124
-        // currSpeed: powertrain.motorSpeed
+        currSpeed: vehicle.speed
+        currBattery: powertrain.batteryVoltage
+        currBatteryIcon: powertrain.batteryVoltageIcon
+        isBatteryWarning: powertrain.isBatteryLow
+        isBatteryDanger: powertrain.isBatteryCritical
+        currAutonomy: 67
     }
 
-    // ColumnLayout {
-    //     anchors.fill: parent
-    //     spacing: 0
+    Item {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.topMargin: 40
+        anchors.leftMargin: 8
 
-    //     TopBar {
-    //         id: topbar
-    //         leftBlinkerActive: wheelAngleProvider.isBlinkerLeftActive
-    //         magnetometerValue: headingProvider.currHeading
-    //         rightBlinkerActive: wheelAngleProvider.isBlinkerRightActive
-    //     }
+        Text {
+            text: exterior.airTemperature + "°C"
+            color: BaseTheme.white
+            font.bold: true
+            font.pixelSize: 14
+        }
+    }
 
-    //     Item {
-    //         Layout.fillWidth: true
-    //         Layout.fillHeight: true
-    //             // Text {
-    //             //     text: "Speed: " + speedProvider.currSpeed + "\n" +
-    //             //         "Temperature: " + temperatureProvider.currTemperature + "\n" +
-    //             //         "Wheel Speed: " + wheelSpeedProvider.currWheelSpeed + "\n" +
-    //             //         "Front Distance: " + frontDistanceProvider.currFrontDistance + "\n" +
-    //             //         "Voltage: " + voltageProvider.currVoltage + "\n" +
-    //             //         "VoltageIcon: " + voltageProvider.voltageIcon + "\n" +
-    //             //         "WheelAngle: " + wheelAngleProvider.currWheelAngle + "\n" +
-    //             //         "Blinker Left: " + wheelAngleProvider.isBlinkerLeftActive + "\n" +
-    //             //         "Blinker Right: " + wheelAngleProvider.isBlinkerRightActive + "\n" +
-    //             //         "Heading: " + headingProvider.currHeading  
-    //             //     font.pixelSize: 12
-    //             //     color: "white"
-    //             //     anchors.centerIn: parent
-    //             // }
-    //     }
+    Item {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.topMargin: 40
+        anchors.leftMargin: centerScreen.width - timeText.width - 8
 
-    //     BottomBar {}
-    // }
+        Text {
+            id: timeText
+            text: clock.time
+            color: BaseTheme.white
+            font.bold: true
+            font.pixelSize: 14
+        }
+    }
 }

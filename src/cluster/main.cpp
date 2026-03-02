@@ -18,6 +18,7 @@
 #include "providers/adasprovider.hpp"
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
+#include "providers/extraprovider.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -76,12 +77,8 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"), 
                              "ClusterTheme", 1, 0, "BaseTheme");
 
-    // Register legacy providers (TimeProvider, SystemStatus)
-    // qmlRegisterType<TimeProvider>("Cluster.Backend", 1, 0, "TimeProvider");
-    // qmlRegisterType<SystemStatus>("Cluster.Backend", 1, 0, "SystemStatus");
+    qmlRegisterType<ExtraProvider>("Cluster.Backend", 1, 0, "ExtraProvider");
 
-    
-    // New grouped providers
     engine.rootContext()->setContextProperty("powertrain", powertrain);
     engine.rootContext()->setContextProperty("exterior", exterior);
     engine.rootContext()->setContextProperty("vehicle", vehicle);

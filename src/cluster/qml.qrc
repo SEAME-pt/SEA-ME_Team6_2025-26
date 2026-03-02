@@ -10,11 +10,9 @@
 	    <file>qml/screens/RightScreen.qml</file>
 	
         <!-- QML Components -->
-        <file>qml/components/TopBar.qml</file>
-        <file>qml/components/BottomBar.qml</file>
-        <file>qml/components/Gauge.qml</file>
         <file>qml/components/MiddleGauge.qml</file>
         <file>qml/components/LeftGauge.qml</file>
+        <file>qml/components/RightGauge.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
@@ -34,6 +32,9 @@
         <file>assets/icons/right-arrow.png</file>
         <file>assets/icons/left-arrow-active.png</file>
         <file>assets/icons/right-arrow-active.png</file>
+        <file>assets/icons/battery.png</file>
+        <file>assets/icons/battery-warning.png</file>
+        <file>assets/icons/battery-danger.png</file>
     
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>

@@ -11,9 +11,9 @@
 #include <QString>
 #include <QMutex>
 
-#define FLASH_ICON "qrc:/assets/icons/flash.svg"
-#define FLASH_WARNING_ICON "qrc:/assets/icons/flash-warning.svg"
-#define FLASH_DANGER_ICON "qrc:/assets/icons/flash-danger.svg"
+#define FLASH_ICON "qrc:/assets/icons/battery.png"
+#define FLASH_WARNING_ICON "qrc:/assets/icons/battery-warning.png"
+#define FLASH_DANGER_ICON "qrc:/assets/icons/battery-danger.png"
 
 /**
  * @class PowertrainProvider

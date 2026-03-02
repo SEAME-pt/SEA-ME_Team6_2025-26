@@ -36,9 +36,9 @@ Item {
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: BaseTheme.carbon
+            shadowColor: BaseTheme.white
             shadowBlur: 1.0
-            shadowOpacity: 0.9
+            shadowOpacity: 0.6
             shadowHorizontalOffset: 0
             shadowVerticalOffset: 0
             shadowScale: 1.01

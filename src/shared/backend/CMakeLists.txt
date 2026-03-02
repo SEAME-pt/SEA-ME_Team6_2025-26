@@ -69,6 +69,7 @@ add_library(Backend STATIC
     providers/vehicleprovider.cpp
     providers/currentlocationprovider.cpp
     providers/chassisprovider.cpp
+    providers/extraprovider.cpp
     
     # Kuksa generated protobuf/gRPC stubs
     kuksa/val.pb.cc

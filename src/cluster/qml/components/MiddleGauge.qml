@@ -11,16 +11,22 @@ Item {
     height: 375
     //? Data
     property real currSpeed: 0
-    property real maxSpeed: 320
-    property real currBattery: 0.84
-    property string speedUnit: "m/h"
+    property real maxSpeed: 1000
+    property real currBattery: 0
+    property real maxBattery: 12.6
+    property real minBattery: 9.82
+    property real currAutonomy: 0
+    property string currBatteryIcon: "qrc:/assets/icons/battery.png"
+    property bool isBatteryWarning: false
+    property bool isBatteryDanger: false
+    property string speedUnit: "km/h"
     //? Helpers
     property real mainAngleStart: 245
     property real mainAngleSweep: 230
     property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep 
     property real secundaryAngleSweep: 80
     property real  activeIndex: (currSpeed / maxSpeed) * (innerTotalTicks - 1)
-    property int bottomActiveIndex: Math.round(currBattery * (bottomTotalTicks - 1))
+    property int bottomActiveIndex:  Math.round(batteryNormalized() * (bottomTotalTicks - 1))
     //? Outer Circle
     property real outerTotalTicks: 161
     property real outerAngleStep: mainAngleSweep / (outerTotalTicks - 1)
@@ -37,8 +43,13 @@ Item {
             return BaseTheme.gaugeBatteryEmpty
         else if (index % 20 === 0)
             return BaseTheme.gaugeMainTextInformation
-        else if (index >= (root.bottomTotalTicks - 1 - root.bottomActiveIndex))
+        else if (index >= (root.bottomTotalTicks - 1 - root.bottomActiveIndex)) {
+            if (isBatteryDanger)
+                return BaseTheme.danger
+            if (isBatteryWarning)
+                return BaseTheme.warning
             return BaseTheme.gaugeBattery
+        }
         return BaseTheme.gaugeTicksInactive
     }
 
@@ -49,6 +60,23 @@ Item {
             return 1.0
         return 0.45
     }
+
+    function getAutonomyColor() {
+        if (isBatteryDanger)
+            return BaseTheme.danger
+        if (isBatteryWarning)
+            return BaseTheme.warning
+        return BaseTheme.gaugeBattery
+    }
+
+    function batteryNormalized() {
+        if (root.currBattery <= root.minBattery)
+            return 0
+        if (root.currBattery >= root.maxBattery)
+            return 1
+        return (root.currBattery - root.minBattery) / (root.maxBattery - root.minBattery)
+    }
+
 
     //? OUTER RING
     Rectangle {
@@ -61,9 +89,9 @@ Item {
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: BaseTheme.carbon
+            shadowColor: BaseTheme.white
             shadowBlur: 1.0
-            shadowOpacity: 0.9
+            shadowOpacity: 0.6
             shadowHorizontalOffset: 0
             shadowVerticalOffset: 0
             shadowScale: 1.01
@@ -214,6 +242,38 @@ Item {
         }
     }
 
+    Item {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 112
+
+        Column {
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: 0
+            spacing: 4
+
+            Image {
+                source: root.currBatteryIcon
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 24
+                height: 24
+                sourceSize.width: 24
+                sourceSize.height: 24
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
+            }
+
+            Text {
+                text: root.currAutonomy + " km"
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 13
+                font.bold: true
+                color: getAutonomyColor()
+            }
+        }
+    }
+
     //? BOTTOM TICKS FOR BATTERY
     Repeater {
         id: bottomTicks
@@ -257,6 +317,13 @@ Item {
                 y: 36
                 rotation: -(root.secundaryAngleStart + (index * root.bottomAngleStep))
             }
+        }
+    }
+
+     Behavior on currBattery {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutQuad
         }
     }
 }
