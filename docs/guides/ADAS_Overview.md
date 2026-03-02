@@ -967,6 +967,8 @@ Popular image segmentation datasets include:
 
 **Semantic Segmentation Moduls**
 
+
+
 | Model           | Year | Architecture Type     | Key Innovation                                | Strengths                                      | Limitations                     | Common Use Cases             |
 | --------------- | ---- | --------------------- | --------------------------------------------- | ---------------------------------------------- | ------------------------------- | ---------------------------- |
 | **FCN**         | 2015 | CNN (Encoder-only)    | Fully convolutional design + skip connections | Foundation model, simple                       | Coarse predictions              | Baseline research            |
@@ -980,10 +982,7 @@ Popular image segmentation datasets include:
 | **Mask2Former** | 2022 | Transformer           | Masked attention for universal segmentation   | Works for semantic, instance & panoptic        | High training cost              | Advanced segmentation tasks  |
 
 
-
-
-
-
+Best choice for us is DeeplabV3
 
 
 
