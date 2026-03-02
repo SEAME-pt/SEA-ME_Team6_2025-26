@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QVariant>
 #include <atomic>
+#include <QMutex>
 #include <memory>
 #include <string>
 #include <vector>
@@ -47,6 +48,7 @@ private:
     std::string _server;
     std::vector<std::string> _signalPaths;
     std::atomic<bool> _shouldStop;
+    std::atomic<grpc::ClientContext*> _activeContext;
     
     // Helper functions
     static std::string read_file(const std::string& path);

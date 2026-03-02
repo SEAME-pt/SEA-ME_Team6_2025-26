@@ -73,7 +73,7 @@ QVariant ReaderWorker::datapoint_to_variant(const kuksa::val::v2::Datapoint &dp)
 // ============================================================================
 
 ReaderWorker::ReaderWorker(const std::string &server, const std::vector<std::string> &signalPaths)
-    : QObject(nullptr), _server(server), _signalPaths(signalPaths), _shouldStop(false)
+    : QObject(nullptr), _server(server), _signalPaths(signalPaths), _shouldStop(false), _activeContext(nullptr)
 {
     qDebug() << "[ReaderWorker] Created for server:" << QString::fromStdString(server);
     qDebug() << "[ReaderWorker] Subscribing to" << signalPaths.size() << "signals";
@@ -105,8 +105,12 @@ void ReaderWorker::startReading()
         // Create context and stream
         std::string jwt = read_file("/etc/kuksa/jwt/reader.jwt");
 
+        
         grpc::ClientContext ctx;
         ctx.AddMetadata("authorization", "Bearer " + jwt);
+
+        _activeContext.store(&ctx);
+
         kuksa::val::v2::SubscribeResponse resp;
 
         std::unique_ptr<grpc::ClientReader<kuksa::val::v2::SubscribeResponse>> stream(
@@ -114,10 +118,13 @@ void ReaderWorker::startReading()
 
         while (!_shouldStop && stream->Read(&resp))
         {
+            if (_shouldStop) break;
             const ::google::protobuf::Map<std::string, kuksa::val::v2::Datapoint> &entries = resp.entries();
 
             for (auto it = entries.begin(); it != entries.end(); ++it)
             {
+                if (_shouldStop) break;
+
                 const std::string &path = it->first;
                 const kuksa::val::v2::Datapoint &dp = it->second;
                 
@@ -133,6 +140,8 @@ void ReaderWorker::startReading()
             }
         }
 
+         _activeContext.store(nullptr);
+
         // Stream ended
         grpc::Status st = stream->Finish();
         if (!st.ok())
@@ -145,7 +154,6 @@ void ReaderWorker::startReading()
         {
             qDebug() << "[ReaderWorker] Subscribe stream ended cleanly";
         }
-        
     } catch (const std::exception &e) {
         QString errorMsg = QString("Exception: %1").arg(e.what());
         qDebug() << "[ReaderWorker]" << errorMsg;
@@ -157,6 +165,12 @@ void ReaderWorker::stopReading()
 {
     qDebug() << "[ReaderWorker] Stop requested";
     _shouldStop = true;
+
+    grpc::ClientContext* ctx = _activeContext.load();
+    if (ctx) {
+        qDebug() << "[ReaderWorker] Cancelling gRPC context...";
+        ctx->TryCancel();
+    }
 }
 
 // ============================================================================
@@ -206,12 +220,14 @@ Reader::~Reader()
 {
     qDebug() << "[Reader] Destructor called - stopping background thread";
     
-    // Stop the worker
-    _worker->stopReading();
+    _worker->stopReading();  // Now properly cancels gRPC
     
-    // Stop thread and wait
     _workerThread->quit();
-    _workerThread->wait(5000); // Wait up to 5 seconds
+    if (!_workerThread->wait(5000)) {  // Wait 5 seconds
+        qWarning() << "[Reader] Thread didn't stop, forcing termination";
+        _workerThread->terminate();
+        _workerThread->wait();
+    }
     
     qDebug() << "[Reader] Background thread stopped";
 }

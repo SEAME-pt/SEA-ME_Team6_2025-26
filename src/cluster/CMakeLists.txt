@@ -22,6 +22,10 @@ else()
     set(IS_CROSS_COMPILE OFF)
 endif()
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+
 # ============================================================================
 # QT6 CONFIGURATION
 # ============================================================================
