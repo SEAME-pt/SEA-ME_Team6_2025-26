@@ -1,3 +1,5 @@
+# Can simulator
+
 > Create a CAN emulator that can replicate STM32's frame sending
 > This is done to test the UI without having to manually drive the car
 
@@ -10,7 +12,8 @@ Flow:
 ## How to setup
 
 ### 1️⃣ Build the emulator
-`g++ -std=c++17 -O2 can_emulator.cpp -o can_emulator -lpthread`
+`cmake -S . -B build`
+`cmake --build build`
 
 ### 2️⃣ Create and enable `vcan0`
 `sudo modprobe vcan`
@@ -22,7 +25,7 @@ Flow:
 `candump vcan0`
 
 #### ⓸ Run the emulator
-`./can_emulator vcan0 ./scenarios`
+`./can_emulator`
 
 ### 5️⃣ Run the can_to_kuksa_publisher with vcan0
 `./home/kuksa_RPi5/bin/can_to_kuksa_publisher vcan0`
