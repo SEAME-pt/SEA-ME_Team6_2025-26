@@ -875,4 +875,116 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
    <img width="255" height="128" alt="image" src="https://github.com/user-attachments/assets/e88b67d7-c763-40ca-8d4d-22e2f96726ef" />
 
+**Non Max Supression(NMS)**
+
+  - one of the most common problems with object detection algorithms is that instead of detecting an object one it might detect it twice, to solve this problem we use non max supression to select one entity out of many overlaping entities.
+
+<img width="720" height="238" alt="image" src="https://github.com/user-attachments/assets/0396c4d9-4c2c-462e-ac02-601613188dfc" />
+
+**Importance of NMS**
+
+1. Reduces Redundancy: Without NMS, the model might produce multiple bounding boxes for the same object, leading to redundant detections.
+2. Improves Precision: By keeping only the most confident bounding boxes, NMS helps improve the overall precision of the object detection model.
+3. Enhances Readability: The final output becomes cleaner and more interpretable, showing only one bounding box per detected object.
+
+
+**How Non Maximum Supression works**
+
+1. **Input**
+   - A set of bounding boxes with associated confidence scores.
+
+2. **Sort bounding boxes**
+   - Sort all bounding boxes in descending order based on their confidences scores.
+
+3. **Select the Highest confidence Box**
+   - Select the bounding box with the highest confidence score and consider it as the current bounding box.
+
+4. **Calculate IoU**
+   - Calculate the Intersection over Union between the current bounding box and all other remaining bounding boxes.
+
+5. **Supress Non maximum Boxes**
+   - Remove all bounding boxes that have an IoU greater than a predefined threshold (e.g., 0.5) with the current bounding box.
+
+6. **Reapeat**
+   - Repeat steps 3 to 5 for the next highest confidence bounding box among the remaining boxes until all boxes have been processed.
+  
+
+**Anchor Box**
+
+  - An anchor box is a template bounding box with a specific aspect ratio and size used as a reference point during the detection process. Multiple anchor boxes with different sizes and aspect ratios are typically associated with each grid cell or feature map cell in the detection network.
+
+   <img width="1633" height="522" alt="image" src="https://github.com/user-attachments/assets/aa9adb5a-97ef-412f-b4a0-94988019f131" />
+
+
+**How Anchor Box works**
+
+1. Initialization
+   - A set of Anchor boxes with different sizes and aspects ratio are defined, we can define three anchor boxes per grid cell with aspect ratios of 1:1, 2:1, 1:2, and there anchor boxes will be placed at each location on the map or grid cell.
+
+2. During training
+   - The network predicts class scores and bounding box offsets for each anchor box, adjusting them to better match ground truth objects, with the anchor having the highest IoU selected as the positive sample and the others treated as negative samples.
+
+3. Bounding Box Regression
+   - The network predicts offsets for an anchor box’s center coordinates and dimensions, which are then applied to the anchor’s original coordinates to compute the final bounding box.
+
+4. Loss Function
+   - The training loss combines a classification loss to ensure correct class prediction and a regression loss to make the predicted bounding boxes closely match the ground truth.
+
+5. During inference
+   - The network produces class probabilities and bounding box offsets for each anchor box, and non-maximum suppression is applied to eliminate overlapping predictions and retain only the best bounding boxes.
+
+**Sumary**
+
+Anchor boxes are predefined at multiple sizes and aspect ratios across the feature map, and during training the network predicts class scores and coordinate offsets for each box, matches the highest-IoU anchors to ground truth for learning via classification and regression losses, and during inference refines the boxes and applies non-maximum suppression to keep the best detections.
+
+**Semantic Segmentation**
+
+**What is semantic segmentation**
+
+  - Semantic segmentation models borrow the concept of image classification models and improve upon them. Instead of labeling entire images, the segmentation model labels each pixel to a pre-defined class. All pixels associated with the same class are grouped together to create a segmentation mask
+
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/ffc96245-5a89-40c0-aec7-da0e828283ab" />
+
+**How does it work**
+
+  Semantic segmentation models generate a segmentation map of an image by assigning a semantic class label to every pixel. This produces segmentation masks, where different regions (such as a tree, ground, or sky) are separated and color-coded according to their class, to achieve this, the models use complex deep neural networks that both group related pixels into meaningful regions and correctly classify each region. These models must be trained on large, human-annotated datasets and learn by adjusting their parameters through techniques like backpropagation and gradient descent.
+
+  <img width="800" height="418" alt="image" src="https://github.com/user-attachments/assets/a1c4bb36-1ae6-403b-a782-8c30425964fa" />
+
+
+**Usefull Datasets**
+
+Accurate image segmentation requires large, complex datasets containing pixel-level masks that label different objects in an image. These datasets are more detailed than typical machine learning datasets because they must precisely annotate each pixel, many open-source datasets support this task. For example, in driverless car applications, models must be trained to reliably recognize objects like pedestrians, bicycles, and cars to ensure safe braking.
+
+Popular image segmentation datasets include:
+
+**Pascal Visual Object Classes (Pascal VOC)** – Provides multiple object classes, bounding boxes, and detailed segmentation maps.
+
+**MS COCO** – Contains about 330,000 images with annotations for detection, segmentation, and captioning tasks.
+
+**Cityscapes** – Focuses on urban environments, with 5,000 images, 20,000 annotations, and 30 class labels.
+
+
+**Semantic Segmentation Moduls**
+
+| Model           | Year | Architecture Type     | Key Innovation                                | Strengths                                      | Limitations                     | Common Use Cases             |
+| --------------- | ---- | --------------------- | --------------------------------------------- | ---------------------------------------------- | ------------------------------- | ---------------------------- |
+| **FCN**         | 2015 | CNN (Encoder-only)    | Fully convolutional design + skip connections | Foundation model, simple                       | Coarse predictions              | Baseline research            |
+| **U-Net**       | 2015 | Encoder–Decoder CNN   | Symmetric skip connections                    | Great for small datasets, precise localization | Heavy for large images          | Medical imaging              |
+| **SegNet**      | 2017 | Encoder–Decoder CNN   | Pooling indices for upsampling                | Memory efficient                               | Lower accuracy vs modern models | Real-time applications       |
+| **PSPNet**      | 2017 | CNN                   | Pyramid Pooling Module                        | Strong global context modeling                 | Computationally expensive       | Scene parsing                |
+| **DeepLabv3**   | 2017 | CNN                   | Atrous Spatial Pyramid Pooling (ASPP)         | Multi-scale context                            | Heavy computation               | Autonomous driving           |
+| **DeepLabv3+**  | 2018 | CNN (Encoder–Decoder) | ASPP + Decoder refinement                     | High accuracy, strong boundaries               | Slower inference                | High-precision segmentation  |
+| **HRNet**       | 2019 | Multi-resolution CNN  | Maintains high-resolution representations     | Fine detail preservation                       | Complex architecture            | Fine-grained segmentation    |
+| **SegFormer**   | 2021 | Transformer           | Efficient hierarchical transformer            | Lightweight + strong performance               | Needs larger datasets           | General-purpose segmentation |
+| **Mask2Former** | 2022 | Transformer           | Masked attention for universal segmentation   | Works for semantic, instance & panoptic        | High training cost              | Advanced segmentation tasks  |
+
+
+
+
+
+
+
+
+
 
