@@ -21,12 +21,13 @@
 #define ENCODER_HOLES 18         // Furos no disco do encoder
 
 // External variables
-extern volatile uint32_t pulse_count;
-extern float current_speed_kmh;
-extern float current_rpm;
+// extern volatile uint32_t pulse_count;
+//extern float current_speed_kmh;
+//extern float current_rpm;
 
 // Function prototypes
 void Speedometer_Init(SystemCtx* ctx);
+void Speedometer_PulseISR(void);
 void Speedometer_CountPulse(void);
 void Speedometer_CalculateSpeed(void);
 float Speedometer_GetSpeed(void);

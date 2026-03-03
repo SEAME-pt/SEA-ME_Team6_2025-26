@@ -1,4 +1,5 @@
 #include "./tasks/task_can_rx.h"
+#include "./tasks/task_indicator.h"
 
 #include <stdio.h>
 #include <stdlib.h>   // abs
@@ -64,7 +65,7 @@ static void send_motor_status_if_due(void)
                    sizeof(motor_status_frame));
 }
 
-static void clear_mcp_flags_if_due(void)
+static void clear_mcp_flags_if_due(SystemCtx* ctx)
 {
   uint32_t now = HAL_GetTick();
   if ((now - s_rx.last_debug_tick) < 5000u)
@@ -72,8 +73,9 @@ static void clear_mcp_flags_if_due(void)
 
   s_rx.last_debug_tick = now;
 
-  uint8_t canintf = MCP2515_ReadRegister(REG_CANINTF);
+  tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
 
+  uint8_t canintf = MCP2515_ReadRegister(REG_CANINTF);
   uint8_t error_flags = (uint8_t)(canintf & 0xFC); // bits 2-7
   if (error_flags)
     MCP2515_BitModify(REG_CANINTF, error_flags, 0x00);
@@ -81,6 +83,8 @@ static void clear_mcp_flags_if_due(void)
   uint8_t eflg = MCP2515_ReadRegister(REG_EFLG);
   if (eflg != 0x00)
     MCP2515_WriteRegister(REG_EFLG, 0x00);
+
+  tx_mutex_put(&ctx->spi1_mutex);
 }
 
 static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
@@ -224,6 +228,25 @@ static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, co
   // TODO watchdog timeout logic
 }
 
+static void handle_indicator_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
+{
+    if (rx_msg->dlc < 1)
+        return;
+
+    uint8_t raw = rx_msg->data[0];
+    if (raw > INDICATOR_ALERT)
+    {
+        sys_log(ctx, "\033[1;31m[CAN_RX] INDICATOR: estado inválido %u\033[0m", raw);
+        return;
+    }
+
+    IndicatorState_t state = (IndicatorState_t)raw;
+    task_indicator_set_state(state);
+
+    static const char* const names[] = { "OFF", "PISCA_ESQ", "PISCA_DIR", "FAROIS", "ALERTA" };
+    sys_log(ctx, "\033[1;33m[CAN_RX] INDICATOR -> %s\033[0m", names[state]);
+}
+
 static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < 1)
@@ -306,6 +329,7 @@ static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg, const Ve
     case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx, snap);            break;
     case CAN_ID_HEARTBEAT_AGL:  handle_heartbeat_agl(ctx, rx_msg, snap);  break;
     case CAN_ID_CMD_RELAY:      handle_relay_cmd(ctx, rx_msg, snap);      break;
+    case CAN_ID_CMD_INDICATOR:  handle_indicator_cmd(ctx, rx_msg);        break;
     case CAN_ID_JOYSTICK:       handle_joystick(ctx, rx_msg, snap);       break;
 
     default:
@@ -339,14 +363,29 @@ void task_can_rx_init(SystemCtx* ctx)
     sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Servo! Status: %d\033[0m",
             s_rx.servo_init_status);
 
-  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x201, 0x500, 0x700, 0x801)...\033[0m");
+  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x201, 0x500, 0x700, 0x601, 0x602)...\033[0m");
 }
 
 void task_can_rx_step(SystemCtx* ctx)
 {
+  /* ---- CANINTF diagnostic: print raw register every 3 s ---- */
+  static uint32_t canintf_log_tick = 0;
+  canintf_log_tick += CAN_RX_SLEEP_TICKS;
+  if (canintf_log_tick >= 3000u)
+  {
+    canintf_log_tick = 0;
+    tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
+    uint8_t canintf = MCP2515_ReadRegister(REG_CANINTF);
+    uint8_t canstat = MCP2515_ReadRegister(REG_CANSTAT);
+    uint8_t eflg    = MCP2515_ReadRegister(REG_EFLG);
+    tx_mutex_put(&ctx->spi1_mutex);
+    sys_log(ctx, "[CAN_RX] CANINTF=0x%02X CANSTAT=0x%02X EFLG=0x%02X",
+            canintf, canstat, eflg);
+  }
+
   // periodic work (same behavior)
   send_motor_status_if_due();
-  clear_mcp_flags_if_due();
+  clear_mcp_flags_if_due(ctx);
 
   //get the latest state snapshot for decision making
   VehicleState snap;
@@ -361,18 +400,25 @@ void task_can_rx_step(SystemCtx* ctx)
 
   while (processed < CAN_RX_MAX_FRAMES_PER_STEP)
   {
+    /* Take SPI mutex for the check+read pair — prevents TX threads from
+     * corrupting the SPI bus mid-transaction (race condition fix). */
+    tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
     uint8_t has_msg = MCP2515_CheckReceive();
+    uint8_t read_ok = 0;
+    if (has_msg)
+      read_ok = MCP2515_ReadMessage(&rx_msg);
+    tx_mutex_put(&ctx->spi1_mutex);
+
     if (!has_msg)
       break;
 
-    if (MCP2515_ReadMessage(&rx_msg))
+    if (read_ok)
     {
       process_one_rx(ctx, &rx_msg, &snap);
       processed++;
     }
     else
     {
-      // if read fails, break to avoid spinning
       break;
     }
   }
