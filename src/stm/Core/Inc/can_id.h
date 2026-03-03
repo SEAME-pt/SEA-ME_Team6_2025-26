@@ -51,7 +51,8 @@
 #define CAN_ID_DIAG_RESPONSE    0x7E8
 
 /* Others */
-#define CAN_ID_CMD_RELAY		0x801
+#define CAN_ID_CMD_RELAY        0x601   /* was 0x801 – exceeded 11-bit SFF limit (max 0x7FF) */
+#define CAN_ID_CMD_INDICATOR    0x602   /* data[0]: IndicatorState_t (0=OFF,1=LEFT,2=RIGHT,3=HEADLIGHTS,4=ALERT) */
 
 
 /*============================================================================

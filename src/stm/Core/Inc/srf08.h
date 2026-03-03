@@ -7,6 +7,7 @@
 #define INC_SRF08_H_
 
 #include "stm32u5xx_hal.h"
+#include "system_ctx.h"
 
 // Endereco I2C padrao do SRF-08 (8-bit)
 #define SRF08_DEFAULT_ADDR  0xE0
@@ -51,15 +52,15 @@ typedef struct {
     uint8_t addr;
 } SRF08_HandleTypeDef;
 
-HAL_StatusTypeDef SRF08_Init(SRF08_HandleTypeDef *hsrf, I2C_HandleTypeDef *hi2c, uint8_t addr);
-HAL_StatusTypeDef SRF08_InitWithConfig(SRF08_HandleTypeDef *hsrf, I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t gain, uint8_t range);
-uint8_t SRF08_GetVersion(SRF08_HandleTypeDef *hsrf);
-uint8_t SRF08_GetLight(SRF08_HandleTypeDef *hsrf);
-HAL_StatusTypeDef SRF08_StartRanging(SRF08_HandleTypeDef *hsrf);
-HAL_StatusTypeDef SRF08_WaitReady(SRF08_HandleTypeDef *hsrf, uint32_t timeout_ms);
-uint8_t SRF08_IsReady(SRF08_HandleTypeDef *hsrf);
-uint16_t SRF08_GetDistanceCm(SRF08_HandleTypeDef *hsrf);
-HAL_StatusTypeDef SRF08_SetGain(SRF08_HandleTypeDef *hsrf, uint8_t gain);
-HAL_StatusTypeDef SRF08_SetRange(SRF08_HandleTypeDef *hsrf, uint8_t range);
+HAL_StatusTypeDef SRF08_Init(SRF08_HandleTypeDef *hsrf, I2C_HandleTypeDef *hi2c, uint8_t addr, SystemCtx* ctx);
+HAL_StatusTypeDef SRF08_InitWithConfig(SRF08_HandleTypeDef *hsrf, I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t gain, uint8_t range, SystemCtx* ctx);
+uint8_t SRF08_GetVersion(SRF08_HandleTypeDef *hsrf, SystemCtx* ctx);
+uint8_t SRF08_GetLight(SRF08_HandleTypeDef *hsrf, SystemCtx* ctx);
+HAL_StatusTypeDef SRF08_StartRanging(SRF08_HandleTypeDef *hsrf, SystemCtx* ctx);
+HAL_StatusTypeDef SRF08_WaitReady(SRF08_HandleTypeDef *hsrf, uint32_t timeout_ms, SystemCtx* ctx);
+uint8_t SRF08_IsReady(SRF08_HandleTypeDef *hsrf, SystemCtx* ctx);
+uint16_t SRF08_GetDistanceCm(SRF08_HandleTypeDef *hsrf, SystemCtx* ctx);
+HAL_StatusTypeDef SRF08_SetGain(SRF08_HandleTypeDef *hsrf, uint8_t gain, SystemCtx* ctx);
+HAL_StatusTypeDef SRF08_SetRange(SRF08_HandleTypeDef *hsrf, uint8_t range, SystemCtx* ctx);
 
 #endif /* INC_SRF08_H_ */

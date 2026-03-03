@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "./tasks/task_indicator.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,6 +56,7 @@ TX_THREAD tof_thread;
 TX_THREAD srf08_thread;
 TX_THREAD battery_thread;
 TX_THREAD thread_relay;
+TX_THREAD indicator_thread;
 TX_QUEUE  can_rx_queue;
 /* Thread stacks */
 UCHAR           thread_relay_stack[1024];
@@ -69,6 +70,7 @@ static uint8_t imu_thread_stack[IMU_THREAD_STACK_SIZE];
 static uint8_t tof_thread_stack[TOF_THREAD_STACK_SIZE];
 static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
 static uint8_t battery_thread_stack[1024];
+static uint8_t indicator_thread_stack[INDICATOR_THREAD_STACK_SIZE];
 
 /* Mutex for printf protection */
 //TX_MUTEX printf_mutex;
@@ -124,6 +126,7 @@ static void IMU_Thread_Entry(ULONG thread_input);
 static void ToF_Thread_Entry(ULONG thread_input);
 static void SRF08_Thread_Entry(ULONG thread_input);
 static void Battery_Thread_Entry(ULONG thread_input);
+static void Indicator_Thread_Entry(ULONG thread_input);
 /* USER CODE END PFP */
 
 /**
@@ -263,6 +266,21 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
                        1024,
                        15, /* Priority 15 (low priority - slow sensor) */
                        15,
+                       TX_NO_TIME_SLICE,
+                       TX_AUTO_START) != TX_SUCCESS)
+  {
+    ret = TX_THREAD_ERROR;
+  }
+
+  /* Create Indicator thread */
+  if (tx_thread_create(&indicator_thread,
+                       "Indicator Thread",
+                       Indicator_Thread_Entry,
+                       0,
+                       indicator_thread_stack,
+                       INDICATOR_THREAD_STACK_SIZE,
+                       INDICATOR_THREAD_PRIORITY,
+                       INDICATOR_THREAD_PRIORITY,
                        TX_NO_TIME_SLICE,
                        TX_AUTO_START) != TX_SUCCESS)
   {
@@ -476,6 +494,25 @@ void thread_relay_entry(ULONG thread_input)
                 // Opcional: printf("Relay OFF\n");
             }
         }
+    }
+}
+
+/**
+  * @brief  Indicator thread entry – KS0064 LED indicator lights
+  * @param  thread_input: not used
+  * @retval None
+  */
+static void Indicator_Thread_Entry(ULONG thread_input)
+{
+    (void)thread_input;
+
+    SystemCtx *ctx = system_ctx();
+    task_indicator_init(ctx);
+
+    while (1)
+    {
+        task_indicator_step(ctx);
+        /* task_indicator_step already sleeps TASK_STEP_MS */
     }
 }
 

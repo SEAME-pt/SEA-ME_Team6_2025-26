@@ -67,6 +67,13 @@
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
 
+
+
+uint8_t matrix_buf[2][8] = {0};  // buffer para cada matriz
+
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,6 +86,59 @@ static void SystemPower_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
+#define MATRIX_ADDR_1  0x71
+#define MATRIX_ADDR_2  0x74
+
+void matrix_init(I2C_HandleTypeDef *hi2c, uint8_t addr) {
+    uint8_t cmd;
+
+    cmd = 0x21;
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, &cmd, 1, 100);
+    HAL_Delay(10);
+
+    cmd = 0x81;
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, &cmd, 1, 100);
+    HAL_Delay(10);
+
+    cmd = 0xEF;
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, &cmd, 1, 100);
+    HAL_Delay(10);
+}
+
+void matrix_all_on(I2C_HandleTypeDef *hi2c, uint8_t addr) {
+    uint8_t packet[17] = {0};
+    packet[0] = 0x00;  // endereço RAM
+    // o HT16K33 usa 16 bytes de RAM, cada linha ocupa 2 bytes
+    // byte par = colunas 0-7, byte ímpar = não usado (0x00)
+    for (int i = 0; i < 8; i++) {
+        packet[1 + (i * 2)] = 0xFF;   // byte da linha
+        packet[1 + (i * 2) + 1] = 0x00; // byte reservado
+    }
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, packet, 17, 100);
+}
+
+
+void matrix_clear(I2C_HandleTypeDef *hi2c, uint8_t addr) {
+    uint8_t packet[17] = {0};
+    packet[0] = 0x00;
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, packet, 17, 100);
+}
+
+void matrix_write_column(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t col) {
+    uint8_t packet[17] = {0};
+    packet[0] = 0x00;
+    for (int row = 0; row < 8; row++) {
+        packet[1 + (row * 2)] = (1 << col);  // acende toda a coluna
+    }
+    HAL_I2C_Master_Transmit(hi2c, addr << 1, packet, 17, 100);
+}
+
+
+
+
+
 // Function para mover servo suavemente
 void Test_Servo_SetAngle(uint16_t angle)
 {
@@ -141,6 +201,53 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_Delay(100);  // pequena pausa a seguir ao boot
+
+  // I2C1 Scanner
+  uint8_t i2c_scan_result[128] = {0};
+  uint8_t found_count = 0;
+
+  printf("=== I2C1 Scanner ===\r\n");
+  printf("Scanning addresses 0x01 to 0x7F...\r\n\r\n");
+
+  for (uint8_t addr = 1; addr < 128; addr++)
+  {
+      HAL_StatusTypeDef result = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(addr << 1), 2, 10);
+
+      if (result == HAL_OK)
+      {
+          printf("  [FOUND] 0x%02X\r\n", addr);
+          i2c_scan_result[found_count++] = addr;
+      }
+
+      /* Recover I2C bus if stuck after NACK/error */
+      if (hi2c1.State != HAL_I2C_STATE_READY)
+      {
+          HAL_I2C_Init(&hi2c1);
+      }
+      __HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_AF);
+  }
+
+  if (found_count == 0)
+  {
+      printf("No I2C devices found!\r\n");
+  }
+  else
+  {
+      printf("\r\nTotal devices found: %d\r\n", found_count);
+  }
+  printf("=== Scan complete ===\r\n\r\n");
+
+
+
+  HAL_Delay(100);  // pequena pausa a seguir ao boot
+
+  matrix_init(&hi2c1, MATRIX_ADDR_1);
+  matrix_init(&hi2c1, MATRIX_ADDR_2);
+
+  matrix_all_on(&hi2c1, MATRIX_ADDR_1);
+  matrix_all_on(&hi2c1, MATRIX_ADDR_2);
+
 
   // Inicia o PWM no TIM1_CH1 (PA8)
   printf("Iniciando PWM para servo motor em PA8 (TIM1_CH1)...\r\n");
@@ -152,10 +259,8 @@ int main(void)
 
   HAL_Delay(500);
 
-  // === TESTE SRF-08 DESATIVADO - Thread SRF08 ativa ===
-  printf("\r\n=== SRF08 sera inicializado pela thread dedicada ===\r\n\r\n");
-
   /* USER CODE END 2 */
+  printf("RACALLAJJSADSADSADPSAPDSA\r\n asdsadsad \r\n \r\n\r\n");
 
   MX_ThreadX_Init();
 
@@ -166,14 +271,22 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  // Uso no while(1):
-	 //Test_Servo_SetAngle(0);      // 0°
-	  //HAL_Delay(1000);
-	  //Test_Servo_SetAngle(90);     // 90°
-	  //HAL_Delay(1000);
-	  //Test_Servo_SetAngle(180);    // 180°
-	  //HAL_Delay(1000);
+	  // Matriz 1: varre esquerda -> direita
+	      // Matriz 2: varre direita -> esquerda
+	      for (int i = 0; i < 8; i++)
+	      {
+	          matrix_write_column(&hi2c1, MATRIX_ADDR_1, i);
+	          matrix_write_column(&hi2c1, MATRIX_ADDR_2, 7 - i);
+	          HAL_Delay(80);
+	      }
 
+	      // Volta: Matriz 1 direita -> esquerda, Matriz 2 esquerda -> direita
+	      for (int i = 7; i >= 0; i--)
+	      {
+	          matrix_write_column(&hi2c1, MATRIX_ADDR_1, i);
+	          matrix_write_column(&hi2c1, MATRIX_ADDR_2, 7 - i);
+	          HAL_Delay(80);
+	      }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

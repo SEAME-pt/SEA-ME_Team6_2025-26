@@ -42,7 +42,7 @@
 #define TEMP_THREAD_PRIORITY          15    /* Temperature sensor */
 
 /* Low Priority Threads */
-/* Add low priority threads here if needed */
+#define INDICATOR_THREAD_PRIORITY     16    /* KS0064 indicator lights */
 
 /* Background Threads */
 /* Add background threads here if needed */
@@ -65,6 +65,7 @@
 #define IMU_THREAD_STACK_SIZE         2048
 #define TOF_THREAD_STACK_SIZE         4096
 #define SRF08_THREAD_STACK_SIZE       2048
+#define INDICATOR_THREAD_STACK_SIZE   1024
 
 
 /* ===========================================================================
