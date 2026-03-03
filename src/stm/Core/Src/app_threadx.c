@@ -483,22 +483,19 @@ static void AEB_Thread_Entry(ULONG thread_input)
 
     // DEBUG
     static uint32_t last_print = 0;
-if ((now_ms - last_print) > 200) {
-    last_print = now_ms;
-    sys_log(ctx,
-      "%s[AEB] st=%u v=%.2f d=%.2f TTC=%ums dS=%umm stop=%u warn=%u%s",
-      ctx->state.aeb_stop_active ? "\033[1;31m" : "",
-      ctx->state.aeb_state,
-      v_mps,
-      d,
-      ctx->state.aeb_ttc_ms,
-      ctx->state.aeb_dstop_mm,
-      ctx->state.aeb_stop_active,
-      ctx->state.aeb_warn,
-      ctx->state.aeb_stop_active ? "\033[0m" : ""
-    );
-}
-
+  if ((now_ms - last_print) > 200) {
+      last_print = now_ms;
+      sys_log(ctx,
+        "%s[AEB] st=%u v=%.2f d=%.2f TTC=%ums dS=%umm stop=%u warn=%u%s",
+        ctx->state.aeb_stop_active ? "\033[1;31m" : "",
+        ctx->state.aeb_state,
+        ctx->state.aeb_ttc_ms,
+        ctx->state.aeb_dstop_mm,
+        ctx->state.aeb_stop_active,
+        ctx->state.aeb_warn,
+        ctx->state.aeb_stop_active ? "\033[0m" : ""
+      );
+  }
     tx_thread_sleep(20); // 20ms loop (50 Hz)
   }
 }
