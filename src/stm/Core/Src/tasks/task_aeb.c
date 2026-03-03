@@ -101,6 +101,11 @@ typedef struct {
   // unlatch policy
   float safe_unlatch_dist_m;    // 1.0m
   uint32_t safe_unlatch_hold_ms; // 1000ms
+
+  float ttc_comfort_s;   // e.g. 1.2
+  float v_max_mps;       // measured max speed at throttle=100 (e.g. 3.0)
+  uint8_t min_creep_pct; // e.g. 8 (allow slow creep in WARN)
+  uint8_t limit_slew_pct_per_step; // e.g. 5 (% per 20ms) to avoid jumps
 } AebParams;
 
 /* AEB module global instance (single instance for whole firmware) */
@@ -129,7 +134,12 @@ static const AebParams P = {
   .max_speed_age_ms = 200,
 
   .safe_unlatch_dist_m = 1.0f,
-  .safe_unlatch_hold_ms = 1000u
+  .safe_unlatch_hold_ms = 1000u,
+
+  .ttc_comfort_s = 1.3f,   // TTC threshold for "comfort braking" (inside WARN state)
+  .v_max_mps = 3.0f,       // change this after measure max speed at full throttle
+  .min_creep_pct = 10u,
+  .limit_slew_pct_per_step = 5u
 };
 
 /* Simple float clamp helper */
@@ -260,6 +270,40 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
 
   bool warn = false;
   bool brake = false;
+
+  /* -------- 6.1) Compute speed limit  -------- */
+  uint8_t desired_limit = 100;
+
+  if (s_aeb.st == AEB_BRAKING || s_aeb.st == AEB_LATCHED) {
+    desired_limit = 0;
+  } else {
+  // Soft layer active only when moving forward-ish
+  if (v_mps > 0.2f) {
+    float v_target = d_eff / P.ttc_comfort_s;   // TTC-based target speed
+    if (v_target < 0.0f) v_target = 0.0f;
+    if (v_target > P.v_max_mps) v_target = P.v_max_mps;
+
+    float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
+    if (pct_f < (float)P.min_creep_pct) pct_f = (float)P.min_creep_pct;
+    if (pct_f > 100.0f) pct_f = 100.0f;
+
+    desired_limit = (uint8_t)pct_f;
+    }
+  }
+
+  // Optional: slew-rate limit so throttle cap doesn’t jump around
+  // (store last_limit in AEB ctx, e.g., s_aeb.last_limit)
+  int diff = (int)desired_limit - (int)s_aeb.last_limit;
+  int max_step = (int)P.limit_slew_pct_per_step;
+  if (diff >  max_step) desired_limit = (uint8_t)(s_aeb.last_limit + max_step);
+  if (diff < -max_step) desired_limit = (uint8_t)(s_aeb.last_limit - max_step);
+
+  s_aeb.last_limit = desired_limit;
+
+  // Publish
+  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+  ctx->state.aeb_speed_limit = desired_limit;
+  tx_mutex_put(&ctx->state_mutex);
 
   /* -------- 7) State machine --------
      OFF   -> ARMED when speed is enough to care
