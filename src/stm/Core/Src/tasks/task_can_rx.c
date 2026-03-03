@@ -149,9 +149,11 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   int8_t throttle = cmd->throttle;
 
   // Block forward during emergency stop (reverse OK)
-  if (snap->emergency_stop_active && throttle >= 0)
+  bool any_stop = (snap->emergency_stop_active || snap->aeb_stop_active);
+
+  if (any_stop && throttle >= 0)
   {
-    sys_log(ctx, "\033[1;33m[CAN_RX] Forward BLOCKED - Emergency! (Reverse OK)\033[0m");
+    sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency/AEB! (Reverse OK)\033[0m");
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
     return;
