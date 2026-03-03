@@ -984,6 +984,57 @@ Popular image segmentation datasets include:
 
 Best choice for us is DeeplabV3
 
+**Convolution Neural Networks(CNNs)**
 
+Convolutional Neural Networks, also known as ConvNets, are neural network architectures inspired by the human visual system and are widely used in computer vision tasks, they are designed to process structured grid like data, especially images by capturing spatial relationships between pixels. They learn hierarchical features through convolution operations, from simple edges and textures to complex shapes and objects.
 
+<img width="996" height="431" alt="image" src="https://github.com/user-attachments/assets/a4042649-7eb2-48b8-87dd-814a4f883363" />
 
+**What is a Covnet?**
+
+A CovNet is a sequence of layers and every layer transforms one volume to another through a differential function.
+
+**Key components of CNN**
+
+1. Input layer
+   - The **input layer** receives the raw image data and passes it to the network for processing, intputs are tipically a 3D volume.
+       - Stores pixel values of the image
+       - Preserves the spatial structure of the image for further feature extraction.
+
+2. Convolutional Layer
+   - The **Convolutional layer** is responsible for extracting important features from the input data, it applies a set of learnable filters that slide over the image and compute the dot product between the filter weights and corresponding image patches, producing feature maps.
+     - Uses small filters to scan the input image.
+     - Generates feature maps that capture patterns such as edges, textures and shapes.
+
+3. Activation Layer
+   - The **Activation layer** introduces non linearity into the network by applying an element-wise activation function to the output of the convolution layer, this enables the model to lean complex patterns beyond linear relationships.
+     - Common activation functions include ReLU, Tanh and Leaky ReLU.
+     - Applied element-wise to the feature maps.
+     - The output dimensions remain unchanged.
+
+4. Pooling layer
+   - The **Pooling layer** is used to reduce the spacial dimensions of the feature maps, making compution faster, reducing memory usage and helping prevent overfitting, this is insterted between convolutional layers in a CNN.
+     - Common types include Max Pooling and Average Pooling.
+     - Reduces width and height while keeping depth unchanged.
+
+5. Flattening
+   - Flattening converts the multi-dimensional feature maps into a one-dimensional vector after convolution and pooling, this vector is then passed to the fully connected layer for classification or regression.
+
+6. Fully Connected layer
+   - The fully connected layer performs high-level reasoning using extracted features and produces the final classification scores.
+  
+7. Output Layer
+   - The output layer converts final scores into probabilities using activation functions like Sigmoid (binary classification) or Softmax (multi-class classification).
+
+**How Convolutional Layers Work**
+
+<img width="800" height="290" alt="image" src="https://github.com/user-attachments/assets/29b2d8d9-82f9-46a7-9965-55207b6b4e2e" />
+
+- A small matrix called a filter slides over the input image to extract important features.
+- At each position, the filter performs element-wise multiplication with the image patch.
+- The multiplied values are summed together to produce a single output value.
+- This operation is repeated across the entire image using a defined stride.
+- The result is a new matrix called a feature map, which highlights detected patterns.
+- Multiple filters are applied to capture different features such as edges, textures and shapes.
+- The process preserves spatial relationships while reducing the number of learnable parameters compared to fully connected layers.
+- Padding can be used to control output size and prevent loss of border information.
