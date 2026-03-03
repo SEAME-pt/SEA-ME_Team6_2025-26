@@ -1104,3 +1104,44 @@ where:
          yt​=Why​⋅ht​
 
   where yt​​ is the output and Why​​ is the weight at the output layer.
+
+
+**Backpropagation Through Time (BPTT) in RNNs**
+
+Since RNNs process sequential data, Backpropagation Through Time (BPTT) is used to update the network's parameters. 
+The loss function L(θ) depends on the final hidden state h3h3​ and each hidden state relies on preceding ones forming a sequential dependency chain:
+
+h3h3​ depends on  depends on h2, h2 depends on h1, …, h1 depends on h0 depends on h2​,h2​ depends on h1​,…,h1​ depends on h0​​.
+
+<img width="484" height="462" alt="image" src="https://github.com/user-attachments/assets/0ab64d18-03ee-42a6-adef-154fb4452252" />
+
+In BPTT, gradients are backpropagated through each time step. This is essential for updating network parameters based on temporal dependencies.
+
+1. **Simplified Gradient Calculation:**
+
+      <img width="190" height="51" alt="image" src="https://github.com/user-attachments/assets/b13304eb-367b-4fc2-93b7-adaa2ebd46c0" />
+
+2. **Handling Dependencies in Layers:**
+
+     <img width="209" height="51" alt="image" src="https://github.com/user-attachments/assets/e06a9590-95da-40e2-add5-3a9984462191" />
+
+3. **Gradient Calculation with Explicit and Implicit Parts:**
+
+     <img width="209" height="51" alt="image" src="https://github.com/user-attachments/assets/90f0ce51-65c0-4fb9-9555-a1d7b7c19630" />
+     
+4. **Final Gradient Expression:**
+
+     <img width="298" height="51" alt="image" src="https://github.com/user-attachments/assets/59f63cfc-159e-4a8f-bc8e-bde236d12568" />
+
+**Types of Recurrent Neural Networks**
+
+There are four types of RNNs based on the number of inputs and outputs in the network:
+
+1. **One-to-One RNN**
+
+  - This is the simpliest type of neural network architecture where there is a single input and a single output, it is used for straightforward classification tasks such as binary classification where no sequential data is involved.
+
+    <img width="297" height="449" alt="image" src="https://github.com/user-attachments/assets/84afe717-0e65-4e20-b41a-d51db2d561fa" />
+
+
+
