@@ -1038,3 +1038,69 @@ A CovNet is a sequence of layers and every layer transforms one volume to anothe
 - Multiple filters are applied to capture different features such as edges, textures and shapes.
 - The process preserves spatial relationships while reducing the number of learnable parameters compared to fully connected layers.
 - Padding can be used to control output size and prevent loss of border information.
+
+
+# Prediction Systems
+
+**Trajectory prediction**
+
+
+
+
+**Recurrent Neural Networks(RNNs)**
+
+Recurrent Neural Networks are a class of neural networks designed to process sequential data by retaining information from previous steps.
+  - Designed for sequencial and temporal data.
+  - Mantains memory of past inputs.
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/8d8b07e6-af5a-426b-8ba8-9813134ccb5d" />
+
+**Key components of RNNs**
+
+1. Reccurent Neurons
+
+The fundamental processing unit in RNN is a Recurrent Unit. They hold a hidden state that maintains information about previous inputs in a sequence. Recurrent units can "remember" information from prior steps by feeding back their hidden state, allowing them to capture dependencies across time.
+
+<img width="239" height="279" alt="image" src="https://github.com/user-attachments/assets/10160cfb-6b39-43fd-be3a-cd8c2a488941" />
+
+
+2. RNN unfolding
+
+RNN unfolding or unrolling is the process of expanding the current structure over time steps, during unfolding each step of the sequence is represented as a separate layer in a series illustrating how information flows across each time step. 
+
+<img width="628" height="279" alt="image" src="https://github.com/user-attachments/assets/06bbb3e3-b4ef-454c-af94-e3f74514f796" />
+
+**Recurrent Neural Network Architecture**
+
+  RNNs share similarities in input and output structures with other deep learning architectures but differ significantly in how information flows from input to output. Unlike traditional deep neural networks where each dense layer has distinct weight matrices. RNNs use shared weights across time steps, allowing them to remember information over sequences.
+
+**How Does RNNs Work?**
+
+At each time step RNNs process units with a fixed activation function. These units have an internal hidden state that acts as memory that retains information from previous time steps. This memory allows the network to store past knowledge and adapt based on new inputs.
+
+**Updating the hidden state in RNNs**
+
+The current hidden state ht depends on the previous state ht−1​​ and the current input xt​​ and is calculated using the following relations:
+
+1. State Update:
+   
+         ht​=f(ht−1​,xt​)
+where:
+
+  ht​​ is the current state
+  
+  ht−1​​ is the previous state
+  
+  xt​ is the input at the current time step
+
+2. Activation Function Application:
+
+         ht​=tanh(Whh​⋅ht−1​+Wxh​⋅xt​)
+   
+  Here, Whh​​ is the weight matrix for the recurrent neuron and Wxh​​ is the weight matrix for the input neuron.
+
+3. Output Calculation:
+
+         yt​=Why​⋅ht​
+
+  where yt​​ is the output and Why​​ is the weight at the output layer.
