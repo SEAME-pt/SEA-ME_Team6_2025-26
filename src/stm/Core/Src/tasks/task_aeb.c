@@ -48,6 +48,7 @@ typedef struct {
   uint32_t below_stop_ms;
   bool initialized;
   uint32_t safe_clear_ms;
+  uint8_t last_limit;
 } AebCtx;
 
 /* -----------------------------
@@ -137,7 +138,7 @@ static const AebParams P = {
   .safe_unlatch_hold_ms = 1000u,
 
   .ttc_comfort_s = 1.3f,   // TTC threshold for "comfort braking" (inside WARN state)
-  .v_max_mps = 3.0f,       // change this after measure max speed at full throttle
+  .v_max_mps = 2.35f,       // change this after measure max speed at full throttle
   .min_creep_pct = 10u,
   .limit_slew_pct_per_step = 5u
 };
@@ -155,6 +156,7 @@ static void aeb_reset(AebCtx* a) {
   a->below_stop_ms = 0;
   a->initialized = false;
   a->safe_clear_ms = 0;
+  a->last_limit = 0;
 }
 
 void task_aeb_init(SystemCtx* ctx) {
@@ -291,8 +293,7 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
     }
   }
 
-  // Optional: slew-rate limit so throttle cap doesn’t jump around
-  // (store last_limit in AEB ctx, e.g., s_aeb.last_limit)
+  // Slew-rate limit so throttle cap doesn’t jump around
   int diff = (int)desired_limit - (int)s_aeb.last_limit;
   int max_step = (int)P.limit_slew_pct_per_step;
   if (diff >  max_step) desired_limit = (uint8_t)(s_aeb.last_limit + max_step);
