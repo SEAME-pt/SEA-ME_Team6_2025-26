@@ -1,6 +1,6 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** 24 February 2026  
+**Last Updated:** 4 March 2026  
 **Branch:** `feature/OTA/implementation`  
 **Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Configured, Dual Implementation (tar.gz + RAUC)
 
@@ -1756,7 +1756,9 @@ RAUC A/B rootfs update system is now configured on both devices:
 - [x] Custom bootloader backend for native RPi bootloader
 - [x] Configuration files deployed
 - [x] SSL certificates generated for bundle signing
-- [ ] Bundle creation workflow (next step)
+- [x] Installation scripts created (`install-bundle.sh`)
+- [x] Post-reboot verification scripts created (`post-reboot-verify.sh`)
+- [ ] Bundle creation workflow (Ruben - in progress)
 - [ ] Full A/B switch test with reboot
 
 **Device Status:**
@@ -1765,6 +1767,34 @@ RAUC A/B rootfs update system is now configured on both devices:
 |--------|------------|-------------|-------------|
 | RPi5 | seame-team6-rpi5 | rootfs.0 (A) | ✅ good |
 | RPi4 | seame-team6-rpi4 | rootfs.0 (A) | ✅ good |
+
+**Partition Layout:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         SD Card                                  │
+├─────────┬─────────────────┬─────────────────┬──────────────────┤
+│  boot   │   rootfs-A (p2) │   rootfs-B (p3) │     data (p4)    │
+│  (p1)   │   [ACTIVE]      │   [INACTIVE]    │   [PERSISTENT]   │
+│         │                 │                 │                  │
+│ config  │  Sistema atual  │  Para updates   │  - configs       │
+│ kernel  │  (AGL running)  │  RAUC escreve   │  - logs          │
+│         │                 │  aqui           │  - certs         │
+│         │                 │                 │  - user data     │
+└─────────┴─────────────────┴─────────────────┴──────────────────┘
+         RAUC gere ◄────────────────────────► RAUC ignora
+```
+
+**What RAUC Updates vs What Persists:**
+
+| Location | Updated by RAUC? | Description |
+|----------|------------------|-------------|
+| `/etc/` | ✅ Yes | System configs (OVERWRITTEN!) |
+| `/opt/` | ✅ Yes | Applications (OVERWRITTEN!) |
+| `/home/` | ✅ Yes | User data in rootfs (OVERWRITTEN!) |
+| `/data/` (p4) | ❌ No | **Persistent** - survives updates |
+
+⚠️ **Important:** Custom configurations in `/etc/` or `/opt/` **will be lost** after RAUC update. Use `/data/` partition for persistent configs.
 
 **Files Created:**
 ```
@@ -1775,6 +1805,8 @@ src/ota/rauc/
 ├── post-install.sh               # Post-install handler
 ├── setup-rauc.sh                 # Device setup script
 ├── create-bundle.sh              # Bundle creation script
+├── install-bundle.sh             # Bundle installation script (NEW)
+├── post-reboot-verify.sh         # Post-reboot verification (NEW)
 ├── ca.cert.pem                   # CA certificate
 ├── dev-cert.pem                  # Dev signing certificate
 ├── dev-key.pem                   # Dev signing key
@@ -1786,11 +1818,138 @@ src/ota/rauc/
 | Feature | Current OTA (Phase C) | RAUC (Phase D) |
 |---------|----------------------|----------------|
 | Scope | Application binaries | Full rootfs |
-| Downtime | ~6 seconds | Reboot required |
-| Rollback | Version directory | A/B partition |
+| Package Size | 1-5 MB | 1-5 GB |
+| Downtime | ~6 seconds | Reboot required (~30s) |
+| Rollback | Version directory | A/B partition (automatic) |
+| Signing | SHA256 hash | X.509 certificate |
 | Use case | Frequent app updates | Major releases |
 
-### 11.4 FOTA for STM32 📋 Planned
+#### 11.3.1 RAUC Bundle Structure
+
+The RAUC bundle (`.raucb`) is a signed package containing:
+
+```
+update-rpi5-20260304.raucb
+├── manifest.raucm          # Metadata (version, compatibility, checksums)
+│   ├── [update]
+│   │   ├── compatible=seame-team6-rpi5
+│   │   ├── version=20260304
+│   │   └── description=SEA:ME Team 6 OTA Update
+│   └── [image.rootfs]
+│       ├── filename=rootfs.img
+│       ├── sha256sum=abc123...
+│       └── size=2147483648
+├── rootfs.img              # Full filesystem image (ext4/squashfs)
+└── hook.sh                 # Pre/post install scripts (optional)
+```
+
+#### 11.3.2 RAUC Installation Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RAUC Update Flow                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. Receive bundle (.raucb)                                     │
+│     └── Via GitHub Release, SCP, or download                    │
+│                                                                 │
+│  2. Verify bundle                                               │
+│     └── rauc info /tmp/update.raucb                             │
+│     └── Checks signature + hash                                 │
+│                                                                 │
+│  3. Install to inactive slot                                    │
+│     └── rauc install /tmp/update.raucb                          │
+│     └── Writes to rootfs-B (p3) while system runs on A          │
+│                                                                 │
+│  4. Reboot                                                      │
+│     └── System boots from rootfs-B                              │
+│                                                                 │
+│  5. Verify & mark good                                          │
+│     └── /opt/ota/rauc/post-reboot-verify.sh                     │
+│     └── rauc status mark-good                                   │
+│                                                                 │
+│  6. Rollback (automatic if boot fails 3x)                       │
+│     └── RAUC automatically returns to rootfs-A                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Installation Commands:**
+
+```bash
+# 1. Copy bundle to device
+scp update-rpi5.raucb root@10.21.220.191:/tmp/
+
+# 2. Verify bundle
+ssh root@10.21.220.191 "rauc info /tmp/update-rpi5.raucb"
+
+# 3. Install
+ssh root@10.21.220.191 "rauc install /tmp/update-rpi5.raucb"
+
+# 4. Reboot
+ssh root@10.21.220.191 "reboot"
+
+# 5. After reboot - verify and confirm
+ssh root@10.21.220.191 "rauc status && rauc status mark-good"
+```
+
+#### 11.3.3 Persistent Data Strategy
+
+Since RAUC replaces the entire rootfs, custom configurations must be stored on the persistent `data` partition:
+
+**Recommended `/data/` Structure:**
+```
+/data/                          # Partition p4 (persistent)
+├── config/                     # Configs that survive updates
+│   ├── etc/
+│   │   ├── kuksa/
+│   │   │   └── vss_custom.json
+│   │   └── network/
+│   │       └── interfaces
+│   └── opt/
+│       └── ota/
+│           └── settings.conf
+├── backup/                     # Automatic backups
+│   ├── pre-update/
+│   └── rollback/
+├── logs/                       # Persistent logs
+│   └── ota.log
+├── certs/                      # Certificates
+│   ├── ca.cert.pem
+│   └── device.cert.pem
+└── state/                      # Application state
+    └── last-known-good.json
+```
+
+**Config Persistence Methods:**
+
+| Method | Description | Use Case |
+|--------|-------------|----------|
+| **Symlinks** | `/etc/kuksa → /data/config/etc/kuksa` | Simple, transparent |
+| **RAUC Post-Install Hook** | Copy from `/data/` after install | Flexible, scriptable |
+| **Bind Mounts** | Mount `/data/config/etc/kuksa` on `/etc/kuksa` | No file duplication |
+
+### 11.4 Phase E: RAUC Delta Updates (Future)
+
+Delta updates send only the **differences** between versions instead of the full rootfs:
+
+| Update Type | Size | Download Time (4G) | Use Case |
+|-------------|------|-------------------|----------|
+| Full rootfs | 2 GB | 15-30 min | Major releases |
+| Delta | 50-200 MB | 1-3 min | Minor updates |
+| tar.gz (apps) | 1-5 MB | 5 sec | Hotfixes |
+
+**Delta Tools:**
+- **casync** - Content-addressable sync (recommended)
+- **desync** - Alternative to casync
+- **bsdiff** - Classic binary diff
+
+**Future Implementation:**
+- [ ] casync chunk store on CDN/S3
+- [ ] Delta bundle creation in CI/CD
+- [ ] Local chunk cache on devices
+
+### 11.5 FOTA for STM32 📋 Planned
 
 - [ ] Bootloader with A/B slots
 - [ ] UDS over CAN protocol
