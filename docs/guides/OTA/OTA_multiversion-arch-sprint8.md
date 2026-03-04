@@ -748,6 +748,30 @@ Each platform requires its own RAUC bundle with matching `compatible` string:
 | RPi4 | `seame-team6-rpi4` | `update-rpi4.raucb` |
 | RPi5 | `seame-team6-rpi5` | `update-rpi5.raucb` |
 
+### RAUC Directories on AGL Device
+
+RAUC uses several directories on the system:
+
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `/run/rauc/` | Runtime data | Temporary files, created by RAUC daemon |
+| `/etc/rauc/` | Configuration | `system.conf`, keyring certificates |
+| `/usr/lib/rauc/` | Libraries | RAUC binaries and shared libraries |
+| `/opt/ota/rauc/` | **Team scripts** | Custom installation and verification scripts |
+
+**Team Scripts (`/opt/ota/rauc/`):**
+```
+/opt/ota/rauc/
+├── install-bundle.sh         # Installs .raucb bundles with validation
+│                             # - Pre-install checks
+│                             # - Config backup to /data
+│                             # - Bundle verification
+│                             # - Optional auto-reboot
+└── post-reboot-verify.sh     # Verifies system health after RAUC update
+                              # - Health checks (network, disk, services)
+                              # - Marks slot as good or triggers rollback
+```
+
 ### Persistent Data Strategy
 
 RAUC replaces the **entire rootfs**, so custom configs must be on the `data` partition:

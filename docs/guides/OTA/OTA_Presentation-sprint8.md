@@ -590,9 +590,35 @@ For this project, we implement **both methods** to:
 | `post-install.sh` | Post-installation handler |
 | `setup-rauc.sh` | Device setup script |
 | `create-bundle.sh` | Bundle creation script |
+| `install-bundle.sh` | Bundle installation with validation (**NEW**) |
+| `post-reboot-verify.sh` | Post-reboot health checks (**NEW**) |
 | `ca.cert.pem` | Certificate for bundle verification |
 
 **Location:** `src/ota/rauc/`
+
+### RAUC Directories on AGL Device
+
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `/run/rauc/` | Runtime data | Temporary files (RAUC daemon) |
+| `/etc/rauc/` | Configuration | `system.conf`, keyring certificates |
+| `/usr/lib/rauc/` | Libraries | RAUC binaries and libraries |
+| `/opt/ota/rauc/` | **Team scripts** | `install-bundle.sh`, `post-reboot-verify.sh` |
+
+**Complete OTA Directory on Device:**
+```
+/opt/ota/
+├── ota-update.sh              # Main OTA script (tar.gz - Phase C)
+├── ota-check.sh               # GitHub polling script
+├── rauc/                      # RAUC scripts (Phase D)
+│   ├── install-bundle.sh      # Install .raucb with validation
+│   └── post-reboot-verify.sh  # Health check + mark slot as good
+├── backup/                    # Version backups
+├── current/                   # Current version symlinks
+├── downloads/                 # Downloaded packages
+├── logs/                      # OTA operation logs
+└── releases/                  # Installed versions
+```
 
 ---
 

@@ -356,6 +356,39 @@ update-rpi5-20260304.raucb
 | Emergency hotfix | **tar.gz** | Fastest option |
 | Security patch (system) | **RAUC** | Full system |
 
+### 9.4 RAUC Directories on AGL Device
+
+RAUC creates several directories on the system:
+
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `/run/rauc/` | Runtime data | Temporary files, created by RAUC daemon |
+| `/etc/rauc/` | Configuration | `system.conf`, keyring certificates |
+| `/usr/lib/rauc/` | Libraries | RAUC binaries and libraries |
+| `/opt/ota/rauc/` | **Team scripts** | Custom scripts for bundle management |
+
+**Team Scripts Directory (`/opt/ota/rauc/`):**
+```
+/opt/ota/rauc/
+├── install-bundle.sh         # Installs .raucb bundles with validation
+└── post-reboot-verify.sh     # Verifies system health after RAUC update
+```
+
+**Full OTA Directory Structure:**
+```
+/opt/ota/
+├── ota-update.sh              # Main OTA script (Phase C - tar.gz)
+├── ota-check.sh               # GitHub API polling for updates
+├── rauc/                      # RAUC-specific scripts (Phase D)
+│   ├── install-bundle.sh      # Validates and installs .raucb bundles
+│   └── post-reboot-verify.sh  # Health checks + marks slot as good
+├── backup/                    # Version backups for rollback
+├── current/                   # Current version symlinks
+├── downloads/                 # Downloaded update packages
+├── logs/                      # OTA operation logs
+└── releases/                  # Installed release versions
+```
+
 ---
 
 ## 10. Persistent Data Strategy

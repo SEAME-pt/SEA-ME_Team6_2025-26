@@ -1796,7 +1796,7 @@ RAUC A/B rootfs update system is now configured on both devices:
 
 ⚠️ **Important:** Custom configurations in `/etc/` or `/opt/` **will be lost** after RAUC update. Use `/data/` partition for persistent configs.
 
-**Files Created:**
+**Files Created (Repository):**
 ```
 src/ota/rauc/
 ├── system.conf.rpi4              # RAUC config for RPi4
@@ -1811,6 +1811,31 @@ src/ota/rauc/
 ├── dev-cert.pem                  # Dev signing certificate
 ├── dev-key.pem                   # Dev signing key
 └── README.md                     # Documentation
+```
+
+**RAUC Directories on AGL Device:**
+
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `/run/rauc/` | Runtime data | Temporary files, created by RAUC daemon |
+| `/etc/rauc/` | Configuration | `system.conf`, keyring certificates |
+| `/usr/lib/rauc/` | Libraries | RAUC binaries and libraries |
+| `/opt/ota/rauc/` | **Team scripts** | `install-bundle.sh`, `post-reboot-verify.sh` |
+
+**OTA Directory Structure on Device:**
+```
+/opt/ota/
+├── ota-update.sh              # Main OTA script (Phase C - tar.gz)
+├── ota-check.sh               # GitHub API polling for updates
+├── ota-update.sh.bak          # Backup of original script
+├── rauc/                      # RAUC-specific scripts (Phase D)
+│   ├── install-bundle.sh      # Installs .raucb bundles
+│   └── post-reboot-verify.sh  # Verifies system after RAUC update
+├── backup/                    # Version backups for rollback
+├── current/                   # Current version symlinks
+├── downloads/                 # Downloaded update packages
+├── logs/                      # OTA operation logs
+└── releases/                  # Installed release versions
 ```
 
 **RAUC vs Current OTA:**
