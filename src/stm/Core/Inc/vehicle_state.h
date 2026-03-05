@@ -14,6 +14,15 @@ typedef struct {
     int16_t  mag_mG[3];        // x,y,z in milli-Gauss
     uint32_t speed_mh;         // meters per hour
 
+    // AEB
+    uint8_t  aeb_stop_active;     // 1 = AEB forcing stop
+    uint8_t  aeb_warn;            // optional warning flag
+    uint8_t  aeb_state;           // enum for debugging
+    uint16_t aeb_ttc_ms;          // debug
+    uint16_t aeb_dstop_mm;        // debug
+    uint32_t aeb_ts;              // last AEB update (ms)
+    uint8_t  aeb_speed_limit;     // Speed limit from AEB (0-100%)
+
     uint32_t srf08_ts;
     uint32_t speed_ts;
     uint32_t rpm_ts;
