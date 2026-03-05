@@ -172,9 +172,12 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  // Apply SRF08 speed limit (only clamps positive throttle)
-  if (throttle > (int8_t)snap->srf08_speed_limit)
-    throttle = (int8_t)snap->srf08_speed_limit;
+  // Apply combined AEB/SRF08 speed limit 
+  uint8_t limit = snap->srf08_speed_limit;
+  if (snap->aeb_speed_limit < limit) limit = snap->aeb_speed_limit;
+
+  if (throttle > (int8_t)limit)
+    throttle = (int8_t)limit;
 
   if ((cmd->flags & CMD_FLAG_BRAKE) || throttle == 0)
   {
@@ -291,8 +294,12 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  if (throttle > (int8_t)snap->srf08_speed_limit)
-    throttle = (int8_t)snap->srf08_speed_limit;
+  // Apply combined AEB/SRF08 speed limit 
+  uint8_t limit = snap->srf08_speed_limit;
+  if (snap->aeb_speed_limit < limit) limit = snap->aeb_speed_limit;
+
+  if (throttle > (int8_t)limit)
+    throttle = (int8_t)limit;
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
