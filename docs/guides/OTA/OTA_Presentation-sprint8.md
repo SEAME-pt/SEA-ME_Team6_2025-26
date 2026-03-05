@@ -1,6 +1,6 @@
 # 📡 OTA Implementation — SEA:ME Team 6
 
-## Sprint 8 Demo — 4 March 2026
+## Sprint 8 Demo — 24 February 2026
 
 ---
 
@@ -590,35 +590,9 @@ For this project, we implement **both methods** to:
 | `post-install.sh` | Post-installation handler |
 | `setup-rauc.sh` | Device setup script |
 | `create-bundle.sh` | Bundle creation script |
-| `install-bundle.sh` | Bundle installation with validation (**NEW**) |
-| `post-reboot-verify.sh` | Post-reboot health checks (**NEW**) |
 | `ca.cert.pem` | Certificate for bundle verification |
 
 **Location:** `src/ota/rauc/`
-
-### RAUC Directories on AGL Device
-
-| Directory | Purpose | Contents |
-|-----------|---------|----------|
-| `/run/rauc/` | Runtime data | Temporary files (RAUC daemon) |
-| `/etc/rauc/` | Configuration | `system.conf`, keyring certificates |
-| `/usr/lib/rauc/` | Libraries | RAUC binaries and libraries |
-| `/opt/ota/rauc/` | **Team scripts** | `install-bundle.sh`, `post-reboot-verify.sh` |
-
-**Complete OTA Directory on Device:**
-```
-/opt/ota/
-├── ota-update.sh              # Main OTA script (tar.gz - Phase C)
-├── ota-check.sh               # GitHub polling script
-├── rauc/                      # RAUC scripts (Phase D)
-│   ├── install-bundle.sh      # Install .raucb with validation
-│   └── post-reboot-verify.sh  # Health check + mark slot as good
-├── backup/                    # Version backups
-├── current/                   # Current version symlinks
-├── downloads/                 # Downloaded packages
-├── logs/                      # OTA operation logs
-└── releases/                  # Installed versions
-```
 
 ---
 
@@ -779,128 +753,4 @@ ssh root@<IP> "/opt/ota/ota-check.sh"
 
 📡 **Team 6 — SEA:ME 2025-26**
 
-*Last Updated: 4 March 2026*
-
----
-
-## 📦 RAUC Bundle Details (Phase D Update)
-
-### What is a RAUC Bundle?
-
-A **RAUC bundle** (`.raucb`) is a **signed package** containing:
-
-```
-update-rpi5-20260304.raucb
-├── manifest.raucm      # Metadata + checksums
-├── rootfs.img          # Complete AGL filesystem (1-5 GB)
-└── hook.sh             # Install scripts (optional)
-```
-
-**Key features:**
-- ✅ X.509 certificate signing
-- ✅ SHA256 hash verification
-- ✅ Atomic installation to inactive slot
-- ✅ Automatic rollback on boot failure
-
----
-
-## 🔄 RAUC vs tar.gz — When to Use Each?
-
-| Scenario | Method | Reason |
-|----------|--------|--------|
-| Update KUKSA binary | **tar.gz** | Fast, no reboot |
-| Update VSS config | **tar.gz** | Config only |
-| Update Qt Cluster | **tar.gz** | Fast, no reboot |
-| New AGL version | **RAUC** | Full system |
-| Kernel update | **RAUC** | Requires reboot |
-| Emergency hotfix | **tar.gz** | Fastest |
-
-### Size & Time Comparison
-
-| Method | Size | Download | Reboot? |
-|--------|------|----------|---------|
-| tar.gz | 1-5 MB | ~5 sec | ❌ No |
-| RAUC Delta | 50-200 MB | 1-3 min | ✅ Yes |
-| RAUC Full | 1-5 GB | 15-30 min | ✅ Yes |
-
----
-
-## 💾 Persistent Data Strategy
-
-### The Problem
-
-RAUC replaces **entire rootfs** → Custom configs are **LOST**!
-
-```
-1. Deploy v1.0 with IP: 10.21.220.191
-2. Change IP to: 10.21.220.200 ✏️
-3. RAUC update to v1.1
-4. IP reverts to: 10.21.220.191 😱
-```
-
-### The Solution: Data Partition
-
-```
-┌─────────┬─────────────────┬─────────────────┬──────────────────┐
-│  boot   │   rootfs-A      │   rootfs-B      │     data (p4)    │
-│  (p1)   │   [ACTIVE]      │   [INACTIVE]    │   [PERSISTENT]   │
-│         │                 │                 │                  │
-│         │  RAUC replaces  │  RAUC writes    │  SURVIVES all    │
-│         │  this!          │  here           │  updates! ✅      │
-└─────────┴─────────────────┴─────────────────┴──────────────────┘
-```
-
-**Store in `/data/`:**
-- Network configs
-- VSS customizations  
-- Certificates
-- Application state
-
----
-
-## 🔧 RAUC Installation Commands
-
-```bash
-# 1. Copy bundle to device
-scp update-rpi5.raucb root@10.21.220.191:/tmp/
-
-# 2. Verify bundle
-ssh root@10.21.220.191 "rauc info /tmp/update-rpi5.raucb"
-
-# 3. Install to inactive slot
-ssh root@10.21.220.191 "rauc install /tmp/update-rpi5.raucb"
-
-# 4. Reboot
-ssh root@10.21.220.191 "reboot"
-
-# 5. Verify & mark good
-ssh root@10.21.220.191 "rauc status mark-good"
-```
-
----
-
-## 📊 Phase D Status (4 March 2026)
-
-| Task | Status |
-|------|--------|
-| RAUC installed (v1.15.1) | ✅ Complete |
-| A/B partitions prepared | ✅ Complete |
-| Custom bootloader backend | ✅ Complete |
-| SSL certificates | ✅ Complete |
-| Installation scripts | ✅ Complete |
-| Post-reboot verification | ✅ Complete |
-| Bundle creation (Ruben) | 🔄 In Progress |
-| Full A/B switch test | 📋 Pending |
-
----
-
-## 🗺️ Complete Roadmap
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| A | OTA proof of concept | ✅ Complete |
-| B | Real binaries + CI/CD | ✅ Complete |
-| C | Atomic symlinks + timer | ✅ Complete |
-| **D** | **RAUC A/B partitions** | **🔄 In Progress** |
-| E | Delta updates (casync) | 📋 Future |
-| FOTA | STM32 firmware | 📋 Future |
+*Last Updated: 24 February 2026**
