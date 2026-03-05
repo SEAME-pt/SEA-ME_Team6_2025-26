@@ -1,7 +1,7 @@
 /**
  * @author souzitaaaa
  * @email diogo.nogueirasousa123@gmail.com
- * @desc Root Source Code for the QT App - Refactored Architecture
+ * @desc Root Source Code for the QT App
  */
 
 #include <QGuiApplication>
@@ -30,7 +30,6 @@ static void crashHandler(int sig) {
     backtrace_symbols_fd(array, size, STDERR_FILENO);
     exit(1);
 }
-
 
 int main(int argc, char *argv[])
 {

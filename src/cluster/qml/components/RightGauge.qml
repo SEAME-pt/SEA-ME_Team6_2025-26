@@ -11,7 +11,17 @@ Item {
     height: 300
 
     property int currPage: 0
-    property int maxPages: 3
+    property int maxPages: 2
+    property bool isWarningActive: false
+
+    function pageSource(page) {
+        if (isWarningActive)
+            return "WarningContent.qml"
+        switch(page) {
+            case 0: return "TripContent.qml"
+            case 1: return "DynamicsContent.qml"
+        }
+    }
 
     //? OUTER RING
     Rectangle {
@@ -22,6 +32,8 @@ Item {
         radius: width / 2
         color: BaseTheme.sportBlack
         layer.enabled: true
+        layer.live: false
+        layer.smooth: false
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: BaseTheme.white
@@ -39,6 +51,7 @@ Item {
 
         Rectangle {
             id: indicatorDot
+            visible: !root.isWarningActive
             width: 8
             height: 8
             radius: 4
@@ -95,15 +108,8 @@ Item {
         Loader {
             id: contentLoader
             anchors.fill: parent
-            //anchors.margins: 6
 
-            sourceComponent: {
-                switch(root.currPage) {
-                    case 0: return batteryContent
-                    case 1: return tripContent
-                    case 2: return headingContent
-                }
-            }
+            source: root.pageSource(root.currPage)
 
             Behavior on opacity {
                 NumberAnimation { duration: 200 }
@@ -111,50 +117,14 @@ Item {
         }
     }
 
-    Component {
-        id: batteryContent
-        Item {
-            anchors.fill: parent
-            Text {
-                anchors.centerIn: parent
-                text: "Battery Content"
-                color: BaseTheme.white
-                font.pixelSize: 18
-            }
-        }
-    }
-
-    Component {
-        id: tripContent
-        Item {
-            anchors.fill: parent
-            Text {
-                anchors.centerIn: parent
-                text: "Trip Content"
-                color: BaseTheme.white
-                font.pixelSize: 18
-            }
-        }
-    }
-
-    Component {
-        id: headingContent
-        Item {
-            anchors.fill: parent
-            Text {
-                anchors.centerIn: parent
-                text: "Heading Content"
-                color: BaseTheme.white
-                font.pixelSize: 18
-            }
-        }
-    }
-
     MouseArea {
+        anchors.centerIn: parent
         width: 275
         height: 275
         cursorShape: Qt.PointingHandCursor
         onClicked: {
+            if (root.isWarningActive) return
+
             contentLoader.opacity = 0
             fadeTimer.start()
         }
@@ -164,6 +134,11 @@ Item {
         id: fadeTimer
         interval: 200
         onTriggered: {
+            if (root.isWarningActive) {
+                contentLoader.opacity = 1.0
+                return
+            }
+
             root.currPage = (root.currPage + 1) % root.maxPages
             contentLoader.opacity = 1.0
         }

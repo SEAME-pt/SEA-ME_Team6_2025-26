@@ -16,7 +16,7 @@ Item {
     //? Helpers
     property real mainAngleStart: 230
     property real mainAngleSweep: 260
-    property real activeIndex: (currMotorSpeed / maxMotorSpeed) * (innerTotalTicks - 1)
+    property real activeIndex: (displayMotorSpeed / maxMotorSpeed) * (innerTotalTicks - 1)
     //? Outer Circle
     property real outerTotalTicks: 161
     property real outerAngleStep: mainAngleSweep / (outerTotalTicks - 1)
@@ -24,6 +24,16 @@ Item {
     //? Inner Circle
     property real innerTotalTicks: 33
     property real innerAngleStep: mainAngleSweep / (innerTotalTicks - 1)
+
+    //? Animation Display
+    property real displayMotorSpeed: 0
+    onCurrMotorSpeedChanged: displayMotorSpeed = currMotorSpeed
+    Behavior on displayMotorSpeed {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutQuad
+        }
+    }
 
     //? OUTER RING
     Rectangle {
@@ -34,6 +44,8 @@ Item {
         radius: width / 2
         color: BaseTheme.sportBlack
         layer.enabled: true
+        layer.live: false
+        layer.smooth: false
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: BaseTheme.white
@@ -55,7 +67,9 @@ Item {
         color: BaseTheme.darkBlack
         border.color: BaseTheme.blackboard
         border.width: 2
-        layer.enabled: true
+         layer.enabled: true
+        layer.live: false
+        layer.smooth: false
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: BaseTheme.white
@@ -130,13 +144,6 @@ Item {
                 y: 48
                 rotation: -(root.mainAngleStart + (index * root.innerAngleStep))
             }
-        }
-    }
-
-    Behavior on currMotorSpeed {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutQuad
         }
     }
 

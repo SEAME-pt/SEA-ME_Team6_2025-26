@@ -74,7 +74,7 @@ private:
     QString _motorSpeedStr;
 
     // Helper Functions
-    void updateBatteryIconInternal();
+    bool updateBatteryIconInternal();
 };
 
 #endif /* POWERTRAINPROVIDER_HPP */

@@ -4,12 +4,11 @@ import QtQuick.Layouts
 import ClusterTheme 1.0
 
 Item {
-    
     Text {
         anchors.centerIn: parent
-        text: "Controller Screen under construction"
+        text: "MediaScreen"
         font.pixelSize: 32
         font.bold: true
-        color: BaseTheme.black
+        color: BaseTheme.white
     }
 }

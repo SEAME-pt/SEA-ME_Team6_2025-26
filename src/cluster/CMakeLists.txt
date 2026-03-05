@@ -22,9 +22,44 @@ else()
     set(IS_CROSS_COMPILE OFF)
 endif()
 
+# ============================================================================
+# SANITIZER CONFIGURATION
+# ============================================================================
+# Options: "none", "address", "thread", "undefined"
+# NOTE: ASAN and TSAN cannot be used together!
+# - Use "address"   to catch memory leaks, use-after-free, buffer overflows
+# - Use "thread"    to catch data races (the QMutex race in reader.cpp)
+# - Use "undefined" to catch UB (integer overflow in gauge bindings!)
+set(SANITIZER "address" CACHE STRING "Sanitizer to use: none, address, thread, undefined")
+
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+
+if(NOT IS_CROSS_COMPILE)
+    if(SANITIZER STREQUAL "address")
+        message(STATUS "[Cluster] AddressSanitizer ENABLED (catches leaks + memory errors)")
+        set(SANITIZER_FLAGS "-fsanitize=address -fno-omit-frame-pointer -g -O1")
+        # ASAN options - set via env var when running:
+        # ASAN_OPTIONS=detect_leaks=1:halt_on_error=0:log_path=/tmp/asan.log ./ClusterApp
+    elseif(SANITIZER STREQUAL "thread")
+        message(STATUS "[Cluster] ThreadSanitizer ENABLED (catches data races in reader/router)")
+        set(SANITIZER_FLAGS "-fsanitize=thread -fno-omit-frame-pointer -g -O1")
+        # TSAN options:
+        # TSAN_OPTIONS=halt_on_error=0:log_path=/tmp/tsan.log ./ClusterApp
+    elseif(SANITIZER STREQUAL "undefined")
+        message(STATUS "[Cluster] UBSanitizer ENABLED (catches integer overflow in gauge math)")
+        set(SANITIZER_FLAGS "-fsanitize=undefined -fno-omit-frame-pointer -g")
+        # UBSAN options:
+        # UBSAN_OPTIONS=halt_on_error=0:print_stacktrace=1 ./ClusterApp
+    else()
+        message(STATUS "[Cluster] No sanitizer")
+        set(SANITIZER_FLAGS "")
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+else()
+    message(STATUS "[Cluster] Sanitizers disabled for cross-compile")
+endif()
 
 # ============================================================================
 # QT6 CONFIGURATION
@@ -60,22 +95,9 @@ message(STATUS "[Cluster] Using shared backend from: ../shared/backend")
 add_executable(ClusterApp
     # Main entry point
     main.cpp
-    
-    # Legacy backend (keep for now - TimeProvider, SystemStatus)
-    # src/backend/timeprovider.cpp
-    # src/backend/systemstatus.cpp
-    
     # QML resources
     qml.qrc
 )
-
-# ============================================================================
-# INCLUDE DIRECTORIES
-# ============================================================================
-# target_include_directories(ClusterApp PRIVATE
-#     ${CMAKE_CURRENT_SOURCE_DIR}/src
-#     ${CMAKE_CURRENT_SOURCE_DIR}/src/backend
-# )
 
 # ============================================================================
 # LINK LIBRARIES - QT6
@@ -117,8 +139,13 @@ message(STATUS "Cross-compiling: ${IS_CROSS_COMPILE}")
 message(STATUS "Qt6 Version: ${Qt6_VERSION}")
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Sanitizer:        ${SANITIZER}")
+message(STATUS "Sanitizer Flags:  ${SANITIZER_FLAGS}")
 if(CMAKE_SYSROOT)
     message(STATUS "Sysroot: ${CMAKE_SYSROOT}")
 endif()
 message(STATUS "Linking to: Backend")
 message(STATUS "========================================")
+
+
+# cmake -DSANITIZER=address .. && make && ASAN_OPTIONS=detect_leaks=1:halt_on_error=0:print_stacktrace=1:log_path=/tmp/asan.log ./ClusterApp 2>&1 | tee /tmp/cluster_run.log

@@ -10,6 +10,8 @@
 #include "providers/adasprovider.hpp"
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
+#include <QThread>
+#include <QCoreApplication>
 
 SignalRouter::SignalRouter(QObject *parent)
     : QObject(parent),
@@ -61,6 +63,9 @@ void SignalRouter::registerChassisProvider(ChassisProvider *provider)
 
 void SignalRouter::routeSignal(const QString &path, const QVariant &value)
 {
+    // qDebug() << "[SignalRouter] Routing:" << path << "on thread:" 
+    //          << (QThread::currentThread() == qApp->thread() ? "MAIN" : "WORKER");
+
     if (!value.isValid()) {
         qWarning() << "[SignalRouter] Received invalid value for path:" << path;
         return;

@@ -78,47 +78,36 @@ void PowertrainProvider::updateMotorSpeed(double speed)
 
 void PowertrainProvider::updateBatteryLowStatus(bool isLow)
 {
-    QMutexLocker locker(&_mutex);
-    
-    if (_isBatteryLow == isLow)
-        return;
-    
-    _isBatteryLow = isLow;
-
-    updateBatteryIconInternal();
-    
-    locker.unlock();
+    bool iconChanged = false;
+    {
+        QMutexLocker locker(&_mutex);
+        if (_isBatteryLow == isLow) return;
+        _isBatteryLow = isLow;
+        iconChanged = updateBatteryIconInternal();
+    }
     emit batteryLowStatusChanged();
+    if (iconChanged) emit batteryVoltageIconChanged();
 }
 
 void PowertrainProvider::updateBatteryCriticalStatus(bool isCritical)
 {
-    QMutexLocker locker(&_mutex);
-    
-    if (_isBatteryCritical == isCritical)
-        return;
-    
-    _isBatteryCritical = isCritical;
-    
-    updateBatteryIconInternal();
-    
-    locker.unlock();
+    bool iconChanged = false;
+    {
+        QMutexLocker locker(&_mutex);
+        if (_isBatteryCritical == isCritical) return;
+        _isBatteryCritical = isCritical;
+        iconChanged = updateBatteryIconInternal();
+    }
     emit batteryCriticalStatusChanged();
+    if (iconChanged) emit batteryVoltageIconChanged();
 }
 
-void PowertrainProvider::updateBatteryIconInternal()
+bool PowertrainProvider::updateBatteryIconInternal()
 {
-    QString newIcon;
-    
-    if (_isBatteryCritical)
-        newIcon = FLASH_DANGER_ICON;
-    else if (_isBatteryLow)
-        newIcon = FLASH_WARNING_ICON;
-    else
-        newIcon = FLASH_ICON;
-    
-    if (newIcon != _batteryVoltageIcon) {
-        _batteryVoltageIcon = newIcon;
-        emit batteryVoltageIconChanged();
-    }
+    QString newIcon = _isBatteryCritical ? FLASH_DANGER_ICON
+                    : _isBatteryLow      ? FLASH_WARNING_ICON
+                                         : FLASH_ICON;
+    if (newIcon == _batteryVoltageIcon) return false;
+    _batteryVoltageIcon = newIcon;
+    return true;
 }

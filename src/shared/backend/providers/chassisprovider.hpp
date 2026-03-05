@@ -56,7 +56,7 @@ private:
     QString _steeringWheelAngleStr;
 
     // Helper Functions
-    void updateBlinkersInternal();
+    bool updateBlinkersInternal();
 };
 
 #endif /* CHASSISPROVIDER_HPP */

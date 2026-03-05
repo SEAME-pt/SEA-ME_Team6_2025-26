@@ -11,8 +11,11 @@
 #include <QThread>
 #include <QDebug>
 #include <QVariant>
-#include <atomic>
+#include <QHash>
 #include <QMutex>
+#include <QDateTime>
+#include <QTimer>
+#include <atomic>
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,7 +43,6 @@ public slots:
 
 signals:
     void signalReceived(QString path, QVariant value);
-    
     void connectionError(QString error);
     void connected();
 
@@ -48,12 +50,20 @@ private:
     std::string _server;
     std::vector<std::string> _signalPaths;
     std::atomic<bool> _shouldStop;
+    std::atomic<bool> _contextReady{false};
     std::atomic<grpc::ClientContext*> _activeContext;
-    
+
+    // Latest value cache: worker writes, dispatch timer reads
+    QMutex _cacheMutex;
+    QHash<QString, QVariant> _latestValues;   // newest value per path
+    QHash<QString, bool> _pendingEmit;        // true = new value waiting to be emitted
+
     // Helper functions
     static std::string read_file(const std::string& path);
     static std::unique_ptr<VAL::Stub> create_val_stub(const std::string& host_port);
     static QVariant datapoint_to_variant(const kuksa::val::v2::Datapoint &dp);
+
+    friend class Reader;
 };
 
 // Main Reader class that manages the worker thread
@@ -71,9 +81,14 @@ signals:
     void connected();
 
 private:
-    QThread *_workerThread;
-    ReaderWorker *_worker;
-    std::string _server = "10.21.220.191:55555";
+    QThread       *_workerThread;
+    ReaderWorker  *_worker;
+    SignalRouter  *_router;
+    QTimer        *_dispatchTimer;           // fires on main thread at fixed rate
+    std::string    _server = "10.21.220.191:55555";
+
+private slots:
+    void dispatchPendingSignals();           // called by timer on main thread
 };
 
 #endif /* READER_HPP */

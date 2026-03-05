@@ -33,51 +33,35 @@ bool ChassisProvider::isBlinkerRightActive() const
     return _isBlinkerRightActive;
 }
 
-void ChassisProvider::updateSteeringWheelAngle(double steeringWheelAngle)
+void ChassisProvider::updateSteeringWheelAngle(double angle)
 {
-    QMutexLocker locker(&_mutex);
-
-    if (qFuzzyCompare(steeringWheelAngle, _steeringWheelAngleValue))
-        return;
-
-    _steeringWheelAngleValue = steeringWheelAngle;
-    _steeringWheelAngleStr = QString::number(qRound(_steeringWheelAngleValue));
-
-    updateBlinkersInternal();
-
-    locker.unlock();
-    emit steeringWheelAngleChanged();
+    bool angleChanged = false, blinkerChanged = false;
+    {
+        QMutexLocker locker(&_mutex);
+        if (qFuzzyCompare(angle, _steeringWheelAngleValue)) return;
+        _steeringWheelAngleValue = angle;
+        _steeringWheelAngleStr = QString::number(qRound(angle));
+        blinkerChanged = updateBlinkersInternal();
+        angleChanged = true;
+    }
+    if (angleChanged) emit steeringWheelAngleChanged();
+    if (blinkerChanged) { emit blinkerLeftChanged(); emit blinkerRightChanged(); }
 }
 
-void ChassisProvider::updateBlinkersInternal()
+bool ChassisProvider::updateBlinkersInternal()
 {
-    if (_steeringWheelAngleValue < 0)
-    {
+    bool prev_left = _isBlinkerLeftActive;
+    bool prev_right = _isBlinkerRightActive;
 
-        if (!_isBlinkerLeftActive)
-        {
-            _isBlinkerLeftActive = true;
-            _isBlinkerRightActive = false;
-        }
+    if (_steeringWheelAngleValue < 0) {
+        _isBlinkerLeftActive = true;
+        _isBlinkerRightActive = false;
+    } else if (_steeringWheelAngleValue > 0) {
+        _isBlinkerRightActive = true;
+        _isBlinkerLeftActive = false;
+    } else {
+        _isBlinkerLeftActive = false;
+        _isBlinkerRightActive = false;
     }
-    else if (_steeringWheelAngleValue > 0)
-    {
-
-        if (!_isBlinkerRightActive)
-        {
-            _isBlinkerRightActive = true;
-            _isBlinkerLeftActive = false;
-        }
-    }
-    else
-    {
-
-        if (_isBlinkerLeftActive || _isBlinkerRightActive)
-        {
-            _isBlinkerLeftActive = false;
-            _isBlinkerRightActive = false;
-        }
-    }
-    emit blinkerLeftChanged();
-    emit blinkerRightChanged();
+    return (_isBlinkerLeftActive != prev_left || _isBlinkerRightActive != prev_right);
 }

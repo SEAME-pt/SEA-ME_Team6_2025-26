@@ -28,20 +28,15 @@ QString ExtraProvider::date() const
 
 void ExtraProvider::updateTime()
 {
-    QMutexLocker locker(&_mutex);
-    QDateTime now = QDateTime::currentDateTime();
-
-    QString newTime = now.toString("hh:mm");
-    QString newDate = now.toString("dddd | MMMM d, yyyy");
-
-    if (newTime != _timeStr) {
-        _timeStr = newTime;
-        emit timeChanged();
+    bool timeChanged = false, dateChanged = false;
+    {
+        QMutexLocker locker(&_mutex);
+        QDateTime now = QDateTime::currentDateTime();
+        QString newTime = now.toString("hh:mm");
+        QString newDate = now.toString("ddd dd").toUpper();
+        if (newTime != _timeStr) { _timeStr = newTime; timeChanged = true; }
+        if (newDate != _dateStr) { _dateStr = newDate; dateChanged = true; }
     }
-    if (newDate != _dateStr) {
-        _dateStr = newDate;
-        emit dateChanged();
-    }
-
-    locker.unlock();
+    if (timeChanged) emit this->timeChanged();
+    if (dateChanged) emit this->dateChanged();
 }

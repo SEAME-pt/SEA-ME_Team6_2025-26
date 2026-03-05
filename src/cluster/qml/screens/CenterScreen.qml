@@ -23,11 +23,11 @@ Item {
     MiddleGauge {
         anchors.fill: parent
         currSpeed: vehicle.speed
-        currBattery: powertrain.batteryVoltage
+        currBattery: parseFloat(powertrain.batteryVoltage) || 0.0
         currBatteryIcon: powertrain.batteryVoltageIcon
         isBatteryWarning: powertrain.isBatteryLow
         isBatteryDanger: powertrain.isBatteryCritical
-        currAutonomy: 67
+        currAutonomy: powertrain.batteryVoltage
     }
 
     Item {
@@ -47,6 +47,19 @@ Item {
     Item {
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.topMargin: 32
+        anchors.leftMargin: -64
+
+        Blinker {
+            activeBlinkerSource: "qrc:/assets/icons/left-arrow-active.png"
+            inactiveBlinkerSource: "qrc:/assets/icons/left-arrow.png"
+            isActive: chassis.isBlinkerLeftActive
+        }
+    }
+
+    Item {
+        anchors.top: parent.top
+        anchors.left: parent.left
         anchors.topMargin: 40
         anchors.leftMargin: centerScreen.width - timeText.width - 8
 
@@ -56,6 +69,19 @@ Item {
             color: BaseTheme.white
             font.bold: true
             font.pixelSize: 14
+        }
+    }
+
+    Item {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.topMargin: 32
+        anchors.leftMargin: centerScreen.width - timeText.width + 64
+
+        Blinker {
+            activeBlinkerSource: "qrc:/assets/icons/right-arrow-active.png"
+            inactiveBlinkerSource: "qrc:/assets/icons/right-arrow.png"
+            isActive: chassis.isBlinkerRightActive
         }
     }
 }

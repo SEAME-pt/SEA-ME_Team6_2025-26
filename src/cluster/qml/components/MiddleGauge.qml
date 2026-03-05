@@ -11,7 +11,7 @@ Item {
     height: 375
     //? Data
     property real currSpeed: 0
-    property real maxSpeed: 1000
+    property real maxSpeed: 2000
     property real currBattery: 0
     property real maxBattery: 12.6
     property real minBattery: 9.82
@@ -25,7 +25,7 @@ Item {
     property real mainAngleSweep: 230
     property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep 
     property real secundaryAngleSweep: 80
-    property real  activeIndex: (currSpeed / maxSpeed) * (innerTotalTicks - 1)
+    property real  activeIndex: (displaySpeed / maxSpeed) * (innerTotalTicks - 1)
     property int bottomActiveIndex:  Math.round(batteryNormalized() * (bottomTotalTicks - 1))
     //? Outer Circle
     property real outerTotalTicks: 161
@@ -37,6 +37,25 @@ Item {
     //? Bottom Background Circle
     property real bottomTotalTicks: 81
     property real bottomAngleStep: secundaryAngleSweep / (bottomTotalTicks - 1)
+    //? Animation Display
+    property real displaySpeed: 0
+    property real displayBattery: 0
+    onCurrSpeedChanged: displaySpeed = currSpeed
+    onCurrBatteryChanged: displayBattery = currBattery
+
+    Behavior on displaySpeed {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutQuad
+        }
+    }
+    Behavior on displayBattery {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.InOutQuad
+        }
+    }
+
 
     function getBatteryTickColor(index) {
         if (index === root.bottomTotalTicks - 1)
@@ -70,11 +89,11 @@ Item {
     }
 
     function batteryNormalized() {
-        if (root.currBattery <= root.minBattery)
+        if (root.displayBattery <= root.minBattery)
             return 0
-        if (root.currBattery >= root.maxBattery)
+        if (root.displayBattery >= root.maxBattery)
             return 1
-        return (root.currBattery - root.minBattery) / (root.maxBattery - root.minBattery)
+        return (root.displayBattery - root.minBattery) / (root.maxBattery - root.minBattery)
     }
 
 
@@ -86,7 +105,9 @@ Item {
         height: 375
         radius: width / 2
         color: BaseTheme.sportBlack
-        layer.enabled: true
+         layer.enabled: true
+        layer.live: false
+        layer.smooth: false
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: BaseTheme.white
@@ -108,7 +129,9 @@ Item {
         color: BaseTheme.darkBlack
         border.color: BaseTheme.blackboard
         border.width: 2
-        layer.enabled: true
+         layer.enabled: true
+        layer.live: false
+        layer.smooth: false
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: BaseTheme.white
@@ -186,13 +209,6 @@ Item {
         }
     }
 
-    Behavior on currSpeed {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutQuad
-        }
-    }
-
     //? CENTER ARC INVOLVING THE MAIN TEXT
     Shape {
         id: centerArc
@@ -227,9 +243,9 @@ Item {
         spacing: 0
 
         Text {
-            text: Math.round(root.currSpeed)
+            text: Math.round(root.displaySpeed)
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 54
+            font.pixelSize: 48
             color: BaseTheme.gaugeMainTextInformation
         }
 
@@ -317,13 +333,6 @@ Item {
                 y: 36
                 rotation: -(root.secundaryAngleStart + (index * root.bottomAngleStep))
             }
-        }
-    }
-
-     Behavior on currBattery {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.InOutQuad
         }
     }
 }
