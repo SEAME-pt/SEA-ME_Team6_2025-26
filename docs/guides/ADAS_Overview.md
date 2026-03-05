@@ -1143,5 +1143,61 @@ There are four types of RNNs based on the number of inputs and outputs in the ne
 
     <img width="297" height="449" alt="image" src="https://github.com/user-attachments/assets/84afe717-0e65-4e20-b41a-d51db2d561fa" />
 
+2. **One-to-Many RNN**
+
+  - In a One-to-Many RNN the network processes a single input to produce multiple outputs over time. This is useful in tasks where one input triggers a sequence of predictions. For example in image captioning a single image can be used as input to generate a sequence of words as a caption.
+
+<img width="420" height="355" alt="image" src="https://github.com/user-attachments/assets/baf668b4-816e-4920-9e7a-2f36f960d848" />
 
 
+3. **Many-to-one RNN**
+
+   - The Many-to-One RNN receives a sequence of inputs and generates a single output. This type is useful when the overall context of the input sequence is needed to make one prediction.
+
+<img width="489" height="449" alt="image" src="https://github.com/user-attachments/assets/36c34aa1-cb85-4d54-abc6-a542dce4df17" />
+
+
+4. **Many-to-many**
+
+- The Many-to-Many RNN type processes a sequence of inputs and generates a sequence of outputs. In language translation task a sequence of words in one language is given as input and a corresponding sequence in another language is generated as output.
+
+<img width="489" height="449" alt="image" src="https://github.com/user-attachments/assets/94570080-0642-4624-a275-3d08b6511fa3" />
+
+
+**Variants of recurrent Neural Networks(RNNs)**
+
+1. Vanilla RNN
+
+   - This simplest form of RNN consists of a single hidden layer where weights are shared across time steps. Vanilla RNNs are suitable for learning short-term dependencies but are limited by the vanishing gradient problem, which hampers long-sequence learning.
+
+2. Bidirectional RNNs
+
+   - Bidirectional RNNs process inputs in both forward and backward directions, capturing both past and future context for each time step.
+
+3. Long Short-Term Memory Networks (LSTMs)
+
+   - Long Short-Term Memory Networks (LSTMs) introduce a memory mechanism to overcome the vanishing gradient problem. Each LSTM cell has three gates:
+
+    Input Gate: Controls how much new information should be added to the cell state.
+   
+    Forget Gate: Decides what past information should be discarded.
+   
+    Output Gate: Regulates what information should be output at the current step. This selective memory enables LSTMs to handle long-term dependencies, making them ideal for tasks where earlier context is critical.
+
+**How RNN Differs from Feedforward Neural Networks?**
+
+**Feedforward Neural Networks (FNNs)**
+
+  - Process data in a single direction, from input to output
+  - Do not store information from previous inputs
+  - Suitable for tasks with independent data, such as image classification
+  - Perform poorly on sequential data due to the absence of memory
+
+**Recurrent Neural Networks (RNNs)**
+
+  - Include feedback loops that pass information from previous steps
+  - Maintain memory of past inputs through hidden states
+  - Designed for sequential and time-dependent data
+  - Effective for tasks where context matters, such as text and time-series analysis
+
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/12ae6f0c-2f8c-40d6-b3e2-c242a4c4984e" />
