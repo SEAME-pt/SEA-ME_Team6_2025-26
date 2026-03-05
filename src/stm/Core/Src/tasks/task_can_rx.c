@@ -8,7 +8,7 @@
 #include "sys_helpers.h"  // sys_log
 #include "can_id.h"      // CAN_ID_*
 #include "can_tx.h"      // mcp_send_message()
-
+#include "stdbool.h"
 #include "motor_control.h"
 #include "servo.h"
 
@@ -172,10 +172,6 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  // Apply SRF08 speed limit (only clamps positive throttle)
-  //if (throttle > (int8_t)snap->srf08_speed_limit)
-  //  throttle = (int8_t)snap->srf08_speed_limit;
-
   // Apply combined AEB/SRF08 speed limit 
   uint8_t limit = snap->srf08_speed_limit;
   if (snap->aeb_speed_limit < limit) limit = snap->aeb_speed_limit;
@@ -204,10 +200,10 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (++s_rx.cmd_log_counter >= 10)
   {
     s_rx.cmd_log_counter = 0;
-    sys_log(ctx,
-      "\033[1;32m[CAN_RX] MotorCmd: T=%d S=%d Mode=%u Flags=0x%02X\033[0m",
-      throttle, steering, cmd->mode, cmd->flags
-    );
+    //sys_log(ctx,
+    //  "\033[1;32m[CAN_RX] MotorCmd: T=%d S=%d Mode=%u Flags=0x%02X\033[0m",
+    //  throttle, steering, cmd->mode, cmd->flags
+    //);
   }
 }
 
@@ -229,10 +225,10 @@ static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, co
 
   const Heartbeat_t* hb = (const Heartbeat_t*)rx_msg->data;
 
-  sys_log(ctx,
-    "\033[1;32m[CAN_RX] Heartbeat AGL: State=%u Uptime=%lu ms Errors=0x%02X\033[0m",
-    hb->state, hb->uptime_ms, hb->errors
-  );
+  //sys_log(ctx,
+  //  "\033[1;32m[CAN_RX] Heartbeat AGL: State=%u Uptime=%lu ms Errors=0x%02X\033[0m",
+  //  hb->state, hb->uptime_ms, hb->errors
+  //);
 
   // TODO watchdog timeout logic
 }
@@ -253,7 +249,7 @@ static void handle_indicator_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
     task_indicator_set_state(state);
 
     static const char* const names[] = { "OFF", "PISCA_ESQ", "PISCA_DIR", "FAROIS", "ALERTA" };
-    sys_log(ctx, "\033[1;33m[CAN_RX] INDICATOR -> %s\033[0m", names[state]);
+    //sys_log(ctx, "\033[1;33m[CAN_RX] INDICATOR -> %s\033[0m", names[state]);
 }
 
 static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
@@ -285,11 +281,13 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
 
   bool any_stop = (snap->emergency_stop_active || snap->aeb_stop_active);
 
-  if (any_stop && throttle >= 0) {
-      Motor_Stop();
-      s_rx.actual_throttle_applied = 0;
-      return;
-  }
+   if (any_stop && throttle >= 0)
+   {
+     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency/AEB! (Reverse OK)\033[0m");
+     Motor_Stop();
+     s_rx.actual_throttle_applied = 0;
+     return;
+   }
 
   if (steering < -100) steering = -100;
   if (steering > 100)  steering = 100;
@@ -302,8 +300,6 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
 
   if (throttle > (int8_t)limit)
     throttle = (int8_t)limit;
-  //if (throttle > (int8_t)snap->srf08_speed_limit)
-  //  throttle = (int8_t)snap->srf08_speed_limit;
 
   uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
   Servo_SetAngle(servo_angle);
@@ -328,10 +324,12 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   if (++s_rx.joystick_log_counter >= 10)
   {
     s_rx.joystick_log_counter = 0;
+    /*
     sys_log(ctx,
       "\033[1;34m[CAN_RX] Joystick: S=%d (%u°) T=%d\033[0m",
       (int)steering, (unsigned)servo_angle, (int)throttle
-    );
+
+    );*/
   }
 }
 
@@ -394,8 +392,8 @@ void task_can_rx_step(SystemCtx* ctx)
     uint8_t canstat = MCP2515_ReadRegister(REG_CANSTAT);
     uint8_t eflg    = MCP2515_ReadRegister(REG_EFLG);
     tx_mutex_put(&ctx->spi1_mutex);
-    sys_log(ctx, "[CAN_RX] CANINTF=0x%02X CANSTAT=0x%02X EFLG=0x%02X",
-            canintf, canstat, eflg);
+    //sys_log(ctx, "[CAN_RX] CANINTF=0x%02X CANSTAT=0x%02X EFLG=0x%02X",
+    //        canintf, canstat, eflg);
   }
 
   // periodic work (same behavior)
@@ -408,6 +406,18 @@ void task_can_rx_step(SystemCtx* ctx)
   tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
   snap = ctx->state;
   tx_mutex_put(&ctx->state_mutex);
+
+
+  bool any_stop = (snap.emergency_stop_active || snap.aeb_stop_active);
+
+   if (any_stop && s_rx.actual_throttle_applied > 0)
+   {
+     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency/AEB! (Reverse OK)\033[0m");
+     Motor_Stop();
+     s_rx.actual_throttle_applied = 0;
+     return;
+   }
+
 
   // RX drain with bounded work
   CAN_Message_t rx_msg;

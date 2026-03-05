@@ -51,3 +51,19 @@ chat-session-*.json
 # TSF Howtoimplement submodules
 docs/TSF/Howtoimplement/safety-monitor/
 docs/TSF/Howtoimplement/trustable/
+
+# STM 32CubeIDE
+# Build outputs
+Debug/
+Release/
+build/
+
+# Object files
+*.o
+*.d
+
+# Firmware outputs
+*.elf
+*.bin
+*.hex
+*.map

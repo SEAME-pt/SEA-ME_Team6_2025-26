@@ -249,7 +249,7 @@ void task_srf08_step(SystemCtx* ctx)
   {
     if (srf08_emergency_state != ESTOP_STATE_EMERGENCY)
     {
-      Motor_Stop();
+      //Motor_Stop();
 
       new_state = ESTOP_STATE_EMERGENCY;
       emergency_stop_active = 1;
@@ -341,7 +341,9 @@ void task_srf08_step(SystemCtx* ctx)
   ctx->state.srf08_distance_mm = distance_mm;
   ctx->state.srf08_light = light;
   ctx->state.srf08_speed_limit = srf08_speed_limit;
-  ctx->state.emergency_stop_active = emergency_stop_active;
+  //ctx->state.emergency_stop_active = emergency_stop_active;
+  ctx->state.srf08_ts = tx_time_get();
+  ctx->state.srf08_valid = (distance_cm != 0xFFFF) ? 1 : 0;  // 1 if read OK, else 0
   tx_mutex_put(&ctx->state_mutex);
 
   // 9) Keep "minimum lag" loop behavior

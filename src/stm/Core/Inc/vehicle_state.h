@@ -21,7 +21,7 @@ typedef struct {
     uint16_t aeb_ttc_ms;          // debug
     uint16_t aeb_dstop_mm;        // debug
     uint32_t aeb_ts;              // last AEB update (ms)
-    uint8_t  aeb_speed_limit;     // Speed limit from AEB (0-100%)
+    uint8_t  aeb_speed_limit;
 
     uint32_t srf08_ts;
     uint32_t speed_ts;
