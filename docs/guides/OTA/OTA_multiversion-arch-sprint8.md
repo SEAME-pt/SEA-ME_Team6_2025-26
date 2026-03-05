@@ -1,6 +1,6 @@
 # OTA Multi-Version Architecture - Sprint 8
 
-**Last Updated:** 13 February 2026
+**Last Updated:** 24 February 2026
 
 ---
 
@@ -440,6 +440,119 @@ ssh root@<IP> "echo 'enabled' > /etc/ota-auto-update"
 # Verify timer is active
 ssh root@<IP> "systemctl list-timers | grep ota"
 ```
+
+---
+
+## 🚗 Vehicle State During Updates
+
+**Can updates be performed while the vehicle is moving?**
+
+| Update Type | Vehicle State | Reason |
+|-------------|---------------|--------|
+| **COTA** (configs) | ✅ Can be moving | Only config files, no service restart |
+| **SOTA** (apps) | ⚠️ Recommended stopped | Service restart may affect UI |
+| **RAUC** (rootfs) | ✅ **Must be stopped** | Requires full system reboot |
+| **FOTA** (STM32) | ✅ **Must be stopped** | Microcontroller controls CAN! |
+
+**Automotive Industry Practice:**
+- Updates scheduled when vehicle is parked
+- Usually at night, connected to charger (EVs)
+- Critical updates require driver consent
+
+---
+
+## 📊 Dual Implementation: OTA Scripts + RAUC
+
+For academic purposes, we implement **both** update methods:
+
+| Feature | OTA Scripts (tar.gz) | RAUC (.raucb) |
+|---------|---------------------|---------------|
+| **Scope** | Application binaries only | Full rootfs image |
+| **Downtime** | ~6 seconds | ~30-60s (reboot) |
+| **Package Size** | 260KB - 4.6MB | 1-5GB |
+| **Risk** | Low (apps only) | Very low (A/B failsafe) |
+| **Rollback** | Version directory switch | A/B partition switch |
+| **Use Case** | Frequent, small updates | Major system releases |
+| **Example** | "Fix bug in Cluster UI" | "Upgrade AGL version" |
+
+**We use BOTH:**
+- OTA Scripts → Fast app updates (daily/weekly)
+- RAUC → System updates (monthly/quarterly)
+
+---
+
+## 🧪 Testing Strategy
+
+### Current Tests
+
+| Test | Purpose | Status |
+|------|---------|--------|
+| Hash verification (SHA256) | Package integrity | ✅ Implemented |
+| Architecture check | Binary matches CPU | ✅ Implemented |
+| Health check | Service starts OK | ✅ Implemented |
+| Rollback test | Reversion works | ✅ Tested (v1.9→v1.8) |
+| Signature verification | Bundle not tampered | ⚠️ RAUC only |
+
+### Testing Scripts (Created)
+
+| Script | Location | Purpose | Status |
+|--------|----------|---------|--------|
+| `smoke-test.sh` | `src/ota/scripts/` | 7+ automated post-update tests | ✅ Created |
+| `canary-check.sh` | `src/ota/scripts/` | Canary deployment support | ✅ Created |
+| `benchmark-ota.sh` | `src/ota/scripts/` | Performance comparison tar.gz vs RAUC | ✅ Created |
+
+### Smoke Test (`smoke-test.sh`)
+
+Automatic post-update verification with 7+ tests:
+
+```bash
+# Deploy and run smoke test
+scp src/ota/scripts/smoke-test.sh root@10.21.220.191:/opt/ota/
+ssh root@10.21.220.191 "chmod +x /opt/ota/smoke-test.sh && /opt/ota/smoke-test.sh"
+```
+
+**Tests performed:**
+1. Service is active
+2. Process is running
+3. No restart loop (< 3 restarts)
+4. Binary exists and is executable
+5. Binary architecture matches system
+6. Version file exists
+7. OTA symlink is valid
+8. VSS configuration exists (RPi5 only)
+
+### Canary Deployment (`canary-check.sh`)
+
+For our 2 devices:
+- **Canary**: RPi5 receives update first
+- Wait 24h and verify functionality
+- If OK → Update RPi4
+- If NOT OK → Investigate before updating RPi4
+
+```bash
+# Configure device roles
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh set-role canary"      # RPi5
+ssh root@10.21.220.192 "/opt/ota/canary-check.sh set-role production"  # RPi4
+
+# Check status
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh status"
+```
+
+### A/B Comparison Test (`benchmark-ota.sh`)
+
+Benchmark script to compare both methods:
+
+```bash
+# Run benchmark from development machine
+./src/ota/scripts/benchmark-ota.sh v1.10.0 rpi5
+```
+
+**Metrics measured:**
+- Package/bundle size
+- Download time
+- Installation time
+- Total update time
+- Service status after update
 
 ---
 

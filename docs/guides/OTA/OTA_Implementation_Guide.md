@@ -1,8 +1,8 @@
 # 📡 OTA Implementation Guide — SEA:ME Team 6
 
-**Last Updated:** 13 February 2026  
+**Last Updated:** 24 February 2026  
 **Branch:** `feature/OTA/implementation`  
-**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Configured
+**Status:** ✅ Multi-Platform Tested (RPi4 + RPi5), RAUC Configured, Dual Implementation (tar.gz + RAUC)
 
 ---
 
@@ -20,7 +20,9 @@
 10. [Security Considerations](#10-security-considerations)
 11. [Future Roadmap](#11-future-roadmap)
 12. [Troubleshooting](#12-troubleshooting)
-13. [References](#13-references)
+13. [Testing Strategy](#13-testing-strategy)
+14. [FAQ - Frequently Asked Questions](#14-faq---frequently-asked-questions)
+15. [References](#15-references)
 
 ---
 
@@ -88,7 +90,7 @@ In simple terms:
 | **SOTA** | Software OTA | Update applications/services | ✅ Implemented |
 | **COTA** | Configuration OTA | Update configs without code change | ✅ Implemented |
 
-### 2.2 SOTA (Software OTA) — Currently Implemented
+### 2.2 SOTA (Software OTA) — ✅ Implemented
 
 Updates user-space software:
 - Binaries (e.g., `kuksa` publisher)
@@ -96,7 +98,12 @@ Updates user-space software:
 - Qt applications
 - Python scripts
 
-### 2.3 COTA (Configuration OTA) — Currently Implemented
+**Currently implemented:**
+- `can_to_kuksa_publisher` binary → installed in `/home/kuksa_RPi5/bin/`
+- `can-to-kuksa.service` → systemd service updated via OTA
+- `HelloQt6Qml` → Qt6 Cluster UI on RPi4
+
+### 2.3 COTA (Configuration OTA) — ✅ Implemented
 
 Updates configuration without reboot:
 - VSS tree (`vss_min.json`)
@@ -104,12 +111,21 @@ Updates configuration without reboot:
 - Feature flags
 - CAN parameters
 
-### 2.4 FOTA (Firmware OTA) — Planned
+**Currently implemented:**
+- `vss_min.json` is included in `update-rpi5.tar.gz` and installed alongside the binary
+- Allows remote update of VSS configuration without code changes
+
+### 2.4 FOTA (Firmware OTA) — 📋 Planned
 
 Updates firmware on STM32:
 - Application only (not bootloader)
 - Via AGL gateway over CAN/UART
 - UDS-inspired protocol
+
+**Not yet implemented.** This would be the next step:
+- Send firmware `.bin` via CAN or UART to the STM32
+- STM32 bootloader receives and flashes
+- More complex as it requires custom bootloader on STM32
 
 ---
 
@@ -289,6 +305,20 @@ We chose a **phased approach**:
 | **Phase C** | Atomic symlinks + auto-polling | ✅ Complete |
 | **Phase D** | RAUC (A/B rootfs) | ✅ Configured |
 
+#### Phase D Clarification: When to use RAUC vs OTA Scripts?
+
+**Phase D (RAUC A/B rootfs)** was designed to support **two scenarios**:
+
+| Scenario | Description | Recommended Method |
+|----------|-------------|--------------------|
+| **Production** | Cars with limited 4G, need efficient updates | OTA scripts for app patches, RAUC for major releases |
+| **Development** | Lab environment with fast network | Can use only RAUC if simplicity is preferred |
+
+**Our approach (Academic Exercise):** We implement **BOTH** methods:
+- Maintain tar.gz (OTA scripts) → fast, lightweight app updates
+- Add RAUC bundles in parallel → full system updates with A/B safety
+- **Document comparative tests** (time, size, rollback, etc.)
+
 ### 4.2 Why This Order?
 
 1. **Phase A** (Manual) — Proves the concept works with hello-ota test
@@ -304,13 +334,13 @@ This approach:
 
 ### 4.3 What We Update
 
-| Component | Type | Method | Status |
-|-----------|------|--------|--------|
-| `kuksa` publisher | SOTA | systemd + script | ✅ Working |
-| Qt Cluster app | SOTA | systemd + script | ✅ Working |
-| VSS tree (`vss_min.json`) | COTA | File copy | ✅ Working |
-| CAN services | SOTA | systemd | ✅ Working |
-| STM32 firmware | FOTA | CAN/UART | 📋 Planned |
+| Component | Type | Method | Status | Details |
+|-----------|------|--------|--------|----------|
+| `kuksa` publisher | SOTA | systemd + script | ✅ Working | `can_to_kuksa_publisher` on RPi5 |
+| Qt Cluster app | SOTA | systemd + script | ✅ Working | `HelloQt6Qml` on RPi4 |
+| VSS tree (`vss_min.json`) | COTA | File copy | ✅ Working | Included in `update-rpi5.tar.gz` |
+| CAN services | SOTA | systemd | ✅ Working | `can-to-kuksa.service` |
+| STM32 firmware | FOTA | CAN/UART | 📋 Planned | Requires STM32 bootloader |
 
 ---
 
@@ -2091,6 +2121,290 @@ git tag vX.Y.Z && git push origin vX.Y.Z
 
 ---
 
-**Document Version:** 1.0  
+## 13. Testing Strategy
+
+### 13.1 Current Tests Implemented
+
+| Test Type | What it tests | Status | Implementation |
+|-----------|---------------|--------|----------------|
+| **Hash verification** | Package integrity | ✅ Implemented | SHA256 check before install |
+| **Architecture check** | Binary matches CPU | ✅ Implemented | `file` command verification |
+| **Health check** | Service starts without crash | ✅ Implemented | Restart loop detection (3+ in 10s = failure) |
+| **Rollback test** | Reversion works | ✅ Tested | Tested v1.9.0→v1.8.0 |
+| **Integration tests** | App works after update | ❌ Manual | Not automated yet |
+| **Signature verification** | Bundle not tampered | ⚠️ Partial | RAUC has X.509, scripts use SHA256 only |
+
+### 13.2 Smoke Test (Post-Update Verification)
+
+A **smoke test** is a quick, basic check that verifies the application "breathes" after an update.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      SMOKE TEST                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  After update v1.9.0 → v1.10.0:                                 │
+│                                                                 │
+│  1. Service running?                                            │
+│     $ systemctl is-active can-to-kuksa.service                  │
+│     → "active" ✅  or  "failed" ❌                               │
+│                                                                 │
+│  2. Binary responds?                                            │
+│     $ /opt/cluster/HelloQt6Qml --version                        │
+│     → "v1.10.0" ✅  or  timeout ❌                               │
+│                                                                 │
+│  3. Port listening? (for network services)                      │
+│     $ curl -s http://localhost:8080/health                      │
+│     → "OK" ✅  or  connection refused ❌                         │
+│                                                                 │
+│  If any test fails → AUTOMATIC ROLLBACK!                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Example implementation for KUKSA publisher:**
+```bash
+smoke_test() {
+    # 1. Service active?
+    systemctl is-active can-to-kuksa.service || return 1
+    
+    # 2. Process exists?
+    pgrep -f can_to_kuksa_publisher || return 1
+    
+    # 3. Not in restart loop?
+    restarts=$(systemctl show can-to-kuksa.service -p NRestarts --value)
+    [ "$restarts" -lt 3 ] || return 1
+    
+    return 0  # Passed!
+}
+```
+
+### 13.3 Canary Deployment
+
+**Canary deployment** means updating **only 1 device first**, verifying it works, and only then updating the rest.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    CANARY DEPLOYMENT                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Imagine 100 cars in a fleet:                                   │
+│                                                                 │
+│  PHASE 1 (Canary):                                              │
+│  ┌─────┐                                                        │
+│  │ 🐤  │ ← Car #1 receives v1.10.0                              │
+│  └─────┘                                                        │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ... ┌─────┐                            │
+│  │v1.9 │ │v1.9 │ │v1.9 │     │v1.9 │ ← 99 cars stay on v1.9.0   │
+│  └─────┘ └─────┘ └─────┘     └─────┘                            │
+│                                                                 │
+│  Wait 24h... Car #1 is OK? ✅                                   │
+│                                                                 │
+│  PHASE 2 (10%):                                                 │
+│  Update 10 cars → wait 24h → all OK? ✅                         │
+│                                                                 │
+│  PHASE 3 (100%):                                                │
+│  Update entire fleet!                                           │
+│                                                                 │
+│  IF problem on Canary → STOP and investigate!                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**In our case (2 devices):**
+- Canary: RPi5 receives update first
+- If OK → Update RPi4
+- If NOT OK → Investigate, don't update RPi4
+
+### 13.4 A/B Comparison Test (RAUC vs tar.gz)
+
+Execute **both update methods** and compare metrics:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    A/B COMPARISON TEST                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  TEST: Update v1.9.0 → v1.10.0                                  │
+│                                                                 │
+│  ┌──────────────────────┐    ┌──────────────────────┐           │
+│  │    OTA Scripts       │    │       RAUC           │           │
+│  │    (tar.gz)          │    │      (.raucb)        │           │
+│  ├──────────────────────┤    ├──────────────────────┤           │
+│  │ Size: 4.6 MB         │    │ Size: 1.2 GB         │           │
+│  │ Download: 1.2s       │    │ Download: 45s        │           │
+│  │ Install: 3.1s        │    │ Install: 120s        │           │
+│  │ Downtime: 0s         │    │ Downtime: 35s        │           │
+│  │ Total: 4.3s          │    │ Total: 200s          │           │
+│  │ Rollback: Manual     │    │ Rollback: Auto boot  │           │
+│  │ Signature: SHA256    │    │ Signature: X.509     │           │
+│  └──────────────────────┘    └──────────────────────┘           │
+│                                                                 │
+│  CONCLUSION:                                                    │
+│  - OTA Scripts: Better for frequent app updates                 │
+│  - RAUC: Better for full system updates                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 13.5 Testing Scripts (Created and Ready to Use)
+
+| Script | Location | Purpose | Status |
+|--------|----------|---------|--------|
+| `smoke-test.sh` | `src/ota/scripts/` | 7+ automated post-update tests | ✅ Created |
+| `canary-check.sh` | `src/ota/scripts/` | Canary deployment support | ✅ Created |
+| `benchmark-ota.sh` | `src/ota/scripts/` | Performance comparison tar.gz vs RAUC | ✅ Created |
+
+#### How to Deploy and Use the Testing Scripts
+
+**Step 1: Copy scripts to devices**
+```bash
+# Copy all test scripts to RPi5
+scp src/ota/scripts/smoke-test.sh src/ota/scripts/canary-check.sh \
+    root@10.21.220.191:/opt/ota/
+
+# Copy all test scripts to RPi4
+scp src/ota/scripts/smoke-test.sh src/ota/scripts/canary-check.sh \
+    root@10.21.220.192:/opt/ota/
+
+# Make them executable
+ssh root@10.21.220.191 "chmod +x /opt/ota/*.sh"
+ssh root@10.21.220.192 "chmod +x /opt/ota/*.sh"
+```
+
+**Step 2: Run smoke test after an update**
+```bash
+# On RPi5
+ssh root@10.21.220.191 "/opt/ota/smoke-test.sh"
+
+# On RPi4
+ssh root@10.21.220.192 "/opt/ota/smoke-test.sh"
+```
+
+**Step 3: Configure canary deployment**
+```bash
+# Set RPi5 as canary (receives updates first)
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh set-role canary"
+
+# Set RPi4 as production (waits 24h after canary)
+ssh root@10.21.220.192 "/opt/ota/canary-check.sh set-role production"
+
+# Check status
+ssh root@10.21.220.191 "/opt/ota/canary-check.sh status"
+```
+
+**Step 4: Run benchmark comparison**
+```bash
+# Run from development machine (requires SSH access)
+./src/ota/scripts/benchmark-ota.sh v1.10.0 rpi5
+```
+
+---
+
+## 14. FAQ - Frequently Asked Questions
+
+### Q1: Can I use only RAUC instead of OTA scripts?
+
+**Yes!** Technically you can use RAUC for everything, but there are trade-offs:
+
+| Aspect | OTA Scripts | RAUC |
+|--------|-------------|------|
+| **Update time** | ~6 seconds | ~30-60s (reboot required) |
+| **Package size** | 260KB-4.6MB (binary only) | 1-5GB (entire rootfs) |
+| **Downtime** | Zero (hot swap) | 30s+ (reboot) |
+| **Practical frequency** | Several times/day | 1x per week/month |
+| **Bandwidth** | Low | High |
+
+**Recommendation:**
+- **Production (limited 4G):** OTA scripts for patches, RAUC for major releases
+- **Development:** Can use only RAUC if you prefer simplicity
+
+### Q2: What's currently implemented for SOTA/COTA?
+
+| Component | Type | Status | Details |
+|-----------|------|--------|---------|
+| `can_to_kuksa_publisher` | SOTA | ✅ Working | Binary at `/home/kuksa_RPi5/bin/` |
+| `can-to-kuksa.service` | SOTA | ✅ Working | systemd service, updated via OTA |
+| `HelloQt6Qml` | SOTA | ✅ Working | Qt6 Cluster UI on RPi4 |
+| `vss_min.json` | COTA | ✅ Working | Included in `update-rpi5.tar.gz` |
+
+### Q3: What about FOTA (STM32)?
+
+**Not yet implemented!** Marked as "📋 Planned" in the roadmap.
+
+Next steps would be:
+- Send firmware `.bin` via CAN or UART to STM32
+- STM32 bootloader receives and flashes
+- More complex because it requires custom bootloader on STM32
+
+### Q4: Can updates be done while the car is moving?
+
+**Depends on the update type:**
+
+| Type | Car Stopped? | Reason |
+|------|--------------|--------|
+| **COTA** (configs) | ❌ Can be moving | Only config files, no restart |
+| **SOTA** (apps) | ⚠️ Recommended stopped | Service restart may affect UI |
+| **RAUC** (rootfs) | ✅ **Must be stopped** | Requires full reboot |
+| **FOTA** (STM32) | ✅ **Must be stopped** | Microcontroller controls CAN! |
+
+**In the automotive industry:**
+- Updates are scheduled when the car is parked
+- Usually at night, connected to charger (EVs)
+- Some critical updates require driver consent
+
+### Q5: Does OTA testing make sense?
+
+**Absolutely yes!** OTA tests are critical:
+
+| Test Type | What it tests | Status |
+|-----------|---------------|--------|
+| Hash verification | Package integrity | ✅ Implemented |
+| Architecture check | Correct binary for CPU | ✅ Implemented |
+| Health check | Service starts without crash | ✅ Implemented |
+| Rollback test | Reversion works | ✅ Tested |
+| Integration tests | App works after update | ❌ Manual |
+| Signature verification | Bundle not tampered | ⚠️ Partial |
+
+### Q6: What's the difference between Smoke Test, Canary, and A/B Comparison?
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    3 QUALITY CONCEPTS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  SMOKE TEST       = "Does the app still work?" (post-update)    │
+│  ───────────                                                    │
+│  • Quick verification (seconds)                                 │
+│  • Automatic after each update                                  │
+│  • Failure → Immediate rollback                                 │
+│                                                                 │
+│  CANARY           = "Test on one before updating all"           │
+│  ──────                                                         │
+│  • 1 device first                                               │
+│  • Wait X hours                                                 │
+│  • OK → Update the rest                                         │
+│                                                                 │
+│  A/B COMPARISON   = "Which method is better?"                   │
+│  ──────────────                                                 │
+│  • Test both methods                                            │
+│  • Measure metrics (time, size, etc.)                           │
+│  • Document results                                             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 15. References
+
+- [RAUC Documentation](https://rauc.readthedocs.io/)
+- [AGL OTA Best Practices](https://docs.automotivelinux.org/)
+- [Uptane Security Framework](https://uptane.github.io/)
+- [systemd Service Management](https://www.freedesktop.org/software/systemd/man/)
+
+---
+
+**Document Version:** 2.0  
 **Author:** SEA:ME Team 6  
-**Last Updated:** February 2026
+**Last Updated:** 24 February 2026
