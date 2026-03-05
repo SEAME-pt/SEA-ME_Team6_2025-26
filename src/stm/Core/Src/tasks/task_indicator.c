@@ -98,8 +98,8 @@ void task_indicator_step(SystemCtx *ctx)
     if (alive_tick >= 4000U)
     {
         alive_tick = 0U;
-        sys_log(ctx, "[Indicator] Alive | estado=%s led_on=%u",
-                indicator_name(state), led_on);
+        //sys_log(ctx, "[Indicator] Alive | estado=%s led_on=%u",
+        //        indicator_name(state), led_on);
     }
 
     /* ---- Advance blink timer ---- */

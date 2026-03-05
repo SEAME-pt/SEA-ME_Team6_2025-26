@@ -121,7 +121,7 @@ static const AebParams P = {
   .a_brake_mps2 = 3.0f, //model of how quickly we can decelerate - change this in tests
 
   .ttc_warn_s   = 1.5f,
-  .ttc_brake_s  = 0.9f, //the real time to break - chang this in tests
+  .ttc_brake_s  = 0.7f, //the real time to break - chang this in tests it was 0.9
   .margin_warn_m  = 0.30f,
   .margin_brake_m = 0.10f,
 
@@ -134,10 +134,10 @@ static const AebParams P = {
   .max_srf_age_ms   = 200,
   .max_speed_age_ms = 200,
 
-  .safe_unlatch_dist_m = 1.0f,
+  .safe_unlatch_dist_m = 0.2f, // it was 1.0
   .safe_unlatch_hold_ms = 1000u,
 
-  .ttc_comfort_s = 1.3f,   // TTC threshold for "comfort braking" (inside WARN state)
+  .ttc_comfort_s = 1.2f,   // TTC threshold for "comfort braking" (inside WARN state)
   .v_max_mps = 2.35f,       // change this after measure max speed at full throttle
   .min_creep_pct = 10u,
   .limit_slew_pct_per_step = 5u
@@ -280,7 +280,7 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
     desired_limit = 0;
   } else {
   // Soft layer active only when moving forward-ish
-  if (v_mps > 0.2f) {
+  if (v_mps > 0.1f) { //changed 0.2 to 0.1
     float v_target = d_eff / P.ttc_comfort_s;   // TTC-based target speed
     if (v_target < 0.0f) v_target = 0.0f;
     if (v_target > P.v_max_mps) v_target = P.v_max_mps;
@@ -300,6 +300,12 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   if (diff < -max_step) desired_limit = (uint8_t)(s_aeb.last_limit - max_step);
 
   s_aeb.last_limit = desired_limit;
+
+  //added log to see if soft braking is active
+  #define COLOR_GREEN   "\x1b[32m"
+  #define COLOR_RESET   "\x1b[0m"
+  sys_log(ctx, COLOR_GREEN "[AEB] current_speed=%.2f desired_limit=%u%%" COLOR_RESET,
+          v_mps, desired_limit);
 
   // Publish
   tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);

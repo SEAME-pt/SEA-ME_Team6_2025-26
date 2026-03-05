@@ -100,14 +100,13 @@ void task_battery_step(SystemCtx* ctx)
 
     mcp_send_message(CAN_ID_BATTERY, (uint8_t*)&f, sizeof(f));
 
-    /* Log */
+    /* Log
     if (s_batt.ina_status == HAL_OK && s_batt.ina.valid) {
         sys_log(ctx, "[Battery] %.2fV | %.2fA | %.2fW | SOC=%u%% | Status=0x%02X",
                 s_batt.ina.voltage_V, s_batt.ina.current_A, s_batt.ina.power_W,
                 (unsigned)s_batt.soc, (unsigned)s_batt.status);
     } else {
         sys_log(ctx, "[Battery] SENSOR ERROR | Status=0x%02X", (unsigned)s_batt.status);
-    }
-
+    }*/
     tx_thread_sleep(CAN_PERIOD_BATTERY_MS);
 }

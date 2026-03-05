@@ -24,15 +24,23 @@ void task_speed_step(SystemCtx* ctx)
     float speed_kmh = Speedometer_GetSpeed();
     float rpm_f     = Speedometer_GetRPM();
 
+    //Apply low-pass filters to speed and rpm
+    static float speed_kmh_filtered = 0.0f;
+    static float rpm_filtered = 0.0f;
+
+    const float alpha = 0.2f;
+    speed_kmh_filtered = speed_kmh_filtered + alpha * ((float)speed_kmh - speed_kmh_filtered);
+    rpm_filtered = rpm_filtered + alpha * ((float)rpm_f - rpm_filtered);
+
     if (speed_kmh < 0.0f)
         speed_kmh = 0.0f;
 
     /* Convert once: km/h → m/h */
-    uint32_t speed_mh = (uint32_t)(speed_kmh * 1000.0f);
+    uint32_t speed_mh = (uint32_t)(speed_kmh_filtered * 1000.0f);
 
     /* Update shared VehicleState */
     tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-    ctx->state.rpm        = (int32_t)rpm_f;
+    ctx->state.rpm        = (int32_t)rpm_filtered;
     ctx->state.rpm_ts     = tx_time_get();
     ctx->state.speed_mh  = speed_mh;
     ctx->state.speed_ts   = tx_time_get();

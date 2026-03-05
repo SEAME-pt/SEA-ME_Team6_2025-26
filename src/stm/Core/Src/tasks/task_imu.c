@@ -124,14 +124,16 @@ void task_imu_step(SystemCtx* ctx)
     }
 
     /* log only when we have a full set */
+    /*
     if (st_accel == HAL_OK && st_gyro == HAL_OK && st_mag == HAL_OK) {
-        sys_log(ctx,
+    	sys_log(ctx,
             "[IMU] Accel(%.2f, %.2f, %.2f)g | Gyro(%.1f, %.1f, %.1f)dps | Mag(%.0f, %.0f, %.0f)mG",
             s_imu.accel.x, s_imu.accel.y, s_imu.accel.z,
             s_imu.gyro.x,  s_imu.gyro.y,  s_imu.gyro.z,
             s_imu.mag.x,   s_imu.mag.y,   s_imu.mag.z
         );
     }
+    */
 
     uint32_t imu_sleep = (CAN_PERIOD_IMU_FAST_MS > 10) ? (CAN_PERIOD_IMU_FAST_MS - 10) : 0;
     tx_thread_sleep(imu_sleep);
