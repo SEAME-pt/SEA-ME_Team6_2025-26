@@ -128,7 +128,7 @@
 
 # 🔎 Retrospective
 - ## **Went well**:
-  - 
+  - We were able to limit our sprint capacity to 100 points. 
 
 - ## **To improve**: 
   - We need to move from research to reality — next sprint, we get our hands on real camera feeds and run our first model inference.
