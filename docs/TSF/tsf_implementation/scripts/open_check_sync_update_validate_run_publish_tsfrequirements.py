@@ -23,12 +23,96 @@ Date: January 2026
 import os
 import re
 import sys
-import yaml
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum
+
+
+# ============================================================================
+# DEPENDENCY CHECK
+# ============================================================================
+
+def check_dependencies() -> Tuple[bool, List[str]]:
+    """
+    Check all required dependencies are available.
+    Returns (success, list of error messages).
+    """
+    errors = []
+    
+    # Check required Python packages
+    required_packages = {
+        'yaml': 'pyyaml',
+    }
+    
+    for module, package in required_packages.items():
+        try:
+            __import__(module)
+        except ImportError:
+            errors.append(f"❌ Python package '{package}' not found. Install with: pip install {package}")
+    
+    # Check if git is available
+    try:
+        result = subprocess.run(['git', '--version'], capture_output=True, text=True, timeout=5)
+        if result.returncode != 0:
+            errors.append("❌ Git not found or not working properly")
+    except (subprocess.SubprocessError, FileNotFoundError):
+        errors.append("❌ Git not found. Please install git.")
+    
+    # Check if we're in a git repository
+    try:
+        result = subprocess.run(['git', 'rev-parse', '--git-dir'], capture_output=True, text=True, timeout=5)
+        if result.returncode != 0:
+            errors.append("❌ Not in a git repository. This script must run from within a git repo.")
+    except subprocess.SubprocessError:
+        errors.append("❌ Failed to check git repository status")
+    
+    return len(errors) == 0, errors
+
+
+def print_startup_diagnostics():
+    """Print diagnostic information at startup."""
+    print("\n" + "="*70)
+    print("🔍 STARTUP DIAGNOSTICS")
+    print("="*70)
+    
+    # Check dependencies
+    deps_ok, dep_errors = check_dependencies()
+    
+    if deps_ok:
+        print("   ✅ All dependencies OK")
+    else:
+        print("   ⚠️  Dependency issues found:")
+        for error in dep_errors:
+            print(f"      {error}")
+    
+    # Check Python version
+    py_version = sys.version_info
+    print(f"   📍 Python version: {py_version.major}.{py_version.minor}.{py_version.micro}")
+    if py_version < (3, 8):
+        print("      ⚠️  Python 3.8+ recommended")
+    
+    # Check working directory
+    print(f"   📍 Working directory: {os.getcwd()}")
+    
+    # Check if venv is active
+    venv = os.environ.get('VIRTUAL_ENV')
+    if venv:
+        print(f"   📍 Virtual environment: {Path(venv).name}")
+    else:
+        print("   ℹ️  No virtual environment active (optional)")
+    
+    print("="*70)
+    
+    return deps_ok
+
+
+# Import yaml after dependency check setup (will fail gracefully if not installed)
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 
 # ============================================================================
@@ -93,6 +177,9 @@ class Config:
     """Configuration loader and manager."""
     
     def __init__(self, config_path: Optional[str] = None):
+        if yaml is None:
+            raise ImportError("PyYAML is required. Install with: pip install pyyaml")
+        
         if config_path is None:
             # Default to config.yaml in same directory
             script_dir = Path(__file__).parent
@@ -164,17 +251,19 @@ class EvidenceParser:
     Robust parser for extracting evidence links from sprint files.
     Handles various formats:
     - EXPECT-L0-X - "text" followed by markdown links
+    - EXPECT_L0_X - "text" (underscore variant)
     - EXPECT-L0-X - "text": followed by indented links
     - ![image](url) format
     - [text](url) format
+    - Raw URLs on indented lines following EXPECT headers
     """
     
     def __init__(self, config: Config):
         self.config = config
-        # Compile regex patterns
+        # Compile regex patterns - support both underscore and hyphen variants
         self.patterns = {
             'expect_header': re.compile(
-                r'EXPECT-L0-(\d+)\s*[-–]\s*["\']?([^"\'\n:]+)["\']?:?',
+                r'EXPECT[-_]L0[-_](\d+)\s*[-–]\s*["\']?([^"\'\n:]+)["\']?:?',
                 re.IGNORECASE
             ),
             'markdown_link': re.compile(
@@ -207,17 +296,24 @@ class EvidenceParser:
         
         current_expect_id = None
         current_expect_desc = None
+        current_expect_indent = 0  # Track indentation level
         
         for i, line in enumerate(lines):
-            # Check for EXPECT-L0-X header
+            # Check for EXPECT-L0-X or EXPECT_L0_X header
             expect_match = self.patterns['expect_header'].search(line)
             if expect_match:
                 current_expect_id = f"EXPECT-L0-{expect_match.group(1)}"
                 current_expect_desc = expect_match.group(2).strip()
+                # Calculate indentation of this EXPECT line
+                current_expect_indent = len(line) - len(line.lstrip())
                 continue
             
             # If we have a current EXPECT, look for links in following lines
             if current_expect_id:
+                # Check line indentation - only process lines more indented than the EXPECT
+                line_indent = len(line) - len(line.lstrip())
+                stripped_line = line.strip()
+                
                 # Check for markdown images
                 for img_match in self.patterns['markdown_image'].finditer(line):
                     alt_text = img_match.group(1) or "image"
@@ -247,15 +343,41 @@ class EvidenceParser:
                         source_file=source_file
                     ))
                 
-                # Reset if we hit an empty line or new section
-                if not line.strip() or line.startswith('#') or line.startswith('**'):
-                    # Check if next line also starts with EXPECT to continue
-                    if i + 1 < len(lines):
-                        next_line = lines[i + 1]
-                        if not self.patterns['expect_header'].search(next_line):
-                            if not line.strip():
-                                current_expect_id = None
-                                current_expect_desc = None
+                # NEW: Check for raw URLs on indented lines (common in sprint files)
+                # Only if line is more indented than the EXPECT header
+                if line_indent > current_expect_indent and stripped_line:
+                    for url_match in self.patterns['raw_url'].finditer(stripped_line):
+                        url = url_match.group(0)
+                        # Check if this URL was already captured as part of markdown syntax
+                        already_captured = any(
+                            e.url == url and e.expect_id == current_expect_id 
+                            for e in evidence_links
+                        )
+                        if not already_captured:
+                            # Determine link type from URL
+                            link_type = "image" if any(ext in url.lower() for ext in ['.png', '.jpg', '.jpeg', '.gif', '.svg', 'assets']) else "link"
+                            evidence_links.append(EvidenceLink(
+                                expect_id=current_expect_id,
+                                description=f"Evidence from {source_file}",
+                                url=url,
+                                link_type=link_type,
+                                source_file=source_file
+                            ))
+                
+                # Reset if we hit a line at same or less indentation (new section)
+                # or if we hit specific section markers
+                if stripped_line and line_indent <= current_expect_indent:
+                    # Don't reset if this is another EXPECT (will be handled above)
+                    if not self.patterns['expect_header'].search(line):
+                        current_expect_id = None
+                        current_expect_desc = None
+                        current_expect_indent = 0
+                
+                # Also reset on major section changes
+                if line.startswith('#') or (line.startswith('**') and line.endswith('**')):
+                    current_expect_id = None
+                    current_expect_desc = None
+                    current_expect_indent = 0
         
         return evidence_links
     
@@ -1564,6 +1686,231 @@ def open_check(config: Config) -> Dict[str, Any]:
     return status
 
 
+def sync_evidence_from_sprints(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Synchronize evidence from sprint files to:
+    1. The requirements table (tsf-requirements-table.md)
+    2. The EVID files (docs/TSF/tsf_implementation/items/evidences/)
+    
+    Source of Truth: Sprint files → Table → EVID files
+    """
+    print("\n" + "="*70)
+    print("🔄 SYNCING EVIDENCE FROM SPRINTS")
+    print("="*70)
+    
+    sync_status = {
+        'table_updates': [],
+        'evid_updates': [],
+        'errors': []
+    }
+    
+    sprint_evidence = check_status.get('sprint_evidence', {})
+    sync_needed = check_status.get('sync_needed', [])
+    table_rows = check_status.get('table_rows', [])
+    
+    if not sprint_evidence:
+        print("   ℹ️  No sprint evidence found to sync")
+        return sync_status
+    
+    if not sync_needed:
+        print("   ✅ All evidence already synced")
+        return sync_status
+    
+    # Ask user before syncing
+    print(f"\n📋 Found {len(sync_needed)} requirement(s) needing evidence sync:")
+    for req_id, sync_type in sync_needed:
+        expect_id = f"EXPECT-{req_id}"
+        if expect_id in sprint_evidence:
+            urls = [e.url for e in sprint_evidence[expect_id]]
+            print(f"   • {req_id}: {len(urls)} evidence URL(s) from sprints")
+    
+    print("\n🔧 Options:")
+    print("   [y] Sync all evidence (update table + EVID files)")
+    print("   [t] Sync to table only")
+    print("   [e] Sync to EVID files only")
+    print("   [n] Skip sync")
+    
+    choice = input("\n>>> Choose option [y/t/e/n]: ").strip().lower()
+    
+    if choice == 'n':
+        print("   ⏭️  Skipping evidence sync")
+        return sync_status
+    
+    sync_table = choice in ['y', 't']
+    sync_evid = choice in ['y', 'e']
+    
+    # 1. Sync to table
+    if sync_table:
+        print("\n📊 Syncing evidence to requirements table...")
+        try:
+            table_updates = _sync_evidence_to_table(config, sprint_evidence, table_rows)
+            sync_status['table_updates'] = table_updates
+            if table_updates:
+                print(f"   ✅ Updated {len(table_updates)} row(s) in table")
+            else:
+                print("   ℹ️  No table updates needed")
+        except Exception as e:
+            error_msg = f"Error syncing to table: {e}"
+            sync_status['errors'].append(error_msg)
+            print(f"   ❌ {error_msg}")
+    
+    # 2. Sync to EVID files
+    if sync_evid:
+        print("\n📁 Syncing evidence to EVID files...")
+        try:
+            evid_updates = _sync_evidence_to_evid_files(config, sprint_evidence)
+            sync_status['evid_updates'] = evid_updates
+            if evid_updates:
+                print(f"   ✅ Updated {len(evid_updates)} EVID file(s)")
+            else:
+                print("   ℹ️  No EVID updates needed")
+        except Exception as e:
+            error_msg = f"Error syncing to EVID files: {e}"
+            sync_status['errors'].append(error_msg)
+            print(f"   ❌ {error_msg}")
+    
+    return sync_status
+
+
+def _sync_evidence_to_table(config: Config, sprint_evidence: Dict[str, List[EvidenceLink]], 
+                            table_rows: List[TableRow]) -> List[str]:
+    """
+    Update the requirements table with evidence URLs from sprints.
+    Returns list of updated row IDs.
+    """
+    updated_rows = []
+    
+    # Read current table content
+    table_path = config.requirements_table
+    with open(table_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    lines = content.split('\n')
+    new_lines = []
+    
+    for line in lines:
+        # Check if this is a table row (starts with |)
+        if line.strip().startswith('|'):
+            # Try to match L0-X pattern
+            match = re.search(r'\*\*L0-(\d+)\*\*', line)
+            if match:
+                req_num = match.group(1)
+                expect_id = f"EXPECT-L0-{req_num}"
+                
+                if expect_id in sprint_evidence and sprint_evidence[expect_id]:
+                    # Build evidence string from sprint URLs
+                    evidence_links = sprint_evidence[expect_id]
+                    evidence_parts = []
+                    
+                    for ev in evidence_links:
+                        if ev.link_type == "image":
+                            evidence_parts.append(f"![{ev.description}]({ev.url})")
+                        else:
+                            evidence_parts.append(f"[{ev.description}]({ev.url})")
+                    
+                    evidence_str = " ".join(evidence_parts)
+                    
+                    # Check if current evidence column is empty or just has placeholder
+                    # Table format: | ID | Requirement | Acceptance | Method | Evidence |
+                    parts = line.split('|')
+                    if len(parts) >= 6:
+                        current_evidence = parts[5].strip() if len(parts) > 5 else ""
+                        
+                        # Only update if evidence is empty, TODO, or "No evidence yet"
+                        if not current_evidence or current_evidence.lower() in ['todo', 'tbd', ''] or 'no evidence' in current_evidence.lower():
+                            # Update the evidence column
+                            parts[5] = f" EXPECT-L0-{req_num} — {evidence_str} "
+                            line = '|'.join(parts)
+                            updated_rows.append(f"L0-{req_num}")
+        
+        new_lines.append(line)
+    
+    # Write updated content
+    if updated_rows:
+        with open(table_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(new_lines))
+    
+    return updated_rows
+
+
+def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List[EvidenceLink]]) -> List[str]:
+    """
+    Update EVID files with evidence URLs from sprints.
+    Returns list of updated file names.
+    """
+    updated_files = []
+    evid_dir = config.items_dir / "evidences"
+    
+    for expect_id, evidence_list in sprint_evidence.items():
+        if not evidence_list:
+            continue
+        
+        # Extract requirement number from EXPECT-L0-X
+        match = re.search(r'L0-(\d+)', expect_id)
+        if not match:
+            continue
+        
+        req_num = match.group(1)
+        evid_file = evid_dir / f"EVID-L0-{req_num}.md"
+        
+        if not evid_file.exists():
+            continue
+        
+        # Read current EVID file
+        with open(evid_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Parse YAML frontmatter
+        yaml_match = re.match(r'^---\n(.*?)\n---(.*)$', content, re.DOTALL)
+        if not yaml_match:
+            continue
+        
+        try:
+            frontmatter = yaml.safe_load(yaml_match.group(1))
+            body = yaml_match.group(2)
+        except yaml.YAMLError:
+            continue
+        
+        if not frontmatter:
+            frontmatter = {}
+        
+        # Get current references
+        current_refs = frontmatter.get('references', [])
+        
+        # Add new evidence URLs as references
+        new_refs_added = False
+        for ev in evidence_list:
+            # Check if URL already exists
+            url_exists = any(
+                ref.get('url', '') == ev.url 
+                for ref in current_refs 
+                if isinstance(ref, dict)
+            )
+            
+            if not url_exists:
+                new_ref = {
+                    'type': 'url',
+                    'url': ev.url,
+                    'description': f"Evidence from {ev.source_file}: {ev.description}"
+                }
+                current_refs.append(new_ref)
+                new_refs_added = True
+        
+        if new_refs_added:
+            # Update frontmatter
+            frontmatter['references'] = current_refs
+            
+            # Rebuild file content
+            new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True, sort_keys=False)}---{body}"
+            
+            with open(evid_file, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            updated_files.append(evid_file.name)
+    
+    return updated_files
+
+
 def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
     """
     Step 2: Generate missing content using AI.
@@ -1964,6 +2311,8 @@ Examples:
                        help='Run all steps')
     parser.add_argument('--config', type=str,
                        help='Path to config.yaml file')
+    parser.add_argument('--skip-diagnostics', action='store_true',
+                       help='Skip startup diagnostics')
     
     args = parser.parse_args()
     
@@ -1971,12 +2320,44 @@ Examples:
     if not any([args.check, args.sync, args.validate, args.all]):
         args.all = True
     
+    # Run startup diagnostics
+    if not args.skip_diagnostics:
+        deps_ok = print_startup_diagnostics()
+        if not deps_ok:
+            print("\n⚠️  Some dependencies are missing. The script may not work correctly.")
+            print("   Fix the issues above or run with --skip-diagnostics to proceed anyway.\n")
+            response = input(">>> Continue anyway? [y/n]: ").strip().lower()
+            if response != 'y':
+                print("   Exiting.")
+                sys.exit(1)
+    
     # Load configuration
     try:
         config = Config(args.config)
         print(f"📁 Config loaded from: {config.config_path}")
+    except FileNotFoundError as e:
+        print(f"\n❌ Configuration file not found!")
+        print(f"   Expected location: {e}")
+        print("\n   💡 How to fix:")
+        print("      1. Create a config.yaml file in the scripts directory")
+        print("      2. Or specify path with --config /path/to/config.yaml")
+        print("      3. Copy config.yaml.example if available")
+        sys.exit(1)
+    except ImportError as e:
+        print(f"\n❌ Missing Python package: {e}")
+        print("\n   💡 How to fix:")
+        print("      pip install pyyaml")
+        sys.exit(1)
+    except yaml.YAMLError as e:
+        print(f"\n❌ Invalid YAML in configuration file!")
+        print(f"   Error: {e}")
+        print("\n   💡 How to fix:")
+        print("      1. Check config.yaml syntax (use a YAML validator)")
+        print("      2. Ensure proper indentation (spaces, not tabs)")
+        sys.exit(1)
     except Exception as e:
-        print(f"❌ Failed to load config: {e}")
+        print(f"\n❌ Failed to load config: {e}")
+        print(f"   Error type: {type(e).__name__}")
         sys.exit(1)
     
     print("\n" + "="*70)
@@ -1997,6 +2378,10 @@ Examples:
     if args.sync or args.all:
         if check_status:
             sync_status = sync_update(config, check_status)
+            # Sync evidence from sprints to table and EVID files
+            evidence_sync_status = sync_evidence_from_sprints(config, check_status)
+            if sync_status:
+                sync_status['evidence_sync'] = evidence_sync_status
     
     if args.validate or args.all:
         validate_status = validate_run_publish(config)
