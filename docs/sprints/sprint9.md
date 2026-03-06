@@ -6,41 +6,41 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [ ] Reformulation of physical car architecture — Version 3.1 (13)
+  - [x] Reformulation of physical car architecture — Version 3.1 (13)
       - Final physical layout design
       - Camera and sensor positioning optimization for ADAS
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] OTA implementation with RAUC (continuation) (13)
+  - [x] OTA implementation with RAUC (continuation) (13)
       - Continue RAUC integration for A/B partition management
       - Validate OTA update flow end-to-end
       - Multi-version deployment support
-  - [ ] AEB — Automatic Emergency Braking initial implementation (13)
+  - [x] AEB — Automatic Emergency Braking initial implementation (13)
       - Design AEB architecture
       - Implement progressive braking algorithm on ThreadX
       - Define safety thresholds and response times
-  - [ ] Qt HMI & Cluster continued development (21)
+  - [x] Qt HMI & Cluster continued development (21)
       - HMI design improvements and new ADAS-related displays
       - Cluster integration with new data signals
       - Continuous work throughout the sprint
-  - [ ] Qt Backend refactoring (8)
+  - [x] Qt Backend refactoring (8)
       - Code restructuring for scalability
       - Improve data model and KUKSA integration
-  - [ ] CAN Bus Simulation - Signal Emulation Layer (8)
+  - [x] CAN Bus Simulation - Signal Emulation Layer (8)
       - Set up virtual CAN interface
       - Implement signals and realistic CAN frames
 
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
-  - [ ] ADAS Spike — Perception, Control & Path Planning (13)
+  - [x] ADAS Spike — Perception, Control & Path Planning (13)
       - Study AEB, LDW, ACC, TSR concepts and feasibility
   - [ ] AI/ML Model Survey (13)
       - Research open-source models for object detection and obstacle avoidance
-  - [ ] AI Spike — GenAI applied to ADAS (13)
+  - [x] AI Spike — GenAI applied to ADAS (13)
       - Study GenAI tools for data augmentation and scenario generation
       - Evaluate GANs, diffusion models, transformers for ADAS context
   
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-  - [ ] TSF refinement — complete pending tasks from previous module (8)
+  - [x] TSF refinement — complete pending tasks from previous module (8)
       - Review and close open TSF requirements
       - Refine TSF automation algorithm
 ---
@@ -51,7 +51,7 @@
 |--------|-------|--------|
 | **João** | OTA with RAUC (13) + TSF refinement (8) + AI Spike (13) | **34** |
 | **Ruben** | Car Architecture v3.1 (13) + AEB implementation (13) | **26** |
-| **David** | AEB implementation (shared with Ruben) + ThreadX ADAS support | **~13** |
+| **David** | AEB implementation (shared with Ruben) + CAN Bus Simulation | **21** |
 | **Vasco** | ADAS Spike (13) + AI/ML Model Survey (13) | **26** |
 | **Diogo** | Qt HMI & Cluster (21) + Qt Backend refactoring (8) | **37** |
 
@@ -92,34 +92,47 @@
 
 ## 📈 Actual Progress
 
-- Sprint 9 points: **___ / 123**
+- Sprint 9 points: **100 / 123**
 
-- ❌ Undone: 
-
+- ❌ Undone:
+   - Camera and sensor positioning optimization for ADAS
+   - Define safety thresholds and response times (AEB)
+   - AI/ML Model Survey
 ---
 
 ## ✅ Outcomes
 
 - **Delivered**:
-  - _(to be filled at sprint end)_
+  - ✅ Research on ADAS
+  - ✅ OTA implementation with RAUC
+  - ✅ AEB implemented
+  - ✅ New cluster and HMI
+  - ✅ Car Architecture v3.1
 
 - **Demos**:
-  - _(to be filled at sprint end)_
+  -  https://github.com/user-attachments/assets/ba84e182-e34c-4a16-aa46-636038c26ac3
+  -  https://github.com/user-attachments/assets/45c0ee6c-a703-49ad-913b-5d854b98bc17
+
+  - <img width="584" height="269" alt="image" src="https://github.com/user-attachments/assets/0a8686de-59d5-4ffb-8299-dfbf5ee977f4" />
+  - <img width="702" height="397" alt="image" src="https://github.com/user-attachments/assets/6f4d6248-5f2a-453a-8a61-0c96fd4b8e8d" />
 
 - **Docs updated**:
-  - _(to be filled at sprint end)_
+  - [RAUC Documentation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/README.md)
+  - [OTA Documentation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota)
+  - [Gen Ai Applied to ADAS](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/GenAI-for-ADAS-Spike.md)
+  - [ADAS Spike](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/ADAS_Overview.md)
 
 - **Tests**:
-  - _(to be filled at sprint end)_
+  - [OTA Tests](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/OTA_Comparison_Tests.md)
 
 ---
 
 # 🔎 Retrospective
 - ## **Went well**:
-  - _(to be filled at sprint end)_
+  - 
 
 - ## **To improve**: 
-  - _(to be filled at sprint end)_
+  - We need to move from research to reality — next sprint, we get our hands on real camera feeds and run our first model inference.
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 9](https://github.com/orgs/SEAME-pt/projects/89/views/16)
