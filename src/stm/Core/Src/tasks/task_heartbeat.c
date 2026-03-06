@@ -75,6 +75,7 @@ void task_heartbeat_step(SystemCtx* ctx)
     /* Visual heartbeat */
     HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
 
+    /*
     sys_log(ctx,
         "[HeartBeat] State=%u | Uptime=%lu ms | Errors=0x%02X | Mode=%u | CRC=0x%02X",
         hb_frame.state,
@@ -83,4 +84,5 @@ void task_heartbeat_step(SystemCtx* ctx)
         hb_frame.mode,
         hb_frame.crc
     );
+    */
 }

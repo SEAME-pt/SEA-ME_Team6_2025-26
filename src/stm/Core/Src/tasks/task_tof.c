@@ -143,8 +143,8 @@ void task_tof_step(SystemCtx* ctx)
     static uint8_t log_counter = 0;
     if (++log_counter >= 15) {
         log_counter = 0;
-        sys_log(ctx, "[ToF] Dist=%u mm | Zone=%u | Targets=%u",
-                global_min_dist, global_nearest_zone, valid_targets);
+        //sys_log(ctx, "[ToF] Dist=%u mm | Zone=%u | Targets=%u",
+        //        global_min_dist, global_nearest_zone, valid_targets);
     }
 
     tx_thread_sleep(66);

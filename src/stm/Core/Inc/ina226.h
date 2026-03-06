@@ -15,7 +15,7 @@
 #define INA226_H
 
 #include "main.h"
-
+#include "system_ctx.h"
 /* I2C Address (7-bit) - Configured via pads on module */
 #define INA226_I2C_ADDR          0x40
 
@@ -107,14 +107,14 @@ typedef struct {
 } INA226_Data_t;
 
 /* Function Prototypes */
-HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c);
-HAL_StatusTypeDef INA226_Reset(void);
-HAL_StatusTypeDef INA226_ReadVoltage(float *voltage_V);
-HAL_StatusTypeDef INA226_ReadCurrent(float *current_A);
-HAL_StatusTypeDef INA226_ReadPower(float *power_W);
-HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data);
-HAL_StatusTypeDef INA226_IsConnected(void);
-uint16_t INA226_GetManufacturerID(void);
-uint16_t INA226_GetDieID(void);
+HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c, SystemCtx* ctx);
+HAL_StatusTypeDef INA226_Reset(SystemCtx* ctx);
+HAL_StatusTypeDef INA226_ReadVoltage(float *voltage_V, SystemCtx* ctx);
+HAL_StatusTypeDef INA226_ReadCurrent(float *current_A, SystemCtx* ctx);
+HAL_StatusTypeDef INA226_ReadPower(float *power_W, SystemCtx* ctx);
+HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data, SystemCtx* ctx);
+HAL_StatusTypeDef INA226_IsConnected(SystemCtx* ctx);
+uint16_t INA226_GetManufacturerID(SystemCtx* ctx);
+uint16_t INA226_GetDieID(SystemCtx* ctx);
 
 #endif /* INA226_H */

@@ -71,6 +71,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_6)
+    {
+        Speedometer_PulseISR();
+    }
+}
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/

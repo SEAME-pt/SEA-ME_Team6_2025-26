@@ -7,14 +7,15 @@
 
 #include "ina226.h"
 #include <string.h>
+#include "system_ctx.h"
 
 /* Private variables */
 static I2C_HandleTypeDef *ina226_i2c = NULL;
 static uint8_t ina226_addr = INA226_I2C_ADDR << 1; /* 8-bit address */
 
 /* Private function prototypes */
-static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value);
-static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value);
+static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value, SystemCtx* ctx);
+static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value, SystemCtx* ctx);
 
 /**
   * @brief  Write a 16-bit value to an INA226 register
@@ -22,14 +23,16 @@ static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value);
   * @param  value: 16-bit value to write
   * @retval HAL status
   */
-static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value)
+static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value, SystemCtx* ctx)
 {
     uint8_t data[3];
     data[0] = reg;
     data[1] = (value >> 8) & 0xFF;  /* MSB first */
     data[2] = value & 0xFF;         /* LSB */
-
-    return HAL_I2C_Master_Transmit(ina226_i2c, ina226_addr, data, 3, HAL_MAX_DELAY);
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    HAL_StatusTypeDef result = HAL_I2C_Master_Transmit(ina226_i2c, ina226_addr, data, 3, HAL_MAX_DELAY);
+    tx_mutex_put(&ctx->i2c1_mutex);
+    return result;
 }
 
 /**
@@ -38,19 +41,23 @@ static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value)
   * @param  value: Pointer to store the 16-bit value
   * @retval HAL status
   */
-static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value)
+static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint8_t data[2];
 
     /* Write register address */
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     status = HAL_I2C_Master_Transmit(ina226_i2c, ina226_addr, &reg, 1, HAL_MAX_DELAY);
+    tx_mutex_put(&ctx->i2c1_mutex);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Read 2 bytes */
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     status = HAL_I2C_Master_Receive(ina226_i2c, ina226_addr, data, 2, HAL_MAX_DELAY);
+    tx_mutex_put(&ctx->i2c1_mutex);
     if (status != HAL_OK) {
         return status;
     }
@@ -66,7 +73,7 @@ static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value)
   * @param  hi2c: Pointer to I2C handle
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c)
+HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint16_t manufacturer_id;
@@ -78,13 +85,15 @@ HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c)
     ina226_i2c = hi2c;
 
     /* Check if device is connected */
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     status = HAL_I2C_IsDeviceReady(ina226_i2c, ina226_addr, 3, 100);
+    tx_mutex_put(&ctx->i2c1_mutex);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Verify manufacturer ID */
-    status = INA226_ReadRegister(INA226_REG_MANUFACTURER, &manufacturer_id);
+    status = INA226_ReadRegister(INA226_REG_MANUFACTURER, &manufacturer_id, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -95,8 +104,8 @@ HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c)
     }
 
     /* Reset the device */
-    status = INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_RESET);
-    if (status != HAL_OK) {
+    status = INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_RESET, ctx);
+     if (status != HAL_OK) {
         return status;
     }
 
@@ -104,13 +113,13 @@ HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c)
     HAL_Delay(1);
 
     /* Configure: 16 averages, 1.1ms conversion, continuous mode */
-    status = INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_DEFAULT);
+    status = INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_DEFAULT, ctx);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Set calibration register for ±20A range */
-    status = INA226_WriteRegister(INA226_REG_CALIBRATION, INA226_CALIBRATION_VALUE);
+    status = INA226_WriteRegister(INA226_REG_CALIBRATION, INA226_CALIBRATION_VALUE, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -122,9 +131,9 @@ HAL_StatusTypeDef INA226_Init(I2C_HandleTypeDef *hi2c)
   * @brief  Reset the INA226 sensor
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_Reset(void)
+HAL_StatusTypeDef INA226_Reset(SystemCtx* ctx)
 {
-    return INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_RESET);
+    return INA226_WriteRegister(INA226_REG_CONFIG, INA226_CONFIG_RESET, ctx);
 }
 
 /**
@@ -132,12 +141,12 @@ HAL_StatusTypeDef INA226_Reset(void)
   * @param  voltage_V: Pointer to store voltage in Volts
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_ReadVoltage(float *voltage_V)
+HAL_StatusTypeDef INA226_ReadVoltage(float *voltage_V, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint16_t raw_value;
 
-    status = INA226_ReadRegister(INA226_REG_BUS_VOLTAGE, &raw_value);
+    status = INA226_ReadRegister(INA226_REG_BUS_VOLTAGE, &raw_value, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -153,13 +162,13 @@ HAL_StatusTypeDef INA226_ReadVoltage(float *voltage_V)
   * @param  current_A: Pointer to store current in Amperes (negative = discharge)
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_ReadCurrent(float *current_A)
+HAL_StatusTypeDef INA226_ReadCurrent(float *current_A, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint16_t raw_value;
     int16_t signed_value;
 
-    status = INA226_ReadRegister(INA226_REG_CURRENT, &raw_value);
+    status = INA226_ReadRegister(INA226_REG_CURRENT, &raw_value, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -178,12 +187,12 @@ HAL_StatusTypeDef INA226_ReadCurrent(float *current_A)
   * @param  power_W: Pointer to store power in Watts
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_ReadPower(float *power_W)
+HAL_StatusTypeDef INA226_ReadPower(float *power_W, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint16_t raw_value;
 
-    status = INA226_ReadRegister(INA226_REG_POWER, &raw_value);
+    status = INA226_ReadRegister(INA226_REG_POWER, &raw_value, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -199,7 +208,7 @@ HAL_StatusTypeDef INA226_ReadPower(float *power_W)
   * @param  data: Pointer to INA226_Data_t structure
   * @retval HAL status
   */
-HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data)
+HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data, SystemCtx* ctx)
 {
     HAL_StatusTypeDef status;
     uint16_t raw_bus, raw_shunt, raw_current, raw_power;
@@ -208,25 +217,25 @@ HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data)
     data->valid = 0;
 
     /* Read bus voltage */
-    status = INA226_ReadRegister(INA226_REG_BUS_VOLTAGE, &raw_bus);
+    status = INA226_ReadRegister(INA226_REG_BUS_VOLTAGE, &raw_bus, ctx);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Read shunt voltage */
-    status = INA226_ReadRegister(INA226_REG_SHUNT_VOLTAGE, &raw_shunt);
+    status = INA226_ReadRegister(INA226_REG_SHUNT_VOLTAGE, &raw_shunt, ctx);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Read current */
-    status = INA226_ReadRegister(INA226_REG_CURRENT, &raw_current);
+    status = INA226_ReadRegister(INA226_REG_CURRENT, &raw_current, ctx);
     if (status != HAL_OK) {
         return status;
     }
 
     /* Read power */
-    status = INA226_ReadRegister(INA226_REG_POWER, &raw_power);
+    status = INA226_ReadRegister(INA226_REG_POWER, &raw_power, ctx);
     if (status != HAL_OK) {
         return status;
     }
@@ -256,19 +265,22 @@ HAL_StatusTypeDef INA226_ReadAll(INA226_Data_t *data)
   * @brief  Check if INA226 is connected
   * @retval HAL status (HAL_OK if connected)
   */
-HAL_StatusTypeDef INA226_IsConnected(void)
+HAL_StatusTypeDef INA226_IsConnected(SystemCtx* ctx)
 {
-    return HAL_I2C_IsDeviceReady(ina226_i2c, ina226_addr, 3, 100);
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    HAL_StatusTypeDef status = HAL_I2C_IsDeviceReady(ina226_i2c, ina226_addr, 3, 100);
+    tx_mutex_put(&ctx->i2c1_mutex);
+    return status;
 }
 
 /**
   * @brief  Get manufacturer ID
   * @retval Manufacturer ID (0x5449 for TI)
   */
-uint16_t INA226_GetManufacturerID(void)
+uint16_t INA226_GetManufacturerID(SystemCtx* ctx)
 {
     uint16_t id = 0;
-    INA226_ReadRegister(INA226_REG_MANUFACTURER, &id);
+    INA226_ReadRegister(INA226_REG_MANUFACTURER, &id, ctx);
     return id;
 }
 
@@ -276,9 +288,9 @@ uint16_t INA226_GetManufacturerID(void)
   * @brief  Get die ID
   * @retval Die ID (0x2260 for INA226)
   */
-uint16_t INA226_GetDieID(void)
+uint16_t INA226_GetDieID(SystemCtx* ctx)
 {
     uint16_t id = 0;
-    INA226_ReadRegister(INA226_REG_DIE_ID, &id);
+    INA226_ReadRegister(INA226_REG_DIE_ID, &id, ctx);
     return id;
 }

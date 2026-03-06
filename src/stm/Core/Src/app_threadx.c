@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "./tasks/task_indicator.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,6 +56,8 @@ TX_THREAD tof_thread;
 TX_THREAD srf08_thread;
 TX_THREAD battery_thread;
 TX_THREAD thread_relay;
+TX_THREAD indicator_thread;
+TX_THREAD aeb_thread;
 TX_QUEUE  can_rx_queue;
 /* Thread stacks */
 UCHAR           thread_relay_stack[1024];
@@ -69,6 +71,8 @@ static uint8_t imu_thread_stack[IMU_THREAD_STACK_SIZE];
 static uint8_t tof_thread_stack[TOF_THREAD_STACK_SIZE];
 static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
 static uint8_t battery_thread_stack[1024];
+static uint8_t indicator_thread_stack[INDICATOR_THREAD_STACK_SIZE];
+static uint8_t aeb_thread_stack[1024];
 
 /* Mutex for printf protection */
 //TX_MUTEX printf_mutex;
@@ -124,6 +128,9 @@ static void IMU_Thread_Entry(ULONG thread_input);
 static void ToF_Thread_Entry(ULONG thread_input);
 static void SRF08_Thread_Entry(ULONG thread_input);
 static void Battery_Thread_Entry(ULONG thread_input);
+static void Indicator_Thread_Entry(ULONG thread_input);
+static void AEB_Thread_Entry(ULONG thread_input);
+
 /* USER CODE END PFP */
 
 /**
@@ -254,6 +261,20 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
     ret = TX_THREAD_ERROR;
   }
 
+    /* Create AEB thread */
+  if (tx_thread_create(&aeb_thread,
+                     "AEB Thread",
+                     AEB_Thread_Entry,
+                     0,
+                     aeb_thread_stack,
+                     sizeof(aeb_thread_stack),
+                     SRF08_THREAD_PRIORITY, SRF08_THREAD_PRIORITY, //same priority as SRF08 for now -CHANGE IT
+                     TX_NO_TIME_SLICE,
+                     TX_AUTO_START) != TX_SUCCESS)
+{
+  ret = TX_THREAD_ERROR;
+}
+
   /* Create Battery thread */
   if (tx_thread_create(&battery_thread,
                        "Battery Thread",
@@ -263,6 +284,21 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
                        1024,
                        15, /* Priority 15 (low priority - slow sensor) */
                        15,
+                       TX_NO_TIME_SLICE,
+                       TX_AUTO_START) != TX_SUCCESS)
+  {
+    ret = TX_THREAD_ERROR;
+  }
+
+  /* Create Indicator thread */
+  if (tx_thread_create(&indicator_thread,
+                       "Indicator Thread",
+                       Indicator_Thread_Entry,
+                       0,
+                       indicator_thread_stack,
+                       INDICATOR_THREAD_STACK_SIZE,
+                       INDICATOR_THREAD_PRIORITY,
+                       INDICATOR_THREAD_PRIORITY,
                        TX_NO_TIME_SLICE,
                        TX_AUTO_START) != TX_SUCCESS)
   {
@@ -430,6 +466,43 @@ static void SRF08_Thread_Entry(ULONG thread_input)
     }
 }
 
+static void AEB_Thread_Entry(ULONG thread_input)
+{
+  (void)thread_input;
+
+  SystemCtx* ctx = system_ctx();
+  task_aeb_init(ctx);
+
+  uint32_t last_ms = (uint32_t)tx_time_get();
+
+  while (1)
+  {
+    uint32_t now_ms = (uint32_t)tx_time_get();
+    uint32_t dt_ms  = now_ms - last_ms;
+    last_ms = now_ms;
+
+    task_aeb_step(ctx, dt_ms);
+
+    // DEBUG
+    static uint32_t last_print = 0;
+if ((now_ms - last_print) > 200) {
+    last_print = now_ms;
+
+    VehicleState s;
+    tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+    s = ctx->state;
+    tx_mutex_put(&ctx->state_mutex);
+
+    sys_log(ctx, "[AEB] st=%u TTC=%ums dS=%umm stop=%u warn=%u",
+            s.aeb_state, s.aeb_ttc_ms, s.aeb_dstop_mm,
+            s.aeb_stop_active, s.aeb_warn);
+
+}
+
+    tx_thread_sleep(20); // 20ms loop (50 Hz)
+  }
+}
+
 /**
   * @brief  Battery thread entry function - Uses INA226 for real measurements
   * @param  thread_input: thread input parameter (not used)
@@ -476,6 +549,25 @@ void thread_relay_entry(ULONG thread_input)
                 // Opcional: printf("Relay OFF\n");
             }
         }
+    }
+}
+
+/**
+  * @brief  Indicator thread entry – KS0064 LED indicator lights
+  * @param  thread_input: not used
+  * @retval None
+  */
+static void Indicator_Thread_Entry(ULONG thread_input)
+{
+    (void)thread_input;
+
+    SystemCtx *ctx = system_ctx();
+    task_indicator_init(ctx);
+
+    while (1)
+    {
+        task_indicator_step(ctx);
+        /* task_indicator_step already sleeps TASK_STEP_MS */
     }
 }
 

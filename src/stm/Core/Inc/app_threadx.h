@@ -61,6 +61,7 @@ extern "C" {
 #include "tasks/task_srf08.h"
 #include "tasks/task_battery.h"
 #include "tasks/task_can_rx.h"
+#include "tasks/task_aeb.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
