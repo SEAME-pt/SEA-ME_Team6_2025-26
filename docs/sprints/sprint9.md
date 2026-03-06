@@ -33,7 +33,7 @@
 - #### **Epic** — Study and Integration of Core Technologies - [#56](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138316020&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C56)
   - [x] ADAS Spike — Perception, Control & Path Planning (13)
       - Study AEB, LDW, ACC, TSR concepts and feasibility
-  - [ ] AI/ML Model Survey (13)
+  - [x] AI/ML Model Survey (13)
       - Research open-source models for object detection and obstacle avoidance
   - [x] AI Spike — GenAI applied to ADAS (13)
       - Study GenAI tools for data augmentation and scenario generation
@@ -92,12 +92,11 @@
 
 ## 📈 Actual Progress
 
-- Sprint 9 points: **100 / 123**
+- Sprint 9 points: **113 / 123**
 
 - ❌ Undone:
    - Camera and sensor positioning optimization for ADAS
    - Define safety thresholds and response times (AEB)
-   - AI/ML Model Survey
 ---
 
 ## ✅ Outcomes
