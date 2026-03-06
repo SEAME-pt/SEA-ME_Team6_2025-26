@@ -118,10 +118,8 @@
   - <img width="372" height="117" alt="image" src="https://github.com/user-attachments/assets/0eaaf71a-b81c-45b8-9a33-c45d5651b1c8" />
   - <img width="599" height="511" alt="image" src="https://github.com/user-attachments/assets/e28d31d1-3d56-4164-afad-2dacaff175c7" />
   - <img width="564" height="481" alt="image" src="https://github.com/user-attachments/assets/f51b2165-cc86-412b-8476-5a253d81be6a" />
-
-
-
-
+  - <img width="508" height="445" alt="image" src="https://github.com/user-attachments/assets/dc2619fc-3784-49fd-95c2-fafb898f50a6" />
+  - <img width="508" height="223" alt="image" src="https://github.com/user-attachments/assets/6740e8ee-f4bb-4665-96d1-4d865b85cb58" />
 
 - **Docs updated**:
   - [RAUC Documentation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/README.md)
