@@ -199,8 +199,17 @@ class Config:
     
     def _resolve_paths(self):
         """Resolve path variables in configuration."""
-        # Get base paths
-        self.repo_root = Path(self._config['paths']['repo_root'])
+        # Get base paths - support "auto" to detect from script location
+        repo_root_config = self._config['paths']['repo_root']
+        
+        if repo_root_config == "auto" or not repo_root_config:
+            # Auto-detect: script is at repo/docs/TSF/tsf_implementation/scripts/
+            # So repo_root is 4 levels up
+            script_dir = Path(__file__).parent.resolve()
+            self.repo_root = script_dir.parent.parent.parent.parent
+        else:
+            self.repo_root = Path(repo_root_config)
+        
         self.tsf_implementation = self.repo_root / "docs/TSF/tsf_implementation"
         self.items_dir = self.tsf_implementation / "items"
         self.scripts_dir = self.tsf_implementation / "scripts"
