@@ -1,15 +1,27 @@
 # 🏁 Sprint 10 — (09/03/2026 → 20/03/2026)
 
-> ## **Sprint Goal**: Integrate AI models into the vehicle's ADAS pipeline, enabling real-time perception and lane departure detection on Hailo-8.
+> ## **Sprint Goal**: Integrate AI models into the vehicle's ADAS pipeline, enabling real-time perception and lane detection on Hailo-8.
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+  - [ ] Hailo-8 Runtime Integration on AGL (13)
+      - Deploy pre-compiled YOLOv8m HEF from Hailo Model Zoo (object detection)
+      - Validate inference on live camera feed (IMX708 → libcamera → Hailo pipeline)
+      - Document setup and performance benchmarks (FPS, latency)
   - [ ] AI/ML Model Validation - Object Detection Model Testing & Benchmarking (13)
       - Test YOLOv8m on real driving scenarios (corridors, objects, people)
       - Compare pre-compiled HEFs: YOLOv8n vs YOLOv8m vs YOLOv8s (FPS vs accuracy trade-off)
       - Document performance benchmarks (FPS, latency, accuracy)
+   - [ ] Lane detection algorithm implementation (8)
+      - Lane lines detected reliably in test footage
+      - Works under varied lighting conditions
+      - Outputs lane center offset and heading error
+  - [ ] Lane Departure Warning — Computer Vision Pipeline (13)
+      - Integrate UFLDv2 (Ultra Fast Lane Detection v2) pre-compiled HEF on Hailo-8
+      - Implement camera frame capture pipeline (libcamera → frame buffer → Hailo inference)
+      - Define lane position thresholds for departure warning
   - [ ] AEB — Complete implementation and tuning (13)
       - Complete safety thresholds and response times (carryover from Sprint 9)
       - Tune progressive braking: SRF08 + IMU fusion with TTC-based state machine
@@ -23,18 +35,6 @@
       - New cluster display elements: LDW indicator, AEB status, AI inference overlay
       - ADAS warning indicators (visual + state-based color changes)
       - Wire Kuksa.val ADAS signals to Qt UI
-  - [ ] Hailo-8 Runtime Integration on AGL (13)
-      - Deploy pre-compiled YOLOv8m HEF from Hailo Model Zoo (object detection)
-      - Validate inference on live camera feed (IMX708 → libcamera → Hailo pipeline)
-      - Document setup and performance benchmarks (FPS, latency)
-  - [ ] Lane Departure Warning — Computer Vision Pipeline (13)
-      - Integrate UFLDv2 (Ultra Fast Lane Detection v2) pre-compiled HEF on Hailo-8
-      - Implement camera frame capture pipeline (libcamera → frame buffer → Hailo inference)
-      - Define lane position thresholds for departure warning
-  - [ ] Lane detection algorithm implementation (8)
-      - Lane lines detected reliably in test footage
-      - Works under varied lighting conditions
-      - Outputs lane center offset and heading error
   - [ ] CARLA simulation environment setup (8)
       - CARLA installed and running on dev machine(s)
       - Vehicle spawned with camera sensor configured
@@ -44,7 +44,7 @@
       - Paths validated against VSS spec and registered in vss.json / overlay
       - Existing databroker entries audited (naming, types, units)
       - Inconsistencies or deprecated paths documented and flagged
-      - Databroker tested with updated paths (publish + subscribe confirmed working)   
+      - Databroker tested with updated paths (publish + subscribe confirmed working) 
 
 ---
 
