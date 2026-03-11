@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "tx_api.h"
 #include <stdbool.h>
+#include "can_tx.h"
+#include "can_id.h"
 #include <stdio.h>
 
 void task_aeb_init(SystemCtx* ctx);

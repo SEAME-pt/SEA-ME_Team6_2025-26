@@ -391,6 +391,16 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   uint32_t ttc_ms   = (ttc > 65.0f)   ? 65000u : (uint32_t)(ttc * 1000.0f);
   uint32_t dstop_mm = (d_stop > 65.0f)? 65000u : (uint32_t)(d_stop * 1000.0f);
 
+  /* Build CAN frame */
+  AEB_t aeb_frame;
+  aeb_frame.warn = warn ? 1: 0;
+  aeb_frame.brake = s_aeb.st == AEB_BRAKING ? 1 : 0;
+
+  mcp_send_message(CAN_ID_AEB_STOP, (uint8_t*)&aeb_frame, sizeof(aeb_frame));
+
+  sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
+        aeb_frame.warn, aeb_frame.brake );
+
   /* -------- 9) Publish AEB outputs into shared state --------
      The actuation thread reads these flags.
      aeb_stop_active = 1 means "block forward + stop motor"
