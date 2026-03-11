@@ -79,6 +79,7 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS
     QuickControls2 
     DBus
     Svg
+    Multimedia
 )
 
 # ============================================================================
@@ -111,6 +112,7 @@ target_link_libraries(HMIApp PRIVATE
     Qt6::QuickControls2
     Qt6::DBus
     Qt6::Svg
+    Qt6::Multimedia
 )
 
 # ============================================================================

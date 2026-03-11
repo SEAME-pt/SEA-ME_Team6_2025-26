@@ -3,7 +3,7 @@
 # ===========================================================================
 # Usage: 
 #   docker build -f Dockerfile.dev -t cluster-dev:latest .
-#   sudo docker run -it --rm   -v $(pwd)/cluster:/workspace   -e DISPLAY=$DISPLAY   -v /tmp/.X11-unix:/tmp/.X11-unix:rw   --network host   --privileged   cluster-dev:latest
+#   sudo docker run -it --rm   -v $(pwd):/workspace   -e DISPLAY=$DISPLAY   -v /tmp/.X11-unix:/tmp/.X11-unix:rw   --network host   --privileged  --device /dev/video2:/dev/video2  cluster-dev:latest
 #   Windows:
 #        docker run -it --rm -e DISPLAY=host.docker.internal:0 --add-host=host.docker.internal:host-gateway -v ${PWD}/cluster:/workspace cluster-dev:latest
 # ===========================================================================
@@ -168,6 +168,39 @@ RUN cd qt6/host-build/qtsvg-everywhere-src-${QT_VERSION} && \
     echo "=== Installing qtsvg ===" && \
     cmake --install . && \
     echo "=== qtsvg build complete ==="
+
+# ===========================================================================
+# Qt6 Build - Download qtmultimedia source
+# ===========================================================================
+RUN cd qt6/src && \
+    wget https://download.qt.io/archive/qt/6.7/${QT_VERSION}/submodules/qtmultimedia-everywhere-src-${QT_VERSION}.tar.xz
+
+# ===========================================================================
+# Qt6 Build - Extract qtmultimedia
+# ===========================================================================
+RUN cd qt6/host-build && \
+    tar xf ../src/qtmultimedia-everywhere-src-${QT_VERSION}.tar.xz
+
+# ===========================================================================
+# Qt6 Build - Build qtmultimedia
+# ===========================================================================
+# Needs GStreamer dev libs for video pipeline on Linux
+RUN apt-get update && apt-get install -y \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-libav \
+    libgstreamer1.0-dev \
+    gstreamer1.0-tools \
+    libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-x \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN cd qt6/host-build/qtmultimedia-everywhere-src-${QT_VERSION} && \
+    /opt/qt6/bin/qt-configure-module . && \
+    cmake --build . --parallel $(nproc) && \
+    cmake --install . && \
+    echo "=== qtmultimedia build complete ==="
 
 # ===========================================================================
 # Qt6 Build - Cleanup build artifacts

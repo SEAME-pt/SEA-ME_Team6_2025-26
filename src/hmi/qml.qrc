@@ -9,6 +9,7 @@
 	
         <!-- QML Components -->
         <file>qml/components/Topbar.qml</file>
+        <file>qml/components/Bottombar.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
