@@ -3,7 +3,7 @@ name: unit-tests
 on:
   pull_request:
     branches:
-      - testWorkflow
+      - development
 
 permissions:
   contents: read
