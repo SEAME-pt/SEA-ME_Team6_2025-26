@@ -6,7 +6,11 @@ level: '1.8'
 normative: true
 references:
 - type: file
+  path: docs/demos/CANbus Scheme Updated.png
+- type: file
   path: docs/guides/CAN-overview.md
+- type: file
+  path: docs/demos/CAN-layout-sprint3.jpeg
 - type: file
   path: docs/guides/CAN-test-guide.md
 - type: file

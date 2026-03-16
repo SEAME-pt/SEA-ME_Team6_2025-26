@@ -7,7 +7,10 @@ text: |
   - **SOTA (Software Over-The-Air):** Application and middleware updates via OTA scripts
   - **COTA (Configuration Over-The-Air):** Remote configuration changes and parameter updates
   - **FOTA (Firmware Over-The-Air):** Low-level firmware updates for ECUs and microcontrollers
-  - **OS Updates:** Full system image updates using RAUC with A/B partition scheme for safe, atomic updates
+  - **OS Updates:** Full system image updates using RAUC with A/B partition scheme for safe, atomic u
+  
+
+  
 
   **Justification:** Modern automotive systems require reliable OTA update mechanisms to deploy security patches, bug fixes, and feature updates without physical access. A layered OTA approach (SOTA/COTA/FOTA) allows granular updates while RAUC provides atomic OS updates with rollback capability, essential for safety-critical automotive applications.
 

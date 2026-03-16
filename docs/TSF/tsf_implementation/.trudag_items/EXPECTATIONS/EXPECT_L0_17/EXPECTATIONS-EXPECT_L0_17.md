@@ -6,7 +6,7 @@ text: The development process incorporates AI-assisted tools for code developmen
 level: '1.17'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_17/ASSERTIONS-ASSERT_L0_17.md
+- path: ../assertions/ASSERT-L0-17.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

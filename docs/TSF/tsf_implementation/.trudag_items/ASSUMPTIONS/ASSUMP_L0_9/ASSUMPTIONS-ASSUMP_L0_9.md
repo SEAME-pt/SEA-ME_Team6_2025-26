@@ -4,7 +4,7 @@ header: 'Assumption: ThreadX should be used on the Microcontroller (STM32) as a.
 level: '1.9'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_9/EXPECTATIONS-EXPECT_L0_9.md
+- path: ../expectations/EXPECT-L0-9.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
