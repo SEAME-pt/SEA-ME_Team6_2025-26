@@ -210,7 +210,7 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
     uint8_t warn;               /* Soft braking before actuall brake */
     uint8_t brake;              /* Indicator that it is braking */
-} AEB_t
+} AEB_t;
 
 /* SRF08 Ultrasonic Distance (0x423) - STM32 -> AGL */
 typedef struct __attribute__((packed)) {

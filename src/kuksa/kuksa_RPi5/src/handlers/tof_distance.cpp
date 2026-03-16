@@ -16,8 +16,8 @@ void handleToFDistance(const can_frame& frame, IKuksaClient& kuksa)
     const std::uint8_t status   = can_decode::u8(&frame.data[7]);
     (void)status;
 
-    kuksa.publishFloat(sig::ADAS_FRONT_DISTANCE_MM, static_cast<float>(dist_mm));
+    kuksa.publishFloat(sig::ADAS_UP_DISTANCE, static_cast<float>(dist_mm));
 
     const bool is_warning = (dist_mm < TOF_WARNING_THRESHOLD_MM) ? true : false;
-    kuksa.publishBool(sig::ADAS_FRONT_IS_WARNING, is_warning);
+    kuksa.publishBool(sig::ADAS_UP_IS_TOP, is_warning);
 }

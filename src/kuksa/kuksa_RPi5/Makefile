@@ -46,6 +46,7 @@ APP_SRCS := \
   $(SRC_DIR)/kuksa_client.cpp \
   $(SRC_DIR)/is_stm_connected.cpp \
   $(SRC_DIR)/handlers/speed.cpp \
+  $(SRC_DIR)/handlers/aeb.cpp \
   $(SRC_DIR)/handlers/environment.cpp \
   $(SRC_DIR)/handlers/heartbeat_stm.cpp \
   $(SRC_DIR)/handlers/tof_distance.cpp \
