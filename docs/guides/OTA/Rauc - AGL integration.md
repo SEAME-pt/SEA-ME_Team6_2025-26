@@ -96,7 +96,12 @@ Describes the hardware layout to the RAUC daemon. The `compatible` string must m
 [system]
 compatible=seame-team6-rpi5
 bootloader=custom
-custom-backend=/usr/lib/rauc/bootloader-custom-backend.sh
+statusfile=/data/rauc.status
+mountprefix=/mnt/rauc
+activate-installed=true
+
+[handlers]
+bootloader-custom-backend=/usr/bin/rauc-rpi-boot
 
 [keyring]
 path=/etc/rauc/ca.cert.pem
@@ -105,11 +110,24 @@ path=/etc/rauc/ca.cert.pem
 device=/dev/mmcblk0p2
 type=ext4
 bootname=A
+readonly=yes
 
 [slot.rootfs.1]
 device=/dev/mmcblk0p3
 type=ext4
 bootname=B
+readonly=yes
+
+[slot.boot.0]
+device=/dev/mmcblk0p1
+type=vfat
+parent=rootfs.0
+
+[slot.boot.1]
+device=/dev/mmcblk0p1
+type=vfat
+parent=rootfs.1
+
 ```
 
 > **Important:** The `compatible` string (`seame-team6-rpi5`) must match the `RAUC_BUNDLE_COMPATIBLE` field in `rauc-bundle.bb` byte for byte. A mismatch causes RAUC to reject the bundle before installation.
