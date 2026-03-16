@@ -672,6 +672,21 @@ ls -la localplugins
 ls -la docs/TSF/tsf_implementation/.dotstop_extensions
 ```
 
+### "ln: failed to create symbolic link '.dotstop.dot': File exists"
+
+This usually means a stale or broken symlink already exists.
+
+Fix manually:
+
+```bash
+rm -f .dotstop.dot
+rm -f docs/TSF/tsf_implementation/.dotstop_extensions
+source .venv/bin/activate
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+```
+
+Note: `setup_trudag_clean.sh` now removes both regular files and broken symlinks before recreating links.
+
 ### "Cannot get non-existent or non-regular file"
 
 File path in references is incorrect. Paths should be:
