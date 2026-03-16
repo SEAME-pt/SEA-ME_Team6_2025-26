@@ -55,6 +55,21 @@ references:
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/RAUC-implementation.md
   description: RAUC implementation documentation
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png
+  description: OTA GitHub Action Workflow screenshot
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png
+  description: OTA Release Tags screenshot
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Release.png
+  description: OTA Release Page screenshot
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r4-script.jpeg
+  description: OTA Script Running on Raspberry Pi 4
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r5-script.jpeg
+  description: OTA Script Running on Raspberry Pi 5
 score: 0.0
 reviewers:
   - name: Joao Jesus Silva

@@ -69,6 +69,9 @@ digraph G {
   "EXPECT-L0-30" -> "ASSERT-L0-30";
   "ASSERT-L0-30" -> "EVID-L0-30";
   "EXPECT-L0-30" -> "ASSUMP-L0-30";
+  "EXPECT-L0-31" -> "ASSERT-L0-31";
+  "ASSERT-L0-31" -> "EVID-L0-31";
+  "EXPECT-L0-31" -> "ASSUMP-L0-31";
   "EXPECT-L0-4" -> "ASSERT-L0-4";
   "ASSERT-L0-4" -> "EVID-L0-4";
   "EXPECT-L0-4" -> "ASSUMP-L0-4";

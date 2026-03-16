@@ -6,7 +6,7 @@ text: The demonstrator car responds to remote control inputs for steering and th
 level: '1.4'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_4/ASSERTIONS-ASSERT_L0_4.md
+- path: ../assertions/ASSERT-L0-4.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

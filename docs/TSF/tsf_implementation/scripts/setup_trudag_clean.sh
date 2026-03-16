@@ -11,9 +11,11 @@ set -e
 # 5. Marks all items as reviewed for SME assessment
 # 6. Runs lint validation
 
-REPO_ROOT="/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
-BASE_DIR="$REPO_ROOT/docs/TSF"
-TSF_IMPL="$BASE_DIR/tsf_implementation"
+# Auto-detect paths from script location
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TSF_IMPL="$( cd "$SCRIPT_DIR/.." && pwd )"
+BASE_DIR="$( cd "$TSF_IMPL/.." && pwd )"
+REPO_ROOT="$( cd "$BASE_DIR/.." && pwd )"
 ITEMS_SOURCE="$TSF_IMPL/items"
 GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"

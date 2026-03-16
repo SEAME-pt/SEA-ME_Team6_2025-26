@@ -116,11 +116,112 @@ The `trudag` CLI manages the TSF lifecycle:
 - Calculates trust scores
 - Publishes reports
 
+### System Requirements
+
+| Software | Version | Purpose |
+|----------|---------|---------|
+| **Python** | 3.11+ | Runtime (required by trudag) |
+| **pip** | Latest | Package manager |
+| **git** | Latest | Version control |
+
+**Optional:**
+| Software | Purpose |
+|----------|---------|
+| **graphviz** | Graph rendering - only needed for `trudag plot` command |
+
+---
+
 ### Installation
 
+#### 🍎 macOS
+
 ```bash
-pip install trudag
+# Install Homebrew (if not installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Add to PATH (Apple Silicon)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Install Python 3.11
+brew install python@3.11
+
+# Create virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
 ```
+
+#### 🐧 Linux (Ubuntu/Debian)
+
+```bash
+# Install system dependencies
+sudo apt update
+sudo apt install -y software-properties-common git curl
+
+# Add Python PPA and install Python 3.11
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.11 python3.11-venv python3.11-dev
+
+# Create virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
+```
+
+#### 🪟 Windows
+
+```powershell
+# 1. Download and install Python 3.11+ from python.org
+#    ✅ Check "Add Python to PATH" during installation
+
+# 2. Download and install Git from git-scm.com
+
+# 3. Create virtual environment (PowerShell)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 4. Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
+```
+
+#### Verify Installation
+
+```bash
+trudag --help
+# Should display trudag usage information
+```
+
+#### 📊 Optional: Install Graphviz
+
+> **Note:** Graphviz is **optional**. It is only needed if you want to use `trudag plot` to generate visual images of the dependency graph (PNG/SVG).
+>
+> For the normal workflow (`--check`, `--sync`, `--validate`), **graphviz is NOT required** because:
+> - The `graph.dot` file is generated as a text file by the Python script  
+> - `trudag` reads and processes the `.dot` file without needing to render it visually
+
+```bash
+# macOS
+brew install graphviz
+
+# Linux
+sudo apt install -y graphviz
+
+# Windows: Download from graphviz.org and add to PATH
+```
+
+---
 
 ### Basic Commands
 

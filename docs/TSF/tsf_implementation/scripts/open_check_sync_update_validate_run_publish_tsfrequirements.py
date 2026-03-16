@@ -199,8 +199,17 @@ class Config:
     
     def _resolve_paths(self):
         """Resolve path variables in configuration."""
-        # Get base paths
-        self.repo_root = Path(self._config['paths']['repo_root'])
+        # Get base paths - support "auto" to detect from script location
+        repo_root_config = self._config['paths']['repo_root']
+        
+        if repo_root_config == "auto" or not repo_root_config:
+            # Auto-detect: script is at repo/docs/TSF/tsf_implementation/scripts/
+            # So repo_root is 4 levels up
+            script_dir = Path(__file__).parent.resolve()
+            self.repo_root = script_dir.parent.parent.parent.parent
+        else:
+            self.repo_root = Path(repo_root_config)
+        
         self.tsf_implementation = self.repo_root / "docs/TSF/tsf_implementation"
         self.items_dir = self.tsf_implementation / "items"
         self.scripts_dir = self.tsf_implementation / "scripts"
@@ -395,6 +404,140 @@ class EvidenceParser:
                 all_evidence[evidence.expect_id].append(evidence)
         
         return all_evidence
+    
+    def scan_evidence_folders(self, table_rows: List['TableRow']) -> Dict[str, List[EvidenceLink]]:
+        """
+        Scan evidence folders for files that might be evidence for requirements:
+        - docs/demos, docs/guides, docs/images, docs/presentations
+        - src/ (source code folder)
+        
+        Uses filename pattern matching to associate files with EXPECT-L0-X.
+        """
+        evidence_folders = [
+            self.config.repo_root / "docs" / "demos",
+            self.config.repo_root / "docs" / "guides",
+            self.config.repo_root / "docs" / "images",
+            self.config.repo_root / "docs" / "presentations",
+            self.config.repo_root / "src",  # Source code folder
+        ]
+        
+        # Build keyword map from requirements
+        # Maps keywords to requirement IDs
+        keyword_map = self._build_keyword_map(table_rows)
+        
+        folder_evidence: Dict[str, List[EvidenceLink]] = {}
+        
+        for folder in evidence_folders:
+            if not folder.exists():
+                continue
+            
+            # Scan all files recursively
+            for file_path in folder.rglob('*'):
+                if file_path.is_dir():
+                    continue
+                
+                # Skip non-evidence files
+                # Include: images, videos, docs, code files
+                valid_extensions = [
+                    # Images and media
+                    '.png', '.jpg', '.jpeg', '.gif', '.webm', '.mp4', '.svg',
+                    # Documents
+                    '.md', '.pdf', '.txt',
+                    # Code files (for src/ folder)
+                    '.py', '.cpp', '.c', '.h', '.hpp', '.qml', '.js', '.ts',
+                    '.sh', '.yaml', '.yml', '.json', '.cmake', '.dockerfile',
+                ]
+                if file_path.suffix.lower() not in valid_extensions:
+                    continue
+                
+                # Try to match file to a requirement
+                filename_lower = file_path.stem.lower().replace('-', ' ').replace('_', ' ')
+                
+                matched_expects = set()
+                
+                # Check for direct EXPECT/L0 reference in filename
+                l0_match = re.search(r'l0[_\-\s]?(\d+)', filename_lower)
+                if l0_match:
+                    expect_id = f"EXPECT-L0-{l0_match.group(1)}"
+                    matched_expects.add(expect_id)
+                
+                expect_match = re.search(r'expect[_\-\s]?l0[_\-\s]?(\d+)', filename_lower)
+                if expect_match:
+                    expect_id = f"EXPECT-L0-{expect_match.group(1)}"
+                    matched_expects.add(expect_id)
+                
+                # Check for keyword matches
+                for keyword, expect_ids in keyword_map.items():
+                    if keyword in filename_lower:
+                        for eid in expect_ids:
+                            matched_expects.add(eid)
+                
+                # Create evidence links for matched expects
+                for expect_id in matched_expects:
+                    if expect_id not in folder_evidence:
+                        folder_evidence[expect_id] = []
+                    
+                    # Build GitHub URL
+                    rel_path = file_path.relative_to(self.config.repo_root)
+                    github_url = f"https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/{rel_path}"
+                    
+                    # Determine link type
+                    link_type = "image" if file_path.suffix.lower() in ['.png', '.jpg', '.jpeg', '.gif'] else "link"
+                    
+                    evidence = EvidenceLink(
+                        expect_id=expect_id,
+                        description=file_path.stem.replace('-', ' ').replace('_', ' '),
+                        url=github_url,
+                        link_type=link_type,
+                        source_file=str(rel_path)
+                    )
+                    
+                    # Avoid duplicates
+                    existing_urls = [e.url for e in folder_evidence[expect_id]]
+                    if github_url not in existing_urls:
+                        folder_evidence[expect_id].append(evidence)
+        
+        return folder_evidence
+    
+    def _build_keyword_map(self, table_rows: List['TableRow']) -> Dict[str, List[str]]:
+        """
+        Build a map of keywords to EXPECT IDs based on requirement content.
+        """
+        keyword_map: Dict[str, List[str]] = {}
+        
+        # Define keyword associations for common topics
+        topic_keywords = {
+            'ota': ['ota', 'update', 'rauc', 'bundle', 'release'],
+            'can': ['can', 'canbus', 'can-bus', 'can bus'],
+            'threadx': ['threadx', 'rtos', 'stm32', 'stm'],
+            'qt': ['qt', 'qml', 'cluster', 'hmi', 'display', 'mockup'],
+            'agl': ['agl', 'linux', 'boot'],
+            'architecture': ['architecture', 'scheme', 'layout', 'diagram'],
+            'test': ['test', 'coverage', 'lcov'],
+            'ci': ['ci', 'cd', 'action', 'workflow', 'pipeline'],
+            'cross': ['cross', 'compile', 'crosscompil'],
+            'car': ['car', 'assembled', '3d', 'vehicle'],
+            'energy': ['energy', 'power', 'consumption', 'thermal'],
+        }
+        
+        for row in table_rows:
+            expect_id = f"EXPECT-L0-{row.number}"
+            req_lower = row.requirement.lower()
+            
+            # Check which topics this requirement relates to
+            for topic, keywords in topic_keywords.items():
+                for kw in keywords:
+                    if kw in req_lower:
+                        # This requirement is about this topic
+                        # Add all topic keywords to map pointing to this expect
+                        for topic_kw in keywords:
+                            if topic_kw not in keyword_map:
+                                keyword_map[topic_kw] = []
+                            if expect_id not in keyword_map[topic_kw]:
+                                keyword_map[topic_kw].append(expect_id)
+                        break
+        
+        return keyword_map
 
 
 # ============================================================================
@@ -1587,6 +1730,31 @@ def open_check(config: Config) -> Dict[str, Any]:
     
     for expect_id, evidences in sprint_evidence.items():
         print(f"   • {expect_id}: {len(evidences)} evidence(s)")
+    
+    # 3.3 NEW: Scan evidence folders (docs/demos, docs/guides, etc., and src/)
+    print("\n📂 Scanning evidence folders (demos, guides, images, presentations, src)...")
+    folder_evidence = evidence_parser.scan_evidence_folders(rows)
+    status['folder_evidence'] = folder_evidence
+    
+    if folder_evidence:
+        folder_total = sum(len(v) for v in folder_evidence.values())
+        print(f"   Found {folder_total} potential evidence files across {len(folder_evidence)} EXPECTs")
+        for expect_id, evidences in sorted(folder_evidence.items()):
+            print(f"   • {expect_id}: {len(evidences)} file(s) found")
+    else:
+        print("   ℹ️  No additional evidence files found in folders")
+    
+    # Merge folder evidence with sprint evidence
+    for expect_id, evidences in folder_evidence.items():
+        if expect_id not in sprint_evidence:
+            sprint_evidence[expect_id] = []
+        for ev in evidences:
+            # Avoid duplicates by URL
+            existing_urls = [e.url for e in sprint_evidence[expect_id]]
+            if ev.url not in existing_urls:
+                sprint_evidence[expect_id].append(ev)
+    
+    status['sprint_evidence'] = sprint_evidence  # Update with merged evidence
     
     # 3.5 NEW: Check for requirements with NO evidence in sprints
     print("\n⚠️  Checking for requirements without sprint evidence...")

@@ -6,6 +6,8 @@ level: '1.11'
 normative: true
 references:
 - type: file
+  path: docs/demos/system-architecture-cross.png
+- type: file
   path: docs/guides/AGL_Configuration_Guide.md
 score: 1.0
 reviewers:

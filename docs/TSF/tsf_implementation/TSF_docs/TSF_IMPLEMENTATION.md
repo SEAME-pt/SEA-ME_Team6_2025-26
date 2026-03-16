@@ -2,7 +2,7 @@
 
 This document describes the TSF (Trustable Software Framework) implementation for the PiRacer Warm-Up project, including the unified automation script, TruDAG integration, and validation workflows.
 
-**Last Updated:** February 2026  
+**Last Updated:** March 2026  
 **Authors:** SEA-ME Team 6
 
 ---
@@ -25,19 +25,295 @@ This document describes the TSF (Trustable Software Framework) implementation fo
 
 ## Prerequisites
 
-- **Python 3.9+** with virtual environment
-- **trudag** installed (`pip install trudag`)
-- **graphviz** (`dot`) for rendering graph.dot
-- **gh CLI** with Copilot extension (optional, for AI generation)
+### Required Software
 
-### Virtual Environment Setup
+| Software | Version | Purpose |
+|----------|---------|---------|
+| **Python** | 3.11+ | Runtime for trudag and scripts |
+| **pip** | Latest | Python package manager |
+| **git** | Latest | Version control |
+| **trudag** | Latest | TSF validation and scoring tool |
+
+### Optional Software
+
+| Software | Purpose |
+|----------|---------|
+| **graphviz** | Render graph.dot diagrams visually (PNG/SVG) - only needed for `trudag plot` |
+| **gh CLI** | GitHub CLI with Copilot extension for AI generation |
+| **pipx** | Isolated Python package installation |
+
+---
+
+## Installation Guide
+
+### 🍎 macOS Installation
+
+#### Step 1: Install Homebrew (if not installed)
 
 ```bash
-# Activate the project virtual environment
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+After installation, add Homebrew to PATH:
+
+```bash
+# For Apple Silicon (M1/M2/M3)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# For Intel Macs
+echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/usr/local/bin/brew shellenv)"
+```
+
+#### Step 2: Install Python 3.11+
+
+```bash
+brew install python@3.11
+```
+
+Verify installation:
+
+```bash
+python3.11 --version
+# Should output: Python 3.11.x
+```
+
+#### Step 3: Create Virtual Environment
+
+```bash
+cd /path/to/SEA-ME_Team6_2025-26
+
+# Remove old venv if exists
+rm -rf .venv
+
+# Create new venv with Python 3.11
+python3.11 -m venv .venv
+
+# Activate venv
+source .venv/bin/activate
+```
+
+#### Step 4: Install Python Dependencies
+
+```bash
+# Upgrade pip
+pip install --upgrade pip
+
+# Install trudag from Eclipse GitLab
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+
+# Install other dependencies
+pip install pyyaml
+```
+
+#### Step 5: Verify Installation
+
+```bash
+trudag --help
+# Should display trudag usage information
+```
+
+---
+
+### 🐧 Linux Installation (Ubuntu/Debian)
+
+#### Step 1: Install System Dependencies
+
+```bash
+sudo apt update
+sudo apt install -y software-properties-common git curl
+```
+
+#### Step 2: Install Python 3.11+
+
+```bash
+# Add deadsnakes PPA for newer Python versions
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+
+# Install Python 3.11
+sudo apt install -y python3.11 python3.11-venv python3.11-dev python3-pip
+```
+
+Verify installation:
+
+```bash
+python3.11 --version
+# Should output: Python 3.11.x
+```
+
+#### Step 3: Create Virtual Environment
+
+```bash
+cd /path/to/SEA-ME_Team6_2025-26
+
+# Remove old venv if exists
+rm -rf .venv
+
+# Create new venv with Python 3.11
+python3.11 -m venv .venv
+
+# Activate venv
+source .venv/bin/activate
+```
+
+#### Step 4: Install Python Dependencies
+
+```bash
+# Upgrade pip
+pip install --upgrade pip
+
+# Install trudag from Eclipse GitLab
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+
+# Install other dependencies
+pip install pyyaml
+```
+
+#### Step 5: Verify Installation
+
+```bash
+trudag --help
+# Should display trudag usage information
+```
+
+---
+
+### 🪟 Windows Installation
+
+#### Step 1: Install Python 3.11+
+
+1. Download Python 3.11+ from [python.org](https://www.python.org/downloads/)
+2. Run the installer
+3. ✅ **IMPORTANT:** Check "Add Python to PATH" during installation
+4. Click "Install Now"
+
+Verify in PowerShell or Command Prompt:
+
+```powershell
+python --version
+# Should output: Python 3.11.x
+```
+
+#### Step 2: Install Git
+
+1. Download Git from [git-scm.com](https://git-scm.com/download/win)
+2. Run installer with default options
+3. Verify:
+
+```powershell
+git --version
+```
+
+#### Step 3: Create Virtual Environment
+
+```powershell
+cd C:\path\to\SEA-ME_Team6_2025-26
+
+# Remove old venv if exists
+Remove-Item -Recurse -Force .venv -ErrorAction SilentlyContinue
+
+# Create new venv
+python -m venv .venv
+
+# Activate venv
+.\.venv\Scripts\Activate.ps1
+```
+
+> **Note:** If you get an execution policy error, run:
+> ```powershell
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+#### Step 4: Install Python Dependencies
+
+```powershell
+# Upgrade pip
+pip install --upgrade pip
+
+# Install trudag from Eclipse GitLab
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+
+# Install other dependencies
+pip install pyyaml
+```
+
+#### Step 5: Verify Installation
+
+```powershell
+trudag --help
+# Should display trudag usage information
+```
+
+---
+
+### 📊 Optional: Install Graphviz (for graph visualization)
+
+> **Note:** Graphviz is an **optional** dependency. It is only needed if you want to use the `trudag plot` command to generate visual images of the dependency graph (PNG/SVG).
+>
+> For the normal workflow (`--check`, `--sync`, `--validate`), **graphviz is NOT required** because:
+> - The `graph.dot` file is generated as a text file by the Python script
+> - `trudag` reads and processes the `.dot` file without needing to render it visually
+
+#### macOS
+
+```bash
+brew install graphviz
+```
+
+#### Linux (Ubuntu/Debian)
+
+```bash
+sudo apt install -y graphviz
+```
+
+#### Windows
+
+1. Download Graphviz from [graphviz.org](https://graphviz.org/download/)
+2. Run the installer
+3. ✅ **IMPORTANT:** Check "Add Graphviz to PATH" during installation
+
+#### Verify graphviz installation
+
+```bash
+dot -V
+# Expected: dot - graphviz version X.X.X
+```
+
+---
+
+## Post-Installation Setup
+
+### Activate Virtual Environment
+
+Always activate the virtual environment before running TSF commands:
+
+```bash
+# macOS/Linux
 source .venv/bin/activate
 
-# Verify trudag is available
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Windows (Command Prompt)
+.\.venv\Scripts\activate.bat
+```
+
+### Verify Complete Setup
+
+```bash
+# Check Python version
+python --version
+# Expected: Python 3.11.x or higher
+
+# Check trudag
 trudag --help
+# Expected: trudag usage information
+
+# Run TSF check
+python docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+# Expected: Successful analysis of requirements
 ```
 
 ---
@@ -320,7 +596,61 @@ Reports are generated in `docs/doorstop/`:
 
 ## Troubleshooting
 
-### "source: no such file or directory: venv/bin/activate"
+### Installation Issues
+
+#### "ERROR: No matching distribution found for trudag"
+
+The package is called `trustable`, not `trudag`. Use the correct command:
+
+```bash
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+```
+
+#### "trudag requires Python 3.11+"
+
+Your Python version is too old. Install Python 3.11 or higher:
+
+```bash
+# macOS
+brew install python@3.11
+
+# Linux
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.11 python3.11-venv
+
+# Then recreate venv
+rm -rf .venv
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+```
+
+#### "zsh: command not found: brew" (macOS)
+
+Homebrew is not installed or not in PATH:
+
+```bash
+# Install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Add to PATH (Apple Silicon)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+#### Windows: "Execution of scripts is disabled"
+
+PowerShell execution policy is blocking the venv activation:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+---
+
+### Runtime Issues
+
+#### "source: no such file or directory: venv/bin/activate"
 
 The project uses `.venv` (with dot), not `venv`:
 
@@ -369,12 +699,12 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Current Status (February 2026)
+## Current Status (March 2026)
 
-- **Total Requirements:** 30 (L0-1 to L0-30)
-- **Total TSF Items:** 120 (30 × 4 types)
-- **Validated Items:** ~86 with score 1.0
-- **Pending Items:** ~34 awaiting evidence/implementation
+- **Total Requirements:** 31 (L0-1 to L0-31)
+- **Total TSF Items:** 124 (31 × 4 types)
+- **Python Version:** 3.11+ (required for trudag)
+- **TruDAG Source:** Eclipse GitLab Package Registry
 
 ---
 
