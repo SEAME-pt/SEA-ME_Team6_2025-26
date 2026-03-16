@@ -7,7 +7,12 @@ by searching the repository for documentation and proof of requirements.
 
 from typing import TypeAlias
 
-yaml: TypeAlias = str | int | float | bool | list["yaml"] | dict[str, "yaml"]
+# TruDAG uses strict signature equality to discover validator functions.
+# Import its yaml alias so our annotations match exactly.
+from trudag.dotstop.core.validator import yaml
+
+# Kept for readability in this module.
+YamlType: TypeAlias = yaml
 
 
 # ============================================================================

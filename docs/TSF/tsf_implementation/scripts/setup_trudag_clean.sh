@@ -142,11 +142,12 @@ echo ""
 
 # Fix file reference paths in YAML to point to .trudag_items structure
 echo "🔧 Fixing file reference paths and IDs in .trudag_items..."
-python3 - <<'PYTHON'
+TSF_IMPL="$TSF_IMPL" python3 - <<'PYTHON'
 import re
+import os
 from pathlib import Path
 
-trudag_items = Path("/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/.trudag_items")
+trudag_items = Path(os.environ["TSF_IMPL"]) / ".trudag_items"
 
 fixed_count = 0
 
