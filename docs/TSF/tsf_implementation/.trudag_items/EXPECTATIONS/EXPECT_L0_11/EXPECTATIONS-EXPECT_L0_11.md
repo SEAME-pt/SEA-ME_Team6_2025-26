@@ -6,7 +6,7 @@ text: The Qt cluster application automatically starts on system boot and display
 level: '1.11'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_11/ASSERTIONS-ASSERT_L0_11.md
+- path: ../assertions/ASSERT-L0-11.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

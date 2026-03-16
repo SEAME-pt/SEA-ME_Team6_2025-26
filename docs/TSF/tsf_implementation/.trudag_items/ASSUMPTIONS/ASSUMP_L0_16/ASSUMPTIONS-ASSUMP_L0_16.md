@@ -4,7 +4,7 @@ header: 'Assumption: CI/CD'
 level: '1.16'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_16/EXPECTATIONS-EXPECT_L0_16.md
+- path: ../expectations/EXPECT-L0-16.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

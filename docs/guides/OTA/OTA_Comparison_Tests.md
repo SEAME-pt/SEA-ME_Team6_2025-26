@@ -1,6 +1,6 @@
 # OTA Comparison Tests: tar.gz Scripts vs RAUC
 
-**Last Updated:** 24 February 2026  
+**Last Updated:** 6 March 2026  
 **Author:** SEA:ME Team 6  
 **Status:** Template Ready for Testing
 

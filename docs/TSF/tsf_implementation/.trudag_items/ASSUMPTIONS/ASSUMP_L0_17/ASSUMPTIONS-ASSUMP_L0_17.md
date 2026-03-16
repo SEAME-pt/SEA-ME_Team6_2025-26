@@ -4,7 +4,7 @@ header: 'Assumption: Introduce AI in the project'
 level: '1.17'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_17/EXPECTATIONS-EXPECT_L0_17.md
+- path: ../expectations/EXPECT-L0-17.md
   type: file
 reviewers:
 - name: Joao Jesus Silva
