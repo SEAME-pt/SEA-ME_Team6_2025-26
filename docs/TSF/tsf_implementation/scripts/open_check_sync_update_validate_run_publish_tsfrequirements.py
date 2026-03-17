@@ -1384,6 +1384,7 @@ normative: true
 references:
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+    description: {PLACEHOLDER_EVIDENCE_MARKER}
 score: 0.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
