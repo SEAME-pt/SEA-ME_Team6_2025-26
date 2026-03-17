@@ -15,7 +15,8 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TSF_IMPL="$( cd "$SCRIPT_DIR/.." && pwd )"
 BASE_DIR="$( cd "$TSF_IMPL/.." && pwd )"
-REPO_ROOT="$( cd "$BASE_DIR/.." && pwd )"
+# Prefer git top-level for correctness; fallback to TSF_IMPL/../../.. from this script layout.
+REPO_ROOT="$(git -C "$TSF_IMPL" rev-parse --show-toplevel 2>/dev/null || { cd "$TSF_IMPL/../../.." && pwd; })"
 ITEMS_SOURCE="$TSF_IMPL/items"
 GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"
@@ -30,7 +31,7 @@ echo ""
 echo "🧹 Step 0: Cleaning all generated files..."
 [ -f "$GRAPH_DIR/graph.dot" ] && rm -f "$GRAPH_DIR/graph.dot" && echo "  ✓ Removed graph.dot"
 [ -f "$DB_FILE" ] && rm -f "$DB_FILE" && echo "  ✓ Removed .dotstop.dot"
-[ -e "$DB_SYMLINK" ] && rm -f "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
+[ -e "$DB_SYMLINK" -o -L "$DB_SYMLINK" ] && rm -f "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
 [ -d "$TSF_IMPL/.trudag_items" ] && rm -rf "$TSF_IMPL/.trudag_items" && echo "  ✓ Removed .trudag_items/ (tsf_impl)"
 [ -d "$REPO_ROOT/.trudag_items" ] && rm -rf "$REPO_ROOT/.trudag_items" && echo "  ✓ Removed .trudag_items/ (repo root)"
 find "$REPO_ROOT" -name "needs.dot" -type f -delete 2>/dev/null && echo "  ✓ Removed needs.dot files"
@@ -54,13 +55,13 @@ echo "✓ DB initialized: $DB_FILE"
 
 # Create symlink in repo root so trudag can find it
 cd "$REPO_ROOT"
-[ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
+[ -e ".dotstop.dot" -o -L ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
 ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
 echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
 
 # Create symlink for .dotstop_extensions in tsf_implementation so trudag finds validators
 cd "$TSF_IMPL"
-[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
+[ -e ".dotstop_extensions" -o -L ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
 ln -s "../../../.dotstop_extensions" ".dotstop_extensions"
 echo "✓ Created .dotstop_extensions symlink for validators"
 echo ""
@@ -142,11 +143,12 @@ echo ""
 
 # Fix file reference paths in YAML to point to .trudag_items structure
 echo "🔧 Fixing file reference paths and IDs in .trudag_items..."
-python3 - <<'PYTHON'
+TSF_IMPL="$TSF_IMPL" python3 - <<'PYTHON'
 import re
+import os
 from pathlib import Path
 
-trudag_items = Path("/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/.trudag_items")
+trudag_items = Path(os.environ["TSF_IMPL"]) / ".trudag_items"
 
 fixed_count = 0
 
