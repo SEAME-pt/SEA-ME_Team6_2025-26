@@ -6,7 +6,7 @@ text: The project implements the Trustable Safety Framework for requirements def
 level: '1.14'
 normative: true
 references:
-- path: ../assertions/ASSERT-L0-14.md
+- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_14/ASSERTIONS-ASSERT_L0_14.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

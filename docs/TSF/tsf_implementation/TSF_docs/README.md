@@ -20,6 +20,15 @@ Follow this order to understand the TSF implementation from concepts to practice
 
 ---
 
+## 📑 Index
+
+1. [Reading Order](#-reading-order)
+2. [Script Execution Commands](#-script-execution-commands)
+3. [Current Status](#-current-status)
+4. [Document Summaries](#-document-summaries)
+
+---
+
 ## 🎯 Quick Start
 
 If you just want to run the TSF system:
@@ -33,6 +42,44 @@ python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_
 
 # Full validation with TruDAG
 ./docs/TSF/tsf_implementation/scripts/setup_trudag_clean.sh
+```
+
+---
+
+## 🔧 Script Execution Commands
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Check item formatting and structure
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence extracted from sprint markers
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish pipeline
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# End-to-end execution
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Check item formatting and structure
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence extracted from sprint markers
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish pipeline
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# End-to-end execution
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
 ```
 
 ---
@@ -78,3 +125,20 @@ python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_
 1. Check [TSF_IMPLEMENTATION.md](TSF_IMPLEMENTATION.md) troubleshooting section
 2. Run `--check` to see current status
 3. Review TruDAG logs in `docs/TSF/tsf_implementation/logs/`
+
+---
+
+## Latest Technical Update (Mar 2026)
+
+Post-debug fixes documented in this folder include:
+
+- symlink cleanup robustness (`-e` and `-L`) in setup script
+- dynamic `TSF_IMPL` path usage (removed hardcoded `/Volumes/...` path)
+- validator signature alignment with TruDAG (`yaml` imported from core validator)
+- `validate_software_dependencies` made retrocompatible with `components` key
+- score recovery fixes for graph links, deterministic URL-reference SHA, and L0_22-L0_31 evidence normalization
+
+Current documented outcome: score recovered to `124/124`.
+
+Detailed recovery log:
+- [TSF_SCORE_RECOVERY_MAR2026.md](TSF_SCORE_RECOVERY_MAR2026.md)

@@ -14,6 +14,47 @@ This document explains how Generative AI (GenAI) is integrated into the TSF auto
 4. [Current Implementation](#current-implementation)
 5. [How to Use AI Generation](#how-to-use-ai-generation)
 6. [Best Practices](#best-practices)
+7. [Script Execution Commands](#script-execution-commands)
+
+---
+
+## Script Execution Commands
+
+To run TSF generation and validation workflows.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Validate item format and references
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence links from sprints
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG pipeline (validate/score/publish)
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Full end-to-end run
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Validate item format and references
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence links from sprints
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG pipeline (validate/score/publish)
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Full end-to-end run
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
 
 ---
 
@@ -320,3 +361,15 @@ This approach balances:
 - ✅ Human oversight and quality control
 - ✅ Automation efficiency
 - ✅ Flexibility for different team setups
+
+---
+
+## Post 0/124 TSF Fixes (Mar 2026)
+
+During validation troubleshooting, the following technical fixes were applied:
+
+- `setup_trudag_clean.sh`: symlink cleanup and dynamic `TSF_IMPL` path rewrite.
+- `validators.py`: TruDAG-compatible `yaml` annotation import.
+- `validate_software_dependencies`: support for `components` key in `evidence.configuration` (retrocompatible with `dependencies/packages`).
+
+These changes recovered scoring from `0/124` to `82/124` in the current run baseline.

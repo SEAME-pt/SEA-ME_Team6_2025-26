@@ -13,8 +13,6 @@ references:
   path: src/cross-compiler/opencvToolchain.cmake
 - type: file
   path: src/cross-compiler/toolchain.cmake
-- type: file
-  path: docs/demos/system-architecture-cross.png
 score: 1.0
 reviewers:
   - name: Joao Jesus Silva

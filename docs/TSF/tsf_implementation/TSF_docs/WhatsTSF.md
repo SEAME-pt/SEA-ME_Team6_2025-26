@@ -1,5 +1,52 @@
 # 🧩 What is TSF (Trustable Software Framework)?
 
+## Index
+
+1. [Overview](#overview)
+2. [Core Concepts](#core-concepts)
+3. [TSF Scaffolding](#tsf-scaffolding)
+4. [Script Execution Commands](#script-execution-commands)
+
+## Script Execution Commands
+
+From repository root.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Check TSF items
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence from sprint markers
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Run everything
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Check TSF items
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence from sprint markers
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Run everything
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+---
+
 ## Overview
 
 The **Trustable Software Framework (TSF)** is an open-source methodology and toolset designed to manage requirements, evidence, and verification activities for safety- and mission-critical software — especially in aerospace, defense, automotive, and medical domains.
@@ -333,3 +380,15 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 - [Eclipse TSF Project](https://projects.eclipse.org/projects/technology.tsf)
 - [TruDAG Documentation](https://gitlab.com/CodethinkLabs/trustable/trudag)
 - [Doorstop (Foundation)](https://github.com/doorstop-dev/doorstop)
+
+---
+
+## Implementation Update (Mar 2026)
+
+In our current TSF implementation, a scoring regression to `0/124` was addressed by:
+
+1. fixing symlink and path handling in `setup_trudag_clean.sh`
+2. aligning custom validator signatures with TruDAG discovery requirements
+3. making `validate_software_dependencies` accept `components` as a valid configuration key
+
+Current score state after these corrections: `82/124`.

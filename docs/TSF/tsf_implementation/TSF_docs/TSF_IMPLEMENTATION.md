@@ -20,6 +20,47 @@ This document describes the TSF (Trustable Software Framework) implementation fo
 9. [CI/CD Integration](#cicd-integration)
 10. [Published Reports](#published-reports)
 11. [Troubleshooting](#troubleshooting)
+12. [Script Execution Commands](#script-execution-commands)
+
+---
+
+## Script Execution Commands
+
+From repository root.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# 1) Lint/structure check only
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# 2) Evidence synchronization only
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# 3) TruDAG validate/score/publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# 4) Full pipeline in sequence
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# 1) Lint/structure check only
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# 2) Evidence synchronization only
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# 3) TruDAG validate/score/publish
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# 4) Full pipeline in sequence
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
 
 ---
 
@@ -684,6 +725,23 @@ rm -f docs/TSF/tsf_implementation/.dotstop_extensions
 source .venv/bin/activate
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
 ```
+
+---
+
+## Post 0/124 Fixes (Mar 2026)
+
+After a full debug cycle, the following fixes were applied to stabilize validation/scoring:
+
+1. `setup_trudag_clean.sh`: fixed symlink cleanup for broken links by checking `-e` or `-L` before `rm`.
+2. `setup_trudag_clean.sh`: removed hardcoded macOS path (`/Volumes/...`) and switched to dynamic `TSF_IMPL` in embedded Python.
+3. `.dotstop_extensions/validators.py`: imported `yaml` from `trudag.dotstop.core.validator` so validator signatures match TruDAG strict discovery.
+4. `.dotstop_extensions/validators.py`: updated `validate_software_dependencies` to accept `components` in addition to `dependencies/packages` (retrocompatible).
+
+Validation impact after fixes:
+
+- `validator_not_found`: resolved
+- `missing file` path rewrite issue: resolved
+- score improved from `0/124` to `82/124` (with remaining items currently failing as `Missing` evidence)
 
 Note: `setup_trudag_clean.sh` now removes both regular files and broken symlinks before recreating links.
 

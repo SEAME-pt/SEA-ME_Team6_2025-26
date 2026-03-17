@@ -180,7 +180,7 @@ def validate_software_dependencies(configuration: dict[str, yaml]) -> tuple[floa
     in requirements files, package.json, CMakeLists.txt, etc.
     
     Configuration should contain:
-        dependencies: list of dependencies to verify
+        dependencies/packages/components: list of dependencies to verify
         dependency_files: optional list of files to check (e.g., requirements.txt, package.json)
     
     Example yaml:
@@ -202,8 +202,11 @@ def validate_software_dependencies(configuration: dict[str, yaml]) -> tuple[floa
     
     repo_root = Path(__file__).resolve().parents[1]
     
-    # Support both "dependencies" and "packages" keys for backward compatibility
-    dependencies = configuration.get("dependencies", configuration.get("packages", []))
+    # Support legacy keys used across TSF items.
+    dependencies = configuration.get(
+        "dependencies",
+        configuration.get("packages", configuration.get("components", [])),
+    )
     if not dependencies:
         return (0.0, [ValueError("No dependencies specified in configuration")])
     

@@ -1,6 +1,5 @@
 from trudag.dotstop.core.reference.references import BaseReference, ResolvedReference
 from trudag.dotstop.core.exception import ReferenceError
-import urllib.request
 import os
 
 
@@ -17,11 +16,11 @@ class FileReference(BaseReference):
         if not os.path.exists(self._path):
             # Return dummy content for non-existent files to avoid ReferenceError
             return b"File not found - reference skipped"
-        
+
         if not os.path.isfile(self._path):
             # Return dummy content for non-regular files
             return b"Non-regular file - reference skipped"
-        
+
         try:
             with open(self._path, 'rb') as f:
                 return f.read()
@@ -48,25 +47,9 @@ class UrlReference(BaseReference):
 
     @property
     def content(self) -> bytes:
-        # Skip fetching GitHub blob URLs from our own repo to avoid 404 errors
-        if 'github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob' in self._url:
-            # Return a dummy content for GitHub blob URLs
-            return b"GitHub blob URL - content not fetched to avoid 404 errors"
-        
-        # If URL looks truncated (ends with incomplete domain), skip it
-        if (self._url.endswith('github.com/SEAME-pt/SEA') or 
-            self._url.endswith('github.com/SEAME-pt/S') or
-            self._url.endswith('github.com/SEAME-pt/SEA-ME_') or
-            self._url.endswith('github.com/SEAME-pt/SEA-M') or
-            len(self._url) < 20 or
-            'github.com/SEAME-pt/SEA' in self._url and not 'SEA-ME_Team6_2025-26' in self._url):
-            return b"Truncated URL - content not fetched"
-        
-        try:
-            resp = urllib.request.urlopen(self._url)
-            return resp.read()
-        except Exception as e:
-            raise ReferenceError(f"Could not fetch URL {self._url}: {e}") from e
+        # Return the URL string itself as bytes for stable, deterministic SHA computation.
+        # Live URL fetching causes non-deterministic SHAs because web content changes over time.
+        return self._url.encode("utf-8")
 
     def as_markdown(self, filepath=None) -> str:  # noqa ARG002
         return f"[{self._url}]({self._url})\n"

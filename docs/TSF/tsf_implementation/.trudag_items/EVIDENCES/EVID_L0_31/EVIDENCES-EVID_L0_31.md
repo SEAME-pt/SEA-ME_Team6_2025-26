@@ -70,7 +70,7 @@ references:
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r5-script.jpeg
   description: OTA Script Running on Raspberry Pi 5
-score: 0.0
+score: 1.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt

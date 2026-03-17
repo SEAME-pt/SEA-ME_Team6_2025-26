@@ -9,7 +9,7 @@ The distribution of scores for evidence nodes across the graph.
 
     |bin|count|
     |-|-|
-    |0.0-0.1 {style="background-color:hsl(12.0, 100%, 61%)"} |73|
+    |0.0-0.1 {style="background-color:hsl(12.0, 100%, 61%)"} |103|
     |0.1-0.2 {style="background-color:hsl(24.0, 100%, 58%)"} |0|
     |0.2-0.3 {style="background-color:hsl(36.0, 100%, 54%)"} |0|
     |0.3-0.4 {style="background-color:hsl(48.0, 100%, 51%)"} |0|
@@ -29,7 +29,7 @@ The distribution of scores for expectations nodes across the graph.
 
     |bin|count|
     |-|-|
-    |0.0-0.1 {style="background-color:hsl(12.0, 100%, 61%)"} |64|
+    |0.0-0.1 {style="background-color:hsl(12.0, 100%, 61%)"} |103|
     |0.1-0.2 {style="background-color:hsl(24.0, 100%, 58%)"} |0|
     |0.2-0.3 {style="background-color:hsl(36.0, 100%, 54%)"} |0|
     |0.3-0.4 {style="background-color:hsl(48.0, 100%, 51%)"} |0|
@@ -65,9 +65,9 @@ The distribution of scores for all nodes across the graph.
 | Category | Count |
 |----------|-------|
 |statements|124|
-|reviewed statements|124|
-|unreviewed statements|0|
-|orphaned statements|55|
-|statements with evidence|30|
-|evidence|94|
-|expectations|85|
+|reviewed statements|121|
+|unreviewed statements|3|
+|orphaned statements|124|
+|statements with evidence|0|
+|evidence|124|
+|expectations|124|

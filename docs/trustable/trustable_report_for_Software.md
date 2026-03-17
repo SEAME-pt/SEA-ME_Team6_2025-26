@@ -55,7 +55,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSERTIONS-ASSERT_L0_30](ASSERTIONS.md#assertions-assert_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_31](ASSERTIONS.md#assertions-assert_l0_31) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_31](ASSERTIONS.md#assertions-assert_l0_31) {class="tsf-score status-unreviewed" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ⨯ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for ASSUMPTIONS ## {: data-toc-label="ASSUMPTIONS"}
 
@@ -127,7 +127,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EVIDENCES-EVID_L0_28](EVIDENCES.md#evidences-evid_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_29](EVIDENCES.md#evidences-evid_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_30](EVIDENCES.md#evidences-evid_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EVIDENCES-EVID_L0_31](EVIDENCES.md#evidences-evid_l0_31) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_31](EVIDENCES.md#evidences-evid_l0_31) {class="tsf-score status-unreviewed" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation. | 0.00 | Missing | ⨯ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EXPECTATIONS ## {: data-toc-label="EXPECTATIONS"}
 
@@ -163,14 +163,14 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EXPECTATIONS-EXPECT_L0_28](EXPECTATIONS.md#expectations-expect_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_29](EXPECTATIONS.md#expectations-expect_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_31](EXPECTATIONS.md#expectations-expect_l0_31) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_31](EXPECTATIONS.md#expectations-expect_l0_31) {class="tsf-score status-unreviewed" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ⨯ Item Reviewed<br>✔ All Children Linked |
 
 
 ---
 
 _Generated for: Software_
 
-* _Repository root: /Users/joaojesussilva/Documents/untitled folder/SEA-ME_Team6_2025-26_
-* _Commit SHA: 89b6054ab570a3d7cb462c807d91a6735b01a7f6_
-* _Commit date/time: 2026-03-11 22:27:31+00:00 UTC_
-* _Commit tag: v1.9.0-119-g89b6054_
+* _Repository root: /home/seame/Documents/SEA-ME_Team6_2025-26_
+* _Commit SHA: 30e87f85ed85a41212670feb35e037d6ff23ea06_
+* _Commit date/time: 2026-03-16 22:51:20+00:00 UTC_
+* _Commit tag: v1.9.0-150-g30e87f8_

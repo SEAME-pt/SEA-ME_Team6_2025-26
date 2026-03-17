@@ -4,7 +4,7 @@ header: 'Assumption: Driveable Car with Remote Control/Driveable Car Model...'
 level: '1.4'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-4.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_4/EXPECTATIONS-EXPECT_L0_4.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

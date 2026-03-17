@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+cd /home/seame/Documents/SEA-ME_Team6_2025-26
+source .venv/bin/activate
+
+create_link() {
+  local parent="$1"
+  local child="$2"
+  trudag manage set-item "$parent" 2>&1 | grep -v shadows || true
+  trudag manage set-item "$child" 2>&1 | grep -v shadows || true
+  local result
+  result=$(trudag manage create-link "$parent" "$child" 2>&1) || true
+  if echo "$result" | grep -q "already"; then
+    echo "SKIP: $parent -> $child"
+  else
+    echo "OK:   $parent -> $child"
+  fi
+}
+
+echo "=== Creating missing ASSERT->EVID edges ==="
+create_link "ASSERTIONS-ASSERT_L0_14" "EVIDENCES-EVID_L0_14"
+create_link "ASSERTIONS-ASSERT_L0_31" "EVIDENCES-EVID_L0_31"
+
+echo "=== Creating missing EXPECT->ASSERT/ASSUMP edges L0_4-9 ==="
+create_link "EXPECTATIONS-EXPECT_L0_4"  "ASSERTIONS-ASSERT_L0_4"
+create_link "EXPECTATIONS-EXPECT_L0_4"  "ASSUMPTIONS-ASSUMP_L0_4"
+create_link "EXPECTATIONS-EXPECT_L0_5"  "ASSERTIONS-ASSERT_L0_5"
+create_link "EXPECTATIONS-EXPECT_L0_5"  "ASSUMPTIONS-ASSUMP_L0_5"
+create_link "EXPECTATIONS-EXPECT_L0_6"  "ASSERTIONS-ASSERT_L0_6"
+create_link "EXPECTATIONS-EXPECT_L0_6"  "ASSUMPTIONS-ASSUMP_L0_6"
+create_link "EXPECTATIONS-EXPECT_L0_7"  "ASSERTIONS-ASSERT_L0_7"
+create_link "EXPECTATIONS-EXPECT_L0_7"  "ASSUMPTIONS-ASSUMP_L0_7"
+create_link "EXPECTATIONS-EXPECT_L0_8"  "ASSERTIONS-ASSERT_L0_8"
+create_link "EXPECTATIONS-EXPECT_L0_8"  "ASSUMPTIONS-ASSUMP_L0_8"
+create_link "EXPECTATIONS-EXPECT_L0_9"  "ASSERTIONS-ASSERT_L0_9"
+create_link "EXPECTATIONS-EXPECT_L0_9"  "ASSUMPTIONS-ASSUMP_L0_9"
+
+echo "=== Creating missing EXPECT->ASSERT/ASSUMP edges L0_22-31 ==="
+create_link "EXPECTATIONS-EXPECT_L0_22" "ASSERTIONS-ASSERT_L0_22"
+create_link "EXPECTATIONS-EXPECT_L0_22" "ASSUMPTIONS-ASSUMP_L0_22"
+create_link "ASSERTIONS-ASSERT_L0_22"   "EVIDENCES-EVID_L0_22"
+create_link "EXPECTATIONS-EXPECT_L0_23" "ASSERTIONS-ASSERT_L0_23"
+create_link "EXPECTATIONS-EXPECT_L0_23" "ASSUMPTIONS-ASSUMP_L0_23"
+create_link "EXPECTATIONS-EXPECT_L0_24" "ASSERTIONS-ASSERT_L0_24"
+create_link "EXPECTATIONS-EXPECT_L0_24" "ASSUMPTIONS-ASSUMP_L0_24"
+create_link "EXPECTATIONS-EXPECT_L0_25" "ASSERTIONS-ASSERT_L0_25"
+create_link "EXPECTATIONS-EXPECT_L0_25" "ASSUMPTIONS-ASSUMP_L0_25"
+create_link "EXPECTATIONS-EXPECT_L0_26" "ASSERTIONS-ASSERT_L0_26"
+create_link "EXPECTATIONS-EXPECT_L0_26" "ASSUMPTIONS-ASSUMP_L0_26"
+create_link "EXPECTATIONS-EXPECT_L0_27" "ASSERTIONS-ASSERT_L0_27"
+create_link "EXPECTATIONS-EXPECT_L0_27" "ASSUMPTIONS-ASSUMP_L0_27"
+create_link "EXPECTATIONS-EXPECT_L0_28" "ASSERTIONS-ASSERT_L0_28"
+create_link "EXPECTATIONS-EXPECT_L0_28" "ASSUMPTIONS-ASSUMP_L0_28"
+create_link "EXPECTATIONS-EXPECT_L0_29" "ASSERTIONS-ASSERT_L0_29"
+create_link "EXPECTATIONS-EXPECT_L0_29" "ASSUMPTIONS-ASSUMP_L0_29"
+create_link "EXPECTATIONS-EXPECT_L0_30" "ASSERTIONS-ASSERT_L0_30"
+create_link "EXPECTATIONS-EXPECT_L0_30" "ASSUMPTIONS-ASSUMP_L0_30"
+create_link "EXPECTATIONS-EXPECT_L0_31" "ASSERTIONS-ASSERT_L0_31"
+create_link "EXPECTATIONS-EXPECT_L0_31" "ASSUMPTIONS-ASSUMP_L0_31"
+
+echo "=== Done ==="
+echo "Total edges in .dotstop.dot:"
+grep -c "\->" .dotstop.dot

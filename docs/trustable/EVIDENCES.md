@@ -18,46 +18,6 @@ _None_
 
 **References:**
 
-- `docs/demos/assembled-car1.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/assembled-car1.jpeg
-		```
-
-
-
-- `docs/demos/assembled-car2.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/assembled-car2.jpeg
-		```
-
-
-
-- `docs/demos/eletric-scheme.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/eletric-scheme.png
-		```
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint3.jpeg
-		```
-
-
-
 - `docs/guides/Power Consumption Analysis.md`
 
 	??? "Click to view reference"
@@ -200,56 +160,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/demos/3d-car.jpg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/3d-car.jpg
-		```
-
-
-
-- `docs/demos/3d-car2.jpg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/3d-car2.jpg
-		```
-
-
-
-- `docs/demos/3d-car3.jpg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/3d-car3.jpg
-		```
-
-
-
-- `docs/demos/eletric-scheme.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/eletric-scheme.png
-		```
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint3.jpeg
-		```
-
-
 
 - `docs/guides/Power Consumption Analysis.md`
 
@@ -1372,106 +1282,6 @@ _None_
 
 **References:**
 
-- `docs/demos/first_qt_app.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/first_qt_app.jpeg
-		```
-
-
-
-- `docs/demos/mockup1.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup1.jpeg
-		```
-
-
-
-- `docs/demos/mockup2.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup2.jpeg
-		```
-
-
-
-- `docs/demos/mockup3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup3.jpeg
-		```
-
-
-
-- `docs/demos/mockup4.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup4.jpeg
-		```
-
-
-
-- `docs/demos/mockup5.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup5.jpeg
-		```
-
-
-
-- `docs/demos/mockup6.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup6.jpeg
-		```
-
-
-
-- `docs/demos/Cluster-display-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-display-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/Cluster-mockup-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-mockup-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/Cluster-study.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-study.jpeg
-		```
-
-
-
 - `docs/guides/QML-guide.md`
 
 	??? "Click to view reference"
@@ -2084,66 +1894,6 @@ _None_
 
 **References:**
 
-- `docs/demos/mockup1.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup1.jpeg
-		```
-
-
-
-- `docs/demos/mockup2.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup2.jpeg
-		```
-
-
-
-- `docs/demos/mockup3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup3.jpeg
-		```
-
-
-
-- `docs/demos/mockup4.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup4.jpeg
-		```
-
-
-
-- `docs/demos/mockup5.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup5.jpeg
-		```
-
-
-
-- `docs/demos/mockup6.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/mockup6.jpeg
-		```
-
-
-
 - `docs/guides/QML-guide.md`
 
 	??? "Click to view reference"
@@ -2670,36 +2420,6 @@ _None_
 		  **Last Updated:** 12th November 2025  
 		  **Contributor:** souzitaaaa
 		````
-
-
-
-- `docs/demos/Cluster-display-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-display-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/Cluster-mockup-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-mockup-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/Cluster-study.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Cluster-study.jpeg
-		```
 
 
 
@@ -3784,16 +3504,6 @@ _None_
 
 
 
-- `docs/demos/system-architecture-cross.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/system-architecture-cross.png
-		```
-
-
-
 {% endraw %}
 
 
@@ -3814,16 +3524,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/demos/CANbus Scheme Updated.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/CANbus Scheme Updated.png
-		```
-
-
 
 - `docs/guides/CAN-overview.md`
 
@@ -3932,16 +3632,6 @@ _None_
 		---
 		
 		````
-
-
-
-- `docs/demos/CAN-layout-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/CAN-layout-sprint3.jpeg
-		```
 
 
 
@@ -4434,46 +4124,6 @@ _None_
 
 **References:**
 
-- `docs/demos/Validation-of-energy-layout-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint3.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint3.jpeg
-		```
-
-
-
-- `docs/demos/eletric-scheme.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/eletric-scheme.png
-		```
-
-
-
-- `docs/demos/eletric-scheme.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/eletric-scheme.png
-		```
-
-
-
 - `docs/guides/Power Consumption Analysis.md`
 
 	??? "Click to view reference"
@@ -4715,36 +4365,6 @@ _None_
 		| **No. Components** | 13 | 12 | -1 |
 		
 		````
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint0.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint0.jpeg
-		```
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint1.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint1.jpeg
-		```
-
-
-
-- `docs/demos/Validation-of-energy-layout-sprint2.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/Validation-of-energy-layout-sprint2.jpeg
-		```
 
 
 
@@ -4768,16 +4388,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/demos/system-architecture-cross.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/system-architecture-cross.png
-		```
-
-
 
 - `docs/guides/AGL_Configuration_Guide.md`
 
@@ -6034,36 +5644,6 @@ _None_
 {% raw %}
 
 **References:**
-
-- `docs/demos/system-architecture-cross.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/system-architecture-cross.png
-		```
-
-
-
-- `docs/demos/first_qt_app.jpeg`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/first_qt_app.jpeg
-		```
-
-
-
-- `docs/demos/eletric-scheme.png`
-
-	??? "Click to view reference"
-
-		```text
-		docs/demos/eletric-scheme.png
-		```
-
-
 
 - `docs/guides/Power Consumption Analysis.md`
 
@@ -8932,7 +8512,7 @@ _None_
 
 ---
 
-### EVIDENCES-EVID_L0_31 | Reviewed: ✔ | Score: 0.0 ### {: #evidences-evid_l0_31 data-toc-label="EVIDENCES-EVID_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EVIDENCES-EVID_L0_31 | Reviewed: ⨯ | Score: 0.0 ### {: #evidences-evid_l0_31 data-toc-label="EVIDENCES-EVID_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
 This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation.
 
 ## Evidence Collection Status
@@ -9003,10 +8583,11 @@ _None_
 
 **References:**
 
-??? failure "Click to view reference logs"
-    ````md
-    Error in item 'EVIDENCES-EVID_L0_31.md' of reference type 'url': Could not fetch URL https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1016)>
-    ````
+- `https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc`
+
+	??? "Click to view reference"
+
+		[https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc)
 
 
 

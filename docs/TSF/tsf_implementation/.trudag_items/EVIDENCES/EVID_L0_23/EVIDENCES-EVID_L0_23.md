@@ -16,7 +16,7 @@ normative: true
 references:
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
-score: 0.0
+score: 1.0
 reviewers:
   - name: Joao Jesus Silva
     email: joao.silva@seame.pt

@@ -16,6 +16,47 @@ This guide covers the validator architecture and implementation for the Trustabl
 6. [Score Calculation](#score-calculation)
 7. [Creating Custom Validators](#creating-custom-validators)
 8. [Troubleshooting](#troubleshooting)
+9. [Script Execution Commands](#script-execution-commands)
+
+---
+
+## Script Execution Commands
+
+Use the unified TSF script for validator-related operations.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Validate front-matter, links, and formatting
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Refresh evidence references before scoring
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG scoring/publishing with custom validators
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Execute complete flow
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Validate front-matter, links, and formatting
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Refresh evidence references before scoring
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG scoring/publishing with custom validators
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Execute complete flow
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
 
 ---
 
@@ -454,3 +495,20 @@ Ensure components/dependencies are mentioned in:
 # Quick validation check
 source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
 ```
+
+---
+
+## Post 0/124 Fixes (Mar 2026)
+
+Recent validator-related fixes applied after scoring dropped to `0/124`:
+
+1. Signature compatibility fix:
+- `validators.py` now imports `yaml` from `trudag.dotstop.core.validator`.
+- This aligns function annotations with TruDAG strict `inspect.signature()` matching.
+
+2. Configuration compatibility fix:
+- `validate_software_dependencies` now accepts `components` as well as `dependencies` and `packages`.
+- This fixed assumptions that were configured with `evidence.configuration.components` and incorrectly scoring `0.0`.
+
+3. Result:
+- the `ASSUMP_L0_23` to `ASSUMP_L0_31` block moved from `0.0` to `1.0` after revalidation.

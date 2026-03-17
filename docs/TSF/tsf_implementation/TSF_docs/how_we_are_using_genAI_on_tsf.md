@@ -1,5 +1,50 @@
 # How We Are Using Generative AI on TSF
 
+## Index
+
+1. [What is Generative AI?](#1-what-is-generative-ai)
+2. [Gen AI in Our TSF Workflow](#2-gen-ai-in-our-tsf-workflow)
+3. [Script Execution Commands](#3-script-execution-commands)
+4. [Post 0/124 Recovery Notes](#11-post-0124-recovery-notes-mar-2026)
+
+## 3. Script Execution Commands
+
+Run these commands from repository root.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Validate structure
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Validate + score + publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Full run
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Validate structure
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Validate + score + publish
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Full run
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
 ## 1. What is Generative AI?
 
 **Generative AI (Gen AI)** refers to artificial intelligence systems that can create new content—text, code, images, or other outputs—based on patterns learned from training data. Unlike traditional software that follows explicit rules, Gen AI models learn from examples and generate contextually appropriate responses.
@@ -310,6 +355,25 @@ Track metrics:
 
 ---
 
-**Last Updated**: December 13, 2025  
+## 11. Post 0/124 Recovery Notes (Mar 2026)
+
+Applied corrections:
+
+1. `setup_trudag_clean.sh`:
+- fixed broken symlink cleanup checks (`-e` and `-L`)
+- replaced hardcoded `/Volumes/...` path with dynamic `TSF_IMPL`
+
+2. `.dotstop_extensions/validators.py`:
+- imported `yaml` from `trudag.dotstop.core.validator` for strict signature matching
+- updated `validate_software_dependencies` to accept `components`, `dependencies`, and `packages`
+
+Outcome after revalidation:
+
+- score improved from `0/124` to `82/124`
+- `ASSUMP_L0_23` to `ASSUMP_L0_31` moved from `0.0` to `1.0`
+
+---
+
+**Last Updated**: March 17, 2026  
 **Authors**: SEA-ME Team 6  
 **Status**: Active (Template-based generation implemented)

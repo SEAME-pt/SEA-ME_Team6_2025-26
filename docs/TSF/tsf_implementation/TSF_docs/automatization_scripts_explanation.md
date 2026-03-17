@@ -14,6 +14,47 @@ This document explains the automation scripts used for TSF management in the SEA
 4. [Configuration](#configuration)
 5. [Module Reference](#module-reference)
 6. [Workflow Diagram](#workflow-diagram)
+7. [Script Execution Commands](#script-execution-commands)
+
+---
+
+## Script Execution Commands
+
+Use the unified TSF script from the repository root.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# 1) Validate structure and references
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# 2) Sync evidence from sprint files
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# 3) Run TruDAG validate/score/publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# 4) Run full pipeline
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# 1) Validate structure and references
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# 2) Sync evidence from sprint files
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# 3) Run TruDAG validate/score/publish
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# 4) Run full pipeline
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
 
 ---
 
@@ -408,3 +449,23 @@ The following scripts are deprecated and kept only for historical reference:
 ```bash
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
 ```
+
+---
+
+## Post 0/124 Fixes Applied To Automation (Mar 2026)
+
+The automation flow was corrected with the following fixes:
+
+1. `scripts/setup_trudag_clean.sh`
+- fixed broken symlink cleanup logic (`-e` or `-L`) to avoid `ln ... File exists` failures.
+- replaced hardcoded macOS path with dynamic `TSF_IMPL` in the embedded Python path-rewrite block.
+
+2. `.dotstop_extensions/validators.py`
+- aligned validator signatures with TruDAG strict matcher by importing `yaml` from `trudag.dotstop.core.validator`.
+- made `validate_software_dependencies` accept `components` in configuration (retrocompatible with `dependencies/packages`).
+
+Operational result:
+
+- removed `validator_not_found` regressions
+- removed path rewrite regressions causing widespread missing references
+- improved score from `0/124` to `82/124` in current validation state
