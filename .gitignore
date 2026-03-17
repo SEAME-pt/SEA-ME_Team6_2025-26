@@ -72,3 +72,6 @@ build/
 venv/
 *.pyc
 __pycache__/
+
+# TruDAG generated items (auto-generated, not source)
+docs/TSF/tsf_implementation/.trudag_items/

@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import subprocess
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
@@ -106,6 +107,11 @@ def print_startup_diagnostics():
     print("="*70)
     
     return deps_ok
+
+
+def is_vscode_cli_available() -> bool:
+    """Return True when VSCode CLI command `code` is available in PATH."""
+    return shutil.which('code') is not None
 
 
 # Import yaml after dependency check setup (will fail gracefully if not installed)
@@ -681,9 +687,12 @@ class AIGenerator:
         
         # Open all files in VSCode
         if settings.get('open_in_vscode', True):
-            print(f"\n📂 Opening {len(items)} files in VSCode...")
-            for item_type, item_id, file_path in items:
-                subprocess.run(['code', str(file_path)], check=False)
+            if is_vscode_cli_available():
+                print(f"\n📂 Opening {len(items)} files in VSCode...")
+                for item_type, item_id, file_path in items:
+                    subprocess.run(['code', str(file_path)], check=False)
+            else:
+                print("\nℹ️  VSCode CLI (`code`) not available; skipping file opening.")
         
         # Build consolidated prompt
         if settings.get('show_prompt_suggestion', True):
@@ -730,6 +739,9 @@ For each item, fill the YAML frontmatter fields:
         
         # Wait for user confirmation
         if settings.get('wait_for_user_confirmation', True):
+            if not is_vscode_cli_available():
+                print("\nℹ️  Non-interactive fallback: VSCode CLI unavailable, skipping Option G wait.")
+                return []
             print(f"\n⏳ Please use Copilot Chat (Cmd+L) or Claude to generate content for ALL items.")
             print(f"   After AI has edited the files, press Enter to continue...")
             print(f"   (Type 'skip' to skip AI generation, 'quit' to exit)")
@@ -803,8 +815,12 @@ For each item, fill the YAML frontmatter fields:
         
         # Open file in VSCode
         if settings.get('open_in_vscode', True):
-            print(f"\n📂 Opening file in VSCode: {file_path}")
-            subprocess.run(['code', str(file_path)], check=False)
+            if is_vscode_cli_available():
+                print(f"\n📂 Opening file in VSCode: {file_path}")
+                subprocess.run(['code', str(file_path)], check=False)
+            else:
+                print("\nℹ️  VSCode CLI (`code`) not available; trying fallback method.")
+                return False
         
         # Show suggested prompt
         if settings.get('show_prompt_suggestion', True):
@@ -816,6 +832,9 @@ For each item, fill the YAML frontmatter fields:
         
         # Wait for user confirmation
         if settings.get('wait_for_user_confirmation', True):
+            if not is_vscode_cli_available():
+                print("\nℹ️  Non-interactive fallback: VSCode CLI unavailable, skipping Option G wait.")
+                return False
             print(f"\n⏳ Please use Copilot Chat (Cmd+L) or Claude to generate content.")
             print(f"   After AI has edited the file, press Enter to continue...")
             print(f"   (Type 'skip' to try CLI fallback, 'quit' to exit)")
