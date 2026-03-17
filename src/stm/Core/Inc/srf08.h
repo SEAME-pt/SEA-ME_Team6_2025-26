@@ -30,7 +30,7 @@
 #define SRF08_DEFAULT_RANGE   255   // Range máximo por default
 
 // Valores recomendados para operação
-#define SRF08_RECOMMENDED_GAIN   12   // Gain médio (melhor para distâncias curtas)
+#define SRF08_RECOMMENDED_GAIN   6    // Gain baixo: reduz falsos ecos do chão/paredes (testar: 4-12)
 #define SRF08_RECOMMENDED_RANGE  140  // ~6m, bom compromisso
 
 // Timing e polling

@@ -73,7 +73,7 @@ void task_heartbeat_step(SystemCtx* ctx)
     mcp_send_message(CAN_ID_HEARTBEAT_STM32, (uint8_t*)&hb_frame, sizeof(hb_frame));
 
     /* Visual heartbeat */
-    HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
+    //HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
 
     /*
     sys_log(ctx,

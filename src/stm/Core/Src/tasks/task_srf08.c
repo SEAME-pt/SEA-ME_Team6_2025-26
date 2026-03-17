@@ -6,13 +6,10 @@
 #include "mcp2515.h"          // mcp_send_message()
 
 
-// Keep these extern/global if other code depends on them exactly as globals
+// Legacy globals kept for link compatibility but no longer written by SRF08.
+// AEB (task_aeb.c) now owns all braking decisions.
 extern volatile uint8_t emergency_stop_active;
 extern volatile uint8_t srf08_speed_limit;
-
-// If these are currently file-static in app_threadx.c, move them to a module
-// that owns SRF08 safety logic (this one), but keep semantics identical:
-static EmergencyStopState_t srf08_emergency_state = ESTOP_STATE_NORMAL;
 
 #ifndef SRF08_DISABLE_POLLING
 #define SRF08_DISABLE_POLLING 1
@@ -53,14 +50,19 @@ static TaskSRF08 s_srf;
 
 void task_srf08_init(SystemCtx* ctx)
 {
-    // reset task state etc...
+    // Zero-init the full struct to avoid stale filter data on reinit
+    TaskSRF08 z = {0};
+    s_srf = z;
+
     s_srf.hsrf08.hi2c = &hi2c1;
     s_srf.hsrf08.addr = SRF08_DEFAULT_ADDR;
 
     sys_log(ctx, "[SRF08] init...");
 
-    // (A) check ready
+    // (A) check ready — use mutex to avoid I2C contention with IMU/ToF
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
     HAL_StatusTypeDef st = HAL_I2C_IsDeviceReady(&hi2c1, SRF08_DEFAULT_ADDR, 3, 100);
+    tx_mutex_put(&ctx->i2c1_mutex);
 
     if (st != HAL_OK) {
         s_srf.init_status = st;
@@ -84,10 +86,20 @@ void task_srf08_init(SystemCtx* ctx)
     if (st != HAL_OK) { sys_log(ctx,"[SRF08] SetRange FAIL st=%d", st); return; }
     tx_thread_sleep(10);
 
-    // read version (optional)
+    // (D) read version
     uint8_t ver = SRF08_GetVersion(&s_srf.hsrf08, ctx);
 
-    sys_log(ctx, "[SRF08] OK version=%u", ver);
+    // (E) verify gain register readback (only valid before first ranging)
+    uint8_t gain_rb = 0xFF;
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    HAL_I2C_Mem_Read(&hi2c1, SRF08_DEFAULT_ADDR, SRF08_REG_GAIN, 1, &gain_rb, 1, 100);
+    tx_mutex_put(&ctx->i2c1_mutex);
+
+    sys_log(ctx, "[SRF08] OK version=%u | gain_reg=%u (expected %u) | range_reg=140",
+            ver, gain_rb, SRF08_RECOMMENDED_GAIN);
+
+    if (gain_rb != SRF08_RECOMMENDED_GAIN)
+        sys_log(ctx, "[SRF08] WARN: gain readback mismatch! I2C write may have failed");
 }
 
 /*
@@ -122,6 +134,7 @@ void task_srf08_init(SystemCtx* ctx)
   }
 }*/
 
+/* Insertion-sort median over the circular buffer (rejects spikes better than mean) */
 static uint16_t srf08_apply_filter(uint16_t distance_mm_raw, uint8_t light)
 {
   // Accept if (light >= threshold) OR (distance valid)
@@ -134,13 +147,24 @@ static uint16_t srf08_apply_filter(uint16_t distance_mm_raw, uint8_t light)
     if (!s_srf.buffer_filled && s_srf.buffer_index == 0)
       s_srf.buffer_filled = 1;
 
-    uint32_t sum = 0;
     uint8_t count = s_srf.buffer_filled ? SRF08_FILTER_SIZE : s_srf.buffer_index;
 
-    for (uint8_t i = 0; i < count; i++)
-      sum += s_srf.distance_buffer[i];
+    if (count == 0)
+      return s_srf.distance_mm_filtered;
 
-    s_srf.distance_mm_filtered = (count > 0) ? (uint16_t)(sum / count) : 0;
+    // Copy buffer and sort to find median
+    uint16_t tmp[SRF08_FILTER_SIZE];
+    for (uint8_t i = 0; i < count; i++) tmp[i] = s_srf.distance_buffer[i];
+
+    // Insertion sort (small buffer, acceptable cost)
+    for (uint8_t i = 1; i < count; i++) {
+      uint16_t key = tmp[i];
+      int8_t j = (int8_t)i - 1;
+      while (j >= 0 && tmp[j] > key) { tmp[j + 1] = tmp[j]; j--; }
+      tmp[j + 1] = key;
+    }
+
+    s_srf.distance_mm_filtered = tmp[count / 2];
   }
 
   return s_srf.distance_mm_filtered;
@@ -228,93 +252,14 @@ void task_srf08_step(SystemCtx* ctx)
     }
   }
 
-  // 6) Speed control
-  if (distance_mm >= SRF08_SLOWDOWN_THRESHOLD_MM || light == 0)
-  {
-    srf08_speed_limit = 100;
-  }
-  else if (distance_mm <= SRF08_EMERGENCY_THRESHOLD_MM && light > 0)
-  {
-    srf08_speed_limit = 0;
-  }
-  else if (light > 0)
-  {
-    srf08_speed_limit = SRF08_SLOWDOWN_SPEED_PERCENT;
-  }
+  // 6) Speed limit now handled entirely by AEB (task_aeb.c).
+  //    SRF08 task only provides distance data.
+  srf08_speed_limit = 100;  // no legacy limiting
 
-  // 7) Emergency stop logic
-  EmergencyStopState_t new_state = srf08_emergency_state;
-
-  if (distance_mm < SRF08_EMERGENCY_THRESHOLD_MM && light > 0)
-  {
-    if (srf08_emergency_state != ESTOP_STATE_EMERGENCY)
-    {
-      //Motor_Stop();
-
-      new_state = ESTOP_STATE_EMERGENCY;
-      emergency_stop_active = 1;
-
-      EmergencyStop_t estop_frame;
-      estop_frame.active = 1;
-      estop_frame.source = 1;  // SRF08
-      estop_frame.distance_mm = distance_mm;
-      estop_frame.reason = 0x01;
-      estop_frame.reserved[0] = 0;
-      estop_frame.reserved[1] = 0;
-      estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
-
-      mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
-
-      sys_log(ctx,
-        "\033[1;31m[SRF08 ESTOP!] %u mm < %u mm (L=%u)\033[0m",
-        distance_mm, SRF08_EMERGENCY_THRESHOLD_MM, light
-      );
-    }
-  }
-  else if (srf08_emergency_state == ESTOP_STATE_EMERGENCY)
-  {
-    if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM || light == 0)
-    {
-      new_state = ESTOP_STATE_NORMAL;
-      emergency_stop_active = 0;
-
-      EmergencyStop_t estop_frame;
-      estop_frame.active = 0;
-      estop_frame.source = 1;
-      estop_frame.distance_mm = distance_mm;
-      estop_frame.reason = 0x00;
-      estop_frame.reserved[0] = 0;
-      estop_frame.reserved[1] = 0;
-      estop_frame.crc = calculate_crc8((uint8_t*)&estop_frame, sizeof(estop_frame) - 1);
-
-      mcp_send_message(CAN_ID_EMERGENCY_STOP, (uint8_t*)&estop_frame, sizeof(estop_frame));
-
-      sys_log(ctx,
-        "\033[1;32m[SRF08] RECOVERY! Dist=%u mm L=%u (CLEAR ENVIADO)\033[0m",
-        distance_mm, light
-      );
-    }
-  }
-  else if (distance_mm >= SRF08_RECOVERY_THRESHOLD_MM && srf08_emergency_state == ESTOP_STATE_WARNING)
-  {
-    new_state = ESTOP_STATE_NORMAL;
-  }
-  else if (distance_mm < SRF08_RECOVERY_THRESHOLD_MM &&
-           distance_mm >= SRF08_EMERGENCY_THRESHOLD_MM &&
-           light > 0)
-  {
-    if (srf08_emergency_state == ESTOP_STATE_NORMAL)
-      new_state = ESTOP_STATE_WARNING;
-  }
-
-  srf08_emergency_state = new_state;
-
-  // 8) Periodic CAN send
+  // 7) Periodic CAN send (always send, including during AEB events)
   s_srf.can_send_counter++;
 
-  if (light > 0 &&
-      srf08_emergency_state != ESTOP_STATE_EMERGENCY &&
-      (s_srf.can_send_counter % 1) == 0)
+  if (light > 0)
   {
     SRF08Distance_t srf08_frame;
     srf08_frame.distance_mm = distance_mm;
@@ -332,8 +277,8 @@ void task_srf08_step(SystemCtx* ctx)
 
     if ((s_srf.can_send_counter % 10) == 0)
     {
-      sys_log(ctx, "[SRF08] %u mm | L=%u | State=%u",
-              distance_mm, light, (unsigned)srf08_emergency_state);
+      sys_log(ctx, "[SRF08] %u mm | L=%u",
+              distance_mm, light);
     }
   }
 

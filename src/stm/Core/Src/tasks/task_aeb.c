@@ -1,4 +1,5 @@
 #include "../Inc/tasks/task_aeb.h"
+#include <math.h>
 
 /*
   This file implements the STM32-side AEB (Autonomous Emergency Braking) logic.
@@ -100,47 +101,49 @@ typedef struct {
   uint32_t max_speed_age_ms;
 
   // unlatch policy
-  float safe_unlatch_dist_m;    // 1.0m
-  uint32_t safe_unlatch_hold_ms; // 1000ms
+  float safe_unlatch_dist_m;
+  uint32_t safe_unlatch_hold_ms;
 
-  float ttc_comfort_s;   // e.g. 1.2
-  float v_max_mps;       // measured max speed at throttle=100 (e.g. 3.0)
-  uint8_t min_creep_pct; // e.g. 8 (allow slow creep in WARN)
-  uint8_t limit_slew_pct_per_step; // e.g. 5 (% per 20ms) to avoid jumps
+  float a_comfort_mps2; // comfortable decel for kinematic speed profile (m/s^2)
+  float v_max_mps;      // measured max speed at throttle=100% (m/s)
+  uint8_t min_creep_pct; // minimum throttle floor in soft-braking zone (set 0 to disable)
+  uint8_t limit_slew_up_pct;   // max throttle increase per 20ms step
+  uint8_t limit_slew_down_pct; // max throttle decrease per 20ms step (faster for braking)
 } AebParams;
 
 /* AEB module global instance (single instance for whole firmware) */
 static AebCtx s_aeb;
 
-/* Parameter values (starting conservative defaults) */
+/* Parameter values */
 static const AebParams P = {
-  .d_offset_m = 0.10f, //changed to 0.1 because the srf08 is really in the nose - David
+  .d_offset_m = 0.10f,
   .v_min_mps  = 0.10f,
 
-  .t_react_s    = 0.25f,
-  .a_brake_mps2 = 3.0f, //model of how quickly we can decelerate - change this in tests
+  .t_react_s    = 0.12f,   // real pipeline latency ~100ms, small margin
+  .a_brake_mps2 = 0.6f,    // realistic decel from PWM reduction (not electrical brake)
 
-  .ttc_warn_s   = 1.5f,
-  .ttc_brake_s  = 0.7f, //the real time to break - chang this in tests it was 0.9
+  .ttc_warn_s   = 0.8f,
+  .ttc_brake_s  = 0.5f,
   .margin_warn_m  = 0.30f,
   .margin_brake_m = 0.10f,
 
-  .speed_arm_mps  = 0.30f,
+  .speed_arm_mps  = 0.15f, // arm at lower speed (~540 m/h) for better coverage
   .speed_stop_mps = 0.10f,
   .stop_hold_ms   = 300,
 
-  .lp_alpha = 0.30f,
+  .lp_alpha = 0.70f,       // faster filter response, median already removes spikes
 
   .max_srf_age_ms   = 200,
   .max_speed_age_ms = 200,
 
-  .safe_unlatch_dist_m = 0.2f, // it was 1.0
+  .safe_unlatch_dist_m = 0.15f,  // allow unlatch closer to walls
   .safe_unlatch_hold_ms = 1000u,
 
-  .ttc_comfort_s = 1.2f,   // TTC threshold for "comfort braking" (inside WARN state)
-  .v_max_mps = 2.35f,       // change this after measure max speed at full throttle
-  .min_creep_pct = 10u,
-  .limit_slew_pct_per_step = 5u
+  .a_comfort_mps2 = 0.15f, // conservative: starts braking ~1.5m away at 40% throttle
+  .v_max_mps = 1.67f,      // real max: ~6000 m/h = 1.67 m/s
+  .min_creep_pct = 0u,
+  .limit_slew_up_pct   = 5u,   // gentle throttle increase
+  .limit_slew_down_pct = 10u   // faster decrease for braking responsiveness
 };
 
 /* Simple float clamp helper */
@@ -156,7 +159,8 @@ static void aeb_reset(AebCtx* a) {
   a->below_stop_ms = 0;
   a->initialized = false;
   a->safe_clear_ms = 0;
-  a->last_limit = 0;
+  //a->last_limit = 0;
+  a->last_limit = 100; // start with no speed limit
 }
 
 void task_aeb_init(SystemCtx* ctx) {
@@ -218,10 +222,12 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
     }
 
     s_aeb.st = AEB_OFF;
+    s_aeb.last_limit = 100;
 
     tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
     ctx->state.aeb_stop_active = 0;          // no AEB stop
     ctx->state.aeb_warn = 0;
+    ctx->state.aeb_speed_limit = 100;
     ctx->state.aeb_state = (uint8_t)s_aeb.st;
     ctx->state.aeb_ts = now_ms;
     tx_mutex_put(&ctx->state_mutex);
@@ -260,9 +266,11 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   float v_eff = (v_mps > P.v_min_mps) ? v_mps : P.v_min_mps;
 
   float d_eff = d - P.d_offset_m;
-  if (d_eff < 0.05f) d_eff = 0.05f;   // clamp effective distance
+  if (d_eff < 0.0f) d_eff = 0.0f;
 
-  float ttc = d_eff / v_eff;
+  // TTC uses clamped distance to avoid division by near-zero
+  float d_ttc = (d_eff < 0.05f) ? 0.05f : d_eff;
+  float ttc = d_ttc / v_eff;
 
   float a_brake = (P.a_brake_mps2 > 0.1f) ? P.a_brake_mps2 : 0.1f;
   float d_stop = v_mps * P.t_react_s + (v_mps * v_mps) / (2.0f * a_brake);
@@ -273,31 +281,40 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   bool warn = false;
   bool brake = false;
 
-  /* -------- 6.1) Compute speed limit  -------- */
+  /* -------- 6.1) Compute speed limit  --------
+     Kinematic speed profile: v_limit = sqrt(2 * a * d_eff)
+     This guarantees v -> 0 as d_eff -> 0 (smooth deceleration to wall).
+
+     ARMED/WARN: use a_comfort (gentle curve, early deceleration)
+     BRAKING:    use a_brake  (steeper curve, more aggressive but still smooth)
+     LATCHED:    hard 0% (car already stopped, hold position)
+  */
   uint8_t desired_limit = 100;
 
-  if (s_aeb.st == AEB_BRAKING || s_aeb.st == AEB_LATCHED) {
+  if (s_aeb.st == AEB_LATCHED) {
     desired_limit = 0;
-  } else {
-  // Soft layer active only when moving forward-ish
-  if (v_mps > 0.1f) { //changed 0.2 to 0.1
-    float v_target = d_eff / P.ttc_comfort_s;   // TTC-based target speed
-    if (v_target < 0.0f) v_target = 0.0f;
+  } else if (s_aeb.st >= AEB_ARMED) {
+    /* Always use a_comfort for the kinematic curve.
+       a_comfort is the REAL deceleration from PWM reduction (conservative).
+       Using a higher 'a' would LOOSEN the limit (allow higher speed). */
+    float v_target = sqrtf(2.0f * P.a_comfort_mps2 * d_eff);
     if (v_target > P.v_max_mps) v_target = P.v_max_mps;
 
     float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
-    if (pct_f < (float)P.min_creep_pct) pct_f = (float)P.min_creep_pct;
     if (pct_f > 100.0f) pct_f = 100.0f;
 
     desired_limit = (uint8_t)pct_f;
-    }
   }
 
-  // Slew-rate limit so throttle cap doesn’t jump around
+  // Asymmetric slew-rate: faster decrease (braking) than increase (resuming)
   int diff = (int)desired_limit - (int)s_aeb.last_limit;
-  int max_step = (int)P.limit_slew_pct_per_step;
-  if (diff >  max_step) desired_limit = (uint8_t)(s_aeb.last_limit + max_step);
-  if (diff < -max_step) desired_limit = (uint8_t)(s_aeb.last_limit - max_step);
+  if (diff > 0) {
+    int max_up = (int)P.limit_slew_up_pct;
+    if (diff > max_up) desired_limit = (uint8_t)(s_aeb.last_limit + max_up);
+  } else {
+    int max_down = (int)P.limit_slew_down_pct;
+    if (diff < -max_down) desired_limit = (uint8_t)(s_aeb.last_limit - max_down);
+  }
 
   s_aeb.last_limit = desired_limit;
 
@@ -306,11 +323,6 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   #define COLOR_RESET   "\x1b[0m"
   sys_log(ctx, COLOR_GREEN "[AEB] current_speed=%.2f desired_limit=%u%%" COLOR_RESET,
           v_mps, desired_limit);
-
-  // Publish
-  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-  ctx->state.aeb_speed_limit = desired_limit;
-  tx_mutex_put(&ctx->state_mutex);
 
   /* -------- 7) State machine --------
      OFF   -> ARMED when speed is enough to care
@@ -343,7 +355,9 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
 
     case AEB_BRAKING:
       warn = true;
-      brake = true;
+      /* brake = false: smooth deceleration via kinematic speed limit (a_brake),
+         NOT hard Motor_Stop(). The speed limit curve v=sqrt(2*a_brake*d)
+         is steeper than comfort, giving aggressive but smooth braking. */
 
       /* Latch when vehicle stays below "stop speed" long enough */
       if (v_mps < P.speed_stop_mps) {
@@ -356,7 +370,7 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
 
     case AEB_LATCHED:
       warn = true;
-      brake = true;
+      brake = true;  /* Only LATCHED forces Motor_Stop() via aeb_stop_active */
       /*
         UNLATCH policy:
         If we are basically stopped AND the obstacle is far away for long enough,
@@ -367,7 +381,7 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
           AND filtered distance > safe_unlatch_dist_m
           for safe_unlatch_hold_ms
       */
-      if ((v_mps < P.speed_stop_mps) && (d > P.safe_unlatch_dist_m)) {
+      if ((v_mps < P.speed_stop_mps) && (d_eff > P.safe_unlatch_dist_m)) {
         s_aeb.safe_clear_ms += dt_ms;
 
         if (s_aeb.safe_clear_ms >= P.safe_unlatch_hold_ms) {
@@ -391,15 +405,17 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   uint32_t ttc_ms   = (ttc > 65.0f)   ? 65000u : (uint32_t)(ttc * 1000.0f);
   uint32_t dstop_mm = (d_stop > 65.0f)? 65000u : (uint32_t)(d_stop * 1000.0f);
 
+
   /* Build CAN frame */
-  AEB_t aeb_frame;
-  aeb_frame.warn = warn ? 1: 0;
-  aeb_frame.brake = s_aeb.st == AEB_BRAKING ? 1 : 0;
+    AEB_t aeb_frame;
+    aeb_frame.warn = warn ? 1: 0;
+    aeb_frame.brake = s_aeb.st == AEB_BRAKING ? 1 : 0;
 
-  mcp_send_message(CAN_ID_AEB_STOP, (uint8_t*)&aeb_frame, sizeof(aeb_frame));
+    mcp_send_message(CAN_ID_AEB_STOP, (uint8_t*)&aeb_frame, sizeof(aeb_frame));
 
-  sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
-        aeb_frame.warn, aeb_frame.brake );
+    sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
+          aeb_frame.warn, aeb_frame.brake );
+
 
   /* -------- 9) Publish AEB outputs into shared state --------
      The actuation thread reads these flags.
@@ -409,6 +425,7 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   ctx->state.aeb_stop_active = brake ? 1 : 0;
   ctx->state.aeb_warn = warn ? 1 : 0;
   ctx->state.aeb_state = (uint8_t)s_aeb.st;
+  ctx->state.aeb_speed_limit = desired_limit;
   ctx->state.aeb_ttc_ms = (uint16_t)((ttc_ms > 65535u) ? 65535u : ttc_ms);
   ctx->state.aeb_dstop_mm = (uint16_t)((dstop_mm > 65535u) ? 65535u : dstop_mm);
   ctx->state.aeb_ts = now_ms;
