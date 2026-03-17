@@ -114,6 +114,19 @@ def is_vscode_cli_available() -> bool:
     return shutil.which('code') is not None
 
 
+def resolve_trudag_command(config) -> Optional[str]:
+    """Resolve the trudag executable from local venvs first, then PATH."""
+    candidates = [
+        config.repo_root / '.venv' / 'bin' / 'trudag',
+        config.tsf_implementation / '.venv' / 'bin' / 'trudag',
+    ]
+    for candidate in candidates:
+        if candidate.exists() and os.access(candidate, os.X_OK):
+            return str(candidate)
+
+    return shutil.which('trudag')
+
+
 # Import yaml after dependency check setup (will fail gracefully if not installed)
 try:
     import yaml
@@ -2467,8 +2480,12 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     if status['trudag_success']:
         print("\n📊 Verifying scores...")
         try:
+            trudag_cmd = resolve_trudag_command(config)
+            if not trudag_cmd:
+                raise FileNotFoundError("trudag executable not found (PATH/.venv)")
+
             result = subprocess.run(
-                ['trudag', 'score', '--validate'],
+                [trudag_cmd, 'score', '--validate'],
                 capture_output=True,
                 text=True,
                 cwd=str(config.tsf_implementation),
