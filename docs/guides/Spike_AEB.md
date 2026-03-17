@@ -1,7 +1,5 @@
 # Spike — Automatic Emergency Braking (AEB)
 
-> **Assignees**: Ruben + David · **Module**: 02 — ADAS · **TSF**: EXPECT-L0-27
-
 ---
 
 ## What is AEB?
