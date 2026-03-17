@@ -1,6 +1,15 @@
 # TSF Score Recovery - March 2026
 
-## Context
+## Table of Contents
+
+1. [Context](#1-context)
+2. [Fixes applied](#2-fixes-applied)
+3. [Why ASSERT_L0_22-L0_31 recovered](#3-why-assert_l0_22-l0_31-recovered)
+4. [Validation command](#4-validation-command)
+5. [Files touched in this recovery](#5-files-touched-in-this-recovery)
+6. [Root cause analysis (RCA)](#6-root-cause-analysis-rca)
+
+## 1. Context
 
 This note documents the recovery work performed to move TruDAG scoring from a partially broken state to full pass.
 
@@ -14,7 +23,7 @@ Final validated state:
 - `0` items at `0.5`
 - `0` items at `0.0`
 
-## Fixes Applied
+## 2. Fixes Applied
 
 1. Completed missing graph links in `.dotstop.dot`
 - Restored required Expectation -> Assertion links
@@ -44,7 +53,7 @@ Final validated state:
   - `"ASSERT-L0-22" -> "EVID-L0-22";`
   - `"EXPECT-L0-22" -> "ASSUMP-L0-22";`
 
-## Why ASSERT_L0_22-L0_31 Recovered
+## 3. Why ASSERT_L0_22-L0_31 Recovered
 
 The apparent validator issue on ASSERT L0_22-L0_31 was downstream from evidence and SHA consistency state. After:
 - correcting EVID L0_22-L0_31 scores,
@@ -52,7 +61,7 @@ The apparent validator issue on ASSERT L0_22-L0_31 was downstream from evidence 
 
 ASSERT and EXPECT items in that range also converged to `1.0`.
 
-## Validation Command
+## 4. Validation Command
 
 ```bash
 source .venv/bin/activate
@@ -65,7 +74,7 @@ Expected summary after these fixes:
 - `0.0: 0`
 - `total: 124`
 
-## Files Touched in This Recovery
+## 5. Files Touched in This Recovery
 
 - `docs/TSF/tsf_implementation/.dotstop.dot`
 - `docs/TSF/tsf_implementation/graph/graph.dot`
@@ -80,7 +89,7 @@ Expected summary after these fixes:
 - `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_30/EVIDENCES-EVID_L0_30.md`
 - `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md`
 
-## Root Cause Analysis (RCA)
+## 6. Root Cause Analysis (RCA)
 
 Symptoms observed:
 - Inconsistent score output between runs

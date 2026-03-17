@@ -4,6 +4,18 @@ This document describes the current TSF automation process in the SEA:ME Team 6 
 
 **Last Updated:** March 2026
 
+## Table of Contents
+
+1. [Main script and commands](#1-main-script-and-commands)
+2. [Recent process changes](#2-recent-process-changes)
+3. [Detailed evidence extraction and sync flow](#3-detailed-evidence-extraction-and-sync-flow)
+4. [Source-of-truth order](#4-source-of-truth-order)
+5. [Placeholder behavior (new)](#5-placeholder-behavior-new)
+6. [Current known limitation](#6-current-known-limitation)
+7. [Updated best practices](#7-updated-best-practices)
+8. [Legacy scripts](#8-legacy-scripts)
+9. [Interpreting `trudag score` output and command variants](#9-interpreting-trudag-score-output-and-command-variants)
+
 ---
 
 ## 1. Main script and commands
@@ -196,3 +208,55 @@ Recommended command:
 ```bash
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
 ```
+
+---
+
+## 9. Interpreting `trudag score` Output and Command Variants
+
+### 9.1 Are all those warnings normal?
+
+In the current project setup, most of the `trudag score` console output is expected:
+
+1. `INFO: Executing validator ...` and `finished execution ...`
+- Normal verbose runtime logs.
+- They indicate validators are being executed across many items.
+
+2. `Reference object <class 'localplugins.FileReference'> shadows an existing Reference ...`
+- A real warning, but usually non-blocking.
+- It means the local plugin defines a `FileReference` class name that already exists in TruDAG, so the shadowed one is not imported.
+- Scoring can still complete successfully.
+
+3. `EVIDENCES-EVID_L0_X = 1.0; Missing`
+- The word `Missing` here is the reason label shown by TruDAG in this setup, not necessarily a failed score.
+- If the item line shows `= 1.0`, then the computed score is still `1.0`.
+- In this repository, EVID items can explicitly carry `score: 1.0`, so they remain at `1.0` even when the reason text is `Missing`.
+
+### 9.2 Which command form should be used?
+
+Preferred when you are already at repository root:
+
+```bash
+source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+```
+
+Equivalent full form when you are not at repository root:
+
+```bash
+cd /absolute/path/to/SEA-ME_Team6_2025-26 && source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+```
+
+### 9.3 Important differences between command variants
+
+1. `cd ... &&` vs no `cd`
+- `cd` is required only when you are not already in repo root.
+
+2. `python3` vs `python`
+- Use `python3` for consistency and to avoid environments where `python` may point to a different interpreter.
+
+3. With `--check` vs without `--check`
+- `--check` runs the check stage explicitly.
+- If omitted, the script behavior depends on default argparse flow and may not run the intended stage.
+
+4. A bare quoted path like `'/Users/.../SEA-ME_Team6_2025-26' && ...`
+- This is not a valid directory change command by itself.
+- It must be `cd '/Users/.../SEA-ME_Team6_2025-26' && ...`.

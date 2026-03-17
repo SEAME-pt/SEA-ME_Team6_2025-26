@@ -8,19 +8,21 @@ This guide covers the validator architecture and implementation for the Trustabl
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Two Types of Validators](#two-types-of-validators)
-3. [Structure Validators (CI)](#structure-validators-ci)
-4. [Content Validators (TruDAG)](#content-validators-trudag)
-5. [Validator Configuration](#validator-configuration)
-6. [Score Calculation](#score-calculation)
-7. [Creating Custom Validators](#creating-custom-validators)
-8. [Troubleshooting](#troubleshooting)
-9. [Script Execution Commands](#script-execution-commands)
+1. [Script execution commands](#1-script-execution-commands)
+2. [Overview](#2-overview)
+3. [Two types of validators](#3-two-types-of-validators)
+4. [Structure validators (CI)](#4-structure-validators-ci)
+5. [Content validators (TruDAG)](#5-content-validators-trudag)
+6. [Validator configuration](#6-validator-configuration)
+7. [Score calculation](#7-score-calculation)
+8. [Creating custom validators](#8-creating-custom-validators)
+9. [Troubleshooting](#9-troubleshooting)
+10. [Best practices](#10-best-practices)
+11. [Post 0/124 fixes (Mar 2026)](#11-post-0124-fixes-mar-2026)
 
 ---
 
-## Script Execution Commands
+## 1. Script Execution Commands
 
 Use the unified TSF script for validator-related operations.
 
@@ -60,7 +62,7 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 
 ---
 
-## Overview
+## 2. Overview
 
 The TSF implementation uses **two types of validators** for different purposes:
 
@@ -75,7 +77,7 @@ This separation ensures:
 
 ---
 
-## Two Types of Validators
+## 3. Two Types of Validators
 
 ### Structure Validators (CI)
 
@@ -102,7 +104,7 @@ This separation ensures:
 
 ---
 
-## Structure Validators (CI)
+## 4. Structure Validators (CI)
 
 ### File Location
 
@@ -172,7 +174,7 @@ jobs:
 
 ---
 
-## Content Validators (TruDAG)
+## 5. Content Validators (TruDAG)
 
 ### File Location
 
@@ -231,7 +233,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Validator Configuration
+## 6. Validator Configuration
 
 ### In ASSUMP Items
 
@@ -306,7 +308,7 @@ evidence:
 
 ---
 
-## Score Calculation
+## 7. Score Calculation
 
 ### Scoring Formula
 
@@ -342,7 +344,7 @@ Result: `score = 2/3 = 0.67`
 
 ---
 
-## Creating Custom Validators
+## 8. Creating Custom Validators
 
 ### Step 1: Add Function to validators.py
 
@@ -399,7 +401,7 @@ evidence:
 
 ---
 
-## Troubleshooting
+## 9. Troubleshooting
 
 ### "Cannot find a validator function for type X"
 
@@ -457,7 +459,7 @@ evidence:
 
 ---
 
-## Best Practices
+## 10. Best Practices
 
 ### 1. Be Specific
 
@@ -498,7 +500,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Post 0/124 Fixes (Mar 2026)
+## 11. Post 0/124 Fixes (Mar 2026)
 
 Recent validator-related fixes applied after scoring dropped to `0/124`:
 

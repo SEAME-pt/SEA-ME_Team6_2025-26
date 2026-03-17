@@ -9,22 +9,27 @@ This document describes the TSF (Trustable Software Framework) implementation fo
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Project Structure](#project-structure)
-3. [Quick Start Commands](#quick-start-commands)
-4. [Main Automation Script](#main-automation-script)
-5. [Workflow Stages](#workflow-stages)
-6. [TruDAG Integration](#trudag-integration)
-7. [Validators](#validators)
-8. [Symlinks Explained](#symlinks-explained)
-9. [CI/CD Integration](#cicd-integration)
-10. [Published Reports](#published-reports)
-11. [Troubleshooting](#troubleshooting)
-12. [Script Execution Commands](#script-execution-commands)
+1. [Script execution commands](#1-script-execution-commands)
+2. [Prerequisites](#2-prerequisites)
+3. [Installation guide](#3-installation-guide)
+4. [Post-installation setup](#4-post-installation-setup)
+5. [Project structure](#5-project-structure)
+6. [Quick start commands](#6-quick-start-commands)
+7. [Main automation script](#7-main-automation-script)
+8. [Workflow stages](#8-workflow-stages)
+9. [TruDAG integration](#9-trudag-integration)
+10. [Validators](#10-validators)
+11. [Symlinks explained](#11-symlinks-explained)
+12. [CI/CD integration](#12-cicd-integration)
+13. [Published reports](#13-published-reports)
+14. [Troubleshooting](#14-troubleshooting)
+15. [Post 0/124 fixes (Mar 2026)](#15-post-0124-fixes-mar-2026)
+16. [Current status (March 2026)](#16-current-status-march-2026)
+17. [Quick reference](#17-quick-reference)
 
 ---
 
-## Script Execution Commands
+## 1. Script Execution Commands
 
 From repository root.
 
@@ -64,7 +69,7 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 
 ---
 
-## Prerequisites
+## 2. Prerequisites
 
 ### Required Software
 
@@ -85,7 +90,7 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 
 ---
 
-## Installation Guide
+## 3. Installation Guide
 
 ### 🍎 macOS Installation
 
@@ -324,7 +329,7 @@ dot -V
 
 ---
 
-## Post-Installation Setup
+## 4. Post-Installation Setup
 
 ### Activate Virtual Environment
 
@@ -359,7 +364,7 @@ python docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_p
 
 ---
 
-## Project Structure
+## 5. Project Structure
 
 ```
 SEA-ME_Team6_2025-26/
@@ -403,7 +408,7 @@ SEA-ME_Team6_2025-26/
 
 ---
 
-## Quick Start Commands
+## 6. Quick Start Commands
 
 ### ⚠️ IMPORTANT: Always activate the virtual environment first!
 
@@ -430,7 +435,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Main Automation Script
+## 7. Main Automation Script
 
 **File:** `open_check_sync_update_validate_run_publish_tsfrequirements.py`
 
@@ -456,7 +461,7 @@ This unified script handles the complete TSF workflow:
 
 ---
 
-## Workflow Stages
+## 8. Workflow Stages
 
 ### Stage 1: OPEN & CHECK (`--check`)
 
@@ -515,7 +520,7 @@ This unified script handles the complete TSF workflow:
 
 ---
 
-## TruDAG Integration
+## 9. TruDAG Integration
 
 ### setup_trudag_clean.sh
 
@@ -558,7 +563,7 @@ trudag lint
 
 ---
 
-## Validators
+## 10. Validators
 
 ### Structure Validators (CI)
 
@@ -595,7 +600,7 @@ evidence:
 
 ---
 
-## Symlinks Explained
+## 11. Symlinks Explained
 
 The project uses symlinks for trudag compatibility:
 
@@ -607,7 +612,7 @@ The project uses symlinks for trudag compatibility:
 
 ---
 
-## CI/CD Integration
+## 12. CI/CD Integration
 
 ### GitHub Actions Workflow
 
@@ -620,7 +625,7 @@ Validates TSF items on PRs to `development`:
 
 ---
 
-## Published Reports
+## 13. Published Reports
 
 Reports are generated in `docs/doorstop/`:
 
@@ -635,7 +640,7 @@ Reports are generated in `docs/doorstop/`:
 
 ---
 
-## Troubleshooting
+## 14. Troubleshooting
 
 ### Installation Issues
 
@@ -728,7 +733,7 @@ python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_
 
 ---
 
-## Post 0/124 Fixes (Mar 2026)
+## 15. Post 0/124 Fixes (Mar 2026)
 
 After a full debug cycle, the following fixes were applied to stabilize validation/scoring:
 
@@ -772,7 +777,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Current Status (March 2026)
+## 16. Current Status (March 2026)
 
 - **Total Requirements:** 31 (L0-1 to L0-31)
 - **Total TSF Items:** 124 (31 × 4 types)
@@ -781,7 +786,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Quick Reference
+## 17. Quick Reference
 
 ```bash
 # Full workflow

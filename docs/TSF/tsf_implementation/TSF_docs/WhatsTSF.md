@@ -2,12 +2,19 @@
 
 ## Index
 
-1. [Overview](#overview)
-2. [Core Concepts](#core-concepts)
-3. [TSF Scaffolding](#tsf-scaffolding)
-4. [Script Execution Commands](#script-execution-commands)
+1. [Script execution commands](#1-script-execution-commands)
+2. [Overview](#2-overview)
+3. [Core concepts](#3-core-concepts)
+4. [TSF scaffolding](#4-tsf-scaffolding)
+5. [TruDAG tool](#5-trudag-tool)
+6. [Scoring system](#6-scoring-system)
+7. [TSF in our project](#7-tsf-in-our-project)
+8. [Benefits of TSF](#8-benefits-of-tsf)
+9. [Current status](#9-current-status)
+10. [References](#10-references)
+11. [Implementation update (Mar 2026)](#11-implementation-update-mar-2026)
 
-## Script Execution Commands
+## 1. Script Execution Commands
 
 From repository root.
 
@@ -47,7 +54,7 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 
 ---
 
-## Overview
+## 2. Overview
 
 The **Trustable Software Framework (TSF)** is an open-source methodology and toolset designed to manage requirements, evidence, and verification activities for safety- and mission-critical software — especially in aerospace, defense, automotive, and medical domains.
 
@@ -57,7 +64,7 @@ The **Trustable Software Framework (TSF)** is an open-source methodology and too
 
 ---
 
-## Core Concepts
+## 3. Core Concepts
 
 ### What TSF Does
 
@@ -98,7 +105,7 @@ This graph is stored in `.dotstop.dot` and managed by `trudag`.
 
 ---
 
-## TSF Scaffolding
+## 4. TSF Scaffolding
 
 The minimal project structure required to apply TSF:
 
@@ -153,7 +160,7 @@ The `trudag` CLI manages the TSF lifecycle:
 
 ---
 
-## TruDAG Tool
+## 5. TruDAG Tool
 
 ### What is trudag?
 
@@ -288,7 +295,7 @@ trudag lint
 
 ---
 
-## Scoring System
+## 6. Scoring System
 
 TSF assigns scores from **0.0 to 1.0** based on:
 - Evidence availability
@@ -312,7 +319,7 @@ Custom validators can automatically verify assumptions:
 
 ---
 
-## TSF in Our Project
+## 7. TSF in Our Project
 
 ### Source of Truth Hierarchy
 
@@ -344,7 +351,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Benefits of TSF
+## 8. Benefits of TSF
 
 ### For Development Teams
 - ✅ **Version-controlled requirements** (alongside code)
@@ -365,7 +372,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Current Status
+## 9. Current Status
 
 - **Framework:** Eclipse TSF with TruDAG
 - **License:** EPL 2.0 and CC BY-SA 4.0
@@ -374,7 +381,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## References
+## 10. References
 
 - [Codethink TSF GitLab](https://gitlab.com/CodethinkLabs/trustable/trustable)
 - [Eclipse TSF Project](https://projects.eclipse.org/projects/technology.tsf)
@@ -383,7 +390,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Implementation Update (Mar 2026)
+## 11. Implementation Update (Mar 2026)
 
 In our current TSF implementation, a scoring regression to `0/124` was addressed by:
 
