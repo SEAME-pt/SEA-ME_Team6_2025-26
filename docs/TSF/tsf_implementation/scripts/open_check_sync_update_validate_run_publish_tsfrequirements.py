@@ -136,6 +136,7 @@ except ImportError:
 
 # Explicit marker used to flag non-real evidence placeholders.
 PLACEHOLDER_EVIDENCE_MARKER = "TSF_PLACEHOLDER_EVIDENCE"
+PLACEHOLDER_EVIDENCE_URL = "https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md"
 
 
 def is_placeholder_evidence_reference(ref: Any) -> bool:
@@ -772,6 +773,11 @@ For each item, fill the YAML frontmatter fields:
 - EVID: Reference to actual evidence files/URLs (NOT to EXPECT or ASSERT)
 - ASSUMP: Reference to `../expectations/EXPECT-L0-X.md`
 
+**CRITICAL for EVID files (no real evidence yet):**
+- If reference has `description: TSF_PLACEHOLDER_EVIDENCE`, KEEP it unchanged.
+- This marker signals that evidence is still pending collection.
+- Only replace this marker with real evidence descriptions when actual evidence is ready.
+
 **DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (validators)
 
 **Quality bar:**
@@ -1400,9 +1406,7 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-      - "STM32"
-      - "CAN"
-      - "Raspberry Pi"
+      - "TSF Assertion Requirement"
 ---
 """,
             'EVID': f"""---
@@ -1416,7 +1420,7 @@ level: '1.{level_num}'
 normative: true
 references:
 - type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+    url: {PLACEHOLDER_EVIDENCE_URL}
     description: {PLACEHOLDER_EVIDENCE_MARKER}
 score: 0.0
 ---
@@ -1441,9 +1445,7 @@ evidence:
   type: validate_software_dependencies
   configuration:
     components:
-      - "Development environment"
-      - "Required tools"
-      - "Test infrastructure"
+            - "TSF tooling"
 ---
 """
         }
@@ -1553,17 +1555,16 @@ review_status: accepted
             fixes_applied.append("Added 'review_status: accepted'")
             modified = True
         
-        # Fix 4: ASSERT/ASSUMP files should have 'evidence:' with valid validator
+        # Fix 4: ASSUMP files should have 'evidence:' with valid validator
         valid_validators = ['validate_hardware_availability', 'validate_linux_environment', 'validate_software_dependencies']
-        
-        if item_type_upper in ['ASSERT', 'ASSUMP']:
+        if item_type_upper == 'ASSUMP':
             evidence = frontmatter.get('evidence', {})
             if not evidence:
                 # Add default evidence validator
                 frontmatter['evidence'] = {
-                    'type': 'validate_hardware_availability',
+                    'type': 'validate_software_dependencies',
                     'configuration': {
-                        'components': ['STM32', 'CAN', 'Raspberry Pi']
+                        'components': ['TSF tooling']
                     }
                 }
                 fixes_applied.append("Added default evidence validator")
@@ -1606,6 +1607,23 @@ review_status: accepted
             if invalid_refs:
                 frontmatter['references'] = valid_refs
                 fixes_applied.append(f"Removed {len(invalid_refs)} invalid references to EXPECT/ASSERT files")
+        
+        # Fix 6b: EVID files MUST preserve TSF_PLACEHOLDER_EVIDENCE marker when no real evidence yet
+        # If AI changed the placeholder description to anything else, restore it to indicate pending evidence
+        if item_type_upper == 'EVID' and 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict):
+                    # Check if this looks like our placeholder reference (URL-based)
+                    ref_url = ref.get('url', '')
+                    if 'github.com' not in ref_url and 'http' not in ref_url:
+                        # This might be our placeholder, ensure marker is exact
+                        description = ref.get('description', '')
+                        if description and description != PLACEHOLDER_EVIDENCE_MARKER:
+                            # AI changed the description - restore marker to signal pending evidence
+                            ref['description'] = PLACEHOLDER_EVIDENCE_MARKER
+                            fixes_applied.append(f"Restored TSF_PLACEHOLDER_EVIDENCE marker (was: '{description}')")
+                            modified = True
+                            break
                 modified = True
         
         # Fix 7: EVID files MUST have at least one reference (trudag rejects empty references)
@@ -1615,12 +1633,21 @@ review_status: accepted
                 # Add placeholder reference to README
                 frontmatter['references'] = [{
                     'type': 'url',
-                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md',
+                    'url': PLACEHOLDER_EVIDENCE_URL,
                     'description': PLACEHOLDER_EVIDENCE_MARKER
                 }]
                 frontmatter['score'] = 0.0  # Mark as incomplete (no real evidence)
                 fixes_applied.append("Added placeholder reference (EVID cannot have empty references)")
                 modified = True
+            elif len(refs) == 1 and isinstance(refs[0], dict):
+                # Keep placeholder explicit when README baseline is the only reference.
+                only_ref = refs[0]
+                only_ref_url = str(only_ref.get('url', '')).strip()
+                if only_ref_url == PLACEHOLDER_EVIDENCE_URL and not is_placeholder_evidence_reference(only_ref):
+                    only_ref['description'] = PLACEHOLDER_EVIDENCE_MARKER
+                    frontmatter['score'] = 0.0
+                    fixes_applied.append("Normalized EVID placeholder description marker")
+                    modified = True
         
         if not modified:
             return False, []
