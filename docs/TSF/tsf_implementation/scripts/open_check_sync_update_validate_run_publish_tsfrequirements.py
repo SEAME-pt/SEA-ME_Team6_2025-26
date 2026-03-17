@@ -693,16 +693,38 @@ class AIGenerator:
         
         settings = self.config.manual_settings
         updated_files = []
+        canonical_types = ['EXPECT', 'ASSERT', 'EVID', 'ASSUMP']
+        canonical_dirs = {
+            'EXPECT': self.config.expectations_dir,
+            'ASSERT': self.config.assertions_dir,
+            'EVID': self.config.evidences_dir,
+            'ASSUMP': self.config.assumptions_dir,
+        }
         
         print(f"\n{'='*70}")
         print(f"🤖 AI GENERATION REQUIRED: {len(items)} items for {len(items_by_req)} requirement(s)")
         print(f"{'='*70}")
         
-        # Open all files in VSCode
+        # Open files in VSCode.
+        # Include canonical 4 files per requirement so AI can generate full set.
         if settings.get('open_in_vscode', True):
             if is_vscode_cli_available():
-                print(f"\n📂 Opening {len(items)} files in VSCode...")
-                for item_type, item_id, file_path in items:
+                files_to_open = []
+                for req_id in sorted(items_by_req.keys(), key=lambda x: int(x)):
+                    for item_type in canonical_types:
+                        files_to_open.append(canonical_dirs[item_type] / f"{item_type}-L0-{req_id}.md")
+
+                # Remove duplicates while preserving order
+                seen = set()
+                unique_files_to_open = []
+                for p in files_to_open:
+                    p_str = str(p)
+                    if p_str not in seen:
+                        seen.add(p_str)
+                        unique_files_to_open.append(p)
+
+                print(f"\n📂 Opening {len(unique_files_to_open)} canonical item files in VSCode...")
+                for file_path in unique_files_to_open:
                     subprocess.run(['code', str(file_path)], check=False)
             else:
                 print("\nℹ️  VSCode CLI (`code`) not available; skipping file opening.")
@@ -725,14 +747,20 @@ class AIGenerator:
                     prompt_lines.append(f"**Verification Method:** {row.verification_method}")
                     prompt_lines.append("")
                     
-                    prompt_lines.append("**Items to generate:**")
-                    for item_type, file_path in req_items:
-                        prompt_lines.append(f"  - {item_type}-L0-{req_id}: {file_path}")
+                    # Always show canonical 4 items, even if only subset is pending.
+                    prompt_lines.append("**Items to generate (all 4 mandatory):**")
+                    for item_type in canonical_types:
+                        canonical_path = canonical_dirs[item_type] / f"{item_type}-L0-{req_id}.md"
+                        prompt_lines.append(f"  - {item_type}-L0-{req_id}: {canonical_path}")
                     prompt_lines.append("")
             
             prompt_lines.append("""
 ---
 **INSTRUCTIONS:**
+
+Generate complete file content for all listed items (EXPECT, ASSERT, EVID, ASSUMP).
+If a file does not exist, create it with full YAML frontmatter and markdown body.
+If a file exists, update only the allowed fields/content.
 
 For each item, fill the YAML frontmatter fields:
 - `header`: A concise title (max 50 characters)
@@ -745,6 +773,11 @@ For each item, fill the YAML frontmatter fields:
 - ASSUMP: Reference to `../expectations/EXPECT-L0-X.md`
 
 **DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (validators)
+
+**Quality bar:**
+- Keep headers specific and under 50 chars.
+- Write actionable, requirement-specific `text` (avoid placeholders/TODOs).
+- Ensure YAML is valid and parseable.
 """)
             
             print("\n".join(prompt_lines))
