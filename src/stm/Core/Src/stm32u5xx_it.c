@@ -22,7 +22,10 @@
 #include "stm32u5xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_threadx.h"
+#include "../Inc/speedometer.h"
+#include "../Inc/app_threadx.h"
+#include "../Inc/tasks/task_tof.h"
+#include "../Inc/tasks/task_speed.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+volatile uint32_t pulse_hits = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -53,17 +56,11 @@
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-/**
-  * @brief GPIO EXTI callback function
-  * @param GPIO_Pin Pin number that triggered the interrupt
-  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == Mems_VLX_GPIO_Pin) {
 		/* VL53L5CX data ready interrupt */
-		/* Signal the ToF thread via semaphore */
-		extern TX_SEMAPHORE vl53l5cx_data_ready_semaphore;
-		tx_semaphore_put(&vl53l5cx_data_ready_semaphore);
+		vlx_ready = 1;
 	}
 	else if (GPIO_Pin == MCP_INT_Pin) {
 		/* MCP2515 CAN interrupt */
@@ -71,17 +68,45 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    if (GPIO_Pin == GPIO_PIN_6)
+    if (htim->Instance == TIM4 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
     {
-        Speedometer_PulseISR();
+        static uint32_t prev_capture = 0;
+        static uint8_t  first_pulse  = 1;
+
+        uint32_t val = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+
+        if (first_pulse)
+        {
+            prev_capture = val;
+            first_pulse  = 0;
+            return;
+        }
+
+        uint32_t delta;
+        if (val >= prev_capture)
+            delta = val - prev_capture;
+        else
+            delta = (0xFFFF - prev_capture) + val + 1;
+
+        // Software debounce: reject bounce/noise (< 1000us at 1MHz = ~52 km/h max)
+        if (delta < 5500)
+            return;
+
+        capture_delta = delta;
+        prev_capture  = val;
+        last_pulse_ms = HAL_GetTick();
+        pulse_hits++;
+        capture_valid = 1;
     }
 }
 
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN EV */
@@ -198,6 +223,20 @@ void EXTI7_IRQHandler(void)
   /* USER CODE BEGIN EXTI7_IRQn 1 */
 
   /* USER CODE END EXTI7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM4 global interrupt.
+  */
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+
+  /* USER CODE END TIM4_IRQn 1 */
 }
 
 /**

@@ -22,6 +22,9 @@ enum {
   CAN_RX_MAX_FRAMES_PER_STEP = 16  // bound work per step for determinism
 };
 
+// Global maximum throttle cap: limits top speed regardless of AEB state
+#define AEB_MAX_THROTTLE_PCT 60u
+
 typedef struct
 {
   HAL_StatusTypeDef motor_init_status;
@@ -165,16 +168,17 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (steering < -100) steering = -100;
   if (steering > 100)  steering = 100;
 
-  uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
+  uint8_t servo_angle = (uint8_t)((100 - steering) * 180 / 200);
   Servo_SetAngle(servo_angle);
   s_rx.actual_steering_applied = steering;
 
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  // Apply combined AEB/SRF08 speed limit 
-  uint8_t limit = snap->srf08_speed_limit;
-  if (snap->aeb_speed_limit < limit) limit = snap->aeb_speed_limit;
+  // Apply global max cap first, then AEB/SRF08 speed limit (tightest wins)
+  uint8_t limit = AEB_MAX_THROTTLE_PCT;
+  if (snap->srf08_speed_limit < limit) limit = snap->srf08_speed_limit;
+  if (snap->aeb_speed_limit   < limit) limit = snap->aeb_speed_limit;
 
   if (throttle > (int8_t)limit)
     throttle = (int8_t)limit;
@@ -294,14 +298,15 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
-  // Apply combined AEB/SRF08 speed limit 
-  uint8_t limit = snap->srf08_speed_limit;
-  if (snap->aeb_speed_limit < limit) limit = snap->aeb_speed_limit;
+  // Apply global max cap first, then AEB/SRF08 speed limit (tightest wins)
+  uint8_t limit = AEB_MAX_THROTTLE_PCT;
+  if (snap->srf08_speed_limit < limit) limit = snap->srf08_speed_limit;
+  if (snap->aeb_speed_limit   < limit) limit = snap->aeb_speed_limit;
 
   if (throttle > (int8_t)limit)
     throttle = (int8_t)limit;
 
-  uint8_t servo_angle = (uint8_t)((steering + 100) * 180 / 200);
+  uint8_t servo_angle = (uint8_t)((100 - steering) * 180 / 200);
   Servo_SetAngle(servo_angle);
   s_rx.actual_steering_applied = (int8_t)steering;
 
@@ -408,16 +413,45 @@ void task_can_rx_step(SystemCtx* ctx)
   tx_mutex_put(&ctx->state_mutex);
 
 
+  // Hard stop only for LATCHED (aeb_stop_active) or AGL emergency
   bool any_stop = (snap.emergency_stop_active || snap.aeb_stop_active);
 
-   if (any_stop && s_rx.actual_throttle_applied > 0)
-   {
-     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency/AEB! (Reverse OK)\033[0m");
-     Motor_Stop();
-     s_rx.actual_throttle_applied = 0;
-     return;
-   }
+  if (any_stop && s_rx.actual_throttle_applied > 0)
+  {
+    sys_log(ctx, "\033[1;33m[CAN_RX] STOP - Emergency/AEB LATCHED! (Reverse OK)\033[0m");
+    Motor_Stop();
+    s_rx.actual_throttle_applied = 0;
+    return;
+  }
 
+  // Proactive AEB speed enforcement: smoothly reduce motor output
+  // between CAN commands to match the AEB kinematic speed limit.
+  // This is what makes braking gradual instead of abrupt.
+  //
+  // Below ~15% PWM the motor can't spin but also doesn't brake
+  // (it just coasts). Use Motor_Stop() (electrical brake) instead.
+  #define AEB_BRAKE_THRESHOLD_PCT 15u
+
+  if (s_rx.actual_throttle_applied > 0)
+  {
+    uint8_t limit = AEB_MAX_THROTTLE_PCT;
+    if (snap.aeb_speed_limit < limit) limit = snap.aeb_speed_limit;
+
+    if ((uint8_t)s_rx.actual_throttle_applied > limit)
+    {
+      if (limit < AEB_BRAKE_THRESHOLD_PCT)
+      {
+        // Below motor dead zone: use electrical brake, not low PWM coast
+        Motor_Stop();
+        s_rx.actual_throttle_applied = 0;
+      }
+      else
+      {
+        Motor_Forward(limit);
+        s_rx.actual_throttle_applied = (int8_t)limit;
+      }
+    }
+  }
 
   // RX drain with bounded work
   CAN_Message_t rx_msg;

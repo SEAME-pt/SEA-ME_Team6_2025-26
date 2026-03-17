@@ -212,6 +212,7 @@ typedef struct __attribute__((packed)) {
     uint8_t brake;              /* Indicator that it is braking */
 } AEB_t;
 
+
 /* SRF08 Ultrasonic Distance (0x423) - STM32 -> AGL */
 typedef struct __attribute__((packed)) {
     uint16_t distance_mm;       /* Distance in mm (0-6000mm range) */

@@ -89,7 +89,7 @@ void task_environment_step(SystemCtx* ctx)
 
     mcp_send_message(CAN_ID_ENVIRONMENT, (uint8_t*)&env_frame, sizeof(env_frame));
 
-    HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+    //HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
 
     /*
     sys_log(ctx,
