@@ -115,6 +115,18 @@ except ImportError:
     yaml = None
 
 
+# Explicit marker used to flag non-real evidence placeholders.
+PLACEHOLDER_EVIDENCE_MARKER = "TSF_PLACEHOLDER_EVIDENCE"
+
+
+def is_placeholder_evidence_reference(ref: Any) -> bool:
+    """Return True when a reference entry is explicitly marked as placeholder evidence."""
+    if not isinstance(ref, dict):
+        return False
+    description = str(ref.get('description', '')).strip()
+    return description.upper() == PLACEHOLDER_EVIDENCE_MARKER
+
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -1121,6 +1133,10 @@ class ContentValidator:
                 if 'TODO' in ref_str:
                     issues.append("TODO in references")
                     break
+
+            # EVID-specific placeholder detection using explicit marker.
+            if item_type == 'EVID' and any(is_placeholder_evidence_reference(ref) for ref in references):
+                issues.append("Placeholder evidence marker in references")
         
         # Check item-type-specific required fields
         # EVID items must have score field
@@ -1533,7 +1549,8 @@ review_status: accepted
                 # Add placeholder reference to README
                 frontmatter['references'] = [{
                     'type': 'url',
-                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md'
+                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md',
+                    'description': PLACEHOLDER_EVIDENCE_MARKER
                 }]
                 frontmatter['score'] = 0.0  # Mark as incomplete (no real evidence)
                 fixes_applied.append("Added placeholder reference (EVID cannot have empty references)")
@@ -1828,18 +1845,46 @@ def open_check(config: Config) -> Dict[str, Any]:
     
     # 6. Identify sync needs (sprint evidence → table → EVID files)
     print("\n🔄 Identifying sync needs...")
+    seen_sync_needs = set()
     for row in rows:
         expect_id = f"EXPECT-L0-{row.number}"
+        evid_item_id = str(row.number)
+
+        # Read EVID file to detect explicit placeholder references.
+        evid_has_placeholder = False
+        evid_path = item_manager.get_item_path('EVID', evid_item_id)
+        if evid_path.exists():
+            try:
+                evid_content = evid_path.read_text(encoding='utf-8')
+                evid_yaml_match = re.match(r'^---\n(.*?)\n---', evid_content, re.DOTALL)
+                if evid_yaml_match:
+                    evid_frontmatter = yaml.safe_load(evid_yaml_match.group(1)) or {}
+                    evid_refs = evid_frontmatter.get('references', [])
+                    if isinstance(evid_refs, list):
+                        evid_has_placeholder = any(is_placeholder_evidence_reference(ref) for ref in evid_refs)
+            except Exception:
+                # Keep check resilient; placeholder detection is advisory for sync.
+                evid_has_placeholder = False
         
         # Check if sprint has evidence that table doesn't
         if expect_id in sprint_evidence:
-            sprint_urls = set(e.url for e in sprint_evidence[expect_id])
             table_evidence = row.evidence.strip()
             
             # Simple check - could be more sophisticated
             if not table_evidence or table_evidence == 'TODO':
-                status['sync_needed'].append((row.id, 'sprint_to_table'))
-                print(f"   • {row.id}: needs sync from sprint to table")
+                key = (row.id, 'sprint_to_table')
+                if key not in seen_sync_needs:
+                    seen_sync_needs.add(key)
+                    status['sync_needed'].append(key)
+                    print(f"   • {row.id}: needs sync from sprint to table")
+
+            # New: if EVID file still uses explicit placeholder marker, sync real sprint evidence into EVID.
+            if evid_has_placeholder and sprint_evidence.get(expect_id):
+                key = (row.id, 'placeholder_to_real_evidence')
+                if key not in seen_sync_needs:
+                    seen_sync_needs.add(key)
+                    status['sync_needed'].append(key)
+                    print(f"   • {row.id}: EVID has placeholder evidence, needs replacement from sprints")
     
     print("\n" + "-"*70)
     print("📋 OPEN & CHECK Summary:")
@@ -1890,7 +1935,7 @@ def sync_evidence_from_sprints(config: Config, check_status: Dict[str, Any]) -> 
         expect_id = f"EXPECT-{req_id}"
         if expect_id in sprint_evidence:
             urls = [e.url for e in sprint_evidence[expect_id]]
-            print(f"   • {req_id}: {len(urls)} evidence URL(s) from sprints")
+            print(f"   • {req_id} [{sync_type}]: {len(urls)} evidence URL(s) from sprints")
     
     print("\n🔧 Options:")
     print("   [y] Sync all evidence (update table + EVID files)")
@@ -2044,6 +2089,14 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
         
         # Get current references
         current_refs = frontmatter.get('references', [])
+        if not isinstance(current_refs, list):
+            current_refs = []
+
+        # Remove explicit placeholder references when real evidence is available.
+        had_placeholder_refs = any(is_placeholder_evidence_reference(ref) for ref in current_refs)
+        kept_refs = [ref for ref in current_refs if not is_placeholder_evidence_reference(ref)]
+        references_changed = len(kept_refs) != len(current_refs)
+        current_refs = kept_refs
         
         # Add new evidence URLs as references
         new_refs_added = False
@@ -2064,9 +2117,16 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
                 current_refs.append(new_ref)
                 new_refs_added = True
         
-        if new_refs_added:
+        if new_refs_added or references_changed:
             # Update frontmatter
             frontmatter['references'] = current_refs
+
+            # If at least one non-placeholder reference exists, mark as complete.
+            has_real_refs = len(current_refs) > 0
+            if has_real_refs:
+                frontmatter['score'] = 1.0
+            elif had_placeholder_refs:
+                frontmatter['score'] = 0.0
             
             # Rebuild file content
             new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True, sort_keys=False)}---{body}"

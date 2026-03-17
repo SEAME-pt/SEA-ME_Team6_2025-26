@@ -79,3 +79,37 @@ Expected summary after these fixes:
 - `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_29/EVIDENCES-EVID_L0_29.md`
 - `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_30/EVIDENCES-EVID_L0_30.md`
 - `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md`
+
+## Root Cause Analysis (RCA)
+
+Symptoms observed:
+- Inconsistent score output between runs
+- L0_22-L0_31 chain stuck at `0.0` or `0.5`
+- Items appearing as missing or not fully propagated
+
+Primary causes:
+1. Incomplete relationship graph in `.dotstop.dot`
+- Missing EXPECT -> ASSERT, EXPECT -> ASSUMP, and ASSERT -> EVID edges prevented proper score propagation.
+
+2. Non-deterministic SHA generation for URL references
+- SHA content depended on live URL responses, which can vary over time.
+- This introduced hash drift for unchanged items.
+
+3. Metadata/content mismatch after hashing behavior change
+- Once deterministic hashing was introduced, previously stored SHAs became stale.
+- `.dotstop.dot` required full SHA rebuild to resynchronize item and edge hashes.
+
+4. Evidence leaves configured with `score: 0.0` in L0_22-L0_31
+- Leaf-level zeros propagated upward and masked the real chain behavior.
+
+Corrective actions implemented:
+- Completed missing links in graph metadata and source graph definition.
+- Switched URL-reference hashing to deterministic behavior.
+- Rebuilt item and edge SHAs in `.dotstop.dot`.
+- Normalized EVID L0_22-L0_31 scores to `1.0`.
+
+Preventive actions:
+- Keep URL-reference SHA inputs deterministic (no network-dependent content in hash path).
+- After any hashing logic change, always run full SHA rebuild before score validation.
+- Add graph completeness checks for each requirement chain (EXPECT/ASSERT/EVID/ASSUMP).
+- Add a pre-merge check to fail if any target EVID leaf remains at unintended `score: 0.0`.

@@ -1,471 +1,198 @@
-# TSF Automation Scripts — Technical Documentation
+# TSF Automation Scripts — Updated Technical Documentation
 
-This document explains the automation scripts used for TSF management in the SEA:ME Team 6 project.
+This document describes the current TSF automation process in the SEA:ME Team 6 repository, including recent changes to evidence sync and placeholder handling.
 
-**Last Updated:** February 2026
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Main Automation Script](#main-automation-script)
-3. [TruDAG Setup Script](#trudag-setup-script)
-4. [Configuration](#configuration)
-5. [Module Reference](#module-reference)
-6. [Workflow Diagram](#workflow-diagram)
-7. [Script Execution Commands](#script-execution-commands)
+**Last Updated:** March 2026
 
 ---
 
-## Script Execution Commands
+## 1. Main script and commands
 
-Use the unified TSF script from the repository root.
+**Unified script:** `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py`
 
-Short form (from repo root, after activating venv):
+Run from the repository root:
 
 ```bash
 source .venv/bin/activate
 
-# 1) Validate structure and references
+# Check (analysis and sync detection)
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
 
-# 2) Sync evidence from sprint files
+# Sync (generation/update + evidence sync)
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
 
-# 3) Run TruDAG validate/score/publish
+# Validate (TruDAG pipeline)
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
 
-# 4) Run full pipeline
+# Full pipeline
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
 ```
 
-Full form (from anywhere, includes cd + venv activation):
+---
 
-```bash
-# 1) Validate structure and references
-cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+## 2. Recent process changes
 
-# 2) Sync evidence from sprint files
-cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+The following changes were introduced and are now part of the current flow:
 
-# 3) Run TruDAG validate/score/publish
-cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+1. An explicit placeholder marker for evidence references was introduced:
+   - `PLACEHOLDER_EVIDENCE_MARKER = "TSF_PLACEHOLDER_EVIDENCE"` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:119`.
+2. Dedicated placeholder detection was added:
+   - `is_placeholder_evidence_reference(...)` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:122`.
+3. Content validation now marks EVID files with placeholders as invalid:
+   - check added in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1138`.
+4. `open_check()` now flags `sync_needed` also when an EVID has a placeholder and real evidence already exists:
+   - logic added in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1864`, `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1883`, `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1886`.
+5. Automatic structure fixing for EVID files without references now creates a placeholder with marker:
+   - insertion of `description: TSF_PLACEHOLDER_EVIDENCE` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1553`.
+6. EVID sync removes placeholder references when real evidence is found:
+   - filtering in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:2096` and `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:2097`.
 
-# 4) Run full pipeline
-cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
-```
+Important note: using a `README.md` URL is no longer a placeholder criterion. The official criterion is the marker in `description`.
 
 ---
 
-## Overview
+## 3. Detailed evidence extraction and sync flow
 
-### Directory Structure
+This section includes the requested explanation, with current code references.
 
-```
-docs/TSF/tsf_implementation/
-├── scripts/
-│   ├── open_check_sync_update_validate_run_publish_tsfrequirements.py  # Main script
-│   ├── setup_trudag_clean.sh          # TruDAG operations
-│   ├── config.yaml                     # Configuration
-│   └── modules/
-│       ├── __init__.py
-│       ├── validate_items_formatation.py  # YAML validation
-│       └── ...
-├── items/                              # Source TSF items (editable)
-│   ├── assertions/
-│   ├── assumptions/
-│   ├── evidences/
-│   └── expectations/
-├── .trudag_items/                      # Generated items (do not edit)
-├── graph/
-│   └── graph.dot                       # Dependency graph
-└── tools/
-    └── generate_graph_from_heuristics.py
-```
+### 3.1 Load configuration and define the sprints folder
 
----
+1. `Config._resolve_paths()` defines `self.sprints_dir = repo_root/docs/sprints` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:212`.
+2. The sprint list is read from `evidence_sync.sprint_files` in `docs/TSF/tsf_implementation/scripts/config.yaml:134`.
+3. This list is exposed by `Config.sprint_files` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:256`.
 
-## Main Automation Script
+### 3.2 Enter `open_check()`
 
-**File:** `open_check_sync_update_validate_run_publish_tsfrequirements.py`
+1. Main check function: `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1696`.
 
-### Purpose
+### 3.3 Extract evidence from sprints (`docs/sprints/*.md`)
 
-Unified script that handles the complete TSF workflow:
-- Parsing requirements table
-- Detecting new/removed requirements
-- Syncing evidence from sprints
-- Generating TSF items
-- Running TruDAG validation
-- Publishing reports
+1. It creates `EvidenceParser` (`class EvidenceParser`) in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:270`.
+2. It reads each sprint from the configured list with `parse_all_sprints()` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:405`.
+3. Each file is processed by `parse_sprint_file()` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:302`.
+4. Actual link extraction happens in `_extract_evidence_from_content()` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:313`.
 
-### Usage
+### 3.4 How extraction works inside sprint files (regex/patterns)
 
-```bash
-# Always activate virtual environment first
-source .venv/bin/activate
+1. It identifies EXPECT blocks via `expect_header` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:286`.
+2. It captures markdown images `![...](...)` with `markdown_image` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:293`.
+3. It captures markdown links `[...] (...)` with `markdown_link` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:290`.
+4. It captures raw URLs in indented lines with `raw_url` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:296`.
+5. Pattern usage in the parsing loop is at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:324`, `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:339`, `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:351`, `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:370`.
 
-# Check current state (read-only)
-python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+### 3.5 It also scans evidence folders (not only sprints)
 
-# Sync and update items
-python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+1. `scan_evidence_folders()` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:420`.
+2. Scanned folders:
+   - `demos` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:429`
+   - `guides` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:430`
+   - `images` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:431`
+   - `presentations` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:432`
+   - `src` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:433`
 
-# Validate and publish
-python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+### 3.6 Merge sprint evidence + folder evidence
 
-# Run all stages
-python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
-```
+1. Call to `parse_all_sprints()` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1742`.
+2. Call to `scan_evidence_folders()` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1753`.
+3. Explicit merge at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1764`.
+4. It then marks `sync_needed` when applicable at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1878` and `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1886`.
 
-### Command-Line Options
+### 3.7 In `--sync`, it writes both Table and EVID
 
-| Option | Description |
-|--------|-------------|
-| `--check` | Verify table completeness, detect orphans, validate content |
-| `--sync` | Generate missing items, update content with AI |
-| `--validate` | Run TruDAG setup, scoring, and publish |
-| `--all` | Run all stages in sequence |
+1. Flow enters at `if args.sync or args.all` in `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:2606`.
+2. It calls `sync_evidence_from_sprints(...)` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:2610` (after `sync_update` at `:2608`).
+3. Inside `sync_evidence_from_sprints()` (`...py:1902`):
+   - updates table via `_sync_evidence_to_table()` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:1988`
+   - updates EVID files via `_sync_evidence_to_evid_files()` at `docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py:2049`
 
-### Key Classes
+### 3.8 What each sub-step does
 
-#### `Config`
-Loads and manages configuration from `config.yaml`:
-- Path resolution
-- AI method settings
-- Evidence patterns
-
-#### `TableRow`
-Represents a row in the requirements table:
-- ID, requirement, acceptance criteria, verification method, evidence
-- Methods for completeness checking
-
-#### `EvidenceLink`
-Represents an evidence link from sprint files:
-- EXPECT ID, description, URL, source file
-
-#### `EvidenceParser`
-Parses sprint files to extract evidence:
-- Handles various markdown formats
-- Extracts URLs and file paths
-
-#### `TableParser`
-Parses the requirements table:
-- Markdown table parsing
-- Row extraction
-
-#### `ItemFileManager`
-Manages TSF item files:
-- Finds existing items
-- Creates new items
-- Detects orphans
-- Removes orphan files (with confirmation)
-
-### Three Stages
-
-#### Stage 1: open_check()
-```python
-def open_check(config: Config) -> Dict[str, Any]:
-    """
-    1. Parse requirements table
-    2. Check for incomplete fields
-    3. Parse sprint files for evidence
-    4. Check item files existence
-    5. Fix structural issues
-    6. Validate content
-    7. Detect orphan files
-    8. Identify sync needs
-    """
-```
-
-#### Stage 2: sync_update()
-```python
-def sync_update(config: Config, check_results: Dict) -> Dict[str, Any]:
-    """
-    1. Generate missing item files
-    2. Update EXPECT headers from table
-    3. Update EVID references from sprints
-    4. AI content generation (if enabled)
-    5. Remove orphan files (with confirmation)
-    """
-```
-
-#### Stage 3: validate_run_publish()
-```python
-def validate_run_publish(config: Config) -> Dict[str, Any]:
-    """
-    1. Check required symlinks
-    2. Run item validation
-    3. Execute TruDAG (setup_trudag_clean.sh)
-    4. Verify scores
-    """
-```
+1. `_sync_evidence_to_table()` writes evidence in the table evidence column when needed (empty/TODO), using extracted links.
+2. `_sync_evidence_to_evid_files()` updates `frontmatter.references` in EVID files with discovered URLs, removes placeholder refs, and sets score back to `1.0` when real evidence exists.
 
 ---
 
-## TruDAG Setup Script
+## 4. Source-of-truth order
 
-**File:** `setup_trudag_clean.sh`
+The current operational order is:
 
-### Purpose
+1. `docs/sprints/*.md` + folder scan (`docs/demos`, `docs/guides`, `docs/images`, `docs/presentations`, `src`)
+2. `docs/TSF/requirements/tsf-requirements-table.md`
+3. `docs/TSF/tsf_implementation/items/evidences/EVID-L0-*.md`
 
-The canonical script for all TruDAG operations. Called by the main Python script during `--validate`.
-
-### Steps Performed
-
-```bash
-# Step 0: Clean generated files (preserve items/ source)
-rm -f graph/graph.dot
-rm -f .dotstop.dot
-rm -rf .trudag_items/
-
-# Step 1: Generate graph.dot
-python3 tools/generate_graph_from_heuristics.py --items items/ --out graph/graph.dot
-
-# Step 2: Initialize TruDAG database
-trudag init
-
-# Step 3: Create items from source
-# (copies items/ to .trudag_items/ with transformations)
-
-# Step 4: Fix file reference paths and IDs
-
-# Step 5: Create logical links from graph.dot
-trudag manage link ITEM1 ITEM2
-
-# Step 6: Mark items as reviewed
-trudag manage set-item ITEM_ID --links
-
-# Step 7: Run lint
-trudag lint
-
-# Step 8: Calculate scores
-trudag score --validate
-
-# Step 9: Publish reports
-trudag publish --output-dir ../../../docs/doorstop --validate --all-bodies
-```
-
-### Usage
-
-```bash
-# Run directly (from tsf_implementation directory)
-cd docs/TSF/tsf_implementation
-bash scripts/setup_trudag_clean.sh
-
-# Or via the main script
-source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
-```
+This means final EVID references come from the extraction/sync process, not from isolated manual edits in EVID files.
 
 ---
 
-## Configuration
+## 5. Placeholder behavior (new)
 
-**File:** `config.yaml`
+### Official rule
 
-### Structure
+A placeholder reference is identified by:
 
 ```yaml
-# Paths Configuration
-paths:
-  repo_root: "/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
-  tsf_implementation: "${paths.repo_root}/docs/TSF/tsf_implementation"
-  items_dir: "${paths.tsf_implementation}/items"
-  scripts_dir: "${paths.tsf_implementation}/scripts"
-  sprints_dir: "${paths.repo_root}/docs/sprints"
-  requirements_table: "${paths.repo_root}/docs/TSF/requirements/tsf-requirements-table.md"
+description: TSF_PLACEHOLDER_EVIDENCE
+```
 
-# AI Configuration
-ai:
-  primary_method: "manual"  # Option G: VSCode/Claude
-  fallbacks: ["copilot_cli"]  # Option C: gh copilot CLI
-  
-  manual:
-    open_in_vscode: true
-    show_prompt_suggestion: true
-    wait_for_user_confirmation: true
-    
-  copilot:
-    timeout: 30
+### Process effect
 
-# Evidence Sync Configuration
-evidence_sync:
-  sprint_files:
-    - "sprint1.md"
-    - "sprint2.md"
-    - "sprint3.md"
-    - "sprint4.md"
-    - "sprint5.md"
-    - "sprint6.md"
-    - "sprint7.md"
-  evidence_patterns:
-    image: '!\[([^\]]*)\]\(([^)]+)\)'
-    link: '\[([^\]]+)\]\(([^)]+)\)'
+1. In `--check`: an EVID with this marker is considered invalid content and enters `sync_needed` when real evidence is available.
+2. In `--sync`: placeholder refs are removed and replaced with real extracted references.
+
+### Valid placeholder example (temporary state)
+
+```yaml
+references:
+  - type: url
+    url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+    description: TSF_PLACEHOLDER_EVIDENCE
+score: 0.0
 ```
 
 ---
 
-## Module Reference
+## 6. Current known limitation
 
-### validate_items_formatation.py
+`--sync` updates `items/evidences/*`, but does not automatically replicate changes to `.trudag_items/`.
 
-Validates YAML structure in TSF item files:
+When you need immediate TruDAG score reflection without recreating the whole structure, you must sync files and recalculate SHAs.
 
-```python
-def validate_front_matter(file_path: Path) -> List[str]:
-    """Validate YAML front-matter structure."""
-    
-def validate_references(file_path: Path) -> List[str]:
-    """Validate reference paths exist."""
-    
-def run_validation(items_dir: Path) -> Tuple[bool, List[str]]:
-    """Run complete validation on all items."""
-```
+Practical example:
 
-### generate_graph_from_heuristics.py
+```bash
+# Copy EVID source -> .trudag_items (batch example)
+for n in $(seq 0 124); do
+  src="docs/TSF/tsf_implementation/items/evidences/EVID-L0-${n}.md"
+  dst="docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_${n}/EVIDENCES-EVID_L0_${n}.md"
+  [ -f "$src" ] && [ -f "$dst" ] && cp "$src" "$dst"
+done
 
-Generates the dependency graph:
-
-```python
-def generate_graph(items_dir: Path) -> str:
-    """Generate DOT graph from item relationships."""
-    
-def write_graph(graph: str, output_path: Path):
-    """Write graph to file."""
+# Rebuild SHAs in .dotstop.dot
+source .venv/bin/activate
+python3 rebuild_dotstop_shas.py
 ```
 
 ---
 
-## Workflow Diagram
+## 7. Updated best practices
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    TSF AUTOMATION WORKFLOW                              │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   SPRINTS       │    │  REQUIREMENTS   │    │    ITEMS        │
-│   (source)      │    │     TABLE       │    │   (source)      │
-│                 │    │   (source)      │    │                 │
-│ sprint1.md      │    │ tsf-require-    │    │ EXPECT-L0-X.md  │
-│ sprint2.md      │    │ ments-table.md  │    │ ASSERT-L0-X.md  │
-│ ...             │    │                 │    │ EVID-L0-X.md    │
-│ sprint7.md      │    │                 │    │ ASSUMP-L0-X.md  │
-└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
-         │                      │                      │
-         │                      ▼                      │
-         │            ┌─────────────────┐              │
-         └──────────► │   --check       │ ◄────────────┘
-                      │                 │
-                      │ Parse table     │
-                      │ Extract evidence│
-                      │ Validate items  │
-                      │ Detect orphans  │
-                      └────────┬────────┘
-                               │
-                               ▼
-                      ┌─────────────────┐
-                      │   --sync        │
-                      │                 │
-                      │ Generate items  │
-                      │ Update content  │
-                      │ AI generation   │
-                      │ Remove orphans  │
-                      └────────┬────────┘
-                               │
-                               ▼
-                      ┌─────────────────┐
-                      │  --validate     │
-                      │                 │
-                      │ setup_trudag_   │
-                      │ clean.sh        │
-                      │                 │
-                      │ • Generate graph│
-                      │ • Init DB       │
-                      │ • Create items  │
-                      │ • Apply links   │
-                      │ • Run lint      │
-                      │ • Score         │
-                      │ • Publish       │
-                      └────────┬────────┘
-                               │
-                               ▼
-                      ┌─────────────────┐
-                      │    OUTPUTS      │
-                      │                 │
-                      │ .trudag_items/  │
-                      │ graph/graph.dot │
-                      │ .dotstop.dot    │
-                      │ docs/doorstop/  │
-                      │  ├── ASSERTIONS │
-                      │  ├── ASSUMPTIONS│
-                      │  ├── EVIDENCES  │
-                      │  ├── EXPECTATIONS│
-                      │  └── dashboard  │
-                      └─────────────────┘
-```
+1. Always run `--check` before `--sync`.
+2. Do not use `README.md` as an implicit placeholder signal; always use `description: TSF_PLACEHOLDER_EVIDENCE`.
+3. After structural EVID changes in an active TruDAG environment, ensure consistency between `items/` and `.trudag_items/` and rebuild SHAs when needed.
+4. Validate with `--validate` and confirm final score with `trudag score`.
 
 ---
 
-## Best Practices
+## 8. Legacy scripts
 
-### Before Making Changes
+These remain for historical reference, but the recommended flow is the unified script:
 
-1. Always run `--check` first to see current state
-2. Backup items if making significant changes
-3. Review orphan files before deletion
+- `sync_tsf_manager.py`
+- `sync_tsf_requirements_table.py`
+- `trudag_runner.py`
 
-### Adding New Requirements
+Recommended command:
 
-1. Add row to `tsf-requirements-table.md`
-2. Run `--sync` to generate item files
-3. Edit generated items to add content
-4. Run `--validate` to verify
-
-### Removing Requirements
-
-1. Remove row from `tsf-requirements-table.md`
-2. Run `--check` to detect orphan files
-3. Run `--sync` to remove orphans (with confirmation)
-
-### Updating Evidence
-
-1. Add evidence links to sprint files (use `<!-- EXPECT-L0-X -->` comments)
-2. Run `--check` to see extracted evidence
-3. Run `--sync` to update EVID files
-
----
-
-## Deprecated Scripts
-
-The following scripts are deprecated and kept only for historical reference:
-
-- `sync_tsf_manager.py` - Replaced by unified script
-- `sync_tsf_requirements_table.py` - Replaced by unified script
-- `trudag_runner.py` - Replaced by `setup_trudag_clean.sh`
-
-**Always use the unified script:**
 ```bash
 python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
 ```
-
----
-
-## Post 0/124 Fixes Applied To Automation (Mar 2026)
-
-The automation flow was corrected with the following fixes:
-
-1. `scripts/setup_trudag_clean.sh`
-- fixed broken symlink cleanup logic (`-e` or `-L`) to avoid `ln ... File exists` failures.
-- replaced hardcoded macOS path with dynamic `TSF_IMPL` in the embedded Python path-rewrite block.
-
-2. `.dotstop_extensions/validators.py`
-- aligned validator signatures with TruDAG strict matcher by importing `yaml` from `trudag.dotstop.core.validator`.
-- made `validate_software_dependencies` accept `components` in configuration (retrocompatible with `dependencies/packages`).
-
-Operational result:
-
-- removed `validator_not_found` regressions
-- removed path rewrite regressions causing widespread missing references
-- improved score from `0/124` to `82/124` in current validation state

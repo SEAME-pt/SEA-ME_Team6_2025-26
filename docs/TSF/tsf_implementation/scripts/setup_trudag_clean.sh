@@ -15,7 +15,8 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TSF_IMPL="$( cd "$SCRIPT_DIR/.." && pwd )"
 BASE_DIR="$( cd "$TSF_IMPL/.." && pwd )"
-REPO_ROOT="$( cd "$BASE_DIR/.." && pwd )"
+# Prefer git top-level for correctness; fallback to TSF_IMPL/../../.. from this script layout.
+REPO_ROOT="$(git -C "$TSF_IMPL" rev-parse --show-toplevel 2>/dev/null || { cd "$TSF_IMPL/../../.." && pwd; })"
 ITEMS_SOURCE="$TSF_IMPL/items"
 GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"
