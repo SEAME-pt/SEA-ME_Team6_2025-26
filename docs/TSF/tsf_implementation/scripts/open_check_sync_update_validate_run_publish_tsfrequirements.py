@@ -2553,26 +2553,33 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
                 timeout=300
             )
             
-            # Parse score output
+            # Parse score output - handle TruDAG format: "ASSERTIONS-ASSERT_L0_1 = 1.0; Validator with References"
+            import re
             lines = result.stdout.strip().split('\n')
             total_items = 0
             items_at_1_0 = 0
             items_below_1_0 = []
             
+            # Regex to extract score from TruDAG output format
+            score_line_re = re.compile(r'^(ASSERTIONS|ASSUMPTIONS|EVIDENCES|EXPECTATIONS)-[^=]+\s*=\s*([0-9]+(?:\.[0-9]+)?)')
+            
             for line in lines:
-                if ' = ' in line and any(prefix in line for prefix in ['ASSERTIONS', 'ASSUMPTIONS', 'EVIDENCES', 'EXPECTATIONS']):
+                line_stripped = line.strip()
+                if not line_stripped or ' = ' not in line_stripped:
+                    continue
+                    
+                match = score_line_re.match(line_stripped)
+                if match:
                     total_items += 1
-                    parts = line.strip().split(' = ')
-                    if len(parts) == 2:
-                        item_name = parts[0]
-                        try:
-                            score = float(parts[1])
-                            if score == 1.0:
-                                items_at_1_0 += 1
-                            else:
-                                items_below_1_0.append((item_name, score))
-                        except ValueError:
-                            pass
+                    item_name = line_stripped.split(' = ')[0]
+                    try:
+                        score = float(match.group(2))
+                        if score == 1.0:
+                            items_at_1_0 += 1
+                        else:
+                            items_below_1_0.append((item_name, score))
+                    except (ValueError, IndexError):
+                        pass
             
             status['score_summary'] = {
                 'total': total_items,
