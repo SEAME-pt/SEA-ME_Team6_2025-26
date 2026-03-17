@@ -22,9 +22,24 @@ GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"
 DB_SYMLINK="$REPO_ROOT/.dotstop.dot"
 
+# Resolve trudag command from local venv first, then PATH.
+if [ -x "$REPO_ROOT/.venv/bin/trudag" ]; then
+    TRUDAG_CMD="$REPO_ROOT/.venv/bin/trudag"
+elif [ -x "$TSF_IMPL/.venv/bin/trudag" ]; then
+    TRUDAG_CMD="$TSF_IMPL/.venv/bin/trudag"
+elif command -v trudag >/dev/null 2>&1; then
+    TRUDAG_CMD="$(command -v trudag)"
+else
+    echo "❌ Error: trudag command not found."
+    echo "   Install/activate it first, e.g.:"
+    echo "   source $REPO_ROOT/.venv/bin/activate"
+    exit 127
+fi
+
 echo "=========================================="
 echo "TSF Trudag Setup - Clean Mode"
 echo "=========================================="
+echo "Using trudag: $TRUDAG_CMD"
 echo ""
 
 # Step 0: Clean all generated files (NEVER touch source items/)
@@ -50,7 +65,7 @@ echo ""
 # Step 2: Initialize DB in tsf_implementation and create symlink in root
 echo "🗄️  Step 2: Initializing trudag DB..."
 cd "$TSF_IMPL"
-trudag init
+"$TRUDAG_CMD" init
 echo "✓ DB initialized: $DB_FILE"
 
 # Create symlink in repo root so trudag can find it
@@ -104,7 +119,7 @@ for category_dir in "$ITEMS_SOURCE"/*; do
         mkdir -p "$target_dir"
         
         # Trudag create-item will create PREFIX-ITEM_ID.md in target_dir
-        trudag manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
+        "$TRUDAG_CMD" manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
         
         # Copy our source content to the created file
         target_file="$target_dir/$PREFIX-$item_id.md"
@@ -287,7 +302,7 @@ while IFS= read -r line; do
         echo "  Linking: $from -> $to"
         
         # Try to create link, ignore URL validation errors
-        output=$(trudag manage create-link "$from" "$to" 2>&1)
+        output=$("$TRUDAG_CMD" manage create-link "$from" "$to" 2>&1)
         exit_code=$?
         
         # Check if error is just about URL validation (can be ignored)
@@ -334,7 +349,7 @@ for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
         full_id="$PREFIX-$item_id"
         
         # Suppress trudag noise, mark item and its links as reviewed
-        if trudag manage set-item "$full_id" --links 2>/dev/null; then
+        if "$TRUDAG_CMD" manage set-item "$full_id" --links 2>/dev/null; then
             echo "    ✓ $full_id"
             reviewed=$((reviewed + 1))
         else
@@ -351,7 +366,7 @@ echo ""
 echo "🔍 Step 6: Running trudag lint..."
 cd "$REPO_ROOT"
 # Run lint and capture output, filter warnings but show important ones
-lint_output=$(trudag manage lint 2>&1)
+lint_output=$("$TRUDAG_CMD" manage lint 2>&1)
 lint_exit=$?
 echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
 if [ $lint_exit -eq 0 ]; then
@@ -370,7 +385,7 @@ echo ""
 
 # Step 7: Run trudag score
 echo "📊 Step 7: Running trudag score..."
-score_output=$(trudag score 2>&1)
+score_output=$("$TRUDAG_CMD" score 2>&1)
 score_exit=$?
 
 # Show scores (filter noise but keep score lines)
@@ -398,7 +413,7 @@ echo ""
 
 # Step 8: Run trudag publish
 echo "🚀 Step 8: Running trudag publish..."
-publish_output=$(trudag publish 2>&1)
+publish_output=$("$TRUDAG_CMD" publish 2>&1)
 publish_exit=$?
 
 # Filter noise from publish output
