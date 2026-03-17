@@ -6,7 +6,7 @@
 
 ---
 
-## 2.1 HailoRT & Kernel Integration
+## HailoRT & Kernel Integration
 
 ### Overview
 
@@ -136,7 +136,7 @@ hailortcli fw-control identify
 
 ---
 
-## 2.2 Inference Pipeline
+## Inference Pipeline
 
 ### Architecture
 
@@ -289,7 +289,7 @@ Models are stored at `/data/models/` and can be swapped by changing `HEF_PATH`. 
 
 ---
 
-## 2.3 Camera IMX708
+## Camera IMX708
 
 ### Hardware
 
