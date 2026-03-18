@@ -1,0 +1,11 @@
+# Battery: discharge then slight charge (regen / charger)
+@init batt_mv=12600 batt_ma=0 batt_soc=95 batt_temp_c=25 batt_cycles=12 batt_status=0
+
+t=0     batt_ma=300   batt_mv=12450 batt_soc=94
+t=1500  batt_ma=800   batt_mv=12250 batt_soc=92
+t=3000  batt_ma=1200  batt_mv=12050 batt_soc=89
+t=4500  batt_ma=1500  batt_mv=11880 batt_soc=86
+t=6000  batt_ma=900   batt_mv=12000 batt_soc=87
+t=7000  batt_ma=-200  batt_mv=12100 batt_soc=88
+t=8500  batt_ma=-500  batt_mv=12220 batt_soc=89
+t=10000 batt_ma=0     batt_mv=12300 batt_soc=90
