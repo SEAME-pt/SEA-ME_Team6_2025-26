@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum
+from urllib.parse import urlparse, unquote
 
 
 # ============================================================================
@@ -145,6 +146,34 @@ def is_placeholder_evidence_reference(ref: Any) -> bool:
         return False
     description = str(ref.get('description', '')).strip()
     return description.upper() == PLACEHOLDER_EVIDENCE_MARKER
+
+
+def github_url_to_repo_path(url: str) -> Optional[str]:
+    """Convert in-repo GitHub blob/tree URLs to workspace-relative file paths."""
+    if not isinstance(url, str):
+        return None
+
+    parsed = urlparse(url)
+    if parsed.netloc.lower() != 'github.com':
+        return None
+
+    path = parsed.path.strip('/')
+    parts = path.split('/')
+    # Expected: <owner>/<repo>/(blob|tree)/<branch>/<path...>
+    if len(parts) < 6:
+        return None
+
+    owner, repo, mode = parts[0], parts[1], parts[2]
+    if owner != 'SEAME-pt' or repo != 'SEA-ME_Team6_2025-26':
+        return None
+    if mode not in ('blob', 'tree'):
+        return None
+
+    # Skip branch segment and keep the path inside the repository.
+    repo_path = '/'.join(parts[4:]).strip()
+    if not repo_path:
+        return None
+    return unquote(repo_path)
 
 
 # ============================================================================
@@ -509,9 +538,8 @@ class EvidenceParser:
                     if expect_id not in folder_evidence:
                         folder_evidence[expect_id] = []
                     
-                    # Build GitHub URL
-                    rel_path = file_path.relative_to(self.config.repo_root)
-                    github_url = f"https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/{rel_path}"
+                    # Use local repository-relative path for stable hashing in TruDAG.
+                    rel_path = str(file_path.relative_to(self.config.repo_root))
                     
                     # Determine link type
                     link_type = "image" if file_path.suffix.lower() in ['.png', '.jpg', '.jpeg', '.gif'] else "link"
@@ -519,14 +547,14 @@ class EvidenceParser:
                     evidence = EvidenceLink(
                         expect_id=expect_id,
                         description=file_path.stem.replace('-', ' ').replace('_', ' '),
-                        url=github_url,
+                        url=rel_path,
                         link_type=link_type,
-                        source_file=str(rel_path)
+                        source_file=rel_path
                     )
                     
                     # Avoid duplicates
                     existing_urls = [e.url for e in folder_evidence[expect_id]]
-                    if github_url not in existing_urls:
+                    if rel_path not in existing_urls:
                         folder_evidence[expect_id].append(evidence)
         
         return folder_evidence
@@ -1444,7 +1472,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+        dependencies:
             - "TSF tooling"
 ---
 """
@@ -1564,7 +1592,7 @@ review_status: accepted
                 frontmatter['evidence'] = {
                     'type': 'validate_software_dependencies',
                     'configuration': {
-                        'components': ['TSF tooling']
+                        'dependencies': ['TSF tooling']
                     }
                 }
                 fixes_applied.append("Added default evidence validator")
@@ -1576,6 +1604,17 @@ review_status: accepted
                     frontmatter['evidence']['type'] = 'validate_hardware_availability'
                     fixes_applied.append(f"Replaced invalid validator '{ev_type}' with 'validate_hardware_availability'")
                     modified = True
+
+                # Normalize ASSUMP software validator config key for compatibility.
+                if ev_type == 'validate_software_dependencies':
+                    configuration = evidence.get('configuration')
+                    if isinstance(configuration, dict):
+                        has_dependencies = isinstance(configuration.get('dependencies'), list)
+                        has_components = isinstance(configuration.get('components'), list)
+                        if not has_dependencies and has_components:
+                            configuration['dependencies'] = configuration.pop('components')
+                            fixes_applied.append("Normalized ASSUMP validator config: components -> dependencies")
+                            modified = True
         
         # Fix 5: Remove 'id' fields from references (should only have type and path)
         if 'references' in frontmatter and isinstance(frontmatter['references'], list):
@@ -1591,6 +1630,22 @@ review_status: accepted
         # Fix 6: EVID files should NOT reference EXPECT/ASSERT files
         # Evidence references should point to actual evidence (images, docs, logs)
         if item_type_upper == 'EVID' and 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            normalized_refs = []
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict) and not is_placeholder_evidence_reference(ref):
+                    ref_type = str(ref.get('type', '')).strip().lower()
+                    ref_url = str(ref.get('url', '')).strip()
+                    repo_path = github_url_to_repo_path(ref_url) if ref_type == 'url' else None
+                    if repo_path:
+                        normalized_refs.append({'type': 'file', 'path': repo_path})
+                        modified = True
+                        continue
+                normalized_refs.append(ref)
+
+            if normalized_refs != frontmatter['references']:
+                frontmatter['references'] = normalized_refs
+                fixes_applied.append("Normalized in-repo GitHub URL references to file references")
+
             invalid_refs = []
             valid_refs = []
             for ref in frontmatter['references']:
@@ -2147,6 +2202,22 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
     updated_files = []
     evid_dir = config.items_dir / "evidences"
     
+    def resolve_reference_path(repo_path: str) -> Optional[str]:
+        """Resolve a repository path to a regular file path when possible."""
+        rel_path = str(repo_path).strip().lstrip('./')
+        if not rel_path:
+            return None
+        abs_path = config.repo_root / rel_path
+        if abs_path.is_file():
+            return rel_path
+        if abs_path.is_dir():
+            for candidate in ('README.md', 'readme.md', 'index.md'):
+                candidate_path = abs_path / candidate
+                if candidate_path.is_file():
+                    return str(candidate_path.relative_to(config.repo_root))
+            return None
+        return None
+
     for expect_id, evidence_list in sprint_evidence.items():
         if not evidence_list:
             continue
@@ -2185,6 +2256,28 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
         if not isinstance(current_refs, list):
             current_refs = []
 
+        # Normalize existing GitHub in-repo URL references to local file references.
+        normalized_refs = []
+        normalized_existing = False
+        for ref in current_refs:
+            if not isinstance(ref, dict):
+                normalized_refs.append(ref)
+                continue
+            if is_placeholder_evidence_reference(ref):
+                normalized_refs.append(ref)
+                continue
+
+            ref_type = str(ref.get('type', '')).strip().lower()
+            ref_url = str(ref.get('url', '')).strip()
+            repo_path = github_url_to_repo_path(ref_url) if ref_type == 'url' else None
+            resolved_path = resolve_reference_path(repo_path) if repo_path else None
+            if resolved_path:
+                normalized_refs.append({'type': 'file', 'path': resolved_path})
+                normalized_existing = True
+            else:
+                normalized_refs.append(ref)
+        current_refs = normalized_refs
+
         # Remove explicit placeholder references when real evidence is available.
         had_placeholder_refs = any(is_placeholder_evidence_reference(ref) for ref in current_refs)
         kept_refs = [ref for ref in current_refs if not is_placeholder_evidence_reference(ref)]
@@ -2194,23 +2287,48 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
         # Add new evidence URLs as references
         new_refs_added = False
         for ev in evidence_list:
-            # Check if URL already exists
-            url_exists = any(
-                ref.get('url', '') == ev.url 
-                for ref in current_refs 
-                if isinstance(ref, dict)
-            )
-            
-            if not url_exists:
+            ev_target = str(ev.url).strip()
+            repo_path = github_url_to_repo_path(ev_target)
+            resolved_path = resolve_reference_path(repo_path) if repo_path else None
+            if resolved_path:
+                new_ref = {'type': 'file', 'path': resolved_path}
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'file'
+                    and str(ref.get('path', '')).strip() == resolved_path
+                    for ref in current_refs
+                )
+            elif ev_target.startswith(('http://', 'https://')):
                 new_ref = {
                     'type': 'url',
-                    'url': ev.url,
+                    'url': ev_target,
                     'description': f"Evidence from {ev.source_file}: {ev.description}"
                 }
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'url'
+                    and str(ref.get('url', '')).strip() == ev_target
+                    for ref in current_refs
+                )
+            else:
+                local_path = ev_target.lstrip('./')
+                resolved_local = resolve_reference_path(local_path)
+                if resolved_local:
+                    new_ref = {'type': 'file', 'path': resolved_local}
+                else:
+                    continue
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'file'
+                    and str(ref.get('path', '')).strip() == new_ref['path']
+                    for ref in current_refs
+                )
+
+            if not ref_exists:
                 current_refs.append(new_ref)
                 new_refs_added = True
-        
-        if new_refs_added or references_changed:
+
+        if new_refs_added or references_changed or normalized_existing:
             # Update frontmatter
             frontmatter['references'] = current_refs
 

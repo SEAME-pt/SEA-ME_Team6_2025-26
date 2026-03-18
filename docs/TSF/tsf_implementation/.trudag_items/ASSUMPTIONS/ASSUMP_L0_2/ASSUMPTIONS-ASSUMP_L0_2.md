@@ -4,7 +4,7 @@ header: 'Assumption: Hardware Assembly'
 level: '1.2'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-2.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_2/EXPECTATIONS-EXPECT_L0_2.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

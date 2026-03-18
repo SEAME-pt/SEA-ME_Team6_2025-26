@@ -12,12 +12,8 @@ references:
   path: docs/guides/genAI-pair-programming-guidelines.md
 - type: file
   path: docs/guides/generative-ai-for-beginners.md
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf
-  description: 'Evidence from sprint4.md: Generative AI PDF'
-- type: url
-  url: https://github.com/fprezado/generative-ai-for-beginners
-  description: 'Evidence from sprint4.md: External AI Reference'
+- type: file
+  path: docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf
 score: 1.0
 reviewers:
 - name: Joao Jesus Silva

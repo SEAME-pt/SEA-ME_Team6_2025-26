@@ -18,9 +18,8 @@ references:
   path: docs/sprints/sprint4.md
 - type: file
   path: docs/sprints/sprint5.md
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md
-  description: 'Evidence from sprint1.md: Scrum Implementation: Dailys'
+- type: file
+  path: docs/dailys/dailys_warmups.md
 score: 1.0
 reviewers:
 - name: Joao Jesus Silva

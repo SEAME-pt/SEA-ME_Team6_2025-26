@@ -25,70 +25,38 @@ text: 'Evidence demonstrating that the Raspberry Pi 5–based system running Aut
 level: '1.23'
 normative: true
 references:
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint0.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint0.jpeg:
-    Validation of energy layout sprint0'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/rpi5-thermal-stress-test-.png
-  description: 'Evidence from docs/demos/rpi5-thermal-stress-test-.png: rpi5 thermal
-    stress test '
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint3.jpeg:
-    Validation of energy layout sprint3'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint2.jpeg:
-    Validation of energy layout sprint2'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint1.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint1.jpeg:
-    Validation of energy layout sprint1'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_and_ThreadX_benefits_Guide.md
-  description: 'Evidence from docs/guides/AGL_and_ThreadX_benefits_Guide.md: AGL and
-    ThreadX benefits Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
-  description: 'Evidence from docs/guides/AGL_Installation_Guide.md: AGL Installation
-    Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_
-    Joystick_installation_and_test.md
-  description: 'Evidence from docs/guides/AGL_ Joystick_installation_and_test.md:
-    AGL  Joystick installation and test'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Configuration_Guide.md
-  description: 'Evidence from docs/guides/AGL_Configuration_Guide.md: AGL Configuration
-    Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power
-    Consumption Analysis.md
-  description: 'Evidence from docs/guides/Power Consumption Analysis.md: Power Consumption
-    Analysis'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/setup/toolchains/agl-toolchain.cmake
-  description: 'Evidence from src/setup/toolchains/agl-toolchain.cmake: agl toolchain'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/setup/toolchains/r5-agl-toolchain.cmake
-  description: 'Evidence from src/setup/toolchains/r5-agl-toolchain.cmake: r5 agl
-    toolchain'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/bootloader-custom-backend.sh
-  description: 'Evidence from src/ota/rauc/bootloader-custom-backend.sh: bootloader
-    custom backend'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/post-reboot-verify.sh
-  description: 'Evidence from src/ota/rauc/post-reboot-verify.sh: post reboot verify'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/shared/backend/providers/powertrainprovider.hpp
-  description: 'Evidence from src/shared/backend/providers/powertrainprovider.hpp:
-    powertrainprovider'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/shared/backend/providers/powertrainprovider.cpp
-  description: 'Evidence from src/shared/backend/providers/powertrainprovider.cpp:
-    powertrainprovider'
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint0.jpeg
+- type: file
+  path: docs/demos/rpi5-thermal-stress-test-.png
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint2.jpeg
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint1.jpeg
+- type: file
+  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
+- type: file
+  path: docs/guides/AGL_Installation_Guide.md
+- type: file
+  path: docs/guides/AGL_ Joystick_installation_and_test.md
+- type: file
+  path: docs/guides/AGL_Configuration_Guide.md
+- type: file
+  path: docs/guides/Power Consumption Analysis.md
+- type: file
+  path: src/setup/toolchains/agl-toolchain.cmake
+- type: file
+  path: src/setup/toolchains/r5-agl-toolchain.cmake
+- type: file
+  path: src/ota/rauc/bootloader-custom-backend.sh
+- type: file
+  path: src/ota/rauc/post-reboot-verify.sh
+- type: file
+  path: src/shared/backend/providers/powertrainprovider.hpp
+- type: file
+  path: src/shared/backend/providers/powertrainprovider.cpp
 score: 1.0
 reviewers:
 - name: Joao Jesus Silva

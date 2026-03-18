@@ -48,10 +48,10 @@ references:
   path: ../assertions/ASSERT-L0-31.md
 - type: file
   path: ../evidences/EVID-L0-31.md
-- type: url
-  url: https://rauc.readthedocs.io/
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc
+- type: file
+  path: docs/guides/OTA/OTA_Implementation_Guide.md
+- type: file
+  path: src/ota/README.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -6,7 +6,7 @@ text: The cluster display content streams wirelessly from the computation device
 level: '1.12'
 normative: true
 references:
-- path: ../assertions/ASSERT-L0-12.md
+- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_12/ASSERTIONS-ASSERT_L0_12.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

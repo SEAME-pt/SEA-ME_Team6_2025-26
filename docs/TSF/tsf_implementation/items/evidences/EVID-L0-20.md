@@ -10,10 +10,10 @@ text: 'Evidence demonstrating AI-assisted content generation in TSF workflow. In
 level: '1.20'
 normative: true
 references:
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/genAI-pair-programming-guidelines.md
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/TSF_docs/genAI_on_tsf.md
+- type: file
+  path: docs/guides/genAI-pair-programming-guidelines.md
+- type: file
+  path: docs/TSF/tsf_implementation/TSF_docs/genAI_on_tsf.md
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py
   description: 'Evidence from sprint4.md: AI Generator'

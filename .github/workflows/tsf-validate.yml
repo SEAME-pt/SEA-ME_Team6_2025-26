@@ -22,3 +22,12 @@ jobs:
       - name: Run TSF validators
         run: |
           python3 docs/TSF/tsf_implementation/scripts/modules/validate_items_formatation.py
+
+      - name: Guard TruDAG filter safety
+        run: |
+          set -e
+          target="docs/TSF/tsf_implementation/scripts/setup_trudag_clean.sh"
+          if grep -nE "grep -v \"shadows an existing Reference\"|grep -v \"\^Reference object\"|grep -v \"\^WARNING.\*Unsupported reference format\"|grep -v \"\^INFO: Executing validator\"|grep -v \"\^INFO: Validator:\"" "$target" | grep -v "|| true"; then
+            echo "Found grep filter pipelines without '|| true' guard in $target"
+            exit 1
+          fi

@@ -21,8 +21,8 @@ normative: true
 references:
 - type: file
   path: ../expectations/EXPECT-L0-31.md
-- type: url
-  url: https://rauc.readthedocs.io/
+- type: file
+  path: docs/guides/OTA/OTA_Implementation_Guide.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -30,7 +30,7 @@ review_status: pending
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "RAUC"
       - "AGL"
       - "U-Boot"

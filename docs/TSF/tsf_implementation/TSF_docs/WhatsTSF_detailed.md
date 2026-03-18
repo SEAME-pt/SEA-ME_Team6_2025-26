@@ -1512,5 +1512,9 @@ TSF provides a modern, formal approach to assess software trustability, replacin
 - Question: https://gitlab.com/CodethinkLabs/trustable/trustable/-/issues/22
 . https://gitlab.com/CodethinkLabs/trustable/trustable/-/issues?sort=created_date&state=opened&first_page_size=100&page_after=eyJjcmVhdGVkX2F0IjoiMjAyNS0wNi0xMSAxMTo1MDoxNy4wNjQxNDMwMDAgKzAwMDAiLCJpZCI6IjE2ODczNjk4OCJ9
 
+
+- Git one: https://gitlab.eclipse.org/eclipse/tsf/tsf (comes from https://gitlab.com/CodethinkLabs/trustable/trustable)
+- Documentation one: https://pages.eclipse.dev/eclipse/tsf/tsf/index.html(comes from https://gitlab.com/CodethinkLabs/trustable/trustable)
+
 ## 💡 “Any consideration of trust must be based on evidence.”
 — Trustable Software Framework

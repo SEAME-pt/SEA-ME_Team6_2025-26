@@ -1,36 +1,29 @@
 ---
 id: EVID_L0_6
 header: Static GUI elements shown
-text: The repository contains mockup images and cluster display screenshots showing static graphical elements in the Qt interface.
+text: The repository contains mockup images and cluster display screenshots showing
+  static graphical elements in the Qt interface.
 level: '1.6'
 normative: true
 references:
 - type: file
-  path: docs/demos/mockup1.jpeg
+  path: docs/guides/QML-guide.md
 - type: file
-  path: docs/demos/mockup2.jpeg
+  path: src/cluster/README.md
 - type: file
-  path: docs/demos/mockup3.jpeg
+  path: docs/ui_design/README.md
 - type: file
-  path: docs/demos/mockup4.jpeg
-- type: file
-  path: docs/demos/mockup5.jpeg
-- type: file
-  path: docs/demos/mockup6.jpeg
+  path: docs/guides/MQTT_spike.md
 - type: file
   path: docs/guides/QML-guide.md
 - type: file
-  path: docs/demos/Cluster-display-sprint3.jpeg
+  path: src/setup/scripts/r5-qt6-build.sh
 - type: file
-  path: docs/demos/Cluster-mockup-sprint3.jpeg
-- type: file
-  path: docs/demos/Cluster-study.jpeg
-- type: file
-  path: src/cluster/README.md
+  path: src/setup/scripts/qt6-build.sh
 score: 1.0
 reviewers:
-  - name: Joao Jesus Silva
-    email: joao.silva@seame.pt
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

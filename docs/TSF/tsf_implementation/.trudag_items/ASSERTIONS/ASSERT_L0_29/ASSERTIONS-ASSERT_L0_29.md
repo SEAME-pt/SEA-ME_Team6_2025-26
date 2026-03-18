@@ -9,9 +9,9 @@ level: '1.29'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-29.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_29/EXPECTATIONS-EXPECT_L0_29.md
 - type: file
-  path: ../evidences/EVID-L0-29.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_29/EVIDENCES-EVID_L0_29.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

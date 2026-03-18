@@ -22,207 +22,118 @@ text: "Evidence demonstrating that the comprehensive OTA update system is implem
 level: '1.31'
 normative: true
 references:
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc
-  description: RAUC implementation scripts
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/install-bundle.sh
-  description: Bundle installation script
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/post-reboot-verify.sh
-  description: Post-reboot health check script
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/RAUC-implementation.md
-  description: RAUC implementation documentation
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png
-  description: OTA GitHub Action Workflow screenshot
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png
-  description: OTA Release Tags screenshot
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Release.png
-  description: OTA Release Page screenshot
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r4-script.jpeg
-  description: OTA Script Running on Raspberry Pi 4
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r5-script.jpeg
-  description: OTA Script Running on Raspberry Pi 5
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg
-  description: 'Evidence from docs/demos/assembled-car2.jpeg: assembled car2'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car.jpg
-  description: 'Evidence from docs/demos/3d-car.jpg: 3d car'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_2
-    - sprint6.jpg
-  description: 'Evidence from docs/demos/car_architecture_new_2 - sprint6.jpg: car
-    architecture new 2   sprint6'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_old
-    - sprint6.jpeg
-  description: 'Evidence from docs/demos/car_architecture_old - sprint6.jpeg: car
-    architecture old   sprint6'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN Scheme
-    - New update.png
-  description: 'Evidence from docs/demos/CAN Scheme - New update.png: CAN Scheme   New
-    update'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/crosscompiling_scheme-sprint6.jpeg
-  description: 'Evidence from docs/demos/crosscompiling_scheme-sprint6.jpeg: crosscompiling
-    scheme sprint6'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/car_architecture_new_1
-    - sprint6.jpg
-  description: 'Evidence from docs/demos/car_architecture_new_1 - sprint6.jpg: car
-    architecture new 1   sprint6'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint0.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint0.jpeg:
-    Validation of energy layout sprint0'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car2.jpg
-  description: 'Evidence from docs/demos/3d-car2.jpg: 3d car2'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/system-architecture-cross.png
-  description: 'Evidence from docs/demos/system-architecture-cross.png: system architecture
-    cross'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint3.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint3.jpeg:
-    Validation of energy layout sprint3'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/3d-car3.jpg
-  description: 'Evidence from docs/demos/3d-car3.jpg: 3d car3'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CAN-layout-sprint3.jpeg
-  description: 'Evidence from docs/demos/CAN-layout-sprint3.jpeg: CAN layout sprint3'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg
-  description: 'Evidence from docs/demos/assembled-car1.jpeg: assembled car1'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/eletric-scheme.png
-  description: 'Evidence from docs/demos/eletric-scheme.png: eletric scheme'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint2.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint2.jpeg:
-    Validation of energy layout sprint2'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/CANbus
-    Scheme Updated.png
-  description: 'Evidence from docs/demos/CANbus Scheme Updated.png: CANbus Scheme
-    Updated'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Validation-of-energy-layout-sprint1.jpeg
-  description: 'Evidence from docs/demos/Validation-of-energy-layout-sprint1.jpeg:
-    Validation of energy layout sprint1'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_and_ThreadX_benefits_Guide.md
-  description: 'Evidence from docs/guides/AGL_and_ThreadX_benefits_Guide.md: AGL and
-    ThreadX benefits Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md
-  description: 'Evidence from docs/guides/AGL_Installation_Guide.md: AGL Installation
-    Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_
-    Joystick_installation_and_test.md
-  description: 'Evidence from docs/guides/AGL_ Joystick_installation_and_test.md:
-    AGL  Joystick installation and test'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Configuration_Guide.md
-  description: 'Evidence from docs/guides/AGL_Configuration_Guide.md: AGL Configuration
-    Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/OTA_Presentation-sprint8.md
-  description: 'Evidence from docs/guides/OTA/OTA_Presentation-sprint8.md: OTA Presentation
-    sprint8'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/OTA_Comparison_Tests.md
-  description: 'Evidence from docs/guides/OTA/OTA_Comparison_Tests.md: OTA Comparison
-    Tests'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/OTA_Implementation_Guide.md
-  description: 'Evidence from docs/guides/OTA/OTA_Implementation_Guide.md: OTA Implementation
-    Guide'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/OTA_multiversion-arch-sprint8.md
-  description: 'Evidence from docs/guides/OTA/OTA_multiversion-arch-sprint8.md: OTA
-    multiversion arch sprint8'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-  description: 'Evidence from docs/guides/Car_Architecture/Circuit_Connection_Diagram.md:
-    Circuit Connection Diagram'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CanFeederArchitecture.jpg
-  description: 'Evidence from docs/images/CanFeederArchitecture.jpg: CanFeederArchitecture'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/setup/toolchains/agl-toolchain.cmake
-  description: 'Evidence from src/setup/toolchains/agl-toolchain.cmake: agl toolchain'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/setup/toolchains/r5-agl-toolchain.cmake
-  description: 'Evidence from src/setup/toolchains/r5-agl-toolchain.cmake: r5 agl
-    toolchain'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/create-bundle.sh
-  description: 'Evidence from src/ota/rauc/create-bundle.sh: create bundle'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/bootloader-custom-backend.sh
-  description: 'Evidence from src/ota/rauc/bootloader-custom-backend.sh: bootloader
-    custom backend'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/rauc/setup-rauc.sh
-  description: 'Evidence from src/ota/rauc/setup-rauc.sh: setup rauc'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/scripts/ota-update.sh
-  description: 'Evidence from src/ota/scripts/ota-update.sh: ota update'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/scripts/ota-check.sh
-  description: 'Evidence from src/ota/scripts/ota-check.sh: ota check'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/scripts/setup-ota-device.sh
-  description: 'Evidence from src/ota/scripts/setup-ota-device.sh: setup ota device'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/ota/scripts/benchmark-ota.sh
-  description: 'Evidence from src/ota/scripts/benchmark-ota.sh: benchmark ota'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/hmi/assets/icons/car-inactive.svg
-  description: 'Evidence from src/hmi/assets/icons/car-inactive.svg: car inactive'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/hmi/assets/icons/car-active.svg
-  description: 'Evidence from src/hmi/assets/icons/car-active.svg: car active'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/shared/backend/providers/vehicleprovider.hpp
-  description: 'Evidence from src/shared/backend/providers/vehicleprovider.hpp: vehicleprovider'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/shared/backend/providers/vehicleprovider.cpp
-  description: 'Evidence from src/shared/backend/providers/vehicleprovider.cpp: vehicleprovider'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Middlewares/ST/threadx/common/src/txe_byte_release.c
-  description: 'Evidence from src/stm/Middlewares/ST/threadx/common/src/txe_byte_release.c:
-    txe byte release'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Middlewares/ST/threadx/common/src/tx_byte_release.c
-  description: 'Evidence from src/stm/Middlewares/ST/threadx/common/src/tx_byte_release.c:
-    tx byte release'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Middlewares/ST/threadx/common/src/txe_block_release.c
-  description: 'Evidence from src/stm/Middlewares/ST/threadx/common/src/txe_block_release.c:
-    txe block release'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Middlewares/ST/threadx/common/src/tx_block_release.c
-  description: 'Evidence from src/stm/Middlewares/ST/threadx/common/src/tx_block_release.c:
-    tx block release'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Core/Inc/vehicle_state.h
-  description: 'Evidence from src/stm/Core/Inc/vehicle_state.h: vehicle state'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-  description: 'Evidence from src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h: cmsis
-    iccarm'
+- type: file
+  path: src/ota/rauc/install-bundle.sh
+- type: file
+  path: src/ota/rauc/install-bundle.sh
+- type: file
+  path: src/ota/rauc/post-reboot-verify.sh
+- type: file
+  path: docs/guides/OTA/OTA_Implementation_Guide.md
+- type: file
+  path: docs/demos/OTA-Action.png
+- type: file
+  path: docs/demos/OTA-Tags.png
+- type: file
+  path: docs/demos/OTA-Release.png
+- type: file
+  path: docs/demos/OTA-r4-script.jpeg
+- type: file
+  path: docs/demos/OTA-r5-script.jpeg
+- type: file
+  path: docs/demos/assembled-car2.jpeg
+- type: file
+  path: docs/demos/3d-car.jpg
+- type: file
+  path: docs/demos/car_architecture_new_2 - sprint6.jpg
+- type: file
+  path: docs/demos/car_architecture_old - sprint6.jpeg
+- type: file
+  path: docs/demos/CAN Scheme - New update.png
+- type: file
+  path: docs/demos/crosscompiling_scheme-sprint6.jpeg
+- type: file
+  path: docs/demos/car_architecture_new_1 - sprint6.jpg
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint0.jpeg
+- type: file
+  path: docs/demos/3d-car2.jpg
+- type: file
+  path: docs/demos/system-architecture-cross.png
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
+- type: file
+  path: docs/demos/3d-car3.jpg
+- type: file
+  path: docs/demos/CAN-layout-sprint3.jpeg
+- type: file
+  path: docs/demos/assembled-car1.jpeg
+- type: file
+  path: docs/demos/eletric-scheme.png
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint2.jpeg
+- type: file
+  path: docs/demos/CANbus Scheme Updated.png
+- type: file
+  path: docs/demos/Validation-of-energy-layout-sprint1.jpeg
+- type: file
+  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
+- type: file
+  path: docs/guides/AGL_Installation_Guide.md
+- type: file
+  path: docs/guides/AGL_ Joystick_installation_and_test.md
+- type: file
+  path: docs/guides/AGL_Configuration_Guide.md
+- type: file
+  path: docs/guides/OTA/OTA_Presentation-sprint8.md
+- type: file
+  path: docs/guides/OTA/OTA_Comparison_Tests.md
+- type: file
+  path: docs/guides/OTA/OTA_Implementation_Guide.md
+- type: file
+  path: docs/guides/OTA/OTA_multiversion-arch-sprint8.md
+- type: file
+  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+- type: file
+  path: docs/images/CanFeederArchitecture.jpg
+- type: file
+  path: src/setup/toolchains/agl-toolchain.cmake
+- type: file
+  path: src/setup/toolchains/r5-agl-toolchain.cmake
+- type: file
+  path: src/ota/rauc/create-bundle.sh
+- type: file
+  path: src/ota/rauc/bootloader-custom-backend.sh
+- type: file
+  path: src/ota/rauc/setup-rauc.sh
+- type: file
+  path: src/ota/scripts/ota-update.sh
+- type: file
+  path: src/ota/scripts/ota-check.sh
+- type: file
+  path: src/ota/scripts/setup-ota-device.sh
+- type: file
+  path: src/ota/scripts/benchmark-ota.sh
+- type: file
+  path: src/hmi/assets/icons/car-inactive.svg
+- type: file
+  path: src/hmi/assets/icons/car-active.svg
+- type: file
+  path: src/shared/backend/providers/vehicleprovider.hpp
+- type: file
+  path: src/shared/backend/providers/vehicleprovider.cpp
+- type: file
+  path: src/stm/Middlewares/ST/threadx/common/src/txe_byte_release.c
+- type: file
+  path: src/stm/Middlewares/ST/threadx/common/src/tx_byte_release.c
+- type: file
+  path: src/stm/Middlewares/ST/threadx/common/src/txe_block_release.c
+- type: file
+  path: src/stm/Middlewares/ST/threadx/common/src/tx_block_release.c
+- type: file
+  path: src/stm/Core/Inc/vehicle_state.h
+- type: file
+  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
 score: 1.0
 reviewers:
 - name: Joao Jesus Silva

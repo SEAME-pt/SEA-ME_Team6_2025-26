@@ -36,6 +36,27 @@ else
     exit 127
 fi
 
+# Filter noisy trudag lines without breaking execution under `set -e`.
+# grep returns exit code 1 when no lines remain, which is expected here.
+filter_trudag_output() {
+    local mode="${1:-default}"
+
+    case "$mode" in
+        lint)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" || true
+            ;;
+        score)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" || true
+            ;;
+        publish)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:" || true
+            ;;
+        *)
+            cat
+            ;;
+    esac
+}
+
 echo "=========================================="
 echo "TSF Trudag Setup - Clean Mode"
 echo "=========================================="
@@ -368,7 +389,7 @@ cd "$REPO_ROOT"
 # Run lint and capture output, filter warnings but show important ones
 lint_output=$("$TRUDAG_CMD" manage lint 2>&1)
 lint_exit=$?
-echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
+echo "$lint_output" | filter_trudag_output lint
 if [ $lint_exit -eq 0 ]; then
     echo "✓ Lint passed!"
 else
@@ -389,7 +410,7 @@ score_output=$("$TRUDAG_CMD" score 2>&1)
 score_exit=$?
 
 # Show scores (filter noise but keep score lines)
-echo "$score_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format"
+echo "$score_output" | filter_trudag_output score
 
 if [ $score_exit -eq 0 ]; then
     # Calculate and show summary
@@ -417,7 +438,7 @@ publish_output=$("$TRUDAG_CMD" publish 2>&1)
 publish_exit=$?
 
 # Filter noise from publish output
-echo "$publish_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:"
+echo "$publish_output" | filter_trudag_output publish
 
 if [ $publish_exit -eq 0 ]; then
     echo ""

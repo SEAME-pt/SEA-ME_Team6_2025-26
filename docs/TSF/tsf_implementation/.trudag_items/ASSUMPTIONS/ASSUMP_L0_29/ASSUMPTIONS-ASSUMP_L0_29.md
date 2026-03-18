@@ -7,7 +7,7 @@ level: '1.29'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-29.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_29/EXPECTATIONS-EXPECT_L0_29.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "Driver presence sensor"
       - "Vehicle control system"
       - "Diogo's duck (symbolic driver)"

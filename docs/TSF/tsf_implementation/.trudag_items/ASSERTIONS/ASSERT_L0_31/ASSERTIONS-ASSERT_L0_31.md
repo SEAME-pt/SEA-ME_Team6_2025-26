@@ -16,13 +16,13 @@ level: '1.31'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-31.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_31/EXPECTATIONS-EXPECT_L0_31.md
 - type: file
-  path: ../evidences/EVID-L0-31.md
-- type: url
-  url: https://rauc.readthedocs.io/
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md
+- type: file
+  path: docs/guides/OTA/OTA_Implementation_Guide.md
+- type: file
+  path: src/ota/README.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

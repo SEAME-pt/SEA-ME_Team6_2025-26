@@ -4,7 +4,7 @@ header: 'Assumption: Implement and test the changing from the old architecture..
 level: '1.10'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-10.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_10/EXPECTATIONS-EXPECT_L0_10.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

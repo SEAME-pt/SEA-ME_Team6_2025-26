@@ -1,24 +1,31 @@
 ---
 id: EVID_L0_1
 header: Architecture documentation exists
-text: The repository contains system architecture diagrams, electrical schematics, and power consumption analysis documents.
+text: The repository contains system architecture diagrams, electrical schematics,
+  and power consumption analysis documents.
 level: '1.1'
 normative: true
 references:
 - type: file
-  path: docs/demos/assembled-car1.jpeg
-- type: file
-  path: docs/demos/assembled-car2.jpeg
-- type: file
-  path: docs/demos/eletric-scheme.png
-- type: file
-  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
+  path: docs/guides/Power Consumption Analysis.md
 - type: file
   path: docs/guides/Power Consumption Analysis.md
+- type: file
+  path: docs/guides/MQTT_spike.md
+- type: file
+  path: docs/guides/QML-guide.md
+- type: file
+  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+- type: file
+  path: docs/images/CanFeederArchitecture.jpg
+- type: file
+  path: src/setup/scripts/r5-qt6-build.sh
+- type: file
+  path: src/setup/scripts/qt6-build.sh
 score: 1.0
 reviewers:
-  - name: Joao Jesus Silva
-    email: joao.silva@seame.pt
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

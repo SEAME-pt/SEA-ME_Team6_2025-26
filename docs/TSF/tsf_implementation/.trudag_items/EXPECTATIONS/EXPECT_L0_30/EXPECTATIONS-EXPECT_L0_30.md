@@ -15,7 +15,7 @@ level: '1.30'
 normative: true
 references:
 - type: file
-  path: ../assertions/ASSERT-L0-30.md
+  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_30/ASSERTIONS-ASSERT_L0_30.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

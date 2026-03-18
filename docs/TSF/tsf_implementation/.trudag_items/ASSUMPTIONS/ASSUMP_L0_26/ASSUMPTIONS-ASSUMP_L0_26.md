@@ -7,7 +7,7 @@ level: '1.26'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-26.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_26/EXPECTATIONS-EXPECT_L0_26.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "STM32 with ThreadX"
       - "Raspberry Pi 5 with AGL"
       - "Raspberry Pi 4 with Qt"
