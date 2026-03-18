@@ -1412,6 +1412,13 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
+evidence:
+    type: validate_hardware_availability
+    configuration:
+        components:
+            - \"STM32\"
+            - \"CAN\"
+            - \"Raspberry Pi\"
 ---
 """,
             'ASSERT': f"""---
@@ -1583,8 +1590,26 @@ review_status: accepted
             fixes_applied.append("Added 'review_status: accepted'")
             modified = True
         
-        # Fix 4: ASSUMP files should have 'evidence:' with valid validator
+        # Fix 4: EXPECT/ASSUMP files should have 'evidence:' with valid validator
         valid_validators = ['validate_hardware_availability', 'validate_linux_environment', 'validate_software_dependencies']
+        if item_type_upper == 'EXPECT':
+            evidence = frontmatter.get('evidence', {})
+            if not evidence:
+                frontmatter['evidence'] = {
+                    'type': 'validate_hardware_availability',
+                    'configuration': {
+                        'components': ['STM32', 'CAN', 'Raspberry Pi']
+                    }
+                }
+                fixes_applied.append("Added default evidence validator for EXPECT")
+                modified = True
+            elif isinstance(evidence, dict):
+                ev_type = evidence.get('type', '')
+                if ev_type and ev_type not in valid_validators:
+                    frontmatter['evidence']['type'] = 'validate_hardware_availability'
+                    fixes_applied.append(f"Replaced invalid EXPECT validator '{ev_type}' with 'validate_hardware_availability'")
+                    modified = True
+
         if item_type_upper == 'ASSUMP':
             evidence = frontmatter.get('evidence', {})
             if not evidence:

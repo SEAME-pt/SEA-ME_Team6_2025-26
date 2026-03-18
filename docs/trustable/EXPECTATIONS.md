@@ -2,7 +2,7 @@
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_1 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_1 data-toc-label="EXPECTATIONS-EXPECT_L0_1" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_1 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_1 data-toc-label="EXPECTATIONS-EXPECT_L0_1" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -13,6 +13,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -57,7 +98,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_2 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_2 data-toc-label="EXPECTATIONS-EXPECT_L0_2" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_2 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_2 data-toc-label="EXPECTATIONS-EXPECT_L0_2" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -68,6 +109,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -112,7 +194,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_3 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_3 data-toc-label="EXPECTATIONS-EXPECT_L0_3" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_3 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_3 data-toc-label="EXPECTATIONS-EXPECT_L0_3" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -123,6 +205,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -167,7 +290,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_4 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_4 data-toc-label="EXPECTATIONS-EXPECT_L0_4" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_4 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_4 data-toc-label="EXPECTATIONS-EXPECT_L0_4" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -178,6 +301,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -222,7 +386,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_5 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_5 data-toc-label="EXPECTATIONS-EXPECT_L0_5" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_5 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_5 data-toc-label="EXPECTATIONS-EXPECT_L0_5" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -233,6 +397,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -277,7 +482,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_6 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_6 data-toc-label="EXPECTATIONS-EXPECT_L0_6" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_6 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_6 data-toc-label="EXPECTATIONS-EXPECT_L0_6" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -288,6 +493,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -332,7 +578,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_7 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_7 data-toc-label="EXPECTATIONS-EXPECT_L0_7" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_7 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_7 data-toc-label="EXPECTATIONS-EXPECT_L0_7" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -343,6 +589,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -387,7 +674,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_8 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_8 data-toc-label="EXPECTATIONS-EXPECT_L0_8" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_8 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_8 data-toc-label="EXPECTATIONS-EXPECT_L0_8" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -398,6 +685,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -442,7 +770,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_9 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_9 data-toc-label="EXPECTATIONS-EXPECT_L0_9" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_9 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_9 data-toc-label="EXPECTATIONS-EXPECT_L0_9" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -453,6 +781,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -497,7 +866,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_10 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_10 data-toc-label="EXPECTATIONS-EXPECT_L0_10" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_10 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_10 data-toc-label="EXPECTATIONS-EXPECT_L0_10" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -508,6 +877,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -552,7 +962,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_11 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_11 data-toc-label="EXPECTATIONS-EXPECT_L0_11" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_11 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_11 data-toc-label="EXPECTATIONS-EXPECT_L0_11" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -563,6 +973,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -607,7 +1058,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_12 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_12 data-toc-label="EXPECTATIONS-EXPECT_L0_12" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_12 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_12 data-toc-label="EXPECTATIONS-EXPECT_L0_12" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -618,6 +1069,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -662,7 +1154,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_13 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_13 data-toc-label="EXPECTATIONS-EXPECT_L0_13" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_13 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_13 data-toc-label="EXPECTATIONS-EXPECT_L0_13" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -673,6 +1165,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -717,7 +1250,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_14 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_14 data-toc-label="EXPECTATIONS-EXPECT_L0_14" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_14 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_14 data-toc-label="EXPECTATIONS-EXPECT_L0_14" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -728,6 +1261,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -772,7 +1346,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_15 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_15 data-toc-label="EXPECTATIONS-EXPECT_L0_15" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_15 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_15 data-toc-label="EXPECTATIONS-EXPECT_L0_15" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -783,6 +1357,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -827,7 +1442,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_16 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_16 data-toc-label="EXPECTATIONS-EXPECT_L0_16" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_16 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_16 data-toc-label="EXPECTATIONS-EXPECT_L0_16" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -838,6 +1453,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -882,7 +1538,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_17 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_17 data-toc-label="EXPECTATIONS-EXPECT_L0_17" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_17 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_17 data-toc-label="EXPECTATIONS-EXPECT_L0_17" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -893,6 +1549,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -937,7 +1634,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_18 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_18 data-toc-label="EXPECTATIONS-EXPECT_L0_18" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_18 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_18 data-toc-label="EXPECTATIONS-EXPECT_L0_18" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -948,6 +1645,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -997,7 +1735,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_19 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_19 data-toc-label="EXPECTATIONS-EXPECT_L0_19" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_19 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_19 data-toc-label="EXPECTATIONS-EXPECT_L0_19" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1008,6 +1746,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1057,7 +1836,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_20 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_20 data-toc-label="EXPECTATIONS-EXPECT_L0_20" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_20 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_20 data-toc-label="EXPECTATIONS-EXPECT_L0_20" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1068,6 +1847,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1117,7 +1937,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_21 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_21 data-toc-label="EXPECTATIONS-EXPECT_L0_21" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_21 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_21 data-toc-label="EXPECTATIONS-EXPECT_L0_21" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1128,6 +1948,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1177,7 +2038,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_22 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_22 data-toc-label="EXPECTATIONS-EXPECT_L0_22" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_22 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_22 data-toc-label="EXPECTATIONS-EXPECT_L0_22" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1188,6 +2049,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1232,7 +2134,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_23 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_23 data-toc-label="EXPECTATIONS-EXPECT_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_23 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_23 data-toc-label="EXPECTATIONS-EXPECT_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1243,6 +2145,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1289,7 +2232,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_24 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_24 data-toc-label="EXPECTATIONS-EXPECT_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_24 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_24 data-toc-label="EXPECTATIONS-EXPECT_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1300,6 +2243,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1348,7 +2332,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_25 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_25 data-toc-label="EXPECTATIONS-EXPECT_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_25 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_25 data-toc-label="EXPECTATIONS-EXPECT_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1359,6 +2343,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1405,7 +2430,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_26 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_26 data-toc-label="EXPECTATIONS-EXPECT_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_26 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_26 data-toc-label="EXPECTATIONS-EXPECT_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1416,6 +2441,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1465,7 +2531,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_27 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_27 data-toc-label="EXPECTATIONS-EXPECT_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_27 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_27 data-toc-label="EXPECTATIONS-EXPECT_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1476,6 +2542,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1522,7 +2629,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_28 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_28 data-toc-label="EXPECTATIONS-EXPECT_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_28 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_28 data-toc-label="EXPECTATIONS-EXPECT_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1533,6 +2640,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1579,7 +2727,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_29 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_29 data-toc-label="EXPECTATIONS-EXPECT_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_29 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_29 data-toc-label="EXPECTATIONS-EXPECT_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1590,6 +2738,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1636,7 +2825,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_30 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_30 data-toc-label="EXPECTATIONS-EXPECT_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_30 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_30 data-toc-label="EXPECTATIONS-EXPECT_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1647,6 +2836,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 
@@ -1698,7 +2928,7 @@ _None_
 
 ---
 
-### EXPECTATIONS-EXPECT_L0_31 | Reviewed: ✔ | Score: 0.0 ### {: #expectations-expect_l0_31 data-toc-label="EXPECTATIONS-EXPECT_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### EXPECTATIONS-EXPECT_L0_31 | Reviewed: ✔ | Score: 1.0 ### {: #expectations-expect_l0_31 data-toc-label="EXPECTATIONS-EXPECT_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1709,6 +2939,47 @@ _None_
 **Supporting Items:**
 
 _None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
 
 {% raw %}
 

@@ -21,6 +21,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -44,6 +85,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -74,6 +122,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -97,6 +186,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -127,6 +223,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -149,6 +286,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -179,6 +323,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -202,6 +387,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -232,6 +424,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -254,6 +487,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -284,6 +524,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -307,6 +588,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -337,6 +625,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -359,6 +688,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -389,6 +725,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -412,6 +789,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -442,6 +826,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -465,6 +890,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -495,6 +927,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -518,6 +991,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -548,6 +1028,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -571,6 +1092,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -602,6 +1130,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -625,6 +1194,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -729,6 +1305,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -752,6 +1369,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -787,6 +1411,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -810,6 +1475,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -841,6 +1513,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -864,6 +1577,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -894,6 +1614,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -917,6 +1678,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -947,6 +1715,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -970,6 +1779,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1000,6 +1816,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1011,18 +1868,29 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_18
-		header: "CAN Bus Communication with ThreadX RTOS"
-		text: |
-		  The vehicle shall communicate via CAN bus using ThreadX as the real-time operating system on the STM32 microcontroller. The CAN communication layer shall be integrated with ThreadX threads to ensure deterministic message handling and proper prioritization of automotive communication tasks.
+		header: CAN Bus Communication with ThreadX RTOS
+		text: 'The vehicle shall communicate via CAN bus using ThreadX as the real-time operating
+		  system on the STM32 microcontroller. The CAN communication layer shall be integrated
+		  with ThreadX threads to ensure deterministic message handling and proper prioritization
+		  of automotive communication tasks.
+		
+		  '
 		level: '1.18'
 		normative: true
 		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_18/ASSERTIONS-ASSERT_L0_18.md
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_18/ASSERTIONS-ASSERT_L0_18.md
 		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		
@@ -1054,6 +1922,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1065,18 +1974,29 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_19
-		header: "TSF Automation Testing"
-		text: |
-		  The project shall implement automated testing for TSF (Technical Software Framework) requirements. This includes validation of item formats, YAML frontmatter structure, and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation shall run in CI/CD pipeline.
+		header: TSF Automation Testing
+		text: 'The project shall implement automated testing for TSF (Technical Software Framework)
+		  requirements. This includes validation of item formats, YAML frontmatter structure,
+		  and cross-references between EXPECT, ASSERT, EVID, and ASSUMP items. Automated validation
+		  shall run in CI/CD pipeline.
+		
+		  '
 		level: '1.19'
 		normative: true
 		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_19/ASSERTIONS-ASSERT_L0_19.md
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_19/ASSERTIONS-ASSERT_L0_19.md
 		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		
@@ -1108,6 +2028,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1119,18 +2080,30 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_20
-		header: "AI-Assisted Content Generation Integration"
-		text: |
-		  The project shall integrate AI-assisted tools for automated content generation in the TSF workflow. This includes using GitHub Copilot CLI and/or VSCode Copilot Chat to generate TSF item content (EXPECT, ASSERT, EVID, ASSUMP) based on requirements and acceptance criteria. The AI integration shall follow documented guidelines for pair programming with generative AI.
+		header: AI-Assisted Content Generation Integration
+		text: 'The project shall integrate AI-assisted tools for automated content generation
+		  in the TSF workflow. This includes using GitHub Copilot CLI and/or VSCode Copilot
+		  Chat to generate TSF item content (EXPECT, ASSERT, EVID, ASSUMP) based on requirements
+		  and acceptance criteria. The AI integration shall follow documented guidelines for
+		  pair programming with generative AI.
+		
+		  '
 		level: '1.20'
 		normative: true
 		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_20/ASSERTIONS-ASSERT_L0_20.md
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_20/ASSERTIONS-ASSERT_L0_20.md
 		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		
@@ -1162,6 +2135,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1173,18 +2187,30 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_21
-		header: "Complete TSF Automation Workflow"
-		text: |
-		  The project shall implement a complete TSF automation workflow that includes: detection of new requirements, automatic generation of TSF items (EXPECT, ASSERT, EVID, ASSUMP), validation of item structure, evidence synchronization from sprint files, and TruDAG graph generation. The workflow shall be executable via a single unified script.
+		header: Complete TSF Automation Workflow
+		text: 'The project shall implement a complete TSF automation workflow that includes:
+		  detection of new requirements, automatic generation of TSF items (EXPECT, ASSERT,
+		  EVID, ASSUMP), validation of item structure, evidence synchronization from sprint
+		  files, and TruDAG graph generation. The workflow shall be executable via a single
+		  unified script.
+		
+		  '
 		level: '1.21'
 		normative: true
 		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_21/ASSERTIONS-ASSERT_L0_21.md
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_21/ASSERTIONS-ASSERT_L0_21.md
 		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		
@@ -1209,6 +2235,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1220,22 +2287,39 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_22
-		header: "STM32 ThreadX Deterministic Startup"
-		text: |
-		  The STM32-based control system running ThreadX shall initialize and start publishing speed data over CAN within a deterministic and bounded time after power-on. The STM32 system must start speed data acquisition and CAN transmission within ≤ 100 ms after power-on.
+		header: STM32 ThreadX Deterministic Startup
+		text: 'The STM32-based control system running ThreadX shall initialize and start publishing
+		  speed data over CAN within a deterministic and bounded time after power-on. The
+		  STM32 system must start speed data acquisition and CAN transmission within ≤ 100
+		  ms after power-on.
 		
-		  **Justification:** AUTOSAR Classic–like ECUs and RTOS-based MCUs typically achieve startup times in the 10–100 ms range. Tier-1 suppliers (Bosch, Continental) commonly target &lt;100 ms for availability of safety-relevant signals. ThreadX is designed for deterministic startup on MCUs.
 		
-		  **Acceptance Criteria:** The STM32 system starts speed data acquisition and CAN transmission within ≤ 100 ms after power-on.
+		  **Justification:** AUTOSAR Classic–like ECUs and RTOS-based MCUs typically achieve
+		  startup times in the 10–100 ms range. Tier-1 suppliers (Bosch, Continental) commonly
+		  target &lt;100 ms for availability of safety-relevant signals. ThreadX is designed
+		  for deterministic startup on MCUs.
+		
+		
+		  **Acceptance Criteria:** The STM32 system starts speed data acquisition and CAN
+		  transmission within ≤ 100 ms after power-on.
+		
+		  '
 		level: '1.22'
 		normative: true
 		references:
-		  - type: file
-		    path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_22/ASSERTIONS-ASSERT_L0_22.md
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_22/ASSERTIONS-ASSERT_L0_22.md
 		reviewers:
-		  - name: Joao Jesus Silva
-		    email: joao.silva@seame.pt
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1259,6 +2343,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1270,13 +2395,22 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_23
-		header: "Raspberry Pi 5 AGL Boot Time"
-		text: |
-		  The Raspberry Pi 5–based system running Automotive Grade Linux (AGL) shall complete its operating system initialization and reach a state where middleware services (e.g. KUKSA) are operational within a bounded time after power-on.
+		header: Raspberry Pi 5 AGL Boot Time
+		text: 'The Raspberry Pi 5–based system running Automotive Grade Linux (AGL) shall
+		  complete its operating system initialization and reach a state where middleware
+		  services (e.g. KUKSA) are operational within a bounded time after power-on.
 		
-		  **Justification:** Linux-based automotive platforms (AGL, QNX, Adaptive AUTOSAR) typically boot in 5–15 s. AGL documentation describes fast boot paths but does not mandate strict limits. This timing does not affect safety, as safety-relevant data is handled by the MCU.
 		
-		  **Acceptance Criteria:** The RASP5/AGL system reaches middleware operational state within ≤ 10 s after power-on.
+		  **Justification:** Linux-based automotive platforms (AGL, QNX, Adaptive AUTOSAR)
+		  typically boot in 5–15 s. AGL documentation describes fast boot paths but does not
+		  mandate strict limits. This timing does not affect safety, as safety-relevant data
+		  is handled by the MCU.
+		
+		
+		  **Acceptance Criteria:** The RASP5/AGL system reaches middleware operational state
+		  within ≤ 10 s after power-on.
+		
+		  '
 		level: '1.23'
 		normative: true
 		references:
@@ -1286,6 +2420,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1309,6 +2450,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1320,16 +2502,27 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_24
-		header: "Combined Startup ThreadX and AGL"
-		text: |
-		  The combined STM32 (ThreadX) and Raspberry Pi 5 (AGL) system shall provide an integrated startup behavior where safety-relevant data is available before or independently of the completion of the AGL boot process.
+		header: Combined Startup ThreadX and AGL
+		text: 'The combined STM32 (ThreadX) and Raspberry Pi 5 (AGL) system shall provide
+		  an integrated startup behavior where safety-relevant data is available before or
+		  independently of the completion of the AGL boot process.
 		
-		  **Justification:** Common automotive architectural practice separates safety-critical MCUs from Linux-based systems. The slower boot domain (AGL) must not block faster safety-relevant functions.
+		
+		  **Justification:** Common automotive architectural practice separates safety-critical
+		  MCUs from Linux-based systems. The slower boot domain (AGL) must not block faster
+		  safety-relevant functions.
+		
 		
 		  **Acceptance Criteria:**
+		
 		  - Speed data publication from the STM32 is available within ≤ 100 ms after power-on.
-		  - AGL system becomes operational within ≤ 10 s, without blocking or delaying data publication.
+		
+		  - AGL system becomes operational within ≤ 10 s, without blocking or delaying data
+		  publication.
+		
 		  - No startup conflict occurs between ThreadX and AGL domains.
+		
+		  '
 		level: '1.24'
 		normative: true
 		references:
@@ -1339,6 +2532,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1362,6 +2562,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1373,16 +2614,25 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_25
-		header: "Instrument Cluster Qt UI Availability"
-		text: |
-		  The instrument cluster system running a Qt-based application on Raspberry Pi 4 shall display an initial usable UI within a bounded time after power-on.
+		header: Instrument Cluster Qt UI Availability
+		text: 'The instrument cluster system running a Qt-based application on Raspberry Pi
+		  4 shall display an initial usable UI within a bounded time after power-on.
 		
-		  **Justification:** OEM instrument cluster guidelines commonly target 1–2 s for first visual feedback after ignition on. AGL and Tier-1 cluster architectures emphasize early visual availability, even with partial data.
+		
+		  **Justification:** OEM instrument cluster guidelines commonly target 1–2 s for first
+		  visual feedback after ignition on. AGL and Tier-1 cluster architectures emphasize
+		  early visual availability, even with partial data.
+		
 		
 		  **Acceptance Criteria:**
+		
 		  - The initial instrument cluster image is displayed within ≤ 2.0 s after power-on.
+		
 		  - The Qt application operates independently of backend data availability.
+		
 		  - Vehicle data values are displayed once published by KUKSA.
+		
+		  '
 		level: '1.25'
 		normative: true
 		references:
@@ -1392,6 +2642,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1415,6 +2672,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1426,16 +2724,27 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_26
-		header: "End-to-End System Startup Time"
-		text: |
-		  The complete system shall provide end-to-end availability of safety-relevant data and a usable instrument cluster UI within time bounds consistent with common automotive architectural practices.
+		header: End-to-End System Startup Time
+		text: 'The complete system shall provide end-to-end availability of safety-relevant
+		  data and a usable instrument cluster UI within time bounds consistent with common
+		  automotive architectural practices.
 		
-		  **Justification:** Automotive systems are architected to ensure fast availability of safety-relevant data and early driver feedback, while allowing complex systems to boot in parallel.
+		
+		  **Justification:** Automotive systems are architected to ensure fast availability
+		  of safety-relevant data and early driver feedback, while allowing complex systems
+		  to boot in parallel.
+		
 		
 		  **Acceptance Criteria:**
+		
 		  - Safety-relevant speed data is available within ≤ 100 ms after power-on.
+		
 		  - A usable instrument cluster UI is displayed within ≤ 2.0 s after power-on.
-		  - Backend services (AGL + KUKSA) become fully operational within ≤ 10 s, without impacting safety or UI availability.
+		
+		  - Backend services (AGL + KUKSA) become fully operational within ≤ 10 s, without
+		  impacting safety or UI availability.
+		
+		  '
 		level: '1.26'
 		normative: true
 		references:
@@ -1445,6 +2754,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1468,6 +2784,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1479,15 +2836,26 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_27
-		header: "Emergency Braking Stopping Distance"
-		text: |
-		  The emergency braking system shall actuate correctly and stop the vehicle at a safe distance from a detected obstacle.
+		header: Emergency Braking Stopping Distance
+		text: 'The emergency braking system shall actuate correctly and stop the vehicle at
+		  a safe distance from a detected obstacle.
 		
-		  **Justification:** Short-range obstacle detection and emergency braking demonstrators commonly use distances in the 200–500 mm range for low-speed platforms. A minimum remaining distance of 50 mm provides a clear safety margin while remaining realistic for a small-scale vehicle.
+		
+		  **Justification:** Short-range obstacle detection and emergency braking demonstrators
+		  commonly use distances in the 200–500 mm range for low-speed platforms. A minimum
+		  remaining distance of 50 mm provides a clear safety margin while remaining realistic
+		  for a small-scale vehicle.
+		
 		
 		  **Acceptance Criteria:**
-		  - Given an obstacle detected at 300 mm from the sensor, the vehicle shall stop with a minimum remaining distance of ≥ 50 mm from the obstacle.
-		  - The braking action shall be triggered automatically once the obstacle detection threshold is reached.
+		
+		  - Given an obstacle detected at 300 mm from the sensor, the vehicle shall stop with
+		  a minimum remaining distance of ≥ 50 mm from the obstacle.
+		
+		  - The braking action shall be triggered automatically once the obstacle detection
+		  threshold is reached.
+		
+		  '
 		level: '1.27'
 		normative: true
 		references:
@@ -1497,6 +2865,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1520,6 +2895,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1531,13 +2947,20 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_28
-		header: "Exterior Temperature Measurement Accuracy"
-		text: |
-		  The system shall measure the exterior temperature with an accuracy suitable for vehicle status display.
+		header: Exterior Temperature Measurement Accuracy
+		text: 'The system shall measure the exterior temperature with an accuracy suitable
+		  for vehicle status display.
 		
-		  **Justification:** Automotive exterior temperature sensors typically allow deviations between ±1 °C and ±3 °C, depending on sensor placement and environmental conditions. A tolerance of ±2 °C is realistic and appropriate for a demonstrator system.
 		
-		  **Acceptance Criteria:** The measured exterior temperature shall correspond to the reference temperature with a maximum deviation of ±2 °C.
+		  **Justification:** Automotive exterior temperature sensors typically allow deviations
+		  between ±1 °C and ±3 °C, depending on sensor placement and environmental conditions.
+		  A tolerance of ±2 °C is realistic and appropriate for a demonstrator system.
+		
+		
+		  **Acceptance Criteria:** The measured exterior temperature shall correspond to the
+		  reference temperature with a maximum deviation of ±2 °C.
+		
+		  '
 		level: '1.28'
 		normative: true
 		references:
@@ -1547,6 +2970,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1570,6 +3000,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1581,15 +3052,24 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_29
-		header: "Driver Presence Condition"
-		text: |
-		  The vehicle shall only accept driving or autonomous commands when a driver is detected as present inside the vehicle.
+		header: Driver Presence Condition
+		text: 'The vehicle shall only accept driving or autonomous commands when a driver
+		  is detected as present inside the vehicle.
 		
-		  **Justification:** Driver presence detection is a common prerequisite in automotive systems to prevent unintended operation. In this project, a symbolic driver (the duck) is used to validate the logical gating of vehicle operation.
+		
+		  **Justification:** Driver presence detection is a common prerequisite in automotive
+		  systems to prevent unintended operation. In this project, a symbolic driver (the
+		  duck) is used to validate the logical gating of vehicle operation.
+		
 		
 		  **Acceptance Criteria:**
+		
 		  - If no driver is detected, the vehicle shall reject all driving or autonomous commands.
-		  - If a driver is detected (Diogo's duck), the vehicle shall accept driving or autonomous commands.
+		
+		  - If a driver is detected (Diogo''s duck), the vehicle shall accept driving or autonomous
+		  commands.
+		
+		  '
 		level: '1.29'
 		normative: true
 		references:
@@ -1599,6 +3079,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1622,6 +3109,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1633,17 +3161,23 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_30
-		header: "Car ready to next module: The vehicle shall be finished to module 2"
-		text: |
-		  The vehicle shall be finished to module 2.
+		header: 'Car ready to next module: The vehicle shall be finished to module 2'
+		text: 'The vehicle shall be finished to module 2.
 		
-		  **Justification:** Architecture finished with software and hardware ready to next module: AGL, ThreadX, CAN, QT, Camera, Sensors, etc.
+		
+		  **Justification:** Architecture finished with software and hardware ready to next
+		  module: AGL, ThreadX, CAN, QT, Camera, Sensors, etc.
+		
 		
 		  **References:** Car ready to ADAS and Machine Learning and OTA module 2.
 		
+		
 		  **Acceptance Criteria:** Car should be completely finalized.
 		
+		
 		  **Verification Method:** Visual, Unity, Functional, Integration tests.
+		
+		  '
 		level: '1.30'
 		normative: true
 		references:
@@ -1653,6 +3187,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
@@ -1676,6 +3217,47 @@ _None_
 
 _None_
 
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
 {% raw %}
 
 **References:**
@@ -1687,47 +3269,37 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_31
-		header: "OTA Update System Implementation: The vehicle shall support Over-The-Air (OTA) software updates using OTA Scripts for SOTA, COTA, and FOTA, plus RAUC with A/B partition scheme for OS updates"
-		text: |
-		  The vehicle shall support comprehensive Over-The-Air (OTA) software updates covering:
-		  
-		  - **SOTA (Software Over-The-Air):** Application and middleware updates via OTA scripts
-		  - **COTA (Configuration Over-The-Air):** Remote configuration changes and parameter updates
-		  - **FOTA (Firmware Over-The-Air):** Low-level firmware updates for ECUs and microcontrollers
-		  - **OS Updates:** Full system image updates using RAUC with A/B partition scheme for safe, atomic u
-		  
-		
-		  
-		
-		  **Justification:** Modern automotive systems require reliable OTA update mechanisms to deploy security patches, bug fixes, and feature updates without physical access. A layered OTA approach (SOTA/COTA/FOTA) allows granular updates while RAUC provides atomic OS updates with rollback capability, essential for safety-critical automotive applications.
-		
-		  **References:** 
-		  - RAUC documentation (https://rauc.readthedocs.io/)
-		  - Automotive OTA best practices (AUTOSAR, ISO 24089)
-		  - AGL OTA update guidelines
-		  - UNECE WP.29 Regulation on Software Updates
-		
-		  **Acceptance Criteria:**
-		  1. **SOTA:** The system shall update application software without requiring full OS reinstallation
-		  2. **COTA:** The system shall apply configuration changes remotely and persist them across reboots
-		  3. **FOTA:** The system shall update STM32/ECU firmware via CAN or other interfaces
-		  4. **RAUC OS Updates:**
-		     - Receive and validate RAUC bundles (.raucb) over network
-		     - Install updates atomically to inactive rootfs partition
-		     - Automatically switch boot slot after successful installation
-		     - Perform post-reboot health checks (network, disk, services)
-		     - Rollback to previous version if health checks fail within 3 boot attempts
-		  5. Preserve user data in /data partition across all update types
-		  6. Provide update status and progress feedback
-		
-		  **Verification Method:** 
-		  - Integration test: SOTA script execution and application update verification
-		  - Integration test: COTA configuration push and persistence validation
-		  - Integration test: FOTA firmware flash and ECU verification
-		  - Integration test: RAUC bundle validation, installation, slot switching
-		  - Health check execution verification
-		  - Rollback verification on simulated failure
-		  - Logs from OTA scripts, RAUC, bootloader, and health check scripts
+		header: 'OTA Update System Implementation: The vehicle shall support Over-The-Air
+		  (OTA) software updates using OTA Scripts for SOTA, COTA, and FOTA, plus RAUC with
+		  A/B partition scheme for OS updates'
+		text: "The vehicle shall support comprehensive Over-The-Air (OTA) software updates\
+		  \ covering:\n\n- **SOTA (Software Over-The-Air):** Application and middleware updates\
+		  \ via OTA scripts\n- **COTA (Configuration Over-The-Air):** Remote configuration\
+		  \ changes and parameter updates\n- **FOTA (Firmware Over-The-Air):** Low-level firmware\
+		  \ updates for ECUs and microcontrollers\n- **OS Updates:** Full system image updates\
+		  \ using RAUC with A/B partition scheme for safe, atomic u\n\n\n\n\n**Justification:**\
+		  \ Modern automotive systems require reliable OTA update mechanisms to deploy security\
+		  \ patches, bug fixes, and feature updates without physical access. A layered OTA\
+		  \ approach (SOTA/COTA/FOTA) allows granular updates while RAUC provides atomic OS\
+		  \ updates with rollback capability, essential for safety-critical automotive applications.\n\
+		  \n**References:** \n- RAUC documentation (https://rauc.readthedocs.io/)\n- Automotive\
+		  \ OTA best practices (AUTOSAR, ISO 24089)\n- AGL OTA update guidelines\n- UNECE\
+		  \ WP.29 Regulation on Software Updates\n\n**Acceptance Criteria:**\n1. **SOTA:**\
+		  \ The system shall update application software without requiring full OS reinstallation\n\
+		  2. **COTA:** The system shall apply configuration changes remotely and persist them\
+		  \ across reboots\n3. **FOTA:** The system shall update STM32/ECU firmware via CAN\
+		  \ or other interfaces\n4. **RAUC OS Updates:**\n   - Receive and validate RAUC bundles\
+		  \ (.raucb) over network\n   - Install updates atomically to inactive rootfs partition\n\
+		  \   - Automatically switch boot slot after successful installation\n   - Perform\
+		  \ post-reboot health checks (network, disk, services)\n   - Rollback to previous\
+		  \ version if health checks fail within 3 boot attempts\n5. Preserve user data in\
+		  \ /data partition across all update types\n6. Provide update status and progress\
+		  \ feedback\n\n**Verification Method:** \n- Integration test: SOTA script execution\
+		  \ and application update verification\n- Integration test: COTA configuration push\
+		  \ and persistence validation\n- Integration test: FOTA firmware flash and ECU verification\n\
+		  - Integration test: RAUC bundle validation, installation, slot switching\n- Health\
+		  \ check execution verification\n- Rollback verification on simulated failure\n-\
+		  \ Logs from OTA scripts, RAUC, bootloader, and health check scripts\n"
 		level: '1.31'
 		normative: true
 		references:
@@ -1743,6 +3315,13 @@ _None_
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		evidence:
+		  type: validate_hardware_availability
+		  configuration:
+		    components:
+		    - STM32
+		    - CAN
+		    - Raspberry Pi
 		---
 		
 		````
