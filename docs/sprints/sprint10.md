@@ -122,6 +122,8 @@
     - [Hailo 8 Integration on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Hailo%208%20Integration%20on%20AGL.md)
     - [Spike_AEB.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Spike_AEB.md)
     - [Spike LKA.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Spike%20LKA.md)
+    - [Classical_Lane_Detection.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Classical_Lane_Detection.md)
+    - [Lane-Detection-Progress.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Lane-Detection-Progress.md)
 
 ---
 
