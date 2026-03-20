@@ -125,10 +125,15 @@ https://github.com/user-attachments/assets/b509b092-2eb2-4e83-a466-03709ce94c50
 
 ![segformer](https://github.com/user-attachments/assets/37ec6319-0237-4523-978a-b662a0480620)  
 
+![segformer-v1](https://github.com/user-attachments/assets/06a699e5-db03-4b0d-b092-1805459e7f0b)
+
+![segformer-v2](https://github.com/user-attachments/assets/d9c72b19-80de-4676-b051-66d6f5717cc1)
+
 ![lane-detection-algorithm-2](https://github.com/user-attachments/assets/1d770a0e-2b91-4f31-96b4-e35e26165ea0)  
 
 ![lane-detection-algorithm-1](https://github.com/user-attachments/assets/73fa2875-ded7-466e-8008-9d6a24f87d15)  
 
+https://github.com/user-attachments/assets/f50bf55f-8af4-4604-b8b0-8213ce7dc8a7
 
 - **Docs updated**:
     - [Yolo_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Yolo_benchmark.md)
