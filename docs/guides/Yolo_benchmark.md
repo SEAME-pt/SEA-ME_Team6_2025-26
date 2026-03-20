@@ -648,6 +648,14 @@ This file will help us see how Yolo performs on hailo and on carla, by checking 
     <img width="2400" height="1200" alt="results" src="https://github.com/user-attachments/assets/7033f276-ed03-492c-b851-d9e341eb5186" />
 
 
-    **Conclusion**
+    **Yolo on Carla**
 
-    We decided to pick Yolov8s because between the benchmark on hailo and on carla was the one with the better results.
+
+
+https://github.com/user-attachments/assets/61c1da53-bb90-4e42-baa7-9f088acfca12
+
+
+
+**Conclusion**
+
+We decided to pick Yolov8s because between the benchmark on hailo and on carla was the one with the better results.
