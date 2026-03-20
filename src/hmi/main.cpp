@@ -22,6 +22,7 @@
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
 #include "providers/extraprovider.hpp"
+#include "providers/cameraprovider.hpp"
 
 static void crashHandler(int sig) {
     void *array[20];
@@ -33,7 +34,7 @@ static void crashHandler(int sig) {
 
 int main(int argc, char *argv[])
 {
-    qputenv("QSG_RENDER_LOOP", "basic");
+    //qputenv("QSG_RENDER_LOOP", "basic");
     qputenv("QML_DISABLE_DISTANCEFIELD", "1");
     signal(SIGSEGV, crashHandler);
     signal(SIGABRT, crashHandler);
@@ -60,6 +61,7 @@ int main(int argc, char *argv[])
     ADASProvider *adas = new ADASProvider(&app);
     CurrentLocationProvider *currentLocation = new CurrentLocationProvider(&app);
     ChassisProvider *chassis = new ChassisProvider(&app);
+    CameraProvider *camera = new CameraProvider(&app);
 
     qDebug() << "[Main] Created all providers";
 
@@ -101,6 +103,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("adas", adas);
     engine.rootContext()->setContextProperty("currentLocation", currentLocation);
     engine.rootContext()->setContextProperty("chassis", chassis);
+    engine.rootContext()->setContextProperty("camera", camera);
 
     qDebug() << "[Main] All providers exposed to QML";
 
