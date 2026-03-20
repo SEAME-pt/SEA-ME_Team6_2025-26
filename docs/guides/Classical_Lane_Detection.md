@@ -43,8 +43,9 @@ The fitted polynomials are drawn onto a blank canvas in bird's eye space, then w
 
 The two examples show the pipeline working correctly on different road scenarios:
 
-- ![lane](lane-detection-algorithm_2.jpeg)
-- ![lane1](lane-detection-algorithm_1.jpeg)
+- ![lane-detection-algorithm_2](https://github.com/user-attachments/assets/d7203f29-5c7d-4212-913b-fb8f95680605)
+- ![lane-detection-algorithm_1](https://github.com/user-attachments/assets/d38c6f0d-cf40-4238-bb7b-2ba0cbfeb5a3)
+
 - **Image 1** — curved road with a dashed center line and a solid outer line. The sliding window correctly tracks both lanes through the curve.
 - **Image 2** — straight road with two solid white lines. Clean histogram peaks and precise polynomial fit.
 
