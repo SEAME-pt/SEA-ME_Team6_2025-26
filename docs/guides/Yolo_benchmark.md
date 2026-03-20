@@ -181,15 +181,6 @@ This file will help us see how Yolo performs on hailo and on carla, by checking 
 
 
           #!/usr/bin/env python3
-          """
-          CARLA 0.9.15 - Dataset Collector for YOLO
-          Optimized version with:
-          - Town03 freeze skip
-          - Smart spawn
-          - Reduced traffic in Town03
-          - Traffic Manager tuning
-          - Safe actor destruction
-          """
           
           import carla
           import cv2
