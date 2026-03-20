@@ -6,15 +6,15 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Hailo-8 Runtime Integration on AGL (13)
+  - [X] Hailo-8 Runtime Integration on AGL (13)
       - Deploy pre-compiled YOLOv8m HEF from Hailo Model Zoo (object detection)
       - Validate inference on live camera feed (IMX708 → libcamera → Hailo pipeline)
       - Document setup and performance benchmarks (FPS, latency)
-  - [ ] AI/ML Model Validation - Object Detection Model Testing & Benchmarking (13)
+  - [X] AI/ML Model Validation - Object Detection Model Testing & Benchmarking (13)
       - Test YOLOv8m on real driving scenarios (corridors, objects, people)
       - Compare pre-compiled HEFs: YOLOv8n vs YOLOv8m vs YOLOv8s (FPS vs accuracy trade-off)
       - Document performance benchmarks (FPS, latency, accuracy)
-   - [ ] Lane detection algorithm implementation (8)
+  - [ ] Lane detection algorithm implementation (8)
       - Lane lines detected reliably in test footage
       - Works under varied lighting conditions
       - Outputs lane center offset and heading error
@@ -22,7 +22,7 @@
       - Integrate UFLDv2 (Ultra Fast Lane Detection v2) pre-compiled HEF on Hailo-8
       - Implement camera frame capture pipeline (libcamera → frame buffer → Hailo inference)
       - Define lane position thresholds for departure warning
-  - [ ] AEB — Complete implementation and tuning (13)
+  - [X] AEB — Complete implementation and tuning (13)
       - Complete safety thresholds and response times (carryover from Sprint 9)
       - Tune progressive braking: SRF08 + IMU fusion with TTC-based state machine
       - Integrate AEB status reporting via CAN → Kuksa.val
@@ -35,22 +35,35 @@
       - New cluster display elements: LDW indicator, AEB status, AI inference overlay
       - ADAS warning indicators (visual + state-based color changes)
       - Wire Kuksa.val ADAS signals to Qt UI
-  - [ ] CARLA simulation environment setup (8)
+  - [X] CARLA simulation environment setup (8)
       - CARLA installed and running on dev machine(s)
       - Vehicle spawned with camera sensor configured
       - Basic manual drive confirmed working
-  - [ ] VSS Path Definition & Databroker Audit (8)
+  - [X] VSS Path Definition & Databroker Audit (8)
       - New VSS paths defined for ADAS signals
       - Paths validated against VSS spec and registered in vss.json / overlay
       - Existing databroker entries audited (naming, types, units)
       - Inconsistencies or deprecated paths documented and flagged
-      - Databroker tested with updated paths (publish + subscribe confirmed working) 
+      - Databroker tested with updated paths (publish + subscribe confirmed working)
+
+- #### **Bonus**
+  - [X] TSF Presentation (13)
+  - [ ] AI Models Type Conversion (13)
 
 ---
 
 ## 📊 Sprint Points Summary
 
-**Total Sprint Points: 94**
+| Member    | Tasks | Points | Achieved |
+|-----------|-------|--------|----------|
+| **João**  | CARLA simulation environment setup (8) + TSF Presentation (13) + AI Models Type Conversion (13) | **34** | **21** |
+| **Ruben** | Hailo-8 Runtime Integration on AGL (13) + AEB — Complete implementation and tuning (13) + AEB → LDW Integration Layer (5) | **31** | **26** |
+| **David** | Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + AEB — Complete implementation and tuning (13) + AEB → LDW Integration Layer (5) + VSS Path Definition & Databroker Audit (8) | **47** | **21** |
+| **Vasco** | Hailo-8 Runtime Integration on AGL (13) + AI/ML Model Validation - Object Detection Model Testing & Benchmarking (13) + CARLA simulation environment setup (8) | **34** | **34** |
+| **Diogo** | Lane detection algorithm implementation (8) + AEB → LDW Integration Layer (5) + ADAS Visualization on Qt HMI Cluster (13) +  VSS Path Definition & Databroker Audit (8) | **34** | **8** |
+> **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
+
+**Total Sprint Points: 94 + 26 (Bonus)**
 
 ---
 
@@ -59,11 +72,11 @@
 | Sprint | Weeks | Theme | Key Deliverables |
 |--------|-------|-------|------------------|
 | **Sprint 9** ✅ | 1-2 | Foundations & Spikes | Car v3.1, AEB start, AI/model research, OTA w/RAUC |
-| **Sprint 10** (current) | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
-| **Sprint 11** | 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |
-| **Sprint 12** | 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
-| **Sprint 13** | 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
-| **Sprint 14** | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
+| **Sprint 10** ✅ | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
+| Sprint 11 | 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |\
+| Sprint 12 | 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
+| Sprint 13 | 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
+| Sprint 14 | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
 
 ---
 
@@ -82,35 +95,47 @@
 
 ## 📈 Actual Progress
 
-- Sprint 10 points: **— / 94**
+- Sprint 10 points: **55 + 13 (Bonus) / 94 + 26 (Bonus)**
 
 - ❌ Undone:
-   - (To be filled at sprint end)
+   - Lane detection algorithm implementation (8)
+   - Lane Departure Warning — Computer Vision Pipeline (13)
+   - AEB → LDW Integration Layer (5)
+   - ADAS Visualization on Qt HMI Cluster (13)
 
 ---
 
 ## ✅ Outcomes
 
 - **Delivered**:
-  - (To be filled at sprint end)
+  - AEB tunning
+  - Yolo models benchmark
+  - Lane Detection Algorithm comprehension
+  - Creation of masks usin Computer Vision
 
 - **Demos**:
-  - (To be filled at sprint end)
+  - FALTAM AQUI
 
 - **Docs updated**:
-  - (To be filled at sprint end)
-
-- **Tests**:
-  - (To be filled at sprint end)
+    - [Yolo_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Yolo_benchmark.md)
+    - [RAUC - AGL Integration](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/OTA/Rauc%20-%20AGL%20integration.md)
+    - [Hailo 8 Integration on AGL](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Hailo%208%20Integration%20on%20AGL.md)
+    - [Spike_AEB.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Spike_AEB.md)
+    - [Spike LKA.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Spike%20LKA.md)
+    - [Classical_Lane_Detection.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Classical_Lane_Detection.md)
+    - [Lane-Detection-Progress.md](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Lane-Detection-Progress.md)
 
 ---
 
 # 🔎 Retrospective
 - ## **Went well**:
-  - (To be filled at sprint end)
+  - Understanding of AI Models
+  - Finished the first feature of ADAS (AEB)
+  - We tested the car working with the hallo running with a yolo model and the car moving full speed at the same time and the power supply worked as expected
 
 - ## **To improve**:
-  - (To be filled at sprint end)
+  - Task attribution and organization
+  - We did the inference of the Perception Model on the Hallo and Camera but not the Lane Assistance
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 10](https://github.com/orgs/SEAME-pt/projects/89/views/17)
