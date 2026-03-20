@@ -603,18 +603,46 @@ This file will help us see how Yolo performs on hailo and on carla, by checking 
     **Yolov8s**
 
     all:          mAP50 = 0.587
+
     vehicle:      mAP50 = 0.780
+
     pedestrian:   mAP50 = 0.104
+
     traffic_light mAP50 = 0.877
 
     
     <img width="2400" height="1200" alt="results" src="https://github.com/user-attachments/assets/285e9ac2-4dd7-4118-a0cd-df8ee327449a" />
 
+    **Train/box_loss:** Mede o erro das bounding boxes durante o treino.
+
+     **Train/cls_loss:** Mede o erro de classificação durante o treino.
+
+    **Train/dfl_loss:** Distribution Focal Loss(refina as bordas das caixas).
+
+    **metrics/precision:** Mede quantos objetos reais o modelo consegue encontrar.
+
+    **val/box_loss:** igual ao train/box_loss mas no conjunto de validação.
+
+    **val/cls_loss:** igual ao train/cls_loss mas com validação.
+
+    **Val/dfl_loss:** Igual ao train/dfl_loss mas com validação.
+
+    **metrics/mAP50:** É a métrica mais usada para medir qualidade de deteção.
+
+    **metrics/mAP50‑95:** Muito mais exigente do que o mAp50.
+
+    
+    
+    
+
     **Yolo26s**
 
     all:            mAP50 = 0.595
+
     vehicle:        mAP50 = 0.730
+
     pedestrian:     mAP50 = 0.163
+
     traffic_light:  mAP50 = 0.893
 
     <img width="2400" height="1200" alt="results" src="https://github.com/user-attachments/assets/7033f276-ed03-492c-b851-d9e341eb5186" />
