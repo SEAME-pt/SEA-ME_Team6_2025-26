@@ -114,7 +114,17 @@
   - Creation of masks usin Computer Vision
 
 - **Demos**:
-  - FALTAM AQUI
+<img width="830" height="198" alt="yolov8s-table" src="https://github.com/user-attachments/assets/ae1ed875-410c-4fb6-9adf-aa757e1acb38" />
+<img width="830" height="198" alt="yolov26s-table" src="https://github.com/user-attachments/assets/a4f17aba-0886-41d0-83b2-fc43022c5d1c" />
+<img width="705" height="756" alt="yolov8s-results" src="https://github.com/user-attachments/assets/9535bf28-2432-4766-8622-ee809e58a129" />
+<img width="705" height="502" alt="yolov26s-results" src="https://github.com/user-attachments/assets/192d6ff5-c342-442c-8e4f-683aab55e762" />
+
+![segformer](https://github.com/user-attachments/assets/37ec6319-0237-4523-978a-b662a0480620)  
+
+![lane-detection-algorithm-2](https://github.com/user-attachments/assets/1d770a0e-2b91-4f31-96b4-e35e26165ea0)  
+
+![lane-detection-algorithm-1](https://github.com/user-attachments/assets/73fa2875-ded7-466e-8008-9d6a24f87d15)  
+
 
 - **Docs updated**:
     - [Yolo_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Yolo_benchmark.md)
