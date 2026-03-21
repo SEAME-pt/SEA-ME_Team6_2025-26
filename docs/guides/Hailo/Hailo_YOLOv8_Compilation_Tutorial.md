@@ -334,6 +334,45 @@ hailomz compile yolov8n \
 cp /local/workspace/yolov8n.hef /local/workspace/shared/models/
 ```
 
+### Step 8.1 — Quick Plan (critical after successful compile)
+
+After `HEF file written to yolov8n.hef`, run this exact sequence.
+
+Inside container (before exit):
+
+```bash
+cp /local/workspace/yolov8n.hef /local/workspace/shared/
+ls -lh /local/workspace/shared/yolov8n.hef
+```
+
+On host (Lenovo):
+
+```bash
+ls -lh "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef"
+```
+
+Send to Raspberry Pi:
+
+```bash
+scp "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef" root@10.21.220.191:/root/models/
+```
+
+Validate on Raspberry Pi:
+
+```bash
+hailortcli parse-hef /root/models/yolov8n.hef
+```
+
+Automation shortcut (inside container):
+
+```bash
+/path/to/SEA-ME_Team6_2025-26/src/setup/scripts/hailo-compile-and-deploy.sh baseline
+
+PI_TARGET=root@10.21.220.191:/root/models/ \
+ONNX_PATH=/local/workspace/shared/models/yolov8n.onnx \
+/path/to/SEA-ME_Team6_2025-26/src/setup/scripts/hailo-compile-and-deploy.sh custom
+```
+
 ### Step 9 — Deploy HEF to Raspberry Pi
 
 Run on host:
@@ -357,6 +396,12 @@ hailortcli parse-hef /root/models/yolov8n.hef
 ### Step 10 — Run inference with new HEF
 
 Update your runtime pipeline/script to point to `yolov8n.hef` (for example in `demo.py` or GStreamer `hailonet hef-path=...`).
+
+If your `demo.py` currently references `yolov8s.hef`, quick replacement command:
+
+```bash
+sed -i 's/yolov8s\.hef/yolov8n.hef/g' /path/to/demo.py
+```
 
 Use sections `4` through `12` for deeper troubleshooting, alternatives, and automation.
 
