@@ -341,8 +341,17 @@ After `HEF file written to yolov8n.hef`, run this exact sequence.
 Inside container (before exit):
 
 ```bash
+ls -lh /local/workspace/yolov8n.hef
 cp /local/workspace/yolov8n.hef /local/workspace/shared/
 ls -lh /local/workspace/shared/yolov8n.hef
+```
+
+Important: run each command on a separate line. Do not paste `cp` + `ls` as a single line.
+
+If source file is not found, locate it first:
+
+```bash
+find /local/workspace -maxdepth 3 -name "yolov8n.hef"
 ```
 
 On host (Lenovo):
@@ -351,16 +360,32 @@ On host (Lenovo):
 ls -lh "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef"
 ```
 
-Send to Raspberry Pi:
+Send to Raspberry Pi (note: `/data/` is the correct Pi storage path):
 
 ```bash
-scp "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef" root@10.21.220.191:/root/models/
+scp -O "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef" root@10.21.220.191:/data/yolov8n.hef
 ```
 
 Validate on Raspberry Pi:
 
 ```bash
-hailortcli parse-hef /root/models/yolov8n.hef
+ls -lh /data/yolov8n.hef
+hailortcli parse-hef /data/yolov8n.hef
+```
+
+**Expected parse-hef output:**
+```
+Architecture HEF was compiled for: HAILO8
+Network group name: yolov8n, Single Context
+    Network name: yolov8n/yolov8n
+        VStream infos:
+            Input  yolov8n/input_layer1 UINT8, NHWC(640x640x3)
+            Output yolov8n/yolov8_nms_postprocess FLOAT32, HAILO NMS BY CLASS(number of classes: 80, maximum bounding boxes per class: 100, maximum frame size: 160320)
+            Operation:
+                Op YOLOV8
+                Name: YOLOV8-Post-Process
+                Score threshold: 0.200
+                IoU threshold: 0.70
 ```
 
 Automation shortcut (inside container):
@@ -368,7 +393,7 @@ Automation shortcut (inside container):
 ```bash
 /path/to/SEA-ME_Team6_2025-26/src/setup/scripts/hailo-compile-and-deploy.sh baseline
 
-PI_TARGET=root@10.21.220.191:/root/models/ \
+PI_TARGET=root@10.21.220.191:/data/ \
 ONNX_PATH=/local/workspace/shared/models/yolov8n.onnx \
 /path/to/SEA-ME_Team6_2025-26/src/setup/scripts/hailo-compile-and-deploy.sh custom
 ```
@@ -382,15 +407,15 @@ ls -lh "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef"
 # or, if you persisted inside models/
 ls -lh "$HOME/Documents/AI/hailo/shared_with_docker/models/yolov8n.hef"
 
-scp "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef" root@10.21.220.191:/root/models/
-# or, if using models/
-# scp "$HOME/Documents/AI/hailo/shared_with_docker/models/yolov8n.hef" root@10.21.220.191:/root/models/
+# Use -O flag for legacy SSH mode (required for some Pi configurations)
+scp -O "$HOME/Documents/AI/hailo/shared_with_docker/yolov8n.hef" root@10.21.220.191:/data/yolov8n.hef
 ```
 
 Run on Raspberry Pi:
 
 ```bash
-hailortcli parse-hef /root/models/yolov8n.hef
+ls -lh /data/yolov8n.hef
+hailortcli parse-hef /data/yolov8n.hef
 ```
 
 ### Step 10 — Run inference with new HEF
@@ -400,8 +425,27 @@ Update your runtime pipeline/script to point to `yolov8n.hef` (for example in `d
 If your `demo.py` currently references `yolov8s.hef`, quick replacement command:
 
 ```bash
-sed -i 's/yolov8s\.hef/yolov8n.hef/g' /path/to/demo.py
+sed -i 's|HEF_PATH = "/data/yolov8s.hef"|HEF_PATH = "/data/yolov8n.hef"|' /data/demo.py
+grep 'HEF_PATH' /data/demo.py  # verify change
+python3 /data/demo.py
 ```
+
+**Expected real-time output on Hailo-8:**
+```
+=== YOLOv8n Hailo-8 Live Demo ===
+[1/3] Loading HEF...
+[2/3] Starting camera...
+[3/3] Opening display...
+Display: saving frames to /data/output/ (no display)
+=== Running (Ctrl+C to stop) ===
+FPS:30.3 | Infer:12.9ms | Det:0 []
+FPS:30.1 | Infer:12.7ms | Det:0 []
+```
+
+Performance achieved:
+- **FPS:** ~30 (real-time)
+- **Inference latency:** 12-14 ms (Hailo-8 hardware acceleration)
+- **Output:** Frames saved to `/data/output/` with detections
 
 Use sections `4` through `12` for deeper troubleshooting, alternatives, and automation.
 
