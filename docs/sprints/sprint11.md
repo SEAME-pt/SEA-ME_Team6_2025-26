@@ -41,7 +41,7 @@
       - Integrate a second camera into the perception pipeline, defining its position and role alongside the primary camera
        
 - ### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
-  - [ ] Reorganize documentation (8)
+  - [ ] Reorganize documentation (5)
       - Reorganize documentation on the repository
       - Expectations updated in sprints    
 ---
@@ -57,7 +57,7 @@
 | **Diogo** | **Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8)** | **29** | **** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 137**
+**Total Sprint Points: 134**
 
 ---
 
