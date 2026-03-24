@@ -1,14 +1,24 @@
 # ADAS (Advanced Driver Assistance Systems) 
-this document as the objective to help us understand what is ADAS and how it works
+This document has the objective of helping us understand what ADAS is and how it works
+
+# Indice
+
+- [ADAS fundamentals](#adas-fundamentals)
+- [ADAS features](#adas-features)
+- [ADAS architecture overview](#adas-architecture-overview)
+- [AI, Machine Learning, and Deep Learning in ADAS](#ai-machine-learning-and-deep-learning-in-adas)
+- [Perception Systems](#perception-systems)
+
+
 
 # ADAS fundamentals
 
-**Whats is ADAS (Advanced Drives Assistance Systems) ?**
-  - comprise a group of automotive systems that use multiple sensors, cameras and radars to monitor everything around the car. After processing the data in control units, output units can react promptly when needed.
+**What is ADAS (Advanced Driver Assistance Systems) ?**
+  - comprises a group of automotive systems that use multiple sensors, cameras, and radars to monitor everything around the car. After processing the data in control units, output units can react promptly when needed.
 
-So what are ADAS main goals ?
-  - ADAS aims to assist drivers, helping drivers perform taks than we humans arent capable of, making driving safer for us and for the other drivers, by doing so ADAS aims improve:
-    - Safety improvment.
+So what are ADAS main goals?
+  - ADAS aims to assist drivers, helping drivers perform tasks that we humans aren't capable of, making driving safer for us and for the other drivers, by doing so ADAS aims improve:
+    - Safety improvement.
     - Driver assistance.
     - Automation.
 
@@ -23,7 +33,7 @@ ADAS is closely linked to the automation of vehicles. Depending on the number an
   - The vehicle has a system that can drive or accelerate/lock, such as the Lane Maintenance Assistant or the ACC.
 
 **level 2**
-  - Systems can drive, accelerate and brake simultaneously. Nevertheless, the driver must be attentive and ready to take control at any time.
+  - Systems can drive, accelerate, and brake simultaneously. Nevertheless, the driver must be attentive and ready to take control at any time.
 
 **level 3**
   - Allows the driver to pause in active driving, since the systems take full control. However, the driver must be prepared to react after receiving a warning.
@@ -48,7 +58,7 @@ Modern Advanced Driver-Assistance Systems (ADAS) follow a modular architecture c
 
 **Perception layer**
 
-the perception layer is responsable of understandig the vehicle surroundings using sensor data, such data can be colected via:
+The perception layer is responsible for understanding the vehicle surroundings using sensor data, such as data that can be collected via:
 
 **Inputs**
 
@@ -189,12 +199,12 @@ This layer decides how the decisions should be executed.
 
 **Lane Keeping Assist (LKA)**
 
-  - Lane Keeping Assist is an active safety system that uses cameras to monitor lane markings and automatically intervenes via steering or braking to prevent a vehicle unintentionally drifting out of his lane.
+  - Lane Keeping Assist is an active safety system that uses cameras to monitor lane markings and automatically intervenes via steering or braking to prevent a vehicle unintentionally drifting out of its lane.
 
 ![what-is-lane-keep-assist-system-1](https://github.com/user-attachments/assets/866cc20a-8c6c-4e78-a08a-37c8dad8d5ab)
 
 
-**How it works ?**
+**How does it work?**
 
   - If the car approaches a line, the system uses electric power steering to apply a gentle torque, correcting the path, or uses Electronic Stability Program (ESP) to apply brakes to individual wheels to guide the car back. 
 
@@ -204,7 +214,7 @@ This layer decides how the decisions should be executed.
     1. Camera captures front road image
     2. image processing/ CNN detect lane lines
     3. System estimates lane center
-    4. steering correction is calculated
+    4. Steering correction is calculated
 
 **Limitations:**
 
@@ -237,7 +247,7 @@ This layer decides how the decisions should be executed.
   - **Forward Facing Radar** (Main Sensor)
     1. Emits radio waves
     2. receives reflected signals from the object ahead
-    3. calculates distance, relative speed and direction
+    3. calculates distance, relative speed, and direction
 
 **Limitations**
 
@@ -259,7 +269,7 @@ This layer decides how the decisions should be executed.
 
 ![autonomous-emergency-braking-2](https://github.com/user-attachments/assets/5ca35a90-2736-4c1a-b11b-4b9f2896494c)
 
-**How it works**
+**How does it work**
 
   - **Detection:** The system uses sensors such as radar, cameras, or LiDAR to identify obstacles like vehicles, pedestrians, or cyclists.
   - **Warning:** Before intervening, most systems provide a Forward Collision Warning (FCW) through audible beeps, visual dashboard alerts, or haptic feedback.
@@ -298,7 +308,7 @@ This layer decides how the decisions should be executed.
 
 ![1690960808641975](https://github.com/user-attachments/assets/3a0d2378-915f-4847-94a2-6595f9596cf4)
 
-**How it works**
+**How does it work**
 
   - **Activation:** The driver activates the automatic parking assist system by pressing a button or through the vehicle's information system.
   - **Search for parking locations:** The system uses various sensors to scan the surrounding environment and identify potential parking spaces.
@@ -341,23 +351,13 @@ This layer decides how the decisions should be executed.
 
   - Yolo
   - ResNet
-  - Dijkstra(calcula a trajetoria ideal)
-
-
-# Sensors Technologies
-
-**Camera based perception systems**
-
-
-
-
-
+  - Dijkstra (calcula a trajetória ideal)
 
 # ADAS architecture overview
 
 **Sensor Layer**
 
-  - this layer is tasked with collecting raw environmental and vehicle data.
+  - This layer is tasked with collecting raw environmental and vehicle data.
 
 <img width="850" height="395" alt="Typical-types-of-sensors-for-ADAS" src="https://github.com/user-attachments/assets/9d491a2a-6dbe-4f91-89e0-852b218d1dd0" />
 
@@ -397,7 +397,7 @@ This layer decides how the decisions should be executed.
 
 **Output**
 
-  - Clean, synchronized, sructured sensor data.
+  - Clean, synchronized, structured sensor data.
 
 **Sensor Fusion Layer**
 
@@ -409,7 +409,7 @@ This layer decides how the decisions should be executed.
 **Fusion types**
 
   - Low level (raw data fusion)
-  - Mid level (feature fusion)
+  - Mid-level (feature fusion)
   - High level (object level fusion)
 
 **Techniques**
@@ -429,7 +429,7 @@ This layer decides how the decisions should be executed.
 
 **Perception Layer**
 
-  - this layer is tasked with detecting and classifying objects in the environment.
+  - This layer is tasked with detecting and classifying objects in the environment.
 
 
 **Functions**
@@ -449,11 +449,11 @@ This layer decides how the decisions should be executed.
 
 **Output**
 
-  - annoted scene with tracked objects and semantics.
+  - annotated scene with tracked objects and semantics.
 
 **Localization & Mapping Layer**
 
-  - this layer is tasked with determining the precise vehicle position.
+  - This layer is tasked with determining the precise vehicle position.
 
 **inputs**
 
@@ -470,11 +470,11 @@ This layer decides how the decisions should be executed.
 
 **Output**
 
-  - Vehicle position, orientation and velocity.
+  - Vehicle position, orientation, and velocity.
 
 **Prediction layer**
 
-  - This tasked with predicting the movement of detected objects.
+  - This task is tasked with predicting the movement of detected objects.
 
 **Functions**
 
@@ -488,7 +488,7 @@ This layer decides how the decisions should be executed.
 
 **Planning layer**
 
-  - This layer is tasked with determining the safest and the most optimal driving behavior.
+  - This layer is tasked with determining the safest and most optimal driving behavior.
 
 **Types of planning**
 
@@ -530,11 +530,11 @@ This layer decides how the decisions should be executed.
 
 **Vehicle Actuation layer**
 
-  - This layer is taked with the physical execution.
+  - This layer is tasked with the physical execution.
 
 **Components**
 
-  - Eletronic Power Steering
+  - Electronic Power Steering
   - Brake System
   - Engine/Powertrain control
 
@@ -595,15 +595,15 @@ Cloud processing is not used for real-time control decisions due to latency, con
 <img width="1280" height="720" alt="1719691178617" src="https://github.com/user-attachments/assets/344d0c7a-f5f7-4e52-9e0d-f54d4b1dc17b" />
 
 
-# AI, MACHINE LEARNING AND DEEP LEARNING IN ADAS
+# AI, MACHINE LEARNING, AND DEEP LEARNING IN ADAS
 
 **Artificial Intelligence in ADAS**
 
   - In the context of ADAS, Artificial Intelligence refers to computational methods that enable systems to learn from data, recognize patterns, make predictions, and improve performance without being explicitly programmed for every scenario.
 
-So how does Ai helps us in our project ?
+So, how does AI help us in our project?
 
-  - AI helps our project by enabling the system to learn from large amounts of real-world data instead of following fixed rules. It can adapt to complex inputs such as traffic patterns, pedestrians, and road conditions and how we do this you may ask? . We achieve this using machine learning techniques, including deep learning, convolutional neural networks (CNNs) for image recognition, and recurrent neural networks (RNNs) for sequential data like sensor readings. Finally, the AI predicts and chooses the safest and most effective actions for the vehicle in real time.
+  - AI helps our project by enabling the system to learn from large amounts of real-world data instead of following fixed rules. It can adapt to complex inputs such as traffic patterns, pedestrians, and road conditions, and how we do this, you may ask? We achieve this using machine learning techniques, including deep learning, convolutional neural networks (CNNs) for image recognition, and recurrent neural networks (RNNs) for sequential data like sensor readings. Finally, the AI predicts and chooses the safest and most effective actions for the vehicle in real time.
 
 
 **Object Detection and Classification**
@@ -626,7 +626,7 @@ This is done by Deep neural Networks that process camera images to produce seman
 
 **Semantic Segmentation**
 
-AI is used to classify each pixel of an image into categories such as:
+AI is used to classify each pixel of an image such as:
 
   - Road
  
@@ -675,7 +675,7 @@ Decision automation in ADAS refers to the ability to select appropriate driving 
 
   - Adaptive cruise control adjustments
 
-All of this AI based decisions are combined with rule based safety layers to ensure determinism and compliance.
+All of these AI-based decisions are combined with rule-based safety layers to ensure determinism and compliance.
 
 **Risk Assessment**
 
@@ -736,7 +736,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **Ruled based vs Learning based Systems**
 
-  - There are two main approaches in Artificial intelligence they are rule-based systems and machine-learning systems. Rule-based systems follow explicit rules created by human experts. They're like a set of instructions given to a computer to follow to make decisions. These systems are good for problems with clear rules and paths. On the other hand, machine learning systems learn from data instead of following explicit rules. They use patterns found in large sets of information to make decisions. These systems can adapt and improve over time as they see more data.
+  - There are two main approaches in Artificial Intelligence rule-based systems and machine-learning systems. Rule-based systems follow explicit rules created by human experts. They're like a set of instructions given to a computer to follow to make decisions. These systems are good for problems with clear rules and paths. On the other hand, machine learning systems learn from data instead of following explicit rules. They use patterns found in large sets of information to make decisions. These systems can adapt and improve over time as they see more data.
 
 **What is a Rule-Based System?**
 
@@ -819,10 +819,10 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 **Modern object detection techniques**
 
 1. YOLO(v1-v8)
-   - treats object detection as a single regression problem , predicting bounding boxes and class probabilities directly from the full image in one forward pass (known for its real time detection capability)
+   - treats object detection as a single regression problem, predicting bounding boxes and class probabilities directly from the full image in one forward pass (known for its real time detection capability)
 
 2. RetinaNet
-   - Introduces Focal loss to adress the class inbalance problem during training, combines the benefits of single stand and two stage detectors.
+   - Introduces Focal loss to address the class imbalance problem during training, combining the benefits of single-stage and two-stage detectors.
 
 3. Mask R-CNN
    - Extends faster R-CNN by adding a branch for predicting segmentation masks, enabling instance segmentation along with object detection.
@@ -831,13 +831,13 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
    - Uses compound scaling method to improve efficiency and accuracy.
 
 5. Detectron2
-   - A open source library by facebook ai research with implementations of state of the art detection algorithms like faster R-CNN, mask R-CNN, RetinaNet.
+   - An open source library by Facebook AI Research with implementations of state-of-the-art detection algorithms like faster R-CNN, mask R-CNN, and RetinaNet.
 
 6. CenterNet
    - Uses keypoint estimation to find the center points of bounding boxes and regress the box size and object class.
 
 7. DETR(Detection transformer)
-   - Utilizes transformers for end to end object detection, combining CNNs for feature extraction and tranformers for object detection.
+   - Utilizes transformers for end-to-end object detection, combining CNNs for feature extraction and transformers for object detection.
 
 8. Vision transformers for object detection
    - Applies transformer models directly to sequences of image patches for object detection.
@@ -847,7 +847,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **Intersection Over Union (IoU)**
 
-  - Intersection over union is a metric used to evaluate the accuracy of an object detection algorithm, it measures the overlap between the predicted bounding box and the ground truth bounding box.
+  - Intersection over union is a metric used to evaluate the accuracy of an object detection algorithm. It measures the overlap between the predicted bounding box and the ground truth bounding box.
 
 <img width="728" height="736" alt="image" src="https://github.com/user-attachments/assets/26791532-4607-4629-895a-c27981a674f5" />
 
@@ -855,7 +855,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 **How do we calculate IoU?**
 
 1. Determine the coordinates of the intersection rectangle
-   - calculate the coordinates of the intersection rectangle by finding the maximum of the left and top coordinates and the minimum of the right and bottom coordinates of the two bounding boxes.
+   - Calculate the coordinates of the intersection rectangle by finding the maximum of the left and top coordinates and the minimum of the right and bottom coordinates of the two bounding boxes.
      
    - Intersection coordinates:
   
@@ -865,7 +865,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
    <img width="720" height="149" alt="image" src="https://github.com/user-attachments/assets/fafe1a1b-3131-4118-8897-4d63140c0801" />
 
-   - width and height cant be negative otherwise intersection area is zero
+   - width and height can't be negative, otherwise the intersection area is zero
   
 3. Calculate the union area
 
@@ -877,7 +877,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **Non Max Supression(NMS)**
 
-  - one of the most common problems with object detection algorithms is that instead of detecting an object one it might detect it twice, to solve this problem we use non max supression to select one entity out of many overlaping entities.
+  - One of the most common problems with object detection algorithms is that instead of detecting an object once, it might detect it twice. To solve this problem, we use non-max suppression to select one entity out of many overlapping entities.
 
 <img width="720" height="238" alt="image" src="https://github.com/user-attachments/assets/0396c4d9-4c2c-462e-ac02-601613188dfc" />
 
@@ -888,13 +888,13 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 3. Enhances Readability: The final output becomes cleaner and more interpretable, showing only one bounding box per detected object.
 
 
-**How Non Maximum Supression works**
+**How Non Maximum Suppression works**
 
 1. **Input**
    - A set of bounding boxes with associated confidence scores.
 
 2. **Sort bounding boxes**
-   - Sort all bounding boxes in descending order based on their confidences scores.
+   - Sort all bounding boxes in descending order based on their confidence scores.
 
 3. **Select the Highest confidence Box**
    - Select the bounding box with the highest confidence score and consider it as the current bounding box.
@@ -919,7 +919,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 **How Anchor Box works**
 
 1. Initialization
-   - A set of Anchor boxes with different sizes and aspects ratio are defined, we can define three anchor boxes per grid cell with aspect ratios of 1:1, 2:1, 1:2, and there anchor boxes will be placed at each location on the map or grid cell.
+   - A set of Anchor boxes with different sizes and aspect ratios is defined. We can define three anchor boxes per grid cell with aspect ratios of 1:1, 2:1, 1:2, and there anchor boxes will be placed at each location on the map or grid cell.
 
 2. During training
    - The network predicts class scores and bounding box offsets for each anchor box, adjusting them to better match ground truth objects, with the anchor having the highest IoU selected as the positive sample and the others treated as negative samples.
@@ -935,7 +935,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **Sumary**
 
-Anchor boxes are predefined at multiple sizes and aspect ratios across the feature map, and during training the network predicts class scores and coordinate offsets for each box, matches the highest-IoU anchors to ground truth for learning via classification and regression losses, and during inference refines the boxes and applies non-maximum suppression to keep the best detections.
+Anchor boxes are predefined at multiple sizes and aspect ratios across the feature map, and during training, the network predicts class scores and coordinate offsets for each box, matches the highest-IoU anchors to ground truth for learning via classification and regression losses, and during inference, refines the boxes and applies non-maximum suppression to keep the best detections.
 
 **Semantic Segmentation**
 
@@ -947,7 +947,7 @@ Anchor boxes are predefined at multiple sizes and aspect ratios across the featu
 
 **How does it work**
 
-  Semantic segmentation models generate a segmentation map of an image by assigning a semantic class label to every pixel. This produces segmentation masks, where different regions (such as a tree, ground, or sky) are separated and color-coded according to their class, to achieve this, the models use complex deep neural networks that both group related pixels into meaningful regions and correctly classify each region. These models must be trained on large, human-annotated datasets and learn by adjusting their parameters through techniques like backpropagation and gradient descent.
+  Semantic segmentation models generate a segmentation map of an image by assigning a semantic class label to every pixel. This produces segmentation masks, where different regions (such as a tree, ground, or sky) are separated and color-coded according to their class. To achieve this, the models use complex deep neural networks that both group related pixels into meaningful regions and correctly classify each region. These models must be trained on large, human-annotated datasets and learn by adjusting their parameters through techniques like backpropagation and gradient descent.
 
   <img width="800" height="418" alt="image" src="https://github.com/user-attachments/assets/a1c4bb36-1ae6-403b-a782-8c30425964fa" />
 
@@ -965,7 +965,7 @@ Popular image segmentation datasets include:
 **Cityscapes** – Focuses on urban environments, with 5,000 images, 20,000 annotations, and 30 class labels.
 
 
-**Semantic Segmentation Moduls**
+**Semantic Segmentation Modules**
 
 
 
@@ -981,44 +981,41 @@ Popular image segmentation datasets include:
 | **SegFormer**   | 2021 | Transformer           | Efficient hierarchical transformer            | Lightweight + strong performance               | Needs larger datasets           | General-purpose segmentation |
 | **Mask2Former** | 2022 | Transformer           | Masked attention for universal segmentation   | Works for semantic, instance & panoptic        | High training cost              | Advanced segmentation tasks  |
 
-
-Best choice for us is DeeplabV3
-
 **Convolution Neural Networks(CNNs)**
 
-Convolutional Neural Networks, also known as ConvNets, are neural network architectures inspired by the human visual system and are widely used in computer vision tasks, they are designed to process structured grid like data, especially images by capturing spatial relationships between pixels. They learn hierarchical features through convolution operations, from simple edges and textures to complex shapes and objects.
+Convolutional Neural Networks, also known as ConvNets, are neural network architectures inspired by the human visual system and are widely used in computer vision tasks. They are designed to process structured grid-like data, especially images by capturing spatial relationships between pixels. They learn hierarchical features through convolution operations, from simple edges and textures to complex shapes and objects.
 
 <img width="996" height="431" alt="image" src="https://github.com/user-attachments/assets/a4042649-7eb2-48b8-87dd-814a4f883363" />
 
 **What is a Covnet?**
 
-A CovNet is a sequence of layers and every layer transforms one volume to another through a differential function.
+A CovNet is a sequence of layers, and every layer transforms one volume into another through a differential function.
 
 **Key components of CNN**
 
 1. Input layer
-   - The **input layer** receives the raw image data and passes it to the network for processing, intputs are tipically a 3D volume.
+   - The **input layer** receives the raw image data and passes it to the network for processing. Inputs are typically a 3D volume.
        - Stores pixel values of the image
        - Preserves the spatial structure of the image for further feature extraction.
 
 2. Convolutional Layer
-   - The **Convolutional layer** is responsible for extracting important features from the input data, it applies a set of learnable filters that slide over the image and compute the dot product between the filter weights and corresponding image patches, producing feature maps.
+   - The **Convolutional layer** is responsible for extracting important features from the input data. It applies a set of learnable filters that slide over the image and compute the dot product between the filter weights and corresponding image patches, producing feature maps.
      - Uses small filters to scan the input image.
-     - Generates feature maps that capture patterns such as edges, textures and shapes.
+     - Generates feature maps that capture patterns such as edges, textures, and shapes.
 
 3. Activation Layer
-   - The **Activation layer** introduces non linearity into the network by applying an element-wise activation function to the output of the convolution layer, this enables the model to lean complex patterns beyond linear relationships.
-     - Common activation functions include ReLU, Tanh and Leaky ReLU.
+   - The **Activation layer** introduces non-linearity into the network by applying an element-wise activation function to the output of the convolution layer, which enables the model to learn complex patterns beyond linear relationships.
+     - Common activation functions include ReLU, Tanh, and Leaky ReLU.
      - Applied element-wise to the feature maps.
      - The output dimensions remain unchanged.
 
 4. Pooling layer
-   - The **Pooling layer** is used to reduce the spacial dimensions of the feature maps, making compution faster, reducing memory usage and helping prevent overfitting, this is insterted between convolutional layers in a CNN.
+   - The **Pooling layer** is used to reduce the spatial dimensions of the feature maps, making computation faster, reducing memory usage, and helping prevent overfitting. This is inserted between convolutional layers in a CNN.
      - Common types include Max Pooling and Average Pooling.
      - Reduces width and height while keeping depth unchanged.
 
 5. Flattening
-   - Flattening converts the multi-dimensional feature maps into a one-dimensional vector after convolution and pooling, this vector is then passed to the fully connected layer for classification or regression.
+   - Flattening converts the multi-dimensional feature maps into a one-dimensional vector after convolution and pooling. This vector is then passed to the fully connected layer for classification or regression.
 
 6. Fully Connected layer
    - The fully connected layer performs high-level reasoning using extracted features and produces the final classification scores.
@@ -1035,7 +1032,7 @@ A CovNet is a sequence of layers and every layer transforms one volume to anothe
 - The multiplied values are summed together to produce a single output value.
 - This operation is repeated across the entire image using a defined stride.
 - The result is a new matrix called a feature map, which highlights detected patterns.
-- Multiple filters are applied to capture different features such as edges, textures and shapes.
+- Multiple filters are applied to capture different features such as edges, textures, and shapes.
 - The process preserves spatial relationships while reducing the number of learnable parameters compared to fully connected layers.
 - Padding can be used to control output size and prevent loss of border information.
 
@@ -1050,14 +1047,14 @@ A CovNet is a sequence of layers and every layer transforms one volume to anothe
 **Recurrent Neural Networks(RNNs)**
 
 Recurrent Neural Networks are a class of neural networks designed to process sequential data by retaining information from previous steps.
-  - Designed for sequencial and temporal data.
-  - Mantains memory of past inputs.
+  - Designed for sequential and temporal data.
+  - Maintains memory of past inputs.
 
 <img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/8d8b07e6-af5a-426b-8ba8-9813134ccb5d" />
 
 **Key components of RNNs**
 
-1. Reccurent Neurons
+1. Recurrent Neurons
 
 The fundamental processing unit in RNN is a Recurrent Unit. They hold a hidden state that maintains information about previous inputs in a sequence. Recurrent units can "remember" information from prior steps by feeding back their hidden state, allowing them to capture dependencies across time.
 
@@ -1066,17 +1063,17 @@ The fundamental processing unit in RNN is a Recurrent Unit. They hold a hidden s
 
 2. RNN unfolding
 
-RNN unfolding or unrolling is the process of expanding the current structure over time steps, during unfolding each step of the sequence is represented as a separate layer in a series illustrating how information flows across each time step. 
+RNN unfolding or unrolling is the process of expanding the current structure over time steps. During unfolding, each step of the sequence is represented as a separate layer in a series, illustrating how information flows across each time step. 
 
 <img width="628" height="279" alt="image" src="https://github.com/user-attachments/assets/06bbb3e3-b4ef-454c-af94-e3f74514f796" />
 
 **Recurrent Neural Network Architecture**
 
-  RNNs share similarities in input and output structures with other deep learning architectures but differ significantly in how information flows from input to output. Unlike traditional deep neural networks where each dense layer has distinct weight matrices. RNNs use shared weights across time steps, allowing them to remember information over sequences.
+  RNNs share similarities in input and output structures with other deep learning architectures, but differ significantly in how information flows from input to output. Unlike traditional deep neural networks, where each dense layer has distinct weight matrices. RNNs use shared weights across time steps, allowing them to remember information over sequences.
 
-**How Does RNNs Work?**
+**How do RNNs work?**
 
-At each time step RNNs process units with a fixed activation function. These units have an internal hidden state that acts as memory that retains information from previous time steps. This memory allows the network to store past knowledge and adapt based on new inputs.
+At each time step, RNNs process units with a fixed activation function. These units have an internal hidden state that acts as memory that retains information from previous time steps. This memory allows the network to store past knowledge and adapt based on new inputs.
 
 **Updating the hidden state in RNNs**
 
@@ -1097,7 +1094,7 @@ where:
 
          ht​=tanh(Whh​⋅ht−1​+Wxh​⋅xt​)
    
-  Here, Whh​​ is the weight matrix for the recurrent neuron and Wxh​​ is the weight matrix for the input neuron.
+  Here, Whh​​ is the weight matrix for the recurrent neuron, and Wxh​​ is the weight matrix for the input neuron.
 
 3. Output Calculation:
 
