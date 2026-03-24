@@ -8,6 +8,7 @@ This document has the objective of helping us understand what ADAS is and how it
 - [ADAS architecture overview](#adas-architecture-overview)
 - [AI, Machine Learning, and Deep Learning in ADAS](#ai-machine-learning-and-deep-learning-in-adas)
 - [Perception Systems](#perception-systems)
+- [Prediction Systems](#prediction-systems)
 
 
 
@@ -472,14 +473,14 @@ This layer decides how the decisions should be executed.
 
   - Vehicle position, orientation, and velocity.
 
-**Prediction layer**
+** layer**
 
   - This task is tasked with predicting the movement of detected objects.
 
 **Functions**
 
-  - Trajectory prediction
-  - Behavior prediction
+  - Trajectory 
+  - Behavior 
   - Risk assessment
 
 **Output**
@@ -599,7 +600,7 @@ Cloud processing is not used for real-time control decisions due to latency, con
 
 **Artificial Intelligence in ADAS**
 
-  - In the context of ADAS, Artificial Intelligence refers to computational methods that enable systems to learn from data, recognize patterns, make predictions, and improve performance without being explicitly programmed for every scenario.
+  - In the context of ADAS, Artificial Intelligence refers to computational methods that enable systems to learn from data, recognize patterns, make s, and improve performance without being explicitly programmed for every scenario.
 
 So, how does AI help us in our project?
 
@@ -650,7 +651,7 @@ AI can improve fusion by:
 
   - Compensating for sensor noise and occlusion
 
-**Prediction of Dynamic Objects**
+** of Dynamic Objects**
 
 AI models estimate:
 
@@ -683,7 +684,7 @@ All of these AI-based decisions are combined with rule-based safety layers to en
    - Evaluate scene complexity
    - Assess driver attention
 
-So, as we can see, AI will help us a lot in this project by enabling intelligent perception and decision support, transforming raw data into actionable environmental understanding. By doing this, it will improve perception and prediction.
+So, as we can see, AI will help us a lot in this project by enabling intelligent perception and decision support, transforming raw data into actionable environmental understanding. By doing this, it will improve perception and .
 
 
 
@@ -691,7 +692,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **Machine learning**
 
-  - Machine learning is a part of artificial intelligence that enables computer systems to learn patterns from data and make predictions or decisions without being programmed by humans.
+  - Machine learning is a part of artificial intelligence that enables computer systems to learn patterns from data and make s or decisions without being programmed by humans.
 
 <img width="943" height="204" alt="image" src="https://github.com/user-attachments/assets/1cf666c9-a2a8-4146-b9f8-96a05f7d5fc9" />
 
@@ -728,7 +729,7 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 | **Accuracy**           | Depends on feature quality and algorithm.                    | Usually higher with enough data.                                             |
 | **Hardware Needs**     | Can run on CPUs.                                             | Often requires GPUs or TPUs.                                                 |
 | **Interpretability**   | Easier to interpret.                                         | Difficult to interpret (“black box”).                                        |
-| **Examples**           | Spam detection, stock prediction, recommendation systems.    | Image classification, speech recognition, natural language processing (NLP). |
+| **Examples**           | Spam detection, stock , recommendation systems.    | Image classification, speech recognition, natural language processing (NLP). |
 
 
 **Machine Learning** when data is structured and limited, and interpretability is important.
@@ -758,18 +759,18 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
 
 **What is a Machine Learning System?**
 
-  - A machine learning system is a computational framework that leverages algorithms and statistical models to enable computers to learn and make predictions or decisions without being explicitly programmed for each task. In technical terms, these systems analyze and generalize patterns from large datasets, allowing them to adapt and improve their performance over time. The strength of machine learning systems lies in their ability to handle complex, data-driven problems where explicit rule formulation may be impractical.
+  - A machine learning system is a computational framework that leverages algorithms and statistical models to enable computers to learn and make s or decisions without being explicitly programmed for each task. In technical terms, these systems analyze and generalize patterns from large datasets, allowing them to adapt and improve their performance over time. The strength of machine learning systems lies in their ability to handle complex, data-driven problems where explicit rule formulation may be impractical.
 
 **Advantage of Machine learning system**
 
 - Machine learning systems can adapt to changing data patterns, automatically improving their performance as they learn from new information.
 - It excels at automating complex tasks, reducing the need for explicit programming and enabling the handling of intricate problems.
-- Machine learning models can continuously learn and optimize their performance over time, enhancing their ability to make accurate predictions or classifications.
+- Machine learning models can continuously learn and optimize their performance over time, enhancing their ability to make accurate s or classifications.
 
 **Limitations of Machine learning system**
 
 - Machine learning models, particularly complex ones, operate as black boxes, making it challenging to interpret their decision-making processes.
-- The effectiveness of machine learning heavily relies on the quality and quantity of training data, and inadequate or biased data can lead to inaccurate predictions.
+- The effectiveness of machine learning heavily relies on the quality and quantity of training data, and inadequate or biased data can lead to inaccurate s.
 - ML models may struggle to generalize well to new, unseen scenarios if the training data does not sufficiently represent the diversity of potential situations, leading to poor performance in real-world applications.
 
 
@@ -928,10 +929,10 @@ So, as we can see, AI will help us a lot in this project by enabling intelligent
    - The network predicts offsets for an anchor box’s center coordinates and dimensions, which are then applied to the anchor’s original coordinates to compute the final bounding box.
 
 4. Loss Function
-   - The training loss combines a classification loss to ensure correct class prediction and a regression loss to make the predicted bounding boxes closely match the ground truth.
+   - The training loss combines a classification loss to ensure correct class  and a regression loss to make the predicted bounding boxes closely match the ground truth.
 
 5. During inference
-   - The network produces class probabilities and bounding box offsets for each anchor box, and non-maximum suppression is applied to eliminate overlapping predictions and retain only the best bounding boxes.
+   - The network produces class probabilities and bounding box offsets for each anchor box, and non-maximum suppression is applied to eliminate overlapping s and retain only the best bounding boxes.
 
 **Sumary**
 
@@ -971,7 +972,7 @@ Popular image segmentation datasets include:
 
 | Model           | Year | Architecture Type     | Key Innovation                                | Strengths                                      | Limitations                     | Common Use Cases             |
 | --------------- | ---- | --------------------- | --------------------------------------------- | ---------------------------------------------- | ------------------------------- | ---------------------------- |
-| **FCN**         | 2015 | CNN (Encoder-only)    | Fully convolutional design + skip connections | Foundation model, simple                       | Coarse predictions              | Baseline research            |
+| **FCN**         | 2015 | CNN (Encoder-only)    | Fully convolutional design + skip connections | Foundation model, simple                       | Coarse s              | Baseline research            |
 | **U-Net**       | 2015 | Encoder–Decoder CNN   | Symmetric skip connections                    | Great for small datasets, precise localization | Heavy for large images          | Medical imaging              |
 | **SegNet**      | 2017 | Encoder–Decoder CNN   | Pooling indices for upsampling                | Memory efficient                               | Lower accuracy vs modern models | Real-time applications       |
 | **PSPNet**      | 2017 | CNN                   | Pyramid Pooling Module                        | Strong global context modeling                 | Computationally expensive       | Scene parsing                |
