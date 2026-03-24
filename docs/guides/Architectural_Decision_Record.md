@@ -10,7 +10,7 @@
    
       - Yolo, it's lightweight enough to run on our Hailo-8.
    
-      - Another very important aspect is that Yolo can process around 50-60 fps, which is very important for us as we are dealing with autonomous driving.
+      - Another very important aspect is that Yolo can process around 70 fps, which is very important for us as we are dealing with autonomous driving.
    
       - As yolo processes the whole image at once, it makes fewer mistakes when it comes to mistakenly background patches as objects, Yolo solves that by looking at the whole image at once.
    
