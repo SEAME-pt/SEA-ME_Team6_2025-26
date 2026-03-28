@@ -145,6 +145,8 @@ The system logs approximately 55 signals, organized into the following categorie
 
 The complete mapping between CAN frame IDs, VSS paths, units, and sample rates is maintained in the signal registry spreadsheet (`seame_datalogger_signal_registry.xlsx`).
 
+<img width="996" height="729" alt="seame_datalogger_signal_registry" src="https://github.com/user-attachments/assets/2fb28d1c-7855-4236-b785-bb636355075f" />
+
 ## 6. File Layout
 
 ```
