@@ -379,157 +379,141 @@ void mcp_send_message(uint16_t id, uint8_t *data, uint8_t len)
 ```
  
 ---
- 
-## 5. RPi5 CAN RX → VSS Bridge — Receiving and Translating
- 
-> **Status:** This layer is not yet implemented in this codebase (March 2026).
-> What currently exists are direct Python scripts (python-can) for testing and manual control.
-> This section describes the planned architecture.
- 
-### 5.1 What the CAN-VSS Bridge Will Be
- 
-The bridge will be a Python script on the RPi5 (AGL) translating between:
-- **CAN** (binary frames with numeric IDs, little-endian)
-- **VSS** (Vehicle Signal Specification, readable paths → Kuksa databroker)
- 
+
+## 5. RPi5 CAN RX → VSS Bridge — Receiving and Translating                                            
+
+### 5.1 What the CAN-VSS Bridge Is                                                                     
+   
+  The bridge is a compiled aarch64 binary (can_to_kuksa_publisher) deployed via Yocto recipe         
+  (can-to-kuksa_1.0.bb) as part of the AGL image. It runs as a systemd service (can-to-kuksa.service)
+   that starts automatically after the network and Kuksa databroker are ready.                       
+                  
+  It translates between:
+  - CAN (binary frames with numeric IDs, little-endian)
+  - VSS (Vehicle Signal Specification, readable paths → Kuksa databroker)                            
+
+  ```c
+  CAN Frame (0x423, 8 bytes LE)                                                                      
+      b[0..1]: 0x2D 0x01 → distance_mm = 0x012D = 301 mm                                             
+      b[2]:    0x8A      → light_level = 138                                                         
+      │                                                                                              
+      │ struct.unpack_from('<H', data, 0)  ← little-endian uint16                                    
+      ▼                                                                                              
+      distance_mm = 301
+      │                                                                                              
+      │ gRPC publish (localhost)
+      ▼                                                                                              
+  Kuksa.val: Vehicle.ADAS.ObstacleDetection.DistanceFront = 0.301  (metres)
 ```
-CAN Frame (0x423, 8 bytes LE)
-    b[0..1]: 0x2D 0x01 → distance_mm = 0x012D = 301 mm
-    b[2]:    0x8A      → light_level = 138
-    │
-    │ struct.unpack_from('<H', data, 0)  ← little-endian uint16
-    ▼
-    distance_mm = 301
-    │
-    │ kuksa-client gRPC
-    ▼
-Kuksa.val: Vehicle.ADAS.ObstacleDetection.DistanceFront = 0.301  (metres)
-```
- 
-> ⚠️ **Watch the endianness:** CAN frames in this project are little-endian (C structs from
-> Cortex-M). Use `struct.unpack_from('<H', ...)` in Python (not `>H`).
- 
+                                                                                                     
+  The bridge publishes to the local Kuksa databroker at 127.0.0.1:55555.                             
+                                                                                                     
+  ▎ ⚠️  Watch the endianness: CAN frames in this project are little-endian (C structs from            
+  ▎ Cortex-M). Use struct.unpack_from('<H', ...) in Python (not >H).
+                                                                                                     
 ### 5.2 SocketCAN Configuration on AGL
- 
-```bash
-# Check that the CAN interface is active
-ip link show can0
- 
-# If not configured:
-ip link set can0 type can bitrate 500000
-ip link set can0 up
- 
-# Test reception (debug):
-candump can0
- 
-# Filter SRF08 only:
-candump can0,423:7FF
+                                                                                                     
+  The bridge uses interface can1. Verify it is active before starting:                               
+   
+  #### Check that the CAN interface is active
+  ```c
+  ip link show can1
 ```
- 
-### 5.3 Bridge Structure (to be implemented)
- 
-```python
-import can
-import struct
- 
-# CAN ID → unpacking function mapping
-# NOTE: little-endian ('<' in struct)
- 
-def unpack_srf08(data):
-    distance_mm, light = struct.unpack_from('<HB', data, 0)
-    return {
-        'Vehicle.ADAS.ObstacleDetection.DistanceFront': distance_mm / 1000.0,  # metres
-        'Vehicle.ADAS.ObstacleDetection.AmbientLight': light,
-    }
- 
-def unpack_wheel_speed(data):
-    rpm, total_pulses, direction, status = struct.unpack_from('<iIBB', data, 0)
-    speed_kmh = abs(rpm) * (66.75e-3 * 3.14159) * 60 / 1000  # approx.
-    return {
-        'Vehicle.Speed': speed_kmh,
-        'Vehicle.Powertrain.Transmission.CurrentGear': direction,
-    }
- 
-def unpack_battery(data):
-    voltage_mv, current_ma, soc = struct.unpack_from('<Hhb', data, 0)
-    return {
-        'Vehicle.Powertrain.Battery.Voltage': voltage_mv / 1000.0,
-        'Vehicle.Powertrain.Battery.CurrentCurrent': current_ma / 1000.0,
-        'Vehicle.Powertrain.Battery.StateOfCharge.Current': soc,
-    }
- 
-CAN_HANDLERS = {
-    0x423: unpack_srf08,
-    0x403: unpack_wheel_speed,
-    0x421: unpack_battery,
-    # ... add the rest
-}
- 
-bus = can.interface.Bus(channel='can0', bustype='socketcan')
- 
-for msg in bus:
-    handler = CAN_HANDLERS.get(msg.arbitration_id)
-    if handler:
-        values = handler(msg.data)
-        # publish values to Kuksa via gRPC
-        # client.set(path, value)
+  #### If not configured:                                                                               
+  ```c
+  ip link set can1 type can bitrate 500000
+  ip link set can1 up                                                                                
+  ```
+            
+  #### Test reception (debug):                                                                          
+```c
+  candump can1
+```                                                                                                     
+  #### Filter SRF08 only (example):                                                                     
+  ```c
+  candump can1,423:7FF
+  ```
+                                                                                                   
+### 5.3 Bridge Deployment
+
+  The bridge is installed and managed by Yocto:
+```c
+  meta-seame/recipes-connectivity/can-to-kuksa/
+  ├── can-to-kuksa_1.0.bb              # Yocto bitbake recipe                                        
+  └── files/
+      ├── can_to_kuksa_publisher       # Pre-compiled aarch64 binary                                 
+      └── can-to-kuksa.service         # Systemd unit
+```                                                                                                     
+  The service invocation:
+                                                                                                     
+  ExecStart=/usr/bin/can_to_kuksa_publisher can1 127.0.0.1:55555
+                                                                                                     
+  The custom VSS schema (vss_min.json) used by the bridge covers all SEA:ME Team 6 signals — motion, 
+  IMU, battery, ADAS, environment, and hardware health. The full CAN ID → VSS path mapping is        
+  documented in the signal registry (seame_datalogger_signal_registry.xlsx).                         
+                  
+  ▎ Note: The CAN ID examples below (0x423, 0x403, 0x421) are illustrative.                          
+  ▎ Refer to the signal registry for the actual IDs used in this project.                                                                                            
+                                                                                                     
+  ---                                                                                                
+  ## 6. Kuksa — Consuming the Data
+                               
+  ### 6.1 Databroker Connection
+                                                                                                     
+  Kuksa.val is deployed on the RPi5 as part of the AGL image via Yocto (meta-seame). It uses a custom
+   VSS schema (vss_min.json) tailored to the SEA:ME Team 6 vehicle. Authentication requires both a   
+  TLS CA certificate and a signed JWT token.                                                         
+                  
+  Host: 10.21.220.191      (RPi5 IP on the team network)
+  Port: 55555                                                                                        
+  Protocol: gRPC
+  TLS: yes                                                                                           
+  CA cert:   /etc/kuksa/tls/ca.crt
+  JWT token: /etc/kuksa/jwt/publisher.jwt                                                            
+                  
+  JWT tokens are RS256-signed, scoped to read:Vehicle.*, and generated by                            
+  kuksa-certs/jwt/jwt-script.py during the Yocto build.
+                                                                                                     
+  ### 6.2 Point Read (Python)                                                                            
+   ```c
+  from pathlib import Path                                                                           
+  from kuksa_client.grpc import VSSClient
+
+  with VSSClient('10.21.220.191', 55555,                                                             
+                 root_certificates=Path('/etc/kuksa/tls/ca.crt'),
+                 token=Path('/etc/kuksa/jwt/publisher.jwt').read_text()) as client:                  
+      values = client.get_current_values([
+          'Vehicle.ADAS.ObstacleDetection.DistanceFront'                                             
+      ])
+      distance_m = values['Vehicle.ADAS.ObstacleDetection.DistanceFront'].value                      
+      print(f"Distance: {distance_m * 1000:.0f} mm")                                                 
+   ``
+  ### 6.3 Subscription — Real-Time Updates                                                               
+  ```c                
+  from pathlib import Path                                                                           
+  from kuksa_client.grpc import VSSClient
+                                                                                                     
+  with VSSClient('10.21.220.191', 55555,
+                 root_certificates=Path('/etc/kuksa/tls/ca.crt'),                                    
+                 token=Path('/etc/kuksa/jwt/publisher.jwt').read_text()) as client:
+      for updates in client.subscribe_current_values([                                               
+          'Vehicle.ADAS.ObstacleDetection.DistanceFront'
+      ]):                                                                                            
+          for path, datapoint in updates.items():
+              print(f"{path} = {datapoint.value}")                                                   
+  ``` 
+  ### 6.4 Quick Test with CLI                                                                            
+                  
+  #### On the RPi5:                                                                                     
+  ```c
+       kuksa-client --ip 127.0.0.1 --port 55555 --protocol grpc \
+               --cacert /etc/kuksa/tls/ca.crt \                                                      
+               --token /etc/kuksa/jwt/publisher.jwt                                                  
 ```
- 
----
- 
-## 6. Kuksa — Consuming the Data
- 
-> **Status:** Kuksa.val databroker is not installed/configured in this codebase.
-> This section describes the target architecture.
- 
-### 6.1 Databroker Connection (when implemented)
- 
-```
-Host: <RPi5 IP>      (e.g., 10.21.220.191)
-Port: 55555
-Protocol: gRPC
-TLS: yes (CA certificate required)
-```
- 
-### 6.2 Point Read (Python)
- 
-```python
-from pathlib import Path
-from kuksa_client.grpc import VSSClient
- 
-with VSSClient('10.21.220.191', 55555,
-               root_certificates=Path('ca.pem')) as client:
-    values = client.get_current_values([
-        'Vehicle.ADAS.ObstacleDetection.DistanceFront'
-    ])
-    distance_m = values['Vehicle.ADAS.ObstacleDetection.DistanceFront'].value
-    print(f"Distance: {distance_m * 1000:.0f} mm")
-```
- 
-### 6.3 Subscription — Real-Time Updates
- 
-```python
-with VSSClient('10.21.220.191', 55555,
-               root_certificates=Path('ca.pem')) as client:
-    for updates in client.subscribe_current_values([
-        'Vehicle.ADAS.ObstacleDetection.DistanceFront'
-    ]):
-        for path, datapoint in updates.items():
-            print(f"{path} = {datapoint.value}")
-```
- 
-### 6.4 Quick Test with CLI
- 
-```bash
-# On the RPi5, if kuksa-client is installed:
-kuksa-client --ip 127.0.0.1 --port 55555 --protocol grpc --cacert /path/to/ca.pem
- 
-# Inside the client:
-getValue Vehicle.ADAS.ObstacleDetection.DistanceFront
-subscribe Vehicle.ADAS.ObstacleDetection.DistanceFront
-```
- 
----
+                                                                                                     
+  #### Inside the client:                                                                               
+  getValue Vehicle.ADAS.ObstacleDetection.DistanceFront
+  subscribe Vehicle.ADAS.ObstacleDetection.DistanceFront   
  
 ## 7. Recipe — Adding a New Sensor
  
