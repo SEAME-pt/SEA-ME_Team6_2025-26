@@ -62,7 +62,7 @@
         "datatype": "double",
         "description": "Vehicle speed measured by Hall effect sensor.",
         "type": "sensor",
-        "unit": "m/h",
+        "unit": "km/h",
         "min": 0,
         "comment": "Hall effect speed sensor via STM32 B-U585I-IOT02A"
       },
@@ -239,7 +239,7 @@
             "type": "branch",
             "children": {
               "PedalPosition": {
-                "datatype": "uint32",
+                "datatype": "uint8",
                 "description": "Brake pedal position as percent. 0 = Not depressed. 100 = Fully depressed.",
                 "max": 100,
                 "min": 0,
@@ -266,7 +266,7 @@
                 "type": "actuator"
               },
               "Front": {
-                "description": "Front obstacle detection zone.",
+                "description": "Front obstacle detection zone (SRF08 ultrasonic).",
                 "type": "branch",
                 "children": {
                   "IsWarning": {
@@ -276,12 +276,39 @@
                   },
                   "Distance": {
                     "datatype": "float",
-                    "description": "Distance to nearest obstacle.",
+                    "description": "Distance to nearest front obstacle.",
                     "type": "sensor",
                     "unit": "mm",
                     "min": 0,
-                    "max": 40000,
+                    "max": 6000,
+                    "comment": "SRF08 ultrasonic sensor via STM32"
+                  },
+                  "IsBraking": {
+                    "datatype": "boolean",
+                    "description": "Indicates if AEB is actively braking due to a front obstacle.",
+                    "type": "sensor",
+                    "comment": "Set by AEB task on STM32"
+                  }
+                }
+              },
+              "Up": {
+                "description": "Upward obstacle detection zone (VL53L5CX ToF).",
+                "type": "branch",
+                "children": {
+                  "Distance": {
+                    "datatype": "float",
+                    "description": "Distance to nearest obstacle above the vehicle.",
+                    "type": "sensor",
+                    "unit": "mm",
+                    "min": 0,
+                    "max": 4000,
                     "comment": "VL53L5CX ToF sensor (4x4 zone) via STM32"
+                  },
+                  "IsOnTop": {
+                    "datatype": "boolean",
+                    "description": "Indicates if an obstacle is detected within warning range above the vehicle.",
+                    "type": "sensor",
+                    "comment": "VL53L5CX ToF sensor via STM32"
                   }
                 }
               }
