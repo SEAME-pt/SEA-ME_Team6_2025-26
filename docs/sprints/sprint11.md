@@ -121,7 +121,6 @@
 - 8-9 FPS
 - <img width="1122" height="839" alt="inferencia_camera_800x160_2" src="https://github.com/user-attachments/assets/24e39f24-b5a3-4b58-9802-93ba0d7e708b" />
 - 19-20 FPS
-- ![yolo-v8-training](https://github.com/user-attachments/assets/9cff0578-f8e3-4313-8733-f3eb24342293)
 - ![yolo_inf](https://github.com/user-attachments/assets/5104ca6d-faa2-43af-8823-9afec4731ae9)
 - ![system-logger](https://github.com/user-attachments/assets/146da718-0c8b-40f3-ab8e-734c786edd2c)
 - ![system-logger-2](https://github.com/user-attachments/assets/580d5248-edca-4c78-9706-dfa288dcea3a)
