@@ -113,7 +113,10 @@
  
 
 - **Demos**:
+
   
+
+- https://github.com/user-attachments/assets/28d68665-9391-4ccd-a853-7bb43c93a3df
 - <img width="1004" height="842" alt="inferencia_camera_1600x320" src="https://github.com/user-attachments/assets/9b04bc4a-e517-42d0-aaa7-08095109594a" />
 - 7-9 FPS
 - <img width="1122" height="839" alt="inferencia_camera_800x160_2" src="https://github.com/user-attachments/assets/24e39f24-b5a3-4b58-9802-93ba0d7e708b" />
