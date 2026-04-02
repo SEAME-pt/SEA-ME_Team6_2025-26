@@ -6,30 +6,30 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Lane detection algorithm implementation (8)
+  - [x] Lane detection algorithm implementation (8)
       - Lane lines detected reliably in test footage
       - Works under varied lighting conditions
       - Outputs lane center offset and heading error
-  - [ ] Lane Departure Warning — Computer Vision Pipeline (13)
-      - Integrate UFLDv2 (Ultra Fast Lane Detection v2) pre-compiled HEF on Hailo-8
+  - [x] Computer Vision Pipeline (13)
+      - Integrate UFLDv2 (Ultra Fast Lane Detection v2) compiled HEF on Hailo-8
       - Implement camera frame capture pipeline (libcamera → frame buffer → Hailo inference)
       - Define lane position thresholds for departure warning
   - [ ] ADAS manager architecture (13)
       - Define ADAS manager architecture (priority-based feature arbitration)
       - CAN message protocol for ADAS events (STM32 ↔ RPi5)
       - Implement basic ADAS event bus on ThreadX side
-  - [ ] Measure end-to-end pipeline latency (8)
+  - [x] Measure end-to-end pipeline latency (8)
       - Timestamp from frame capture to inference output
       - Verify real-time viability for ADAS
-  - [ ] Dataset labelling (8)
+  - [x] Dataset labelling (8)
       - Label images from shared dataset
-  - [ ] YOLOv8 model training (13)
+  - [x] YOLOv8 model training (13)
       - Train object detection model
-  - [ ] Basic cruise control (21)
+  - [x] Basic cruise control (21)
       - Implement a basic cruise control that maintains a set vehicle speed without driver input
-  - [ ] Architectural Decision Record about Yolov8-s decision (8)
+  - [x] Architectural Decision Record about Yolov8-s decision (8)
       - Document the architectural decision for choosing YOLOv8-s as the object detection model, justifying the choice against alternatives
-  - [ ] Logging system in the car (13)
+  - [x] Logging system in the car (13)
       - Implement an on-board logging system that records vehicle data and events when the car is not connected to an external computer
   - [ ] Team knowledge (8)
       - Document and share technical knowledge across the team, ensuring all members are aligned on architecture, tools and decisions made during the sprint
@@ -37,7 +37,7 @@
 - ### **Epic** - Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
   - [ ] Headlights implementation (8)
       - Implement functional headlights on the vehicle
-  - [ ] Second camera integration (8)
+  - [x] Second camera integration (8)
       - Integrate a second camera into the perception pipeline, defining its position and role alongside the primary camera
        
 - ### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
@@ -89,26 +89,55 @@
 
 ## 📈 Actual Progress
 
-- Sprint 11 points: **0 / 137**
+- ### Sprint 11 points: **103 / 137**
+
+- ### Bonus:
+  - Object detection labell dataset ✅
+  - Creation of documentation for team knowledge (sensor pipeline + datalogger + car connections) ✅  
 
 - ❌ Undone:
+  - ADAS manager architecture (13)
+  - Team knowledge (8)
+  - Headlights implementation (8)
+  - Reorganize documentation (5)
 
 ---
 
 ## ✅ Outcomes
 
 - **Delivered**:
+  - Progress on lane detection with viable latency for ADAS
+  - Reasearch and implementation of PID in cruise control
+  - Creation of "blackbox" - system datalogger
+  - Creation of new documentation for team knowledge
+ 
 
 - **Demos**:
+  
+- <img width="1004" height="842" alt="inferencia_camera_1600x320" src="https://github.com/user-attachments/assets/9b04bc4a-e517-42d0-aaa7-08095109594a" />
+- 7-9 FPS
+- <img width="1122" height="839" alt="inferencia_camera_800x160_2" src="https://github.com/user-attachments/assets/24e39f24-b5a3-4b58-9802-93ba0d7e708b" />
+- 19-24 FPS
+- ![yolo-v8-training](https://github.com/user-attachments/assets/9cff0578-f8e3-4313-8733-f3eb24342293)
+- ![yolo_inf](https://github.com/user-attachments/assets/5104ca6d-faa2-43af-8823-9afec4731ae9)
+- ![system-logger](https://github.com/user-attachments/assets/146da718-0c8b-40f3-ab8e-734c786edd2c)
+- ![system-logger-2](https://github.com/user-attachments/assets/580d5248-edca-4c78-9706-dfa288dcea3a)
+
+
 
 - **Docs updated**:
+  - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Datalogger_guide.md
+  - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Car_Architecture/Car_Conections.md
+  - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Car_Architecture/Sensor_Pipeline.md
 
 ---
 
 # 🔎 Retrospective
 - ## **Went well**:
+- Better expertise of AI models and machine learning team-wise
 
 - ## **To improve**:
+- Team-building activities
 
 ## 🔗 Useful Links
 - Sprint board/view: [Sprint 11](https://github.com/orgs/SEAME-pt/projects/89/views/17)
