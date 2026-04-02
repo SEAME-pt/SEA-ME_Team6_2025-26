@@ -50,11 +50,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8)** | **29** | **** |
-| **Ruben** | **Basic cruise control (21) + Headlights implementation (8) + Second camera integration (8) + Logging system in the car (13)** | **50** | **** |
-| **David** | **Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + ADAS manager architecture (13) + Measure end-to-end pipeline latency (8)** | **42** | **** |
-| **Vasco** | **YOLOv8 model training (13) + Dataset labelling (13) + Architectural Decision Record about Yolov8-s decision (8)** | **32** | **** |
-| **Diogo** | **Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8)** | **29** | **** |
+| **João**  | **Lane detection algorithm implementation (8) + Lane Departure Warning — Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8)** | **29** | **29** |
+| **Ruben** | **Basic cruise control (21) + Headlights implementation (8) + Second camera integration (8) + Logging system in the car (13)** | **50** | **42** |
+| **David** | **Lane detection algorithm implementation (8) + Computer Vision Pipeline (13) + ADAS manager architecture (13) + Measure end-to-end pipeline latency (8)** | **42** | **29** |
+| **Vasco** | **YOLOv8 model training (13) + Dataset labelling (13) + Architectural Decision Record about Yolov8-s decision (8)** | **32** | **24** |
+| **Diogo** | **Lane detection algorithm implementation (8) + Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8)** | **29** | **29** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 **Total Sprint Points: 134**
