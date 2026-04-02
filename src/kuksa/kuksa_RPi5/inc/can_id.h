@@ -37,6 +37,7 @@
 #define CAN_ID_ENVIRONMENT      0x420
 #define CAN_ID_BATTERY          0x421
 #define CAN_ID_TOF_DISTANCE     0x422
+#define CAN_ID_SRF08_DISTANCE   0x423
 
 /* Joystick (temporary)*/
 #define CAN_ID_JOYSTICK			0x500
