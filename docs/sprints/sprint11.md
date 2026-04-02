@@ -57,7 +57,7 @@
 | **Diogo** | **Lane detection algorithm implementation (8) + Computer Vision Pipeline (13) + Measure end-to-end pipeline latency (8) + Extra Task(13)** | **42** | **42** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 134**
+**Total Sprint Points: 155**
 
 ---
 
@@ -89,7 +89,7 @@
 
 ## 📈 Actual Progress
 
-- ### Sprint 11 points: **103 / 137**
+- ### Sprint 11 points: **121 / 155**
 
 - ### Bonus:
   - Object detection labell dataset (13) ✅
