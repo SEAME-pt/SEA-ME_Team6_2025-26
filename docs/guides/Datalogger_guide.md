@@ -45,10 +45,13 @@ The service is sandboxed with resource limits (128 MB RAM cap, 15% CPU quota, `P
 
 The `/data/` partition survives RAUC A/B OTA updates. Logs written here persist across system reflashes, which means recorded sessions are never lost when the team deploys a new AGL image. The config file also lives in `/data/seame-configs/` for the same reason.
 
-V1 - DataLogger.html 
+### V1 - DataLogger.html 
 <img width="1570" height="918" alt="Captura de ecrã de 2026-03-28 01-19-05" src="https://github.com/user-attachments/assets/3f2b4651-a2e1-4065-90d2-6638c5b89de0" />
-<img width="1570" height="918" alt="Captura de ecrã de 2026-03-28 01-19-19" src="https://github.com/user-attachments/assets/b89418b3-5eb4-459b-8c43-3d0a4745d887" />
 
+### V2 - Updated Datalogger.html
+<img width="1852" height="1085" alt="Screenshot from 2026-04-02 12-20-19" src="https://github.com/user-attachments/assets/a3b12b7f-698b-4e1c-b8ac-fdb71f5dd4a8" />
+<img width="1852" height="1085" alt="Screenshot from 2026-04-02 12-20-30" src="https://github.com/user-attachments/assets/f2e382e4-ebf4-479b-ae80-351fb01b7a6f" />
+<img width="1852" height="1085" alt="Screenshot from 2026-04-02 12-20-40" src="https://github.com/user-attachments/assets/dfdfff41-b758-415d-a12c-41b928f58c0b" />
 
 ## 3. Data Flow
 
