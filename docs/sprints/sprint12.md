@@ -28,9 +28,9 @@
   - [ ] Dataset Labelling (5)
       - Dataset finetuning
   - [ ] YoloV8 compilation and post-processing (8)
-  - [ ] Benchmarks and tests (31)
-      - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) and YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)(21)
-      - Test YOLO8n-seg vs YOLO26n-seg (5)
+  - [ ] Benchmarks and tests (26)
+      - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) and YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)
+      - Test YOLO8n-seg vs YOLO26n-seg
        
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [ ] TSF presentation (5)    
@@ -50,14 +50,14 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **ADAS manager architecture (13)** + **Benchmarks and Tests (25)** + **TSF Presentation (5)** + **Reorganize documentation (5)**| **44** | **-** |
-| **Ruben** | **ADAS Features (13) + Headlights implementation (8) + ADAS Manager(13)** + **Reorganize documentation (5)**| **39** | **-** |
+| **João**  | **Benchmarks and Tests (26)** + **TSF Presentation (5)** + **Reorganize documentation (5)**| **36** | **-** |
+| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (13)** + **Headlights implementation (8)** + **Reorganize documentation (5)**| **39** | **-** |
 | **David** | **ADAS manager architecture (13) + Test real E2E using UFLv2 + Yolo8s (5) + Computer Vision Pipeline (13)** + **Reorganize documentation (5)**| **36** | **-** |
-| **Vasco** | **ADAS manager architecture (13)** + **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (31)** | **** | **-** |
+| **Vasco** | **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (8) + Computer Vision Pipeline (13)** | **31** | **-** |
 | **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 155**
+**Total Sprint Points: 114**
 
 ---
 
