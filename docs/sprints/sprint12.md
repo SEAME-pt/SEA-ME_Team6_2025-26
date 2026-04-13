@@ -19,8 +19,8 @@
       - Wire Kuksa.val ADAS signals to Qt UI
       - KUKSA Integration — Lane and Object Detection
       
-  - #### **Epic** — AI Models - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (31)
+  - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
+  - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (5)
   - [ ] Computer Vision Pipeline (13)
       - Migration of post-processing to C++
       - Fine-tuning UFLDv2
@@ -29,8 +29,7 @@
       - Dataset finetuning
   - [ ] YoloV8 compilation and post-processing (8)
   - [ ] Benchmarks and tests (31)
-      - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) (13)
-      - Test YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)((13)
+      - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) and YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)(21)
       - Test YOLO8n-seg vs YOLO26n-seg (5)
        
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
@@ -51,11 +50,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **AI Models Benchmark (21) + TSF Presentation (8)** | **29** | **-** |
-| **Ruben** | **ADAS Features (13) + Headlights implementation (8) + Lane Keep Assistant Task (13) + ADAS Manager(13)**| **42** | **-** |
-| **David** | **ADAS manager architecture (13) + Lane Keep Assistant Task (13) + Computer Vision Pipeline (13) + Fine-tuning UFLDv2 (8)** | **47** | **-** |
-| **Vasco** | **Dataset Labelling (5) + AI Models (21)** | **26** | **-** |
-| **Diogo** | **ADAS manager architecture (13) + ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
+| **João**  | **ADAS manager architecture (13)** + **Benchmarks and Tests (25)** + **TSF Presentation (5)** + **Reorganize documentation (5)**| **44** | **-** |
+| **Ruben** | **ADAS Features (13) + Headlights implementation (8) + ADAS Manager(13)** + **Reorganize documentation (5)**| **39** | **-** |
+| **David** | **ADAS manager architecture (13) + Test real E2E using UFLv2 + Yolo8s (5) + Computer Vision Pipeline (13)** + **Reorganize documentation (5)**| **36** | **-** |
+| **Vasco** | **ADAS manager architecture (13)** + **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (31)** | **** | **-** |
+| **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 **Total Sprint Points: 155**
