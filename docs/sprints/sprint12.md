@@ -19,7 +19,7 @@
       - Wire Kuksa.val ADAS signals to Qt UI
       - KUKSA Integration — Lane and Object Detection
       
-  - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
+- #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
   - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (5)
   - [ ] Computer Vision Pipeline (13)
       - Migration of post-processing to C++
