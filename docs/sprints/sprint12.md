@@ -1,6 +1,6 @@
 # 🏁 Sprint 12 — (13/04/2026 → 24/04/2026)
 
-> ## **Sprint Goal**:   VER COM A MALTA!
+> ## **Sprint Goal**: Continue ADAS features implementation
 ---
 
 ## 📌 Epics
