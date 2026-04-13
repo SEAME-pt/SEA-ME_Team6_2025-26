@@ -21,13 +21,13 @@
       
   - #### **Epic** — AI Models - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency&precision) (31)
-     - [ ] Computer Vision Pipeline (13)
-          - Migration of post-processing to C++
-          - Fine-tuning UFLDv2
-          - C++ post-migration benchmark
-      - [ ] Dataset Labelling (5)
-          - Dataset finetuning
-      - [ ] YoloV8 compilation and post-processing (13)
+  - [ ] Computer Vision Pipeline (13)
+      - Migration of post-processing to C++
+      - Fine-tuning UFLDv2
+      - C++ post-migration benchmark
+  - [ ] Dataset Labelling (5)
+      - Dataset finetuning
+  - [ ] YoloV8 compilation and post-processing (13)
   - [ ] Benchmarks and tests (44)
       - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) (13)
       - Test YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)(13)
@@ -37,11 +37,11 @@
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [ ] TSF presentation (5)    
 
-- ### **Epic** - Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
+- #### **Epic** - Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
   - [ ] Headlights implementation (8)
       - Implement functional headlights on the vehicle
        
-- ### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
+- #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Reorganize documentation (5)
       - Reorganize documentation on the repository
 
