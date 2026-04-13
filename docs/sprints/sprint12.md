@@ -17,15 +17,16 @@
       - Migration of post-processing to C++
       - Fine-tuning UFLDv2
       - C++ post-migration benchmark
-  - [ ] Training Dataset (21)
+  - [ ] Training Dataset (5)
       - Dataset finetuning
-      - Ai Model training with our dataset
   - [ ] ADAS Visualization on Qt HMI Cluster (13)
       - New cluster display elements: LDW indicator, AEB status, AI inference overlay
       - ADAS warning indicators (visual + state-based color changes)
       - Wire Kuksa.val ADAS signals to Qt UI
       - KUKSA Integration — Lane and Object Detection
-  - [ ] AI Models Benchmark (21)
+  - [ ] AI Models (21)
+      - Implementation Segformer for Lane Detection
+      - Compilation and post-processing YoloV8s
       - Benchmark yolo8n-seg vs yolo26n-seg
       - Benchmark yolo8n-seg vs yolo26n-seg
       - Benchmark segformer + yolo8s
@@ -40,10 +41,8 @@
 - ### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Reorganize documentation (5)
       - Reorganize documentation on the repository
-      - Expectations updated in sprints
+
 ---
-- Fine-tuning UFLDv2
-      - C++ post-migration benchmark
 
   
 ## 📊 Sprint Points Summary
@@ -53,7 +52,7 @@
 | **João**  | **AI Models Benchmark (21) + TSF Presentation (8)** | **29** | **-** |
 | **Ruben** | **ADAS Features (13) + Headlights implementation (8) + Lane Keep Assistant Task (13) + ADAS Manager(13)**| **42** | **-** |
 | **David** | **ADAS manager architecture (13) + Lane Keep Assistant Task (13) + Computer Vision Pipeline (13) + Fine-tuning UFLDv2 (8)** | **47** | **-** |
-| **Vasco** | **Training Dataset (21)** | **21** | **-** |
+| **Vasco** | **Training Dataset (5) + AI Models (21)** | **26** | **-** |
 | **Diogo** | **ADAS manager architecture (13) + ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
