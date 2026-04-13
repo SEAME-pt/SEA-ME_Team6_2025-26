@@ -20,19 +20,18 @@
       - KUKSA Integration — Lane and Object Detection
       
   - #### **Epic** — AI Models - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency&precision) (31)
+  - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (31)
   - [ ] Computer Vision Pipeline (13)
       - Migration of post-processing to C++
       - Fine-tuning UFLDv2
       - C++ post-migration benchmark
   - [ ] Dataset Labelling (5)
       - Dataset finetuning
-  - [ ] YoloV8 compilation and post-processing (13)
-  - [ ] Benchmarks and tests (44)
+  - [ ] YoloV8 compilation and post-processing (8)
+  - [ ] Benchmarks and tests (31)
       - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) (13)
-      - Test YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)(13)
+      - Test YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)((13)
       - Test YOLO8n-seg vs YOLO26n-seg (5)
-      - Benchmark Segformer + yolo8s (13)
        
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
   - [ ] TSF presentation (5)    
