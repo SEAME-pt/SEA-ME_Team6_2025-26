@@ -1227,6 +1227,38 @@ BUFFER: 1h
 - Compilação bloqueada por alocador (sem workaround viável)
 
 ---
+
+### 11E.6 Auditoria factual (2026-04-14) e decisão de execução
+
+**Estado das branches (facto confirmado):**
+- `feature/Hailo/models_benchmarks` foi criado em cima da linha de `feature/Hailo/model_conversion` (merge-base no tip de `model_conversion`).
+- `feature/Hailo/model_conversion` **não** está sincronizada com `development` (divergência medida: `development` muito à frente, `model_conversion` com poucos commits próprios).
+
+**Origem de `calibration_images` (histórico reconstruído):**
+- Fluxo A: download de `coco_calib2017.tfrecord` oficial.
+- Fluxo B: geração local de TFRecord a partir de `COCO val2017`.
+- Fluxo C: cópia de pasta local `calibration_images` para `shared_with_docker`.
+- Fluxo D: recriação de `calibration_images` com subset de imagens COCO (256 ficheiros no comando de preparação).
+- Numa compilação do `yolo26n-seg` (script sem NMS), o log mostra explicitamente: `Using dataset with 64 entries for calibration`.
+
+**O que esta evidência permite (e o que não permite):**
+- Permite afirmar que houve compilação com calibração real por imagens RGB (não random) em pelo menos uma execução.
+- **Não** permite afirmar benchmark E2E por cenário ADAS real (não há evidência de pipeline completa com vídeo + métricas de qualidade por classe no histórico de comandos).
+- O `hailortcli benchmark` (quando usado) mede throughput/latência de inferência no HEF, não valida precisão semântica da tarefa (passadeira/seta/STOP).
+
+**Decisão prática para avançar implementação:**
+- Avançar já com implementação em duas fases:
+   1. **Fase 1 (agora):** integração técnica + inferência + logging de latência/CPU com dataset parcial.
+   2. **Fase 2 (gate de qualidade):** validar/recalibrar com labels completas de passadeira, seta e STOP antes de qualquer decisão final de modelo.
+- Critério de segurança: sem labels completas, resultados contam apenas como **pré-validação técnica**, não como validação funcional ADAS.
+
+**Checklist mínimo para a próxima iteração:**
+- Fixar e versionar uma pasta única de calibração (`calibration_images_v1`) com manifesto (hash + nº imagens).
+- Repetir compilação dos 3 candidatos (`yolov8n_h8`, `yolov8n_seg_h8`, `yolo26n_seg_320_h8_no_nms`) com o mesmo conjunto.
+- Executar benchmark homogéneo no alvo com protocolo único (mesmo batch, tempo, temperatura e carga).
+- Separar relatório em dois blocos: `Infer-only` e `E2E`.
+
+---
 ## 12) Compatibilidade ONNX/YOLO26 — Esclarecimentos Técnicos
 
 **Pergunta:** O YOLO26/YOLO26-seg são incompatíveis com ONNX ou com o formato ONNX?
