@@ -33,9 +33,9 @@
   - [B) Docker Permission Error (`docker.sock`)](#b-docker-permission-error-dockersock)
   - [C) Historical Contradiction Resolved](#c-historical-contradiction-resolved)
   - [D) What to Keep vs What to Archive](#d-what-to-keep-vs-what-to-archive)
-  - [E) Why the Initial Ruben Tutorial Could Fail (and Why This Took Longer)](#e-why-the-initial-ruben-tutorial-could-fail-and-why-this-took-longer)
+  - [E) Why the Initial colega Tutorial Could Fail (and Why This Took Longer)](#e-why-the-initial-colega-tutorial-could-fail-and-why-this-took-longer)
   - [F) Why João 2.0 Also Failed Before Final Success](#f-why-joão-20-also-failed-before-final-success)
-- [17) Legacy Reference: Ruben Initial Tutorial](#17-legacy-reference-ruben-initial-tutorial)
+- [17) Legacy Reference: colega Initial Tutorial](#17-legacy-reference-colega-initial-tutorial)
 
 ## 1) Goal
 
@@ -808,7 +808,7 @@ Archive as historical notes only:
 - mixed manual/automatic setup instructions in the same linear flow,
 - contradictory statements disproven by validated runs.
 
-### E) Why the Initial Ruben Tutorial Could Fail (and Why This Took Longer)
+### E) Why the Initial colega Tutorial Could Fail (and Why This Took Longer)
 
 This section is meant for technical justification and peer alignment, not blame.
 
@@ -854,9 +854,9 @@ Communication-ready summary:
 
 ---
 
-## 17) Legacy Reference: Ruben Initial Tutorial
+## 17) Legacy Reference: colega Initial Tutorial
 
-> This section preserves the initial Ruben workflow as a historical reference.
+> This section preserves the initial colega workflow as a historical reference.
 > It is not the recommended main path for this project, but it is kept for traceability and team context.
 
 ### Scope

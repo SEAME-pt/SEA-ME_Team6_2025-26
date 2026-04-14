@@ -1,8 +1,9 @@
 # AI Planning — SEA:ME Team 6 (ADAS Spike)
 
-> Data: 26/03/2026  
+> Data: 26/03/2026 (documento inicial)  
+> Última atualização: 14/04/2026 (planeamento E2E 1 dia)  
 > Branch: `feature/Hailo/model_conversion`  
-> Objetivo: consolidar decisões de modelos, conversão, organização Lenovo/Docker/AGL, correções de tutorial e plano de execução de 2 dias.
+> Objetivo: consolidar decisões de modelos, conversão, organização Lenovo/Docker/AGL, correções de tutorial e plano de execução de 2 dias. **[Atualizado 14/04: nova seção com planeamento E2E comparativo de 1 dia para Opções B (UFLDv2+YOLO26n-seg) e C (UFLDv2+YOLOv8n-seg)]**
 
 ---
 
@@ -23,7 +24,7 @@ Tópico 1: Que Modelos Escolher?
 
 Tópico 2: Problemas na Conversão
 - [3) Conversão e perda de precisão](#3-conversão-e-perda-de-precisão)
-  - [3.1 O problema do David pode ser real?](#31-o-problema-do-david-pode-ser-real)
+  - [3.1 O problema do colega pode ser real?](#31-o-problema-do-colega-pode-ser-real)
   - [3.2 Onde normalmente se perde mais](#32-onde-normalmente-se-perde-mais)
   - [3.3 Como validar objetivamente](#33-como-validar-objetivamente)
   - [3.4 Data augmentation (Albumentations / GenAI) — quando usar](#34-data-augmentation-albumentations--genai--quando-usar)
@@ -307,7 +308,7 @@ Pergunta prática: `YOLOv8-seg` e `YOLO26-seg` podem substituir o `UFLDv2` para 
 
 ## 3) Conversão e perda de precisão
 
-## 3.1 O problema do David pode ser real?
+## 3.1 O problema do colega pode ser real?
 
 **Sim.** A diferença entre `.pth/.onnx` e `.hef` pode ocorrer principalmente em:
 - quantização para INT8,
@@ -802,7 +803,7 @@ Se `bash` falhar e `sh` funcionar, usar `sh` temporariamente no benchmark.
 
 ### 12) Vale a pena seguir com YOLO26-seg mesmo com benchmark do YOLOv8s melhor?
 
-Sim, para o objetivo de segmentação/semântica de pista. O benchmark do Vasco é útil para detecção geral, mas não substitui benchmark de modelos `-seg` com métricas E2E do vosso caso ADAS.
+Sim, para o objetivo de segmentação/semântica de pista. O benchmark do colega é útil para detecção geral, mas não substitui benchmark de modelos `-seg` com métricas E2E do vosso caso ADAS.
 
 ---
 
@@ -1079,10 +1080,153 @@ Leitura prática:
 
 - `yolov8n_h8` é a referência mais rápida em deteção pura.
 - `yolov8n_seg_h8` confirma o custo adicional da segmentação no device.
-- `yolo26n_seg_320_h8_no_nms.hef` tornou-se uma comparação válida, mas deve continuar identificado como `experimental-host-nms` por mover o pós-processamento para o host.
+
+
+## 11E) Planeamento E2E Comparativo — 1 Dia (14/04/2026)
+
+> **Atualização crítica (14/04/2026):** As medições de 11D.11 foram feitas com `hailortcli benchmark` (dummy frames sintéticos), **não E2E completo**. Este planeamento fecha o gap, executando E2E real (decode→preprocess→infer→postprocess→render) para **Opção B (UFLDv2 + YOLO26n-seg)** e **Opção C (UFLDv2 + YOLOv8n-seg)** com **dataset real colega** (pista + labels).
+
+### 11E.0 Notas sobre o Benchmark Anterior (11D.11)
+
+| Aspecto | Status | Implicação |
+|--------|--------|-----------|
+| **Dataset usado** | Dummy frames (hailortcli benchmark default) | FPS/latência hw_only são válidas; não é E2E |
+| **Calibração HEFs** | Usado `calibration_images` não documentado | Falta validação com dataset colega |
+| **YOLO26n-seg (full INT8)** | Nunca testado; apenas split hybrid em 11D.10 | Considerar tentar full INT8 em Bloco 1.5 |
+| **E2E com host-NMS** | Não medido (apenas infer-only) | Falta medir overhead de NMS em CPU |
+| **Qualidade (mAP, FN)** | Não medido | Falta validação com labels colega (passadeiras, setas) |
 
 ---
 
+### 11E.1 Timeline Refinada: 1 Dia (9h30 total)
+
+```
+BLOCO 0: Pré-requisitos (0h30)
+├─ Freezar protocolo: resolução 640x640, cenários (normal + curva+sombra)
+├─ Freezar thresholds: conf=0.45, iou=0.5 (UFLDv2); conf=0.5, iou=0.6 (YOLO26/YOLOv8)
+├─ Validar HEFs: yolov8n_seg_h8.hef, yolo26n_seg_320_h8_no_nms.hef presentes em AGL
+├─ Preparar dataset colega: labels (passadeiras, setas, sinais) em formato validado
+└─ Confirmar skeleton E2E de colega reutilizável (decode→preprocess→infer→postprocess→render)
+
+BLOCO 1: E2E YOLO26n-seg (Opção B) — 3h00
+├─ 0h30: Tentar compilação YOLO26n-seg (full INT8) se não já feito
+│        └─ Se sucesso: usar full INT8; se falhar: usar split hybrid de 11D.10
+├─ 1h00: Integrar infer (Hailo) + host-NMS (se split) + postprocess + render
+├─ 0h45: Teste estabilidade: 10 frames → se OK → próximo bloco
+├─ 0h30: Setup logging: FPS, latência p50/p95/p99, CPU, qualidade (FN)
+└─ Critério: Se bloquear >90 min, fallback automático para Bloco 2
+
+BLOCO 2: E2E YOLOv8n-seg (Opção C) — 2h00 (ou fallback de B)
+├─ 1h00: Reutilizar código Bloco 1 (mudança: trocar HEF, remover host-NMS)
+├─ 0h45: Validar: device-side NMS funciona estável
+├─ 0h15: Teste estabilidade: 10 frames → se OK → Bloco 3
+└─ Status: Se B passou → backup; se B falhou → this becomes main
+
+BLOCO 3: Correr 2 Cenários (1h45)
+├─ Cenário 1 (Normal): pista reta, boa iluminação
+│  ├─ Correr 50 frames em B (YOLO26n-seg)
+│  ├─ Medir: FPS E2E (avg, min, max, StdDev), p50/p95/p99, CPU avg/max, qualidade
+│  └─ Tempo: ~20 min
+├─ Cenário 2 (Curva+Sombra): curva acentuada, sombras
+│  ├─ Correr 50 frames em B (YOLO26n-seg)
+│  ├─ Medir: FPS E2E, p95/p99, CPU max, taxa de falha crítica (FN em passadeira/setas)
+│  └─ Tempo: ~20 min
+├─ Repetir C (YOLOv8n-seg) em ambos cenários se tempo permitir (~35 min)
+└─ Registar em tempo real: drops, jitter, picos de latência anomalias
+
+BLOCO 4: Tabela Final + Decisão (1h30)
+├─ Compilar tabela única: A (colega: UFLDv2+YOLOv8s), B (YOLO26n-seg), C (YOLOv8n-seg)
+│  ├─ FPS E2E (avg, min, max, StdDev)
+│  ├─ Latência (p50, p95, p99, jitter max)
+│  ├─ CPU (Avg, Max) — crítico para host-NMS
+│  ├─ Qualidade (taxa detecção passadeira, setas, sinais)
+│  ├─ Robustez (taxa FN em curva+sombra)
+│  └─ Status (GO produção / GO experimental / NO-GO)
+├─ Classificar:
+│  ├─ Melhor E2E: qual é (A, B, ou C)?
+│  ├─ Fallback: se melhor falhar?
+│  └─ Gate: p95 latência <= 50 ms? CPU avg <= 30%? FN < 1%?
+└─ Documentar resultados finais
+
+BUFFER: 1h
+├─ Debug última hora (se anomalias)
+├─ ou: iniciar SegFormer (Opção D) se 3h+ disponível
+└─ ou: reunião alinhamento colega/colega
+
+=== TEMPO TOTAL: 9h30 ===
+```
+
+---
+
+### 11E.2 Ordem de Prioridade (Reordenada conforme Ponto 2)
+
+**Por que testar YOLO26n-seg (full INT8) ANTES de split hybrid, e B ANTES de C?**
+
+| Ordem | Modelo | Razão | Tempo | Risco | Fallback |
+|-------|--------|-------|-------|-------|----------|
+| **1º** | `YOLO26n-seg (full INT8)` | Nunca testado; se passar, melhor desempenho | 0h30 | Médio | → split hybrid (11D.10) |
+| **2º** | `YOLO26n-seg (split hybrid)` | Já validado (11D.10); baseline para B | 3h | Médio | → YOLOv8n-seg |
+| **3º** | `YOLOv8n-seg (device-side NMS)` | Simpler, mais estável; fallback universal | 2h | Baixo | → recuar para A (colega) |
+
+---
+
+### 11E.3 Dependências Críticas (antes de começar)
+
+| Item | Status | Ação |
+|------|--------|------|
+| `yolov8n_seg_h8.hef` | ✅ Validado (11D.11) | Confirmar cópia em AGL: `/data/yolov8n_seg_h8.hef` |
+| `yolo26n_seg_320_h8_no_nms.hef` | ✅ Validado (11D.10) | Confirmar cópia em AGL: `/data/yolo26n_seg_320_h8_no_nms.hef` |
+| `YOLO26n-seg full INT8` | ❓ Nunca compilado | Tentar em Bloco 1.5; se sucesso, usar; se falha, revert split hybrid |
+| Dataset colega | ✅ Pronto | Confirmar localização, formato (imagens + labels YOLO), variância (sombra/curva) |
+| Skeleton E2E (colega) | ✅ Pronto | Deve suportar: decode → preprocess → infer → postprocess → render |
+| HEF validation tool | ✅ Disponível em AGL | `hailortcli parse-hef` para validar HEFs antes de benchmark |
+
+---
+
+### 11E.4 Notas Técnicas
+
+**YOLO26n-seg (full INT8) — candidato novo:**
+- Se compilar (não foi testado), latência ~9-10ms (tudo Hailo), zero overhead host.
+- Risco: pode não quantizar completamente, voltar a erro de alocador.
+- Estratégia: tentar em Bloco 1.5 (~30 min); se falhar, revert imediato para split hybrid.
+
+**YOLO26n-seg (split hybrid) — já validado em 11D.10:**
+- Backbone INT8 no Hailo (~8-10ms), head float32 em CPU (~1-3ms).
+- Host-NMS overhead: ~2-3ms adicional.
+- Latência E2E esperada: ~12-15ms + preprocess + render.
+- Risco: jitter em frames com muitas detecções (densidade alta).
+- Vantagem: compatibilidade garantida (já compilou).
+
+**YOLOv8n-seg (device-side NMS) — baseline mais simples:**
+- Tudo na Hailo (backbone + head + NMS), latência ~10-12ms.
+- Zero overhead host; mais estável.
+- Desvantagem: menor robustez a sombras/small objects vs YOLO26.
+
+---
+
+### 11E.5 Critérios de Go/No-Go (para fechar decisão final)
+
+**GO Produção:**
+- p95 latência E2E <= 50 ms
+- CPU avg <= 30%, CPU max <= 60%
+- FN (false negatives) em passadeira/setas <= 1%
+- Jitter (Max latência - p95) <= 10ms
+- Reprodutibilidade: >=3 runs com sigma consistente
+
+**GO Experimental:**
+- p95 latência E2E <= 60 ms (com observação explícita no report)
+- CPU avg <= 40%, CPU max <= 75%
+- FN em passadeira/setas <= 2%
+- Requer fallback claro documentado (ex: "se E2E latentem > 60ms, fallback para YOLOv8n-seg")
+
+**NO-GO:**
+- p95 latência E2E > 60 ms
+- CPU max > 75% (térmico em risco)
+- FN em passadeira/setas > 2%
+- Comportamento não reproduzível (crashes, instabilidade frame-a-frame)
+- Compilação bloqueada por alocador (sem workaround viável)
+
+---
 ## 12) Compatibilidade ONNX/YOLO26 — Esclarecimentos Técnicos
 
 **Pergunta:** O YOLO26/YOLO26-seg são incompatíveis com ONNX ou com o formato ONNX?
@@ -1284,6 +1428,41 @@ O Hailo Suite detecta automaticamente que a head NMS-free não é quantizável e
 4. **Dia 5-6:** Se falhar, reverter para YOLO26s-seg com hybrid split
 5. **Dia 6-8:** Integrar steering control e testar trajectórias
 
+## 11E) Comparação prática — `SegFormer + YOLOv8s` vs alternativas híbridas
+
+Objetivo: responder de forma direta à dúvida operacional sobre peso/complexidade/latência no edge, sem misturar suposições com medições já validadas.
+
+### 11E.1 O que esta comparação tenta decidir
+
+- Se `SegFormer + YOLOv8s` traz mais valor do que `UFLDv2 + YOLOv8s-Seg`.
+- Se a troca para `UFLDv2 + YOLOv26s-Seg` melhora o pipeline sem degradar estabilidade.
+- Se um modelo único (`YOLOv26s-Seg`) consegue cobrir tudo com risco aceitável.
+
+### 11E.2 Leitura rápida por critério
+
+| Critério | `SegFormer + YOLOv8s` | `UFLDv2 + YOLOv8s-Seg` | `UFLDv2 + YOLOv26s-Seg` | Observação prática |
+|---|---|---|---|---|
+| **Latência no edge** | Média/Alta | Média | Média/Boa | `SegFormer` pode ficar leve ou pesado conforme variante, resolução e pós-processamento; não assumir valor fixo sem benchmark. |
+| **Complexidade de integração** | Média | Média | Média/Alta | Dois modelos continuam a ser dois caminhos de deploy, validação e debug. `UFLDv2` reduz ambiguidade para geometria de faixa. |
+| **Linhas e geometria de faixa** | Média | **Alta** | **Alta** | `UFLDv2` é mais estável para `offset` e `heading` em curvas/contra-curvas. |
+| **Marcas horizontais** (`STOP`, passadeiras, setas) | **Alta** | Alta | **Muito alta** | `SegFormer` tem força em segmentação densa; `YOLO26s-Seg` tende a ser mais robusto em objetos pequenos e cenários degradados. |
+| **Sinais verticais** | Boa | Boa | **Muito boa** | `YOLOv8s`/`YOLO26s-Seg` são bons neste eixo; a diferença real vem do benchmark E2E e do custo de postprocess. |
+| **Risco no Hailo** | Médio | **Baixo** | Médio | A maturidade do fluxo pesa mais do que o score teórico. O que já está validado no Hailo deve ter prioridade. |
+
+### 11E.3 Conclusão operacional
+
+- **`SegFormer + YOLOv8s` não é automaticamente mais pesado**, mas também **não pode ser assumido como a melhor escolha** sem benchmark E2E no mesmo protocolo.
+- **`UFLDv2 + YOLOv8s-Seg` continua a ser a opção de menor risco** quando a prioridade é fechar arquitetura rápido e com estabilidade.
+- **`UFLDv2 + YOLOv26s-Seg` é o candidato mais forte para médio prazo**, desde que o ganho em robustez compense o custo de integração/validação.
+- **`YOLOv26s-Seg` sozinho** pode simplificar o desenho, mas ainda exige prova objetiva de estabilidade geométrica e de latência E2E para substituir `UFLDv2`.
+
+### 11E.4 Regra de decisão recomendada
+
+1. **Agora:** manter `UFLDv2 + YOLOv8s-Seg` como baseline de implementação.
+2. **Se quiserem validar `SegFormer + YOLOv8s`:** correr o mesmo protocolo E2E, com `p50/p95/p99`, CPU, temperatura e qualidade por classe crítica.
+3. **Se `YOLO26s-Seg` passar o gate E2E:** promover como opção de médio prazo.
+4. **Não decidir só por infer-only:** a comparação final tem de incluir o custo do pós-processamento e o comportamento em cenário real.
+
 ---
 
 ## REFERÊNCIAS
@@ -1434,17 +1613,17 @@ Regra de ouro para nós:
 - Comparação de decisão final (produção): E2E vs E2E, incluindo no 26 o NMS host ativo.
 
 
-Benchark Vasco & Benchmark Joao
-Excelente. Agora tenho contexto completo. O benchmark do Vasco é bom e detalha Hailo + CARLA, mas falha em áreas críticas para a tua decisão ponderada. Deixa-me resumir:
+Benchark colega & Benchmark Joao
+Excelente. Agora tenho contexto completo. O benchmark do colega é bom e detalha Hailo + CARLA, mas falha em áreas críticas para a tua decisão ponderada. Deixa-me resumir:
 
-O que Vasco fez bem:
+O que colega fez bem:
 ✅ Benchmark Hailo com métricas completas (FPS, latência p50/p95/p99, CPU Avg/Max)
 ✅ Teste em CARLA com dataset robusto (4 mapas, 3000 frames, traffic realista)
 ✅ mAP50 comparável (YOLOv8s = 0.587, YOLO26s = 0.595)
 ✅ Conclusão "YOLOv8s melhor" justificada
 
 O que está em falta (insuficiência):
-Critério	Vasco mediu?	Impacto na decisão ADAS
+Critério	colega mediu?	Impacto na decisão ADAS
 Segmentação (STOP/passadeira/setas)	❌ Nenhum teste de yolov8s_seg ou yolo26s_seg	⚠️ Crítico — benchmarked yolov8s puro (sem segmentação), não as versões -seg
 Robustez por cenário (sombras/curvas/90º)	⚠️ CARLA genérico; sem stress-test de sombras degradadas	⚠️ Significativo — tua pista tem sombras + curvas acentuadas
 Estabilidade temporal (jitter/picos)	⚠️ Medidos p99, mas sem gráficos de picos isolados	⚠️ Moderado — p99 não captura frequência de outliers
@@ -1452,7 +1631,7 @@ Host-NMS (YOLO26)	❌ Não testou yolo26n_seg_320_h8_no_nms.hef (experimental)	�
 Qualidade de condução (lane + objetos)	❌ Não mediu erro de lane offset/heading	⚠️ Crítico — UFLDv2 não foi testado em paralelo
 Recursos térmicos	⚠️ CPU Avg/Max sim, temperatura/potência não	⚠️ Significativo — host-NMS aumenta CPU
 Conclusão:
-**Vasco foi insuficiente para a tua decisão porque:
+**colega foi insuficiente para a tua decisão porque:
 
 Testou yolov8s (sem segmentação), não yolov8s_seg — o qual é essencial para STOP/passadeira.
 Não testou YOLO26 segmentation (yolo26s_seg ou yolo26n_seg_320_h8_no_nms.hef).
@@ -1465,7 +1644,7 @@ Usa dados reais do Hailo (319.47 FPS para yolov8n_h8, 107.22 para yolov8n_seg_h8
 Avalia contra 6 critérios ADAS-específicos ponderados
 Conclui: yolov8n_seg_h8 (7.63/10 produção) vs yolo26n_seg_320_h8_no_nms.hef (7.77/10 experimental)
 Inclui risco de integração e gates
-Portanto: Vasco fez uma boa baseline, mas a tua análise estruturada é mais defensável para decisão ADAS.
+Portanto: colega fez uma boa baseline, mas a tua análise estruturada é mais defensável para decisão ADAS.
 
 Resposta: Qual o melhor modelo?
 Ranking	Modelo	Score	Decisão
@@ -1476,12 +1655,12 @@ Portanto:
 * Mantém-se yolov8n_seg_h8 para agora (arquitetura 2 dias)? ✅ SIM — é a escolha mais segura.
 * Passa para yolo26n_seg_320_h8_no_nms.hef no médio prazo? ⚠️ SIM, mas com cuidado — é ligeiramente melhor (7.77 vs 7.63), mas experimental; só com fallback garantido.
 A decisão está agora justificada e rastreável nos 6 critérios ponderados. Inseriu-se na seção A.1b do planning doc.
-—————————————————Benchmark do Vasco (resposta direta)
-Excelente. Agora tenho contexto completo. O benchmark do Vasco é bom e detalha Hailo + CARLA, mas falha em áreas críticas para a tua decisão ponderada. Deixa-me resumir:
-O que Vasco fez bem:
+—————————————————Benchmark do colega (resposta direta)
+Excelente. Agora tenho contexto completo. O benchmark do colega é bom e detalha Hailo + CARLA, mas falha em áreas críticas para a tua decisão ponderada. Deixa-me resumir:
+O que colega fez bem:
 ✅ Benchmark Hailo com métricas completas (FPS, latência p50/p95/p99, CPU Avg/Max)✅ Teste em CARLA com dataset robusto (4 mapas, 3000 frames, traffic realista)✅ mAP50 comparável (YOLOv8s = 0.587, YOLO26s = 0.595)✅ Conclusão "YOLOv8s melhor" justificada
 O que está em falta (insuficiência):
-Critério	Vasco mediu?	Impacto na decisão ADAS
+Critério	colega mediu?	Impacto na decisão ADAS
 Segmentação (STOP/passadeira/setas)	❌ Nenhum teste de yolov8s_seg ou yolo26s_seg	⚠️ Crítico — benchmarked yolov8s puro (sem segmentação), não as versões -seg
 Robustez por cenário (sombras/curvas/90º)	⚠️ CARLA genérico; sem stress-test de sombras degradadas	⚠️ Significativo — tua pista tem sombras + curvas acentuadas
 Estabilidade temporal (jitter/picos)	⚠️ Medidos p99, mas sem gráficos de picos isolados	⚠️ Moderado — p99 não captura frequência de outliers
@@ -1489,7 +1668,7 @@ Host-NMS (YOLO26)	❌ Não testou yolo26n_seg_320_h8_no_nms.hef (experimental)
 Qualidade de condução (lane + objetos)	❌ Não mediu erro de lane offset/heading	⚠️ Crítico — UFLDv2 não foi testado em paralelo
 Recursos térmicos	⚠️ CPU Avg/Max sim, temperatura/potência não	⚠️ Significativo — host-NMS aumenta CPU
 Conclusão:
-**Vasco foi insuficiente para a tua decisão porque:
+**colega foi insuficiente para a tua decisão porque:
 1. Testou yolov8s (sem segmentação), não yolov8s_seg — o qual é essencial para STOP/passadeira.
 2. Não testou YOLO26 segmentation (yolo26s_seg ou yolo26n_seg_320_h8_no_nms.hef).
 3. CARLA genérico ≠ tua pista específica (sombras, curves, sinais degradados).
@@ -1500,7 +1679,7 @@ A matriz A.1b que inserimos colmata isto:
 * Avalia contra 6 critérios ADAS-específicos ponderados
 * Conclui: yolov8n_seg_h8 (7.63/10 produção) vs yolo26n_seg_320_h8_no_nms.hef (7.77/10 experimental)
 * Inclui risco de integração e gates
-Portanto: Vasco fez uma boa baseline, mas a tua análise estruturada é mais defensável para decisão ADAS.
+Portanto: colega fez uma boa baseline, mas a tua análise estruturada é mais defensável para decisão ADAS.
 ——Latência (ms)
 * P50: 50% dos frames são mais rápidos que este valor (mediana).
 * P95: 95% dos frames são mais rápidos; mostra “quase pior caso”.
@@ -1543,10 +1722,10 @@ Estratégia recomendada (boa e justa)
 * Principal: yolov8s vs yolov8s-seg e yolov8n vs yolov8n-seg (mesmo size).
 * Depois: tentativa yolo26-seg como spike separado.
 * Não usar como conclusão principal: yolov8n-seg vs yolov8s (cruzado n vs s + task diferente).
-Se quiseres, faço já uma matriz de benchmark única (template) para vocês preencherem e ficar 100% comparável com o do Vasco.
+Se quiseres, faço já uma matriz de benchmark única (template) para vocês preencherem e ficar 100% comparável com o do colega.
 
-1) O Vasco fez benchmark na Hailo?
-SIM. Vasco fez benchmark Hailo (linhas 3-154 do Yolo_benchmark.md):
+1) O colega fez benchmark na Hailo?
+SIM. colega fez benchmark Hailo (linhas 3-154 do Yolo_benchmark.md):
 
 ✅ O que ele mediu:
 
@@ -1563,7 +1742,7 @@ YOLO26s: 36.66 FPS, latência 27.27ms, p99 28.37ms, CPU Avg 8.6%
 ❌ Nenhum teste de yolo26s_seg ou yolo26n_seg_320_h8_no_nms.hef (experimental host-NMS)
 ❌ Script do Hailo é genérico (dummy frames sintéticos, não câmara real)
 
-Resumindo: O Vasco fez benchmark na Hailo?
+Resumindo: O colega fez benchmark na Hailo?
 SIM, mas incompleto:
 Testou: YOLOv8s, YOLOv8m, YOLOv11n, YOLOv11s, YOLO26s
 NÃO testou: yolov8s_seg, yolo26s_seg, nem nada com host-NMS
@@ -1578,7 +1757,7 @@ Etapa	O que fizeste	Resultado
 2. Deploy em AGL (Pi5)	Copiaste os 3 HEFs para AGL Hailo-8 Hat	HEFs prontos para inference
 3. Benchmark hardware	Executaste hailortcli benchmark com os 3 HEFs	Dados medidos em 01/04/2026
 4. Extracção de métricas	Capturaste FPS (hw_only + streaming), latência hardware	Tabela 11D.11 no planning doc
-Dados que Joao mediu e Vasco nao:
+Dados que Joao mediu e colega nao:
 yolov8n_h8.hef        → 319.47 FPS, 6.30 ms
 yolov8n_seg_h8.hef    → 107.22 FPS, 8.30 ms
 yolo26n_seg_320_h8_no_nms.hef → 117.68 FPS, 7.94 ms
@@ -1588,8 +1767,8 @@ Método: hailortcli benchmark — inferência pura na Hailo-8, com parâmetros h
 
 
 O que ambos nao fizeram: 
-- Joao e Vasco nao fizeram E2E. Vasco não fez E2E completo (fez inferência Hailo + treino/avaliação CARLA, não pipeline completo câmara→decisão).
-Logo, sim, podem comparar o teu benchmark com o do Vasco.
+- Joao e colega nao fizeram E2E. colega não fez E2E completo (fez inferência Hailo + treino/avaliação CARLA, não pipeline completo câmara→decisão).
+Logo, sim, podem comparar o teu benchmark com o do colega.
 Mas só como comparação de “infer-only / não-E2E”, não como decisão final safety-critical.
 
 O que dá para concluir hoje (defensável)

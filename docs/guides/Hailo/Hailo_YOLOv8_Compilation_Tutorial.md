@@ -33,9 +33,9 @@
   - [B) Docker Permission Error (`docker.sock`)](#b-docker-permission-error-dockersock)
   - [C) Historical Contradiction Resolved](#c-historical-contradiction-resolved)
   - [D) What to Keep vs What to Archive](#d-what-to-keep-vs-what-to-archive)
-  - [E) Why the Initial Ruben Tutorial Could Fail (and Why This Took Longer)](#e-why-the-initial-ruben-tutorial-could-fail-and-why-this-took-longer)
+  - [E) Why the Initial colega Tutorial Could Fail (and Why This Took Longer)](#e-why-the-initial-colega-tutorial-could-fail-and-why-this-took-longer)
   - [F) Why João 2.0 Also Failed Before Final Success](#f-why-joão-20-also-failed-before-final-success)
-- [17) Legacy Reference: Ruben Initial Tutorial](#17-legacy-reference-ruben-initial-tutorial)
+- [17) Legacy Reference: colega Initial Tutorial](#17-legacy-reference-colega-initial-tutorial)
 
 ## 1) Goal
 
@@ -626,6 +626,14 @@ For `Hailo Runtime Integration on AGL`, what matters most is:
 
 That is why starting with `yolov8n` is recommended.
 
+For the **ADAS architecture decision** itself, use the planning document as the source of truth:
+
+- `UFLDv2 + YOLOv8s-Seg` remains the safest short-term baseline.
+- `UFLDv2 + YOLO26s-Seg` is the stronger medium-term candidate if E2E validation passes.
+- `SegFormer + YOLOv8s` should only be considered after running the same E2E protocol and confirming that it is not worse in latency, CPU load, or stability.
+
+In other words: this tutorial keeps the **compilation order** simple; it does not override the **architecture choice** documented in `docs/guides/Hailo/AI_implementation_planning.md`.
+
 ---
 
 ## 12) Automation (Repeatable)
@@ -735,6 +743,14 @@ Recommended flow for project evolution:
 
 Starting with `yolov8n` accelerates integration and initial benchmarking.
 
+For the current ADAS spike, the architecture preference is already documented separately:
+
+- baseline now: `UFLDv2 + YOLOv8s-Seg`
+- medium-term target: `UFLDv2 + YOLO26s-Seg`
+- candidate to validate before promoting: `SegFormer + YOLOv8s`
+
+This means the compile tutorial should be read as the **mechanical flow** for Hailo artifacts, while the planning doc defines the **best model pairing** for the piste scenario.
+
 ---
 
 ## 14) Final Checklist
@@ -808,7 +824,7 @@ Archive as historical notes only:
 - mixed manual/automatic setup instructions in the same linear flow,
 - contradictory statements disproven by validated runs.
 
-### E) Why the Initial Ruben Tutorial Could Fail (and Why This Took Longer)
+### E) Why the Initial colega Tutorial Could Fail (and Why This Took Longer)
 
 This section is meant for technical justification and peer alignment, not blame.
 
@@ -854,9 +870,9 @@ Communication-ready summary:
 
 ---
 
-## 17) Legacy Reference: Ruben Initial Tutorial
+## 17) Legacy Reference: colega Initial Tutorial
 
-> This section preserves the initial Ruben workflow as a historical reference.
+> This section preserves the initial colega workflow as a historical reference.
 > It is not the recommended main path for this project, but it is kept for traceability and team context.
 
 ### Scope
