@@ -7,7 +7,7 @@ import Cluster.Backend 1.0
 
 Item {
     id: root
-    Layout.preferredHeight: 160
+    Layout.preferredHeight: 120
     Layout.fillWidth: true
     property real currSpeed: 0
 
@@ -22,7 +22,7 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        anchors.margins: 8
+        anchors.margins: 4
         spacing: 0
 
         // Logo and User information
@@ -60,7 +60,7 @@ Item {
                     Rectangle {
                         anchors.left: parent.left
                         width: parent.width
-                        height: 25
+                        height: 18
                         radius: 4
                         color: "transparent"
                         border.color: BaseTheme.danger
@@ -72,7 +72,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "TEAM 6"
                             color: BaseTheme.danger
-                            font.pixelSize: 14
+                            font.pixelSize: 12
                             font.bold: true
                         }
                     }
@@ -105,7 +105,7 @@ Item {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 25
+                                Layout.preferredHeight: 18
                                 radius: 4
                                 color: "transparent"
                                 border.color: BaseTheme.gaugeBattery
@@ -117,7 +117,7 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "SPEED"
                                     color: BaseTheme.gaugeBattery
-                                    font.pixelSize: 14
+                                    font.pixelSize: 12
                                     font.bold: true
                                 }
                             }
@@ -127,7 +127,7 @@ Item {
                                 Layout.fillHeight: true
                                 text: Math.round(root.currSpeed) + " km/h"
                                 color: BaseTheme.white
-                                font.pixelSize: 28
+                                font.pixelSize: 20
                                 font.bold: false
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -144,7 +144,7 @@ Item {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 25
+                                Layout.preferredHeight: 18
                                 radius: 4
                                 color: "transparent"
                                 border.color: BaseTheme.gaugeTicksActive
@@ -156,7 +156,7 @@ Item {
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "BATTERY"
                                     color: BaseTheme.gaugeTicksActive
-                                    font.pixelSize: 14
+                                    font.pixelSize: 12
                                     font.bold: true
                                 }
                             }
@@ -166,7 +166,7 @@ Item {
                                 Layout.fillHeight: true
                                 text: "0 kW"
                                 color: BaseTheme.white
-                                font.pixelSize: 28
+                                font.pixelSize: 20
                                 font.bold: false
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -221,7 +221,7 @@ Item {
                                 leftPadding: 8
                                 text: clock.time
                                 color: BaseTheme.white
-                                font.pixelSize: 28
+                                font.pixelSize: 20
                                 font.bold: true
                             }
 
@@ -231,7 +231,7 @@ Item {
                                 text: clock.date
                                 color: BaseTheme.white
                                 opacity: 0.45
-                                font.pixelSize: 14
+                                font.pixelSize: 12
                                 font.bold: true
                             }
                         }
@@ -252,7 +252,7 @@ Item {
                                 leftPadding: 8
                                 text: exterior.airTemperature + "°C"
                                 color: BaseTheme.white
-                                font.pixelSize: 28
+                                font.pixelSize: 20
                                 font.bold: true
                             }
 
@@ -262,7 +262,7 @@ Item {
                                 text: "(Humidity)"
                                 color: BaseTheme.white
                                 opacity: 0.45
-                                font.pixelSize: 14
+                                font.pixelSize: 12
                                 font.bold: true
                             }
 
@@ -272,7 +272,7 @@ Item {
                                 text: currentLocation.heading + "°"
                                 color: BaseTheme.white
                                 opacity: 0.45
-                                font.pixelSize: 14
+                                font.pixelSize: 12
                                 font.bold: true
                             }
                         }
@@ -289,8 +289,8 @@ Item {
                 Rectangle {
                     id: outerCircle
                     anchors.centerIn: parent
-                    width: 144
-                    height: 144
+                    width: 112
+                    height: 112
                     radius: width / 2
                     color: BaseTheme.sportBlack
                     layer.enabled: true
@@ -311,8 +311,8 @@ Item {
                 Rectangle {
                     id: innerCircle
                     anchors.centerIn: parent
-                    width: 135
-                    height: 135
+                    width: 104
+                    height: 104
                     radius: width / 2
                     color: BaseTheme.darkBlack
                     border.color: BaseTheme.blackboard
@@ -335,7 +335,7 @@ Item {
                     anchors.centerIn: parent
                     text: "To be added"
                     color: BaseTheme.white
-                    font.pixelSize: 14
+                    font.pixelSize: 12
                     font.bold: true
                 }
             }
