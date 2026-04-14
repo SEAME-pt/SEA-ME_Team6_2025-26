@@ -32,6 +32,7 @@ endif()
 find_package(Qt6 6.7 REQUIRED COMPONENTS 
     Core 
     DBus
+    Multimedia
 )
 
 # ============================================================================
@@ -70,6 +71,7 @@ add_library(Backend STATIC
     providers/currentlocationprovider.cpp
     providers/chassisprovider.cpp
     providers/extraprovider.cpp
+    providers/cameraprovider.cpp
     
     # Kuksa generated protobuf/gRPC stubs
     kuksa/val.pb.cc
@@ -93,6 +95,7 @@ target_include_directories(Backend PUBLIC
 target_link_libraries(Backend PUBLIC
     Qt6::Core
     Qt6::DBus
+    Qt6::Multimedia
 )
 
 # ============================================================================
