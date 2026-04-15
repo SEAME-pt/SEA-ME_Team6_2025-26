@@ -6,8 +6,8 @@ text: The project repository includes automated CI/CD pipelines for building and
 level: '1.16'
 normative: true
 references:
-- path: ../assertions/ASSERT-L0-16.md
-  type: file
+- type: file
+  path: ../assertions/ASSERT-L0-16.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

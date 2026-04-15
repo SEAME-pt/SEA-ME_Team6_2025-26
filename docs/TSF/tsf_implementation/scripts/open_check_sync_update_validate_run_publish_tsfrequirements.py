@@ -961,13 +961,21 @@ For each item, fill the YAML frontmatter fields:
         
         # Build item-type specific instructions for references
         if item_type == "EXPECT":
-                        references_instruction = """- references: optional.
-    Use only supporting artifacts/context documents when needed.
-    Do not force links to ASSERT/ASSUMP items in frontmatter."""
+            references_instruction = """- references: MUST reference the corresponding ASSERT file ONLY.
+  Format:
+  references:
+    - type: file
+      path: ../assertions/ASSERT-L0-{id}.md
+  ⚠️ DO NOT add any other file paths (docs/guides, etc.) or URLs."""
         elif item_type == "ASSERT":
-                        references_instruction = """- references: optional.
-    Use only supporting artifacts/context documents when needed.
-    Reasoning links should be represented in graph links, not frontmatter references."""
+            references_instruction = """- references: MUST reference the corresponding EXPECT and EVID files ONLY.
+  Format:
+  references:
+    - type: file
+      path: ../expectations/EXPECT-L0-{id}.md
+    - type: file
+      path: ../evidences/EVID-L0-{id}.md
+  ⚠️ DO NOT add any other file paths (docs/guides, etc.) or URLs."""
         elif item_type == "EVID":
             references_instruction = """- references: Evidence sources including file paths and URLs.
   Example:
@@ -975,11 +983,16 @@ For each item, fill the YAML frontmatter fields:
     - type: file
       path: ../../sprints/sprint1.md
     - type: url
-      path: https://example.com/documentation
+      url: https://example.com/documentation
       description: External documentation source
-    ⚠️ Prefer real artifacts as references; avoid linking to TSF item files."""
+  ⚠️ Prefer real artifacts; avoid linking to expectations/assertions."""
         else:
-                        references_instruction = "- references: optional supporting artifacts/context only."
+            references_instruction = """- references: MUST reference the corresponding EXPECT file ONLY.
+  Format:
+  references:
+    - type: file
+      path: ../expectations/EXPECT-L0-{id}.md
+  ⚠️ DO NOT add any other file paths."""
         
         references_instruction = references_instruction.format(id=item_id)
         
@@ -1683,7 +1696,28 @@ review_status: accepted
                             fixes_applied.append("Normalized ASSUMP validator config: components -> dependencies")
                             modified = True
         
-        # Fix 5: Remove 'id' fields from references (should only have type and path)
+        # Fix 5: Normalize references for EXPECT/ASSERT/ASSUMP to canonical paths
+        if item_type_upper in {'EXPECT', 'ASSERT', 'ASSUMP'} and 'references' in frontmatter:
+            # item_id is the number part (e.g., "32"), not the full ID (e.g., "L0-32")
+            num = str(item_id).strip()
+            canonical_refs = []
+            
+            if item_type_upper == 'EXPECT':
+                canonical_refs = [{'type': 'file', 'path': f'../assertions/ASSERT-L0-{num}.md'}]
+            elif item_type_upper == 'ASSERT':
+                canonical_refs = [
+                    {'type': 'file', 'path': f'../expectations/EXPECT-L0-{num}.md'},
+                    {'type': 'file', 'path': f'../evidences/EVID-L0-{num}.md'}
+                ]
+            elif item_type_upper == 'ASSUMP':
+                canonical_refs = [{'type': 'file', 'path': f'../expectations/EXPECT-L0-{num}.md'}]
+            
+            if canonical_refs:
+                frontmatter['references'] = canonical_refs
+                fixes_applied.append(f"Normalized {item_type_upper} references to canonical paths")
+                modified = True
+        
+        # Fix 5b: Remove 'id' fields from references (should only have type and path)
         if 'references' in frontmatter and isinstance(frontmatter['references'], list):
             refs_fixed = False
             for ref in frontmatter['references']:
