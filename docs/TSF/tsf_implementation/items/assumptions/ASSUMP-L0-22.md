@@ -1,5 +1,5 @@
 ---
-id: ASSUMP_L0_22
+id: ASSUMP-L0-22
 header: 'Assumption: STM32 ThreadX development environment ready'
 text: 'Assumption: The STM32 development environment with ThreadX RTOS is properly
   configured, including the CAN peripheral setup and timing measurement capabilities.

@@ -7102,7 +7102,7 @@ _Validator Score: 1.0_
 		---
 		id: EVID_L0_32
 		header: ADAS pipeline performance test evidence
-		text: 'Evidence for L0-32 shall include: (1) instrumented integration test logs with
+		text: 'Evidence shall include: (1) instrumented integration test logs with
 		  per-stage timestamp data from the camera input through perception output rendering;
 		  (2) CPU profiling results and utilization measurements for the post-processing stage
 		  under normal, shadow, and curve scenarios; (3) latency statistics (median, p95,

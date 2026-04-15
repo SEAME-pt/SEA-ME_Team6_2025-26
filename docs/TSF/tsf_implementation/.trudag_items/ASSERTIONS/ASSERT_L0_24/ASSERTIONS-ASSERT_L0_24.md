@@ -16,13 +16,4 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-      - "STM32"
-      - "ThreadX"
-      - "Raspberry Pi 5"
-      - "AGL"
-      - "CAN"
 ---

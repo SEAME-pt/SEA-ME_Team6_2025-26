@@ -16,8 +16,8 @@ This document describes the TSF (Trustable Software Framework) implementation fo
   - ASSUMP semantic defaults are now validated (for example `TSF tooling` template dependency).
 
 Current expected `--check` pending items in this branch:
-- `EVID-L0-32` placeholder evidence marker.
-- `ASSUMP-L0-32` template/default dependency value.
+- placeholder evidence marker in references.
+- template/default dependency value.
 
 ---
 

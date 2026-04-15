@@ -12,8 +12,7 @@ This document now also tracks post-recovery issues found in April 2026:
   - `--check` now reports semantic ASSUMP defaults in addition to EVID placeholder marker.
 
 Latest expected pending placeholders:
-- `EVID-L0-32`
-- `ASSUMP-L0-32`
+- Pending placeholder tracking is reset for the manual retest.
 
 ## Table of Contents
 

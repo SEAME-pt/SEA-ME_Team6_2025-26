@@ -671,7 +671,7 @@ Corrected ID format from underscore-separated (`ASSERT_L0_22`) to hyphen-separat
 ✅ EXPECT: 32/32 validated
 ✅ ASSERT: 32/32 validated
 ✅ EVID: 31/32 validated
-⚠️  EVID-L0-32: Placeholder evidence marker (pre-existing; flagged for sprint sync)
+⚠️  Placeholder evidence marker (pre-existing; flagged for sprint sync)
 ✅ ASSUMP: 32/32 validated
 
 TOTAL: 127 valid, 1 pre-existing warning
@@ -690,7 +690,7 @@ SUCCESS RATE: 99.2%
 | Empty references crash | HIGH | ✅ RESOLVED | Fixed main script |
 | Duplicate references (~20 files) | MEDIUM | ℹ️ DOCUMENTED | Noted for future cleanup |
 | Reference direction violations | HIGH | ℹ️ DOCUMENTED | Noted for model alignment |
-| EVID-L0-32 placeholder | LOW | ⚠️ FLAGGED | For future sprint sync |
+| Placeholder evidence marker | LOW | ⚠️ FLAGGED | For future sprint sync |
 
 ---
 
@@ -747,14 +747,14 @@ The implementation is now ready for continued development and integration testin
   - empty/invalid ASSUMP dependencies/packages/components sets,
   - placeholder evidence marker usage outside EVID context.
 - **Post-fix status:** `--check` now reports both pending placeholders:
-  - `EVID-L0-32: Placeholder evidence marker in references`
-  - `ASSUMP-L0-32: Template/default ASSUMP dependency: 'TSF tooling'`
+  - placeholder evidence marker in references
+  - template/default ASSUMP dependency: 'TSF tooling'
 
 ## Updated Verification Snapshot (April 2026)
 
 ```
 --check summary: 126 valid, 2 need attention
-Pending items: EVID-L0-32, ASSUMP-L0-32
+Pending items: placeholder evidence marker and ASSUMP template/default dependency
 ```
 
 This is an expected, transparent state: unresolved placeholders are now explicitly visible and no longer hidden by asymmetrical checks.

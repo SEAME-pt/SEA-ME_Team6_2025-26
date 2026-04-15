@@ -1,0 +1,40 @@
+# Still To Do
+
+## April 2026 follow-up items
+
+1. Fix the evidence handling:
+   - either restore the linkage with the sprint files, or
+   - improve the parser across most project files, such as demo, guides, src, and related folders.
+
+2. Decide whether to remove `evidence:` from ASSUMP items.
+
+   Important note:
+   - In the current TSF implementation, the `evidence:` block inside ASSUMP items is not treated as artifact evidence.
+   - It is treated as validator configuration for the assumption.
+   - So this ASSUMP block is currently correct in the present model:
+
+   ```yaml
+   evidence:
+     type: validate_hardware_availability
+     configuration:
+       components:
+       - Expansion Board
+       - Raspberry Pi 5
+       - Hailo Hat
+       - DC motors
+       - servo motor
+       - Qt
+       - cluster
+       - DSI
+   ```
+
+   If the goal is a pure TSF model with no validator configuration inside assumptions, then three places in the script must change:
+   - the content validation rule
+   - the ASSUMP template creation
+   - the structural auto-fix logic
+
+   In that case, removing the block today would make `--check` mark ASSUMP items as invalid.
+
+## Status
+
+This document is intentionally left as a work list for the next cleanup iteration.

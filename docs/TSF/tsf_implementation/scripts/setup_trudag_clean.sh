@@ -135,12 +135,12 @@ for category_dir in "$ITEMS_SOURCE"/*; do
         # Convert hyphens to underscores for trudag (ASSERT-L0-1 -> ASSERT_L0_1)
         item_id="${filename//-/_}"
         
-        # Prepare target directory for trudag to create item (use absolute path)
+        # Let trudag create the target structure; pre-creating can trigger
+        # misleading "already exists" errors on some versions.
         target_dir="$TSF_IMPL/.trudag_items/$PREFIX/$item_id"
-        mkdir -p "$target_dir"
         
         # Trudag create-item will create PREFIX-ITEM_ID.md in target_dir
-        "$TRUDAG_CMD" manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
+        "$TRUDAG_CMD" manage create-item "$PREFIX" "$item_id" "$target_dir" || true
         
         # Copy our source content to the created file
         target_file="$target_dir/$PREFIX-$item_id.md"

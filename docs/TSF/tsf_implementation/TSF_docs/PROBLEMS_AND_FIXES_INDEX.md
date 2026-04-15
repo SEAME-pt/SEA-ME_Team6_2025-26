@@ -88,8 +88,7 @@ Key outcomes:
 
 Expected placeholders still pending replacement:
 
-- `EVID-L0-32`
-- `ASSUMP-L0-32`
+- pending placeholder notes were reset for the manual retest.
 
 These are currently visible by design in `--check` output.
 

@@ -9,7 +9,7 @@ Welcome to the TSF (Trustable Software Framework) documentation for SEA:ME Team 
 - Fixed TruDAG plugin warning noise caused by `localplugins.FileReference` name collision with built-in references.
 - Clarified that `exit 130/143` seen in some runs were interruption signals (`SIGINT`/`SIGTERM`), not TSF structural failures.
 - Improved `--check` semantic placeholder detection for ASSUMP validator configuration.
-- Current expected pending placeholders: `EVID-L0-32` and `ASSUMP-L0-32`.
+- Current expected pending placeholders are cleared for the manual retest.
 
 ---
 
@@ -29,6 +29,7 @@ Follow this order to understand the TSF implementation from concepts to practice
 | 8 - | [**PROBLEMS_AND_FIXES_INDEX.md**](PROBLEMS_AND_FIXES_INDEX.md) | Unified troubleshooting index joining recovery log and structural analysis | ~5 min |
 | 9 - | [**TSF_SCORE_RECOVERY_MAR2026.md**](TSF_SCORE_RECOVERY_MAR2026.md) | March 2026 score recovery and technical fixes log | ~6 min |
 | 10 - | [**TSF_STRUCTURAL_ANALYSIS_REPORT.md**](TSF_STRUCTURAL_ANALYSIS_REPORT.md) | Structural/content issue analysis with root causes and resolutions timeline | ~12 min |
+| 11 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
 
 ---
 
@@ -138,6 +139,9 @@ Note: historical counters below may differ from latest branch state when new L0 
 
 ### 10 - TSF_STRUCTURAL_ANALYSIS_REPORT.md
 > Consolidated analysis of structural and content issues (including April 2026 follow-up), with root causes, fixes applied, and remaining known placeholders.
+
+### 11 - Still_TO_DO
+> Short action list for the next cleanup pass, including evidence handling and the ASSUMP validator/model decision.
 
 ---
 

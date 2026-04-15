@@ -1,5 +1,5 @@
 ---
-id: ASSERT_L0_22
+id: ASSERT-L0-22
 header: "STM32 ThreadX Deterministic Startup Verification"
 text: |
   The STM32-based control system running ThreadX has been verified to initialize and start publishing speed data over CAN within the specified deterministic time bound. Startup timing measurements confirm that speed data acquisition and CAN transmission begin within ≤ 100 ms after power-on, meeting AUTOSAR-like ECU startup requirements.
@@ -14,11 +14,4 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-      - "STM32"
-      - "CAN"
-      - "Raspberry Pi"
 ---
