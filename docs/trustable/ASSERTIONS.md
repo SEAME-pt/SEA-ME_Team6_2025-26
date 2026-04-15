@@ -69,7 +69,7 @@ _Validator Score: 1.0_
 		header: System architecture defined
 		text: The demonstrator car system has a documented architecture that describes all
 		  hardware and software components and their interactions.
-		level: 1.1
+		level: '1.1'
 		normative: true
 		references:
 		- type: file
@@ -104,29 +104,23 @@ _Validator Score: 1.0_
 		level: '1.1'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Power%20Consumption%20Analysis.md)
+		
 		
 		````
 
@@ -200,15 +194,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_2
 		header: Hardware assembly complete
 		text: The demonstrator car hardware is fully assembled with all components correctly
 		  connected and operational.
 		level: '1.2'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_2/ASSERTIONS-ASSERT_L0_2.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -239,25 +231,14 @@ _Validator Score: 1.0_
 		level: '1.2'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		
@@ -333,14 +314,12 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_3
 		header: Software environment operational
 		text: The Raspberry Pi 5 runs a Linux environment capable of executing Qt applications.
 		level: '1.3'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_3/ASSERTIONS-ASSERT_L0_3.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -371,42 +350,28 @@ _Validator Score: 1.0_
 		level: '1.3'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		 
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/AGL_Installation_Guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cluster/README.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+		
+		
 		````
 
 
@@ -479,15 +444,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_4
 		header: Remote control functional
 		text: The demonstrator car responds to remote control inputs for steering and throttle
 		  control.
 		level: '1.4'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_4/ASSERTIONS-ASSERT_L0_4.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -518,34 +481,26 @@ _Validator Score: 1.0_
 		level: '1.4'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/car_control/joystick_control.py
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/joystick.cpp
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Install%20and%20Test%20Joystick%20in%20AGL.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Remote%20control%201%20evidence_EXPECT_L0_4.mp4)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/Remote%20control%202%20evidence_EXPECT_L0_4.mp4)
+		
 		
 		````
 
@@ -619,14 +574,12 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_5
 		header: Qt application launches
 		text: A basic Qt application successfully launches and displays on the system.
 		level: '1.5'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_5/ASSERTIONS-ASSERT_L0_5.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -657,30 +610,37 @@ _Validator Score: 1.0_
 		level: '1.5'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: README.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: src/cluster/README.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		
 		
 		 
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cluster/README.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car1.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/assembled-car2.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/first_qt_app.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cluster)
+		
+		
 		````
 
 
@@ -753,15 +713,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_6
 		header: GUI displays static elements
 		text: The Qt graphical user interface displays static visual elements that form a
 		  simple cluster dashboard.
 		level: '1.6'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_6/ASSERTIONS-ASSERT_L0_6.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -792,27 +750,31 @@ _Validator Score: 1.0_
 		level: '1.6'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: src/cluster/README.md
-		- type: file
-		  path: docs/ui_design/README.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+		- [Evidence Link](https://github.com/fprezado/generative-ai-for-beginners)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/ui_design/README.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup1.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup2.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup3.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup4.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup5.jpeg)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/mockup6.jpeg)
+		
 		
 		````
 
@@ -886,14 +848,12 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_7
 		header: Cross-compilation capability exists
 		text: The Qt application can be cross-compiled for the target hardware architecture.
 		level: '1.7'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_7/ASSERTIONS-ASSERT_L0_7.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -924,32 +884,22 @@ _Validator Score: 1.0_
 		level: '1.7'
 		normative: true
 		references:
-		- type: file
-		  path: src/cross-compiler/Dockerfile
-		- type: file
-		  path: src/cross-compiler/DockerFileRasp
-		- type: file
-		  path: src/cross-compiler/opencvToolchain.cmake
-		- type: file
-		  path: src/cross-compiler/toolchain.cmake
-		- type: file
-		  path: src/cross-compiler/README.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_compiler.h
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/cross-compiler)
+		
 		
 		````
 
@@ -1023,15 +973,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_8
 		header: CAN communication established
 		text: The Raspberry Pi 5 and STM32 microcontroller communicate bidirectionally using
 		  the CAN protocol.
 		level: '1.8'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_8/ASSERTIONS-ASSERT_L0_8.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -1062,323 +1010,30 @@ _Validator Score: 1.0_
 		level: '1.8'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/CAN-overview.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/CAN-explanation.md
-		- type: file
-		  path: docs/images/CANFrame.png
-		- type: file
-		  path: docs/images/CANsignal.png
-		- type: file
-		  path: docs/images/CANtopology.png
-		- type: file
-		  path: docs/images/CANtopology2.png
-		- type: file
-		  path: docs/images/Half-duplex-communication.png
-		- type: file
-		  path: docs/guides/CAN-overview.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/CAN-explanation.md
-		- type: file
-		  path: docs/images/CANFrame.png
-		- type: file
-		  path: src/CAN/CAN_test/README.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/images/CANsignal.png
-		- type: file
-		  path: docs/images/CANtopology2.png
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/images/CANtopology.png
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/ota/scripts/canary-check.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_to_kuksa_publisher.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_decode.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_decode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_encode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_to_kuksa_publisher.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_id.h
-		- type: file
-		  path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/can_decode.hpp
-		- type: file
-		  path: src/tests/unit/cpp/can_frame_builder.hpp
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/shared/backend/kuksa/can_id.h
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_tx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_id.h
-		- type: file
-		  path: src/stm/Core/Inc/tasks/task_can_rx.h
-		- type: file
-		  path: src/stm/Core/Src/can_tx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/Core/Src/tasks/task_can_rx.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-test-guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-explanation.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANFrame.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANsignal.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/CANtopology2.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/images/Half-duplex-communication.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/CAN-overview.md)
+		
 		
 		````
 
@@ -1452,15 +1107,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_9
 		header: Real-time OS operational
 		text: The STM32 microcontroller runs the ThreadX real-time operating system for control
 		  tasks.
 		level: '1.9'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_9/ASSERTIONS-ASSERT_L0_9.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -1491,253 +1144,23 @@ _Validator Score: 1.0_
 		level: '1.9'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/QML-guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/cluster/README.md)
+		
 		
 		````
 
@@ -1811,15 +1234,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_10
 		header: Dual-device architecture implemented
 		text: The system operates using a dual Raspberry Pi architecture with Raspberry Pi
 		  5 for computation and Raspberry Pi 4 for display.
 		level: '1.10'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_10/ASSERTIONS-ASSERT_L0_10.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -1850,138 +1271,23 @@ _Validator Score: 1.0_
 		level: '1.10'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/Software-Tests-guide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/ota/scripts/smoke-test.sh
-		- type: file
-		  path: src/tests/utils/scripts/run_python_coverage.sh
-		- type: file
-		  path: src/tests/unit/python/test_joystick_control.py
-		- type: file
-		  path: src/tests/unit/python/test_calculator.py
-		- type: file
-		  path: src/tests/unit/cpp/temperatureprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/battery_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_lps22hh.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_veml6030.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_integration.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speedprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_accel_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/imu_gyro_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_servo.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_distance_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speed_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/environment_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_emergency_stop.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_magn_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_motor_control.cpp
-		- type: file
-		  path: src/tests/unit/cpp/dispatcher_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_ism330dhcx.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_speedometer.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_hts221.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_tof.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/joystick_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_iis2mdc.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/timeprovider_test.cpp
-		- type: file
-		  path: src/tests/scripts/run_tests_docker.sh
-		- type: file
-		  path: src/tests/scripts/coverage.sh
-		- type: file
-		  path: src/tests/cmake/CoveragePython.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageIndex.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageCpp.cmake
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.cpp
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/stm/Combined_test.md
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+		
 		
 		````
 
@@ -2055,15 +1361,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_11
 		header: Automatic startup configured
 		text: The Qt cluster application automatically starts on system boot and displays
 		  fullscreen.
 		level: '1.11'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_11/ASSERTIONS-ASSERT_L0_11.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2094,53 +1398,26 @@ _Validator Score: 1.0_
 		level: '1.11'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/images/Flow.jpg
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+		- [Evidence Link](https://github.com/fprezado/generative-ai-for-beginners)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+		
 		
 		````
 
@@ -2214,15 +1491,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_12
 		header: Wireless display operational
 		text: The cluster display content streams wirelessly from the computation device to
 		  the display device.
 		level: '1.12'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_12/ASSERTIONS-ASSERT_L0_12.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2253,62 +1528,24 @@ _Validator Score: 1.0_
 		normative: true
 		level: '1.12'
 		references:
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: src/stm/Combined_test.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/stm/Combined_test.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/src/CAN/CAN_test/README.md)
+		
 		
 		````
 
@@ -2382,15 +1619,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_13
 		header: Version control established
 		text: The project uses a GitHub repository with proper structure and version control
 		  practices.
 		level: '1.13'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_13/ASSERTIONS-ASSERT_L0_13.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2421,19 +1656,25 @@ _Validator Score: 1.0_
 		level: '1.13'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/github-guidelines.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/github-guidelines.md
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-guidelines.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/github-actions-guide.md)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/.github/workflows/validate_items_formatation.yml)
+		
 		
 		````
 
@@ -2507,15 +1748,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_14
 		header: Requirements traceability established
 		text: The project implements the Trustable Safety Framework for requirements definition
 		  and traceability.
 		level: '1.14'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_14/ASSERTIONS-ASSERT_L0_14.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2546,133 +1785,23 @@ _Validator Score: 1.0_
 		level: '1.14'
 		normative: true
 		references:
-		- type: file
-		  path: docs/TSF/tsf_implementation/TSF_docs/WhatsTSF.md
-		- type: file
-		  path: docs/TSF/tsf_implementation/TSF_docs/WhatsTSF_detailed.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Software-Tests-guide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/ota/scripts/smoke-test.sh
-		- type: file
-		  path: src/tests/utils/scripts/run_python_coverage.sh
-		- type: file
-		  path: src/tests/unit/python/test_joystick_control.py
-		- type: file
-		  path: src/tests/unit/python/test_calculator.py
-		- type: file
-		  path: src/tests/unit/cpp/temperatureprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/battery_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_lps22hh.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_veml6030.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_integration.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speedprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_accel_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/imu_gyro_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_servo.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_distance_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speed_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/environment_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_emergency_stop.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_magn_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_motor_control.cpp
-		- type: file
-		  path: src/tests/unit/cpp/dispatcher_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_ism330dhcx.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_speedometer.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_hts221.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_tof.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/joystick_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_iis2mdc.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/timeprovider_test.cpp
-		- type: file
-		  path: src/tests/scripts/run_tests_docker.sh
-		- type: file
-		  path: src/tests/scripts/coverage.sh
-		- type: file
-		  path: src/tests/cmake/CoveragePython.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageIndex.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageCpp.cmake
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/stm/Combined_test.md
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		    
+		
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/WhatsTSF.md)
 		
 		
 		````
@@ -2747,15 +1876,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_15
 		header: Agile methodology adopted
 		text: The team follows Agile Scrum practices for iterative development and project
 		  management.
 		level: '1.15'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_15/ASSERTIONS-ASSERT_L0_15.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2786,27 +1913,23 @@ _Validator Score: 1.0_
 		level: '1.15'
 		normative: true
 		references:
-		- type: file
-		  path: docs/dailys/dailys_warmups.md
-		- type: file
-		  path: docs/sprints/sprint1.md
-		- type: file
-		  path: docs/sprints/sprint2.md
-		- type: file
-		  path: docs/sprints/sprint3.md
-		- type: file
-		  path: docs/sprints/sprint4.md
-		- type: file
-		  path: docs/sprints/sprint5.md
-		- type: file
-		  path: docs/dailys/dailys_warmups.md
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/dailys/dailys_warmups.md)
+		
 		
 		````
 
@@ -2880,15 +2003,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_16
 		header: Continuous integration active
 		text: The project repository includes automated CI/CD pipelines for building and testing
 		  code changes.
 		level: '1.16'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_16/ASSERTIONS-ASSERT_L0_16.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -2919,38 +2040,14 @@ _Validator Score: 1.0_
 		level: '1.16'
 		normative: true
 		references:
-		- type: file
-		  path: .github/workflows/daily-meeting.yml
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		
@@ -3027,15 +2124,13 @@ _Validator Score: 1.0_
 
 		````md
 		---
+		
 		id: EXPECT_L0_17
 		header: AI tools integrated
 		text: The development process incorporates AI-assisted tools for code development
 		  and documentation.
 		level: '1.17'
 		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_17/ASSERTIONS-ASSERT_L0_17.md
-		  type: file
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
@@ -3066,21 +2161,24 @@ _Validator Score: 1.0_
 		level: '1.17'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/github-guidelines.md
-		- type: file
-		  path: docs/guides/genAI-pair-programming-guidelines.md
-		- type: file
-		  path: docs/guides/generative-ai-for-beginners.md
-		- type: file
-		  path: docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf)
+		- [Evidence Link](https://github.com/fprezado/generative-ai-for-beginners)
+		
 		
 		````
 
@@ -3201,316 +2299,14 @@ _Validator Score: 1.0_
 		level: '1.18'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/CAN-explanation.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/CAN-overview.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/images/CANFrame.png
-		- type: file
-		  path: docs/images/CANsignal.png
-		- type: file
-		  path: docs/images/CANtopology2.png
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/images/CANtopology.png
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/ota/scripts/canary-check.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_to_kuksa_publisher.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_decode.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_decode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_encode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_to_kuksa_publisher.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_id.h
-		- type: file
-		  path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/can_decode.hpp
-		- type: file
-		  path: src/tests/unit/cpp/can_frame_builder.hpp
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/shared/backend/kuksa/can_id.h
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_tx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_id.h
-		- type: file
-		  path: src/stm/Core/Inc/tasks/task_can_rx.h
-		- type: file
-		  path: src/stm/Core/Src/can_tx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/Core/Src/tasks/task_can_rx.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		
@@ -3635,134 +2431,23 @@ _Validator Score: 1.0_
 		level: '1.19'
 		normative: true
 		references:
-		- type: file
-		  path: docs/TSF/tsf_implementation/README.md
-		- type: file
-		  path: .github/workflows/tsf-validate.yml
 		- type: url
-		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/sync_tsf_manager.py
-		  description: 'Evidence from sprint4.md: TSF Manager Script'
-		- type: url
-		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py
-		  description: 'Evidence from sprint4.md: AI Generator'
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Software-Tests-guide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: src/ota/scripts/smoke-test.sh
-		- type: file
-		  path: src/tests/utils/scripts/run_python_coverage.sh
-		- type: file
-		  path: src/tests/unit/python/test_joystick_control.py
-		- type: file
-		  path: src/tests/unit/python/test_calculator.py
-		- type: file
-		  path: src/tests/unit/cpp/temperatureprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/battery_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_lps22hh.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_veml6030.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_integration.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speedprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_accel_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/imu_gyro_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_servo.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_distance_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speed_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/environment_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_emergency_stop.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_magn_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_motor_control.cpp
-		- type: file
-		  path: src/tests/unit/cpp/dispatcher_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_ism330dhcx.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_speedometer.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_hts221.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_tof.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/joystick_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_iis2mdc.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/timeprovider_test.cpp
-		- type: file
-		  path: src/tests/scripts/run_tests_docker.sh
-		- type: file
-		  path: src/tests/scripts/coverage.sh
-		- type: file
-		  path: src/tests/cmake/CoveragePython.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageIndex.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageCpp.cmake
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/stm/Combined_test.md
-		score: 1.0
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/sync_tsf_manager.py)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py)
 		
 		
 		````
@@ -3886,22 +2571,23 @@ _Validator Score: 1.0_
 		level: '1.20'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/genAI-pair-programming-guidelines.md
-		- type: file
-		  path: docs/TSF/tsf_implementation/TSF_docs/genAI_on_tsf.md
 		- type: url
-		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py
-		  description: 'Evidence from sprint4.md: AI Generator'
-		- type: url
-		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/genAI_on_tsf.md
-		  description: 'Evidence from sprint4.md: GenAI on TSF Doc'
-		score: 1.0
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
+		
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/genAI_on_tsf.md)
 		
 		
 		````
@@ -4024,146 +2710,14 @@ _Validator Score: 1.0_
 		level: '1.21'
 		normative: true
 		references:
-		- type: file
-		  path: docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Software-Tests-guide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/ota/scripts/smoke-test.sh
-		- type: file
-		  path: src/tests/utils/scripts/run_python_coverage.sh
-		- type: file
-		  path: src/tests/unit/python/test_joystick_control.py
-		- type: file
-		  path: src/tests/unit/python/test_calculator.py
-		- type: file
-		  path: src/tests/unit/cpp/temperatureprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/battery_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_lps22hh.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_veml6030.cpp
-		- type: file
-		  path: src/tests/unit/cpp/servo_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_integration.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speedprovider_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_accel_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/imu_gyro_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/emergency_stop_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/speedometer_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/test_servo.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_distance_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/speed_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/environment_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_emergency_stop.cpp
-		- type: file
-		  path: src/tests/unit/cpp/imu_magn_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_motor_control.cpp
-		- type: file
-		  path: src/tests/unit/cpp/dispatcher_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_ism330dhcx.cpp
-		- type: file
-		  path: src/tests/unit/cpp/tof_testable.c
-		- type: file
-		  path: src/tests/unit/cpp/test_speedometer.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_hts221.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_tof.cpp
-		- type: file
-		  path: src/tests/unit/cpp/motor_control_testable.h
-		- type: file
-		  path: src/tests/unit/cpp/joystick_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/test_iis2mdc.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/timeprovider_test.cpp
-		- type: file
-		  path: src/tests/scripts/run_tests_docker.sh
-		- type: file
-		  path: src/tests/scripts/coverage.sh
-		- type: file
-		  path: src/tests/cmake/CoveragePython.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageIndex.cmake
-		- type: file
-		  path: src/tests/cmake/CoverageCpp.cmake
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/stm/Combined_test.md
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
 		
@@ -4311,310 +2865,14 @@ _Validator Score: 1.0_
 		level: '1.22'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/CAN-explanation.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/CAN-overview.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/images/CANFrame.png
-		- type: file
-		  path: docs/images/CANsignal.png
-		- type: file
-		  path: docs/images/CANtopology2.png
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/images/CANtopology.png
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/ota/scripts/canary-check.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_to_kuksa_publisher.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_decode.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_decode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_encode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_to_kuksa_publisher.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_id.h
-		- type: file
-		  path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/can_decode.hpp
-		- type: file
-		  path: src/tests/unit/cpp/can_frame_builder.hpp
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/shared/backend/kuksa/can_id.h
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.cpp
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_tx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_id.h
-		- type: file
-		  path: src/stm/Core/Inc/tasks/task_can_rx.h
-		- type: file
-		  path: src/stm/Core/Src/can_tx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/Core/Src/tasks/task_can_rx.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: accepted
+		score: 0.0
 		---
 		This evidence item collects repository artifacts, sprint reports and timing measurements that demonstrate the STM32 ThreadX startup requirement is met.
 		
@@ -4764,33 +3022,14 @@ _Validator Score: 1.0_
 		level: '1.23'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.cpp
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met.
 		
@@ -4945,264 +3184,14 @@ _Validator Score: 1.0_
 		level: '1.24'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects integration test results, CAN traffic logs, and timing correlation data that demonstrate the combined startup requirement is met.
 		
@@ -5355,45 +3344,14 @@ _Validator Score: 1.0_
 		level: '1.25'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/powertrainprovider.cpp
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects video recordings, startup logs, and timing measurements that demonstrate the instrument cluster UI availability requirement is met.
 		
@@ -5551,272 +3509,14 @@ _Validator Score: 1.0_
 		level: '1.26'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects end-to-end integration test results, video recordings, and system logs that demonstrate all startup time requirements are met.
 		
@@ -5970,23 +3670,14 @@ _Validator Score: 1.0_
 		level: '1.27'
 		normative: true
 		references:
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects video recordings, distance measurements, and test logs that demonstrate the emergency braking stopping distance requirement is met.
 		
@@ -6134,54 +3825,14 @@ _Validator Score: 1.0_
 		level: '1.28'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects measurement comparisons, photos, and logs that demonstrate the temperature measurement accuracy requirement is met.
 		
@@ -6332,50 +3983,25 @@ _Validator Score: 1.0_
 		level: '1.29'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met.
 		
 		**Evidence Status:** Pending - integration test to be performed during driver presence validation testing.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png)
+		
 		
 		````
 
@@ -6523,374 +4149,26 @@ _Validator Score: 1.0_
 		level: '1.30'
 		normative: true
 		references:
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/CAN-test-guide.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/CAN-explanation.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/ThreadX_Installation_Guide.md
-		- type: file
-		  path: docs/guides/CAN-overview.md
-		- type: file
-		  path: docs/guides/ThreadXGuide.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/CAN_test/CAN_Test.c
-		- type: file
-		  path: docs/guides/CAN_test/CAN-test.gif
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.c
-		- type: file
-		  path: docs/guides/CAN_test/app_threadx.h
-		- type: file
-		  path: docs/guides/OTA/OTA_Presentation-sprint8.md
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: docs/guides/OTA/OTA_Implementation_Guide.md
-		- type: file
-		  path: docs/guides/OTA/OTA_multiversion-arch-sprint8.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CANFrame.png
-		- type: file
-		  path: docs/images/CANsignal.png
-		- type: file
-		  path: docs/images/CANtopology2.png
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: docs/images/CANtopology.png
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/create-bundle.sh
-		- type: file
-		  path: src/ota/rauc/install-bundle.sh
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: src/ota/rauc/setup-rauc.sh
-		- type: file
-		  path: src/ota/scripts/ota-update.sh
-		- type: file
-		  path: src/ota/scripts/ota-check.sh
-		- type: file
-		  path: src/ota/scripts/canary-check.sh
-		- type: file
-		  path: src/ota/scripts/setup-ota-device.sh
-		- type: file
-		  path: src/ota/scripts/benchmark-ota.sh
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/is_stm_connected.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_to_kuksa_publisher.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/can_decode.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/src/handlers/heartbeat_stm.cpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_decode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_encode.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_to_kuksa_publisher.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/is_stm_connected.hpp
-		- type: file
-		  path: src/kuksa/kuksa_RPi5/inc/can_id.h
-		- type: file
-		  path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/tests/unit/mocks/stm32_mocks.cpp
-		- type: file
-		  path: src/tests/unit/mocks/stm32u5xx_hal.h
-		- type: file
-		  path: src/tests/unit/cpp/can_decode.hpp
-		- type: file
-		  path: src/tests/unit/cpp/can_frame_builder.hpp
-		- type: file
-		  path: src/tests/unit/cpp/is_stm_connected_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/can_decode_test.cpp
-		- type: file
-		  path: src/tests/unit/cpp/heartbeat_stm_test.cpp
-		- type: file
-		  path: src/shared/backend/kuksa/can_id.h
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/CAN/CAN_test/CAN_Test.c
-		- type: file
-		  path: src/CAN/CAN_test/CAN-test.gif
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.c
-		- type: file
-		  path: src/CAN/CAN_test/app_threadx.h
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/txe_byte_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/tx_byte_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/txe_block_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/tx_block_release.c
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/vl53l5cx_platform_stm32.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_can_benchmark.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_hal_conf.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32_assert.h
-		- type: file
-		  path: src/stm/Core/Inc/stm32u5xx_it.h
-		- type: file
-		  path: src/stm/Core/Inc/app_threadx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_tx.h
-		- type: file
-		  path: src/stm/Core/Inc/can_id.h
-		- type: file
-		  path: src/stm/Core/Inc/tasks/task_can_rx.h
-		- type: file
-		  path: src/stm/Core/Src/can_tx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32_can_benchmark.c
-		- type: file
-		  path: src/stm/Core/Src/vl53l5cx_platform_stm32.c
-		- type: file
-		  path: src/stm/Core/Src/app_threadx.c
-		- type: file
-		  path: src/stm/Core/Src/system_stm32u5xx.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_timebase_tim.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_it.c
-		- type: file
-		  path: src/stm/Core/Src/stm32u5xx_hal_msp.c
-		- type: file
-		  path: src/stm/Core/Src/tasks/task_can_rx.c
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos_config.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.h
-		- type: file
-		  path: src/stm/AZURE_RTOS/App/app_azure_rtos.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/system_stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u585xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpgpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gtzc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_tim.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_icache.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_usart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dlyb.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_lpuart.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_def.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_dma.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_gpio.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_crs.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_uart_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_icache.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_tim_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_cortex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_exti.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_i2c.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_spi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dma.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gtzc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pwr.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_mdf.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpio.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_dma_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_flash.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_ospi.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_dlyb.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rcc_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_lpgpio.c
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2.
 		
 		**Evidence Status:** Pending - tests and documentation to be completed during finalization phase.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png)
+		
 		
 		````
 
@@ -7053,77 +4331,14 @@ _Validator Score: 1.0_
 		level: '1.31'
 		normative: true
 		references:
-		- type: file
-		  path: src/ota/rauc/install-bundle.sh
-		- type: file
-		  path: src/ota/rauc/install-bundle.sh
-		- type: file
-		  path: src/ota/rauc/post-reboot-verify.sh
-		- type: file
-		  path: docs/guides/OTA/OTA_Implementation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: docs/guides/AGL_ Joystick_installation_and_test.md
-		- type: file
-		  path: docs/guides/AGL_Configuration_Guide.md
-		- type: file
-		  path: docs/guides/OTA/OTA_Presentation-sprint8.md
-		- type: file
-		  path: docs/guides/OTA/OTA_Comparison_Tests.md
-		- type: file
-		  path: docs/guides/OTA/OTA_Implementation_Guide.md
-		- type: file
-		  path: docs/guides/OTA/OTA_multiversion-arch-sprint8.md
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/images/CanFeederArchitecture.jpg
-		- type: file
-		  path: src/setup/toolchains/agl-toolchain.cmake
-		- type: file
-		  path: src/setup/toolchains/r5-agl-toolchain.cmake
-		- type: file
-		  path: src/ota/rauc/create-bundle.sh
-		- type: file
-		  path: src/ota/rauc/bootloader-custom-backend.sh
-		- type: file
-		  path: src/ota/rauc/setup-rauc.sh
-		- type: file
-		  path: src/ota/scripts/ota-update.sh
-		- type: file
-		  path: src/ota/scripts/ota-check.sh
-		- type: file
-		  path: src/ota/scripts/setup-ota-device.sh
-		- type: file
-		  path: src/ota/scripts/benchmark-ota.sh
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/txe_byte_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/tx_byte_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/txe_block_release.c
-		- type: file
-		  path: src/stm/Middlewares/ST/threadx/common/src/tx_block_release.c
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		score: 1.0
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
 		reviewers:
 		- name: Joao Jesus Silva
 		  email: joao.silva@seame.pt
 		review_status: pending
+		score: 0.0
 		---
 		This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation.
 		
@@ -7181,6 +4396,15 @@ _Validator Score: 1.0_
 		- [ ] Multi-update cycle test
 		
 		**Evidence Status:** In Progress - RAUC scripts implemented, SOTA/COTA/FOTA scripts pending, awaiting bundle creation and integration testing.
+		
+		## Evidence
+		
+		### Sprint Evidence
+		
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png)
+		- [Evidence Link](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Release.png)
+		
 		
 		````
 
@@ -9771,6 +6995,131 @@ _Validator Score: 1.0_
 		curl -fL https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/releases/download/v1.5.0/hash.txt -o hash.txt
 		sha256sum -c hash.txt
 		```
+		
+		````
+
+
+
+{% endraw %}
+
+
+---
+
+### ASSERTIONS-ASSERT_L0_32 | Reviewed: ✔ | Score: 1.0 ### {: #assertions-assert_l0_32 data-toc-label="ASSERTIONS-ASSERT_L0_32" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
+
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+_None_
+
+**Supporting Items:**
+
+_None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
+{% raw %}
+
+**References:**
+
+- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_32/EXPECTATIONS-EXPECT_L0_32.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EXPECT_L0_32
+		header: "ADAS pipeline real-time performance"
+		text: |
+		  The system shall process camera input and deliver stable, scenario-robust perception outputs for autonomous driving operations. End-to-end latency (decode through render) shall not exceed 70 ms median and 100 ms at p95 percentile under normal driving scenarios. Performance in adverse conditions (shadow and curve scenarios) must maintain p95 latency below 120 ms. Post-processing CPU utilization shall remain below 40% average and 60% at p95 on a single CPU core. This expectation ensures safe trajectory control and stable autonomous driving behavior across varying environmental conditions.
+		level: '1.32'
+		normative: true
+		references:
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_32/ASSERTIONS-ASSERT_L0_32.md
+		reviewers:
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
+		review_status: accepted
+		evidence:
+		    type: validate_hardware_availability
+		    configuration:
+		        components:
+		            - "STM32"
+		            - "CAN"
+		            - "Raspberry Pi"
+		---
+		
+		````
+
+
+
+- `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_32/EVIDENCES-EVID_L0_32.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EVID_L0_32
+		header: ADAS pipeline performance test evidence
+		text: 'Evidence for L0-32 shall include: (1) instrumented integration test logs with
+		  per-stage timestamp data from the camera input through perception output rendering;
+		  (2) CPU profiling results and utilization measurements for the post-processing stage
+		  under normal, shadow, and curve scenarios; (3) latency statistics (median, p95,
+		  p99 percentiles) across multiple test runs with scenario tags; (4) performance benchmark
+		  reports documenting results against acceptance criteria thresholds. Evidence will
+		  be collected from sprint integration test runs, performance benchmarking sessions,
+		  and scenario-specific test campaigns.
+		
+		  '
+		level: '1.32'
+		normative: true
+		references:
+		- type: url
+		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+		  description: TSF_PLACEHOLDER_EVIDENCE
+		score: 0.0
+		---
 		
 		````
 

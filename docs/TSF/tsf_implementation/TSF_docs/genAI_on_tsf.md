@@ -2,7 +2,13 @@
 
 This document explains how Generative AI (GenAI) is integrated into the TSF automation workflow for the SEA:ME Team 6 project.
 
-**Last Updated:** February 2026
+**Last Updated:** April 2026
+
+## April 2026 Update
+
+- GenAI-driven item generation now coexists with stricter semantic post-checks for placeholder/default content.
+- ASSUMP validator configuration defaults are now flagged in `--check` to avoid hidden template carry-over.
+- Troubleshooting guidance should treat `130/143` as interruption signals when runs are manually stopped.
 
 ---
 

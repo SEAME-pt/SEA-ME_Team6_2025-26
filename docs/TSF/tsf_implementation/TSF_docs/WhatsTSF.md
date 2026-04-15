@@ -16,6 +16,12 @@
 
 ## 1. Script Execution Commands
 
+## April 2026 Update
+
+- Resolved repeated TruDAG warning caused by local plugin `FileReference` name collision.
+- Clarified that interrupted runs (`130`/`143`) are signal-based interruptions, not TSF model errors.
+- Content checks now explicitly flag ASSUMP semantic defaults alongside EVID placeholders.
+
 From repository root.
 
 Short form (from repo root, after activating venv):

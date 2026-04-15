@@ -2,7 +2,13 @@
 
 This document describes the current TSF automation process in the SEA:ME Team 6 repository, including recent changes to evidence sync and placeholder handling.
 
-**Last Updated:** March 2026
+**Last Updated:** April 2026
+
+## April 2026 Update
+
+- Removed local plugin reference-name collision that generated repeated TruDAG warning lines.
+- Added ASSUMP semantic placeholder/default detection in content validation.
+- Current expected pending `--check` items are now explicit and transparent: `EVID-L0-32` and `ASSUMP-L0-32`.
 
 ## Table of Contents
 

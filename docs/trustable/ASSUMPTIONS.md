@@ -76,7 +76,7 @@ _Validator Score: 1.0_
 		header: System architecture defined
 		text: The demonstrator car system has a documented architecture that describes all
 		  hardware and software components and their interactions.
-		level: 1.1
+		level: '1.1'
 		normative: true
 		references:
 		- type: file
@@ -167,37 +167,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_2/EXPECTATIONS-EXPECT_L0_2.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_2
-		header: Hardware assembly complete
-		text: The demonstrator car hardware is fully assembled with all components correctly
-		  connected and operational.
-		level: '1.2'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_2/ASSERTIONS-ASSERT_L0_2.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -268,36 +238,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_3/EXPECTATIONS-EXPECT_L0_3.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_3
-		header: Software environment operational
-		text: The Raspberry Pi 5 runs a Linux environment capable of executing Qt applications.
-		level: '1.3'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_3/ASSERTIONS-ASSERT_L0_3.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -368,37 +309,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_4/EXPECTATIONS-EXPECT_L0_4.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_4
-		header: Remote control functional
-		text: The demonstrator car responds to remote control inputs for steering and throttle
-		  control.
-		level: '1.4'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_4/ASSERTIONS-ASSERT_L0_4.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -469,36 +380,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_5/EXPECTATIONS-EXPECT_L0_5.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_5
-		header: Qt application launches
-		text: A basic Qt application successfully launches and displays on the system.
-		level: '1.5'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_5/ASSERTIONS-ASSERT_L0_5.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -569,37 +451,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_6/EXPECTATIONS-EXPECT_L0_6.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_6
-		header: GUI displays static elements
-		text: The Qt graphical user interface displays static visual elements that form a
-		  simple cluster dashboard.
-		level: '1.6'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_6/ASSERTIONS-ASSERT_L0_6.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -670,36 +522,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_7/EXPECTATIONS-EXPECT_L0_7.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_7
-		header: Cross-compilation capability exists
-		text: The Qt application can be cross-compiled for the target hardware architecture.
-		level: '1.7'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_7/ASSERTIONS-ASSERT_L0_7.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -770,37 +593,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_8
-		header: CAN communication established
-		text: The Raspberry Pi 5 and STM32 microcontroller communicate bidirectionally using
-		  the CAN protocol.
-		level: '1.8'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_8/ASSERTIONS-ASSERT_L0_8.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -871,37 +664,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_9/EXPECTATIONS-EXPECT_L0_9.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_9
-		header: Real-time OS operational
-		text: The STM32 microcontroller runs the ThreadX real-time operating system for control
-		  tasks.
-		level: '1.9'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_9/ASSERTIONS-ASSERT_L0_9.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -972,37 +735,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_10/EXPECTATIONS-EXPECT_L0_10.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_10
-		header: Dual-device architecture implemented
-		text: The system operates using a dual Raspberry Pi architecture with Raspberry Pi
-		  5 for computation and Raspberry Pi 4 for display.
-		level: '1.10'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_10/ASSERTIONS-ASSERT_L0_10.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1073,37 +806,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_11/EXPECTATIONS-EXPECT_L0_11.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_11
-		header: Automatic startup configured
-		text: The Qt cluster application automatically starts on system boot and displays
-		  fullscreen.
-		level: '1.11'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_11/ASSERTIONS-ASSERT_L0_11.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1175,111 +878,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_12/EXPECTATIONS-EXPECT_L0_12.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_12
-		header: Wireless display operational
-		text: The cluster display content streams wirelessly from the computation device to
-		  the display device.
-		level: '1.12'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_12/ASSERTIONS-ASSERT_L0_12.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
-
-- `docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_12/EVIDENCES-EVID_L0_12.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EVID_L0_12
-		header: Wireless display demonstrated
-		text: The repository contains VNC configuration guides and demonstration images showing
-		  wireless display streaming.
-		normative: true
-		level: '1.12'
-		references:
-		- type: file
-		  path: docs/guides/Power Consumption Analysis.md
-		- type: file
-		  path: docs/guides/AGL_Installation_Guide.md
-		- type: file
-		  path: src/stm/Combined_test.md
-		- type: file
-		  path: docs/guides/MQTT_spike.md
-		- type: file
-		  path: docs/guides/QML-guide.md
-		- type: file
-		  path: docs/guides/github-actions-guide.md
-		- type: file
-		  path: docs/guides/Testing-Framework-Decision.md
-		- type: file
-		  path: docs/guides/Car_Architecture/circuit_image.png
-		- type: file
-		  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
-		- type: file
-		  path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
-		    four simple ingredients.pdf
-		- type: file
-		  path: src/setup/scripts/r5-qt6-build.sh
-		- type: file
-		  path: src/setup/scripts/qt6-build.sh
-		- type: file
-		  path: src/hmi/assets/icons/car-inactive.svg
-		- type: file
-		  path: src/hmi/assets/icons/car-active.svg
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.hpp
-		- type: file
-		  path: src/shared/backend/providers/vehicleprovider.cpp
-		- type: file
-		  path: src/stm/Core/Inc/vehicle_state.h
-		- type: file
-		  path: src/stm/Core/Inc/lcd1602.h
-		- type: file
-		  path: src/stm/Core/Src/lcd1602.c
-		- type: file
-		  path: src/stm/Drivers/CMSIS/Include/cmsis_iccarm.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd.h
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd_ex.c
-		- type: file
-		  path: src/stm/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_pcd.c
-		score: 1.0
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		---
-		This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1350,37 +949,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_13/EXPECTATIONS-EXPECT_L0_13.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_13
-		header: Version control established
-		text: The project uses a GitHub repository with proper structure and version control
-		  practices.
-		level: '1.13'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_13/ASSERTIONS-ASSERT_L0_13.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1456,37 +1025,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_14/EXPECTATIONS-EXPECT_L0_14.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_14
-		header: Requirements traceability established
-		text: The project implements the Trustable Safety Framework for requirements definition
-		  and traceability.
-		level: '1.14'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_14/ASSERTIONS-ASSERT_L0_14.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1558,37 +1097,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_15
-		header: Agile methodology adopted
-		text: The team follows Agile Scrum practices for iterative development and project
-		  management.
-		level: '1.15'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_15/ASSERTIONS-ASSERT_L0_15.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1659,37 +1168,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_16/EXPECTATIONS-EXPECT_L0_16.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_16
-		header: Continuous integration active
-		text: The project repository includes automated CI/CD pipelines for building and testing
-		  code changes.
-		level: '1.16'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_16/ASSERTIONS-ASSERT_L0_16.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -1760,37 +1239,7 @@ _Validator Score: 1.0_
 
 **References:**
 
-- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_17/EXPECTATIONS-EXPECT_L0_17.md`
-
-	??? "Click to view reference"
-
-		````md
-		---
-		id: EXPECT_L0_17
-		header: AI tools integrated
-		text: The development process incorporates AI-assisted tools for code development
-		  and documentation.
-		level: '1.17'
-		normative: true
-		references:
-		- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_17/ASSERTIONS-ASSERT_L0_17.md
-		  type: file
-		reviewers:
-		- name: Joao Jesus Silva
-		  email: joao.silva@seame.pt
-		review_status: accepted
-		evidence:
-		  type: validate_hardware_availability
-		  configuration:
-		    components:
-		    - STM32
-		    - CAN
-		    - Raspberry Pi
-		---
-		
-		````
-
-
+_None_
 
 {% endraw %}
 
@@ -5743,6 +5192,100 @@ _Validator Score: 1.0_
 		**Document Version:** 2.0  
 		**Author:** SEA:ME Team 6  
 		**Last Updated:** 24 February 2026
+		
+		````
+
+
+
+{% endraw %}
+
+
+---
+
+### ASSUMPTIONS-ASSUMP_L0_32 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_32 data-toc-label="ASSUMPTIONS-ASSUMP_L0_32" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
+
+{: .expanded-item-element }
+
+**Supported Requests:**
+
+_None_
+
+**Supporting Items:**
+
+_None_
+
+**Validator:**
+
+_Validator Score: 1.0_
+
+??? "Click to view validator configuration"
+    ````yaml
+    type: validate_hardware_availability
+        configuration:
+          components:
+          - STM32
+          - CAN
+          - Raspberry Pi
+    ````
+
+??? "Click to view validator documentation"
+    ````md
+    Validator for ASSUMP-L0-1 and ASSUMP-L0-2: Hardware availability.
+        
+        Validates that hardware components mentioned in the assumption are documented
+        in the repository through:
+        - Documentation files (guides, demos, sprints)
+        - Source code references
+        - Demo images
+        
+        Configuration should contain:
+            components: list of hardware components to validate
+            search_paths: optional list of paths to search (relative to repo root)
+        
+        Example yaml:
+            validators:
+            - type: validate_hardware_availability
+              configuration:
+                components:
+                  - "Raspberry Pi 5"
+                  - "Hailo AI Hat"
+                  - "DC motors"
+        
+        Returns:
+            (score, warnings) where score = percentage of validated components
+    ````
+
+{% raw %}
+
+**References:**
+
+- `docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_32/EXPECTATIONS-EXPECT_L0_32.md`
+
+	??? "Click to view reference"
+
+		````md
+		---
+		id: EXPECT_L0_32
+		header: "ADAS pipeline real-time performance"
+		text: |
+		  The system shall process camera input and deliver stable, scenario-robust perception outputs for autonomous driving operations. End-to-end latency (decode through render) shall not exceed 70 ms median and 100 ms at p95 percentile under normal driving scenarios. Performance in adverse conditions (shadow and curve scenarios) must maintain p95 latency below 120 ms. Post-processing CPU utilization shall remain below 40% average and 60% at p95 on a single CPU core. This expectation ensures safe trajectory control and stable autonomous driving behavior across varying environmental conditions.
+		level: '1.32'
+		normative: true
+		references:
+		- type: file
+		  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_32/ASSERTIONS-ASSERT_L0_32.md
+		reviewers:
+		- name: Joao Jesus Silva
+		  email: joao.silva@seame.pt
+		review_status: accepted
+		evidence:
+		    type: validate_hardware_availability
+		    configuration:
+		        components:
+		            - "STM32"
+		            - "CAN"
+		            - "Raspberry Pi"
+		---
 		
 		````
 

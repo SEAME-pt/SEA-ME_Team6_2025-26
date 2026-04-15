@@ -10,8 +10,10 @@ This allows trudag to find:
   validate_software_dependencies (from validators.py)
 """
 
-# Export references
-from .references import FileReference, UrlReference
+# Export references.
+# Do not export a custom `FileReference` here because TruDAG already ships one
+# with the same symbol name, which causes repeated shadowing warnings.
+from .references import UrlReference
 
 # Export validators
 from .validators import (
@@ -22,7 +24,6 @@ from .validators import (
 
 __all__ = [
     # References
-    "FileReference",
     "UrlReference",
     # Validators
     "validate_hardware_availability",

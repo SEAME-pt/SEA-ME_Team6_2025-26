@@ -2,7 +2,14 @@
 
 Welcome to the TSF (Trustable Software Framework) documentation for SEA:ME Team 6.
 
-**Last Updated:** February 2026
+**Last Updated:** April 2026
+
+## April 2026 Update
+
+- Fixed TruDAG plugin warning noise caused by `localplugins.FileReference` name collision with built-in references.
+- Clarified that `exit 130/143` seen in some runs were interruption signals (`SIGINT`/`SIGTERM`), not TSF structural failures.
+- Improved `--check` semantic placeholder detection for ASSUMP validator configuration.
+- Current expected pending placeholders: `EVID-L0-32` and `ASSUMP-L0-32`.
 
 ---
 
@@ -18,7 +25,10 @@ Follow this order to understand the TSF implementation from concepts to practice
 | 4 - | [**automatization_scripts_explanation.md**](automatization_scripts_explanation.md) | Detailed explanation of the automation scripts | ~12 min |
 | 5 - | [**how_we_are_using_genAI_on_tsf.md**](how_we_are_using_genAI_on_tsf.md) | How we are using GenAI in TSF automation workflows | ~8 min |
 | 6 - | [**VALIDATORS_GUIDE.md**](VALIDATORS_GUIDE.md) | CI validators vs TruDAG validators guide | ~8 min |
-| 7 - | [**TSF_SCORE_RECOVERY_MAR2026.md**](TSF_SCORE_RECOVERY_MAR2026.md) | March 2026 score recovery and technical fixes log | ~6 min |
+| 7 - | [**REFERENCES_GUIDE.md**](REFERENCES_GUIDE.md) | Reference modeling rules, placeholder policy, and anti-patterns | ~8 min |
+| 8 - | [**PROBLEMS_AND_FIXES_INDEX.md**](PROBLEMS_AND_FIXES_INDEX.md) | Unified troubleshooting index joining recovery log and structural analysis | ~5 min |
+| 9 - | [**TSF_SCORE_RECOVERY_MAR2026.md**](TSF_SCORE_RECOVERY_MAR2026.md) | March 2026 score recovery and technical fixes log | ~6 min |
+| 10 - | [**TSF_STRUCTURAL_ANALYSIS_REPORT.md**](TSF_STRUCTURAL_ANALYSIS_REPORT.md) | Structural/content issue analysis with root causes and resolutions timeline | ~12 min |
 
 ---
 
@@ -28,6 +38,7 @@ Follow this order to understand the TSF implementation from concepts to practice
 2. [Script Execution Commands](#-script-execution-commands)
 3. [Current Status](#-current-status)
 4. [Document Summaries](#-document-summaries)
+5. [Problem and Resolution Trail](#-problem-and-resolution-trail)
 
 ---
 
@@ -88,6 +99,8 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 
 ## 📊 Current Status
 
+Note: historical counters below may differ from latest branch state when new L0 items are added.
+
 - **Requirements:** 30 (L0-1 to L0-30)
 - **Total Items:** 116 (4 types × 30 - 4 orphans removed)
 - **TruDAG Score:** 86/116 items at 1.0
@@ -114,8 +127,29 @@ cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SE
 ### 6 - VALIDATORS_GUIDE.md
 > Explains the difference between CI validators (GitHub Actions) and TruDAG validators. Covers the universal validators (hardware, linux, software) and how to create new ones.
 
-### 7 - TSF_SCORE_RECOVERY_MAR2026.md
+### 7 - REFERENCES_GUIDE.md
+> Defines how `references` should be written for EXPECT/ASSERT/EVID/ASSUMP, including placeholder policy and validation checklist.
+
+### 8 - PROBLEMS_AND_FIXES_INDEX.md
+> Single entry point for incident history. Joins score-recovery and structural-analysis streams, with issue-to-fix mapping and current pending items.
+
+### 9 - TSF_SCORE_RECOVERY_MAR2026.md
 > Technical record of the March 2026 recovery work, including validator/path fixes, graph/link corrections, evidence normalization, and score restoration steps.
+
+### 10 - TSF_STRUCTURAL_ANALYSIS_REPORT.md
+> Consolidated analysis of structural and content issues (including April 2026 follow-up), with root causes, fixes applied, and remaining known placeholders.
+
+---
+
+## Problem and Resolution Trail
+
+If you are debugging regressions or trying to understand historical failures, read in this order:
+
+1. [PROBLEMS_AND_FIXES_INDEX.md](PROBLEMS_AND_FIXES_INDEX.md) - unified incident index and fast triage path.
+2. [TSF_SCORE_RECOVERY_MAR2026.md](TSF_SCORE_RECOVERY_MAR2026.md) - score breakdown and recovery actions.
+3. [TSF_STRUCTURAL_ANALYSIS_REPORT.md](TSF_STRUCTURAL_ANALYSIS_REPORT.md) - deeper structural/content findings and later follow-up corrections.
+4. [VALIDATORS_GUIDE.md](VALIDATORS_GUIDE.md) - validator behavior expected after fixes.
+5. [REFERENCES_GUIDE.md](REFERENCES_GUIDE.md) - reference policy and practical implementation mapping.
 
 ---
 
