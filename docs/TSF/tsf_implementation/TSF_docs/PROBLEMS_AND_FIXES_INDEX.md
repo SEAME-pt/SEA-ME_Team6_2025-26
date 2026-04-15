@@ -9,7 +9,7 @@ This document is the practical junction of:
 
 It provides one entry point to understand what failed, why it failed, and what was done.
 
-**Last Updated:** April 2026
+**Last Updated:** April 15, 2026
 
 ---
 
@@ -70,6 +70,27 @@ Key outcomes:
 - Clarified interrupted runs (`130/143`) vs true validation failures.
 - Improved semantic placeholder detection in `--check`.
 
+### April 15, 2026 - L0-32 References Corruption Fix
+
+**Issue**: EXPECT-L0-32, ASSERT-L0-32, and ASSUMP-L0-32 items had corrupted references pointing to `docs/guides/*.md` instead of canonical paths like `../assertions/ASSERT-L0-32.md`.
+
+**Root Causes** (two-layer issue):
+1. **YAML Format Corruption**: EXPECT-L0-32.md and ASSERT-L0-32.md were missing the closing `---` frontmatter marker, preventing file parsing
+2. **Fix Logic Bug**: Fix 5 in `fix_item_structure()` tried to regex-match `L0-\d+` against `item_id`, but the caller only passed the number ("32"), not "L0-32"
+
+**Fixes Applied**:
+- Added missing closing `---` markers to corrupted YAML files
+- Simplified Fix 5 logic (line 1698+) to use `item_id` directly
+- Verified all L0-32 references now use canonical paths
+- Strengthened AI generation prompts (line 964+) to enforce canonical-only references
+
+**Commit**: 603b33d8 (TSF/dana_presentation branch) - Fixed 126 items across all types
+
+**Verification**:
+- ✅ EXPECT-L0-32: `../assertions/ASSERT-L0-32.md`
+- ✅ ASSERT-L0-32: `../expectations/EXPECT-L0-32.md` + `../evidences/EVID-L0-32.md`
+- ✅ ASSUMP-L0-32: `../expectations/EXPECT-L0-32.md`
+
 ---
 
 ## 4. Issue-to-fix map
@@ -81,6 +102,7 @@ Key outcomes:
 | Plugin warning spam (`FileReference` collision) | Removed custom `FileReference`; kept focused URL customization | `TSF_STRUCTURAL_ANALYSIS_REPORT.md` |
 | Interrupted run confusion (`130/143`) | Treat as signal interruption, not model failure | `TSF_STRUCTURAL_ANALYSIS_REPORT.md` |
 | Placeholder detection asymmetry | Added semantic ASSUMP checks and cross-type placeholder guardrails | `TSF_STRUCTURAL_ANALYSIS_REPORT.md` |
+| L0-32 corrupted references (guides/* instead of canonical) | Fixed YAML format + Fix 5 logic in `fix_item_structure()`; normalized all references | This document (April 15, 2026 section) |
 
 ---
 

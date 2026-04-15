@@ -29,7 +29,8 @@ Follow this order to understand the TSF implementation from concepts to practice
 | 8 - | [**PROBLEMS_AND_FIXES_INDEX.md**](PROBLEMS_AND_FIXES_INDEX.md) | Unified troubleshooting index joining recovery log and structural analysis | ~5 min |
 | 9 - | [**TSF_SCORE_RECOVERY_MAR2026.md**](TSF_SCORE_RECOVERY_MAR2026.md) | March 2026 score recovery and technical fixes log | ~6 min |
 | 10 - | [**TSF_STRUCTURAL_ANALYSIS_REPORT.md**](TSF_STRUCTURAL_ANALYSIS_REPORT.md) | Structural/content issue analysis with root causes and resolutions timeline | ~12 min |
-| 11 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
+| 11 - | [**L0-32_REFERENCES_FIX_REPORT.md**](L0-32_REFERENCES_FIX_REPORT.md) | L0-32 reference corruption root cause analysis, fixes applied, and prevention measures | ~8 min |
+| 12 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
 
 ---
 
@@ -140,7 +141,10 @@ Note: historical counters below may differ from latest branch state when new L0 
 ### 10 - TSF_STRUCTURAL_ANALYSIS_REPORT.md
 > Consolidated analysis of structural and content issues (including April 2026 follow-up), with root causes, fixes applied, and remaining known placeholders.
 
-### 11 - Still_TO_DO
+### 11 - L0-32_REFERENCES_FIX_REPORT.md
+> Deep dive into the L0-32 reference corruption issue discovered in April 2026. Covers the two-layer root cause (YAML format corruption + Fix 5 logic bug), all fixes applied, verification results, and prevention mechanisms for future issues.
+
+### 12 - Still_TO_DO
 > Short action list for the next cleanup pass, including evidence handling and the ASSUMP validator/model decision.
 
 ---
