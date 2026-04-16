@@ -2,11 +2,19 @@
 
 ## April 2026 follow-up items
 
-1. Fix the evidence handling:
+1. Fix EVID-L0-31, and L0-31 other items
+
+2. Fix expectations, assertions, assumptions and evidences files, taking this out:
+
+references:
+- type: file
+  path: ../assertions/ASSERT-L0-32.md
+
+3. Fix the evidence handling:
    - either restore the linkage with the sprint files, or
    - improve the parser across most project files, such as demo, guides, src, and related folders.
 
-2. Decide whether to remove `evidence:` from ASSUMP items.
+4. Decide whether to remove `evidence:` from ASSUMP items.
 
    Important note:
    - In the current TSF implementation, the `evidence:` block inside ASSUMP items is not treated as artifact evidence.

@@ -17,9 +17,8 @@ references:
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/ai_generator.py
   description: 'Evidence from sprint4.md: AI Generator'
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/TSF/tsf_implementation/TSF_docs/old/genAI_on_tsf.md
-  description: 'Evidence from sprint4.md: GenAI on TSF Doc'
+- type: file
+  path: docs/TSF/tsf_implementation/TSF_docs/old/genAI_on_tsf.md
 score: 1.0
 reviewers:
 - name: Joao Jesus Silva

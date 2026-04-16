@@ -4,8 +4,8 @@ header: 'Assumption: Agile'
 level: '1.15'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md
-  type: file
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_15/EXPECTATIONS-EXPECT_L0_15.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
