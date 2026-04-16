@@ -26,7 +26,7 @@ Follow this order to understand the TSF implementation from concepts to practice
 | 5 - | [**how_we_are_using_genAI_on_tsf.md**](how_we_are_using_genAI_on_tsf.md) | How we are using GenAI in TSF automation workflows | ~8 min |
 | 6 - | [**VALIDATORS_GUIDE.md**](VALIDATORS_GUIDE.md) | CI validators vs TruDAG validators guide | ~8 min |
 | 7 - | [**REFERENCES_GUIDE.md**](REFERENCES_GUIDE.md) | Reference modeling rules, placeholder policy, and anti-patterns | ~8 min |
-| 8 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
+| 8 - | [**FUTURE_TO_DO_in_TSF/**](FUTURE_TO_DO_in_TSF/) | Future backlog folder for pending tasks, improvements, and new ideas | ~6 min |
 | 9 - | [**problems_and_fixes/**](problems_and_fixes/) | Dedicated folder for incident history and fix reports, including the TruDAG link-review order report | ~20 min |
 | 10 - | [**old/**](old/) | Archived legacy documentation | ~2 min |
 
@@ -130,8 +130,8 @@ Note: historical counters below may differ from latest branch state when new L0 
 ### 7 - REFERENCES_GUIDE.md
 > Defines how `references` should be written for EXPECT/ASSERT/EVID/ASSUMP, including placeholder policy and validation checklist.
 
-### 8 - Still_TO_DO
-> Short action list for the next cleanup pass, including evidence handling and the ASSUMP validator/model decision.
+### 8 - FUTURE_TO_DO_in_TSF/
+> Folder for pending tasks, proposed improvements, and future TSF ideas (whether implemented or not).
 
 ### 9 - problems_and_fixes/
 > Folder containing the incident-resolution reading order:
