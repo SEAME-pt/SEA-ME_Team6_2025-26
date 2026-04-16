@@ -26,11 +26,9 @@ Follow this order to understand the TSF implementation from concepts to practice
 | 5 - | [**how_we_are_using_genAI_on_tsf.md**](how_we_are_using_genAI_on_tsf.md) | How we are using GenAI in TSF automation workflows | ~8 min |
 | 6 - | [**VALIDATORS_GUIDE.md**](VALIDATORS_GUIDE.md) | CI validators vs TruDAG validators guide | ~8 min |
 | 7 - | [**REFERENCES_GUIDE.md**](REFERENCES_GUIDE.md) | Reference modeling rules, placeholder policy, and anti-patterns | ~8 min |
-| 8 - | [**PROBLEMS_AND_FIXES_INDEX.md**](PROBLEMS_AND_FIXES_INDEX.md) | Unified troubleshooting index joining recovery log and structural analysis | ~5 min |
-| 9 - | [**TSF_SCORE_RECOVERY_MAR2026.md**](TSF_SCORE_RECOVERY_MAR2026.md) | March 2026 score recovery and technical fixes log | ~6 min |
-| 10 - | [**TSF_STRUCTURAL_ANALYSIS_REPORT.md**](TSF_STRUCTURAL_ANALYSIS_REPORT.md) | Structural/content issue analysis with root causes and resolutions timeline | ~12 min |
-| 11 - | [**L0-32_REFERENCES_FIX_REPORT.md**](L0-32_REFERENCES_FIX_REPORT.md) | L0-32 reference corruption root cause analysis, fixes applied, and prevention measures | ~8 min |
-| 12 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
+| 8 - | [**Still_TO_DO**](Still_TO_DO) | Open follow-up tasks and next cleanup actions | ~4 min |
+| 9 - | [**problems_and_fixes/**](problems_and_fixes/) | Dedicated folder for incident history and fix reports, including the TruDAG link-review order report | ~20 min |
+| 10 - | [**old/**](old/) | Archived legacy documentation | ~2 min |
 
 ---
 
@@ -132,20 +130,19 @@ Note: historical counters below may differ from latest branch state when new L0 
 ### 7 - REFERENCES_GUIDE.md
 > Defines how `references` should be written for EXPECT/ASSERT/EVID/ASSUMP, including placeholder policy and validation checklist.
 
-### 8 - PROBLEMS_AND_FIXES_INDEX.md
-> Single entry point for incident history. Joins score-recovery and structural-analysis streams, with issue-to-fix mapping and current pending items.
-
-### 9 - TSF_SCORE_RECOVERY_MAR2026.md
-> Technical record of the March 2026 recovery work, including validator/path fixes, graph/link corrections, evidence normalization, and score restoration steps.
-
-### 10 - TSF_STRUCTURAL_ANALYSIS_REPORT.md
-> Consolidated analysis of structural and content issues (including April 2026 follow-up), with root causes, fixes applied, and remaining known placeholders.
-
-### 11 - L0-32_REFERENCES_FIX_REPORT.md
-> Deep dive into the L0-32 reference corruption issue discovered in April 2026. Covers the two-layer root cause (YAML format corruption + Fix 5 logic bug), all fixes applied, verification results, and prevention mechanisms for future issues.
-
-### 12 - Still_TO_DO
+### 8 - Still_TO_DO
 > Short action list for the next cleanup pass, including evidence handling and the ASSUMP validator/model decision.
+
+### 9 - problems_and_fixes/
+> Folder containing the incident-resolution reading order:
+> - TRUDAG_LINK_REVIEW_ORDER_FIX_REPORT.md
+> - PROBLEMS_AND_FIXES_INDEX.md
+> - TSF_SCORE_RECOVERY_MAR2026.md
+> - TSF_STRUCTURAL_ANALYSIS_REPORT.md
+> - L0-32_REFERENCES_FIX_REPORT.md
+
+### 10 - old/
+> Archived legacy documentation, including the older GenAI-on-TSF note.
 
 ---
 
@@ -153,11 +150,9 @@ Note: historical counters below may differ from latest branch state when new L0 
 
 If you are debugging regressions or trying to understand historical failures, read in this order:
 
-1. [PROBLEMS_AND_FIXES_INDEX.md](PROBLEMS_AND_FIXES_INDEX.md) - unified incident index and fast triage path.
-2. [TSF_SCORE_RECOVERY_MAR2026.md](TSF_SCORE_RECOVERY_MAR2026.md) - score breakdown and recovery actions.
-3. [TSF_STRUCTURAL_ANALYSIS_REPORT.md](TSF_STRUCTURAL_ANALYSIS_REPORT.md) - deeper structural/content findings and later follow-up corrections.
-4. [VALIDATORS_GUIDE.md](VALIDATORS_GUIDE.md) - validator behavior expected after fixes.
-5. [REFERENCES_GUIDE.md](REFERENCES_GUIDE.md) - reference policy and practical implementation mapping.
+1. [problems_and_fixes/README.md](problems_and_fixes/README.md) - unified incident index and fast triage path.
+2. [VALIDATORS_GUIDE.md](VALIDATORS_GUIDE.md) - validator behavior expected after fixes.
+3. [REFERENCES_GUIDE.md](REFERENCES_GUIDE.md) - reference policy and practical implementation mapping.
 
 ---
 
@@ -191,4 +186,4 @@ Post-debug fixes documented in this folder include:
 Current documented outcome: score recovered to `124/124`.
 
 Detailed recovery log:
-- [TSF_SCORE_RECOVERY_MAR2026.md](TSF_SCORE_RECOVERY_MAR2026.md)
+- [problems_and_fixes/TSF_SCORE_RECOVERY_MAR2026.md](problems_and_fixes/TSF_SCORE_RECOVERY_MAR2026.md)

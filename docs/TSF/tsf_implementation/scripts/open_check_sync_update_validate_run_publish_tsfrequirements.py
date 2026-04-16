@@ -1611,7 +1611,17 @@ review_status: accepted
         # Parse YAML frontmatter
         yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
         if not yaml_match:
-            return False, ["No YAML frontmatter found"]
+            # Auto-repair common corruption: missing closing frontmatter delimiter.
+            # This prevents a single malformed file from breaking check/validate workflows.
+            delimiter_count = content.count('\n---') + (1 if content.startswith('---\n') else 0)
+            if content.startswith('---\n') and delimiter_count == 1:
+                content = content.rstrip() + "\n---\n"
+                yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+                if yaml_match:
+                    fixes_applied.append("Recovered missing YAML frontmatter closing marker")
+                    modified = True
+            if not yaml_match:
+                return False, ["No YAML frontmatter found"]
         
         try:
             frontmatter = yaml.safe_load(yaml_match.group(1))
@@ -2729,6 +2739,18 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     else:
         print(f"   ⚠️  Validator not found: {validator_path}")
     
+    # Fail fast: do not run TruDAG if structural validation already failed.
+    if not status['validation_passed']:
+        print("\n⛔ Skipping TruDAG because item validation failed.")
+        print("   Fix validation errors first (e.g., missing/invalid YAML frontmatter), then rerun --validate.")
+        print("\n" + "-"*70)
+        print("✅ VALIDATE, RUN & PUBLISH Summary:")
+        print(f"   • Validation: {'✅ Passed' if status['validation_passed'] else '❌ Failed'}")
+        print(f"   • TruDAG: {'✅ Passed' if status['trudag_success'] else '❌ Skipped'}")
+        print(f"   • Errors: {len(status['errors'])}")
+        print(f"   • Warnings: {len(status['warnings'])}")
+        return status
+
     # 2. Run TruDAG (setup_trudag_clean.sh)
     print("\n🚀 Running TruDAG...")
     
@@ -2736,7 +2758,8 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     
     if trudag_script.exists():
         try:
-            print("   ⏳ Running TruDAG (this may take several minutes for 84 items)...")
+            item_count = sum(1 for _ in config.items_dir.rglob("*.md"))
+            print(f"   ⏳ Running TruDAG (this may take several minutes for {item_count} items)...")
             print("   📺 Live output:")
             print("   " + "-"*50)
             
