@@ -22,8 +22,15 @@ enum {
   SRF08_MAX_POLLS         = 14   // 14 * 5 = 70 ticks
 };
 
-#define SRF08_FILTER_SIZE        5
+#define SRF08_FILTER_SIZE        3  // reduced from 5: less lag (~214ms vs ~357ms)
 #define SRF08_LIGHT_THRESHOLD    2
+
+/* Far-reading debounce: the sensor occasionally misses an echo and returns 0,
+ * which maps to 6000 mm.  Only accept a reading above this threshold after
+ * SRF08_FAR_DEBOUNCE_COUNT consecutive such readings.  A single close reading
+ * immediately resets the debounce — safety-critical behaviour. */
+#define SRF08_FAR_THRESHOLD_MM      2000U   /* anything above ~2 m is "possibly no echo" */
+#define SRF08_FAR_DEBOUNCE_COUNT       3U   /* need 3 consecutive far readings (~210 ms) */
 
 typedef struct
 {
@@ -41,6 +48,10 @@ typedef struct
   uint8_t  buffer_index;
   uint8_t  buffer_filled;
   uint16_t distance_mm_filtered;
+
+  // far-reading debounce state
+  uint8_t  far_debounce_count;     /* consecutive far readings so far            */
+  uint16_t last_near_distance_mm;  /* last confirmed close reading (safe fallback) */
 
   // one-time banner printed
   uint8_t printed_banner;
@@ -98,8 +109,19 @@ void task_srf08_init(SystemCtx* ctx)
     sys_log(ctx, "[SRF08] OK version=%u | gain_reg=%u (expected %u) | range_reg=140",
             ver, gain_rb, SRF08_RECOMMENDED_GAIN);
 
-    if (gain_rb != SRF08_RECOMMENDED_GAIN)
-        sys_log(ctx, "[SRF08] WARN: gain readback mismatch! I2C write may have failed");
+    if (gain_rb != SRF08_RECOMMENDED_GAIN) {
+        sys_log(ctx, "[SRF08] WARN: gain readback mismatch (got %u, expected %u) — a retentar...", gain_rb, SRF08_RECOMMENDED_GAIN);
+        // Segunda tentativa
+        HAL_StatusTypeDef st2 = SRF08_SetGain(&s_srf.hsrf08, SRF08_RECOMMENDED_GAIN, ctx);
+        tx_thread_sleep(20);
+        tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+        HAL_I2C_Mem_Read(&hi2c1, SRF08_DEFAULT_ADDR, SRF08_REG_GAIN, 1, &gain_rb, 1, 100);
+        tx_mutex_put(&ctx->i2c1_mutex);
+        if (gain_rb != SRF08_RECOMMENDED_GAIN)
+            sys_log(ctx, "[SRF08] ERRO: gain readback ainda errado após retry (st=%d, got=%u) — sensor pode estar mal configurado", st2, gain_rb);
+        else
+            sys_log(ctx, "[SRF08] gain corrigido na 2a tentativa OK");
+    }
 }
 
 /*
@@ -175,13 +197,22 @@ void task_srf08_step(SystemCtx* ctx)
   // 1) Start ranging
   HAL_StatusTypeDef ranging_status = SRF08_StartRanging(&s_srf.hsrf08, ctx);
 
-  if (ranging_status != HAL_OK && ++s_srf.err_log_counter >= 15)
+  if (ranging_status != HAL_OK)
   {
-    s_srf.err_log_counter = 0;
-    sys_log(ctx,
-      "\033[1;31m[SRF08] ERRO ao enviar comando ranging! Status: %d\033[0m",
-      ranging_status
-    );
+    if (++s_srf.err_log_counter >= 15)
+    {
+      s_srf.err_log_counter = 0;
+      sys_log(ctx,
+        "\033[1;31m[SRF08] ERRO ao enviar comando ranging! Status: %d\033[0m",
+        ranging_status
+      );
+    }
+    /* Ranging command failed — reading would be stale/invalid.
+     * Sleep the normal measurement window so the task cadence stays the
+     * same, then return without touching the filter or sending CAN.
+     * This prevents 6000 mm / 0 lux from reaching the RPi5 datalogger. */
+    tx_thread_sleep(SRF08_MEAS_WAIT_TICKS);
+    return;
   }
 
   // 2) Wait measurement complete (same behavior)
@@ -224,42 +255,71 @@ void task_srf08_step(SystemCtx* ctx)
   uint16_t distance_cm = SRF08_GetDistanceCm(&s_srf.hsrf08, ctx);
   uint8_t  light       = SRF08_GetLight(&s_srf.hsrf08, ctx);
 
-  uint16_t distance_mm_raw = (distance_cm == 0xFFFF) ? 0 : (uint16_t)(distance_cm * 10u);
-  uint16_t distance_mm     = srf08_apply_filter(distance_mm_raw, light);
+  /* I2C read error — distance and light are both unreliable.
+   * Do not update the filter or send CAN; the RPi5 will keep the last
+   * valid reading rather than receiving 6000 mm / 0 lux garbage. */
+  if (distance_cm == 0xFFFF)
+  {
+    if (++s_srf.srf08_log_counter >= 15)
+    {
+      s_srf.srf08_log_counter = 0;
+      sys_log(ctx, "\033[1;31m[SRF08] ERRO I2C ao ler distancia!\033[0m");
+    }
+    tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+    ctx->state.srf08_valid = 0;
+    tx_mutex_put(&ctx->state_mutex);
+    return;
+  }
+
+  uint16_t distance_mm_raw;
+  if (distance_cm == 0) {
+    distance_mm_raw = (uint16_t)(SRF08_MAX_DISTANCE_CM * 10u);  // sem eco = sem obstáculo
+  } else {
+    distance_mm_raw = (uint16_t)(distance_cm * 10u);
+  }
+
+  // Eco do chão: leitura pequena não é obstáculo real → tratar como "livre"
+  if (distance_mm_raw > 0 && distance_mm_raw < SRF08_MIN_VALID_DISTANCE_MM)
+    distance_mm_raw = (uint16_t)(SRF08_MAX_DISTANCE_CM * 10u);
+
+  uint16_t distance_mm = srf08_apply_filter(distance_mm_raw, light);
+
+  /* Far-reading debounce: ignore isolated "no echo" spikes.
+   * Only accept a far reading after SRF08_FAR_DEBOUNCE_COUNT consecutive
+   * readings above SRF08_FAR_THRESHOLD_MM.  Any single close reading resets
+   * the debounce immediately (safe-by-default: treat unknown as obstacle). */
+  if (distance_mm > SRF08_FAR_THRESHOLD_MM)
+  {
+      if (s_srf.far_debounce_count < SRF08_FAR_DEBOUNCE_COUNT)
+      {
+          s_srf.far_debounce_count++;
+          /* Not yet confirmed far — hold the last known close reading */
+          distance_mm = s_srf.last_near_distance_mm;
+      }
+      /* else: debounce count reached → accept the far reading as-is */
+  }
+  else
+  {
+      /* Close reading → reset debounce and save as safe fallback */
+      s_srf.far_debounce_count    = 0U;
+      s_srf.last_near_distance_mm = distance_mm;
+  }
 
   // 5) Debug log every ~1s
   if (++s_srf.srf08_log_counter >= 15)
   {
     s_srf.srf08_log_counter = 0;
-
-    if (distance_cm == 0xFFFF)
-    {
-      sys_log(ctx, "\033[1;31m[SRF08] ERRO I2C ao ler distancia!\033[0m");
-    }
-    else
-    {
-      // preserve exact messages/formatting
-      sys_log(ctx, "\033[1;36m[SRF08] %u mm | L=%u | SpeedLimit=%u%%",
-              distance_mm, light, srf08_speed_limit);
-
-      if (srf08_speed_limit < 100)
-        sys_log(ctx, " \033[1;33m[SLOWDOWN!]\033[1;36m");
-
-      if (light == 0 && distance_cm == 0)
-        sys_log(ctx, " <- SEM ECO");
-
-      sys_log(ctx, "\033[0m");
-    }
+    sys_log(ctx, "\033[1;36m[SRF08] raw=%u mm | filt=%u mm | L=%u\033[0m",
+            distance_mm_raw, distance_mm, light);
   }
 
   // 6) Speed limit now handled entirely by AEB (task_aeb.c).
   //    SRF08 task only provides distance data.
   srf08_speed_limit = 100;  // no legacy limiting
 
-  // 7) Periodic CAN send (always send, including during AEB events)
+  // 7) CAN send
   s_srf.can_send_counter++;
 
-  if (light > 0)
   {
     SRF08Distance_t srf08_frame;
     srf08_frame.distance_mm = distance_mm;
@@ -268,7 +328,7 @@ void task_srf08_step(SystemCtx* ctx)
     srf08_frame.range_setting = 0;
     srf08_frame.reserved[0] = 0;
     srf08_frame.reserved[1] = 0;
-    srf08_frame.status = 0x01;
+    srf08_frame.status = 0x01;  /* ranging succeeded this cycle */
 
     if (s_srf.init_status != HAL_OK)
       srf08_frame.status |= (1 << 1);
@@ -277,7 +337,7 @@ void task_srf08_step(SystemCtx* ctx)
 
     if ((s_srf.can_send_counter % 10) == 0)
     {
-      sys_log(ctx, "[SRF08] %u mm | L=%u",
+      sys_log(ctx, "[SRF08] %u mm | L=%u | valid=1",
               distance_mm, light);
     }
   }
@@ -288,7 +348,7 @@ void task_srf08_step(SystemCtx* ctx)
   ctx->state.srf08_speed_limit = srf08_speed_limit;
   //ctx->state.emergency_stop_active = emergency_stop_active;
   ctx->state.srf08_ts = tx_time_get();
-  ctx->state.srf08_valid = (distance_cm != 0xFFFF) ? 1 : 0;  // 1 if read OK, else 0
+  ctx->state.srf08_valid = 1;  /* always 1 here — error paths return early */
   tx_mutex_put(&ctx->state_mutex);
 
   // 9) Keep "minimum lag" loop behavior
