@@ -83,13 +83,14 @@
 #define INA226_CONFIG_DEFAULT    (INA226_AVG_16 | INA226_VBUS_1100US | \
                                   INA226_VSHUNT_1100US | INA226_MODE_SHUNT_BUS_CONT)
 
-/* Calibration for ±20A module with 2mΩ shunt (R002) */
-/* Current_LSB = 1mA (simplified)                      */
-/* CAL = 0.00512 / (0.001 × 0.002) = 2560             */
-#define INA226_RSHUNT_OHMS       0.002f
-#define INA226_CALIBRATION_VALUE 2560
-#define INA226_CURRENT_LSB_MA    1.0f
-
+/*
+ * Calibration for ±20A module with ~4mΩ shunt
+ * Current_LSB = 20A / 32768 ≈ 0.61mA, using 1mA for simplicity
+ * CAL = 0.00512 / (Current_LSB × Rshunt)
+ * CAL = 0.00512 / (0.001 × 0.004) = 1280
+ */
+#define INA226_CALIBRATION_VALUE 1280
+#define INA226_CURRENT_LSB_MA    1.0f    /* 1mA per LSB */
 
 /* LSB values from datasheet */
 #define INA226_BUS_VOLTAGE_LSB   1.25f   /* 1.25mV per LSB */

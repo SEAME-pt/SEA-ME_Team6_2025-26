@@ -1,6 +1,5 @@
 #include "./tasks/task_can_rx.h"
 #include "./tasks/task_indicator.h"
-#include "./tasks/task_cruise_control.h"
 
 #include <stdio.h>
 #include <stdlib.h>   // abs
@@ -24,7 +23,7 @@ enum {
 };
 
 // Global maximum throttle cap: limits top speed regardless of AEB state
-#define AEB_MAX_THROTTLE_PCT 100u
+#define AEB_MAX_THROTTLE_PCT 60u
 
 typedef struct
 {
@@ -89,30 +88,6 @@ static void clear_mcp_flags_if_due(SystemCtx* ctx)
     MCP2515_WriteRegister(REG_EFLG, 0x00);
 
   tx_mutex_put(&ctx->spi1_mutex);
-
-  /* TXBO (bit 5): bus-off error — TEC reached 255. The MCP2515 stops all
-   * transmission and reception. Recovery: transition through config mode
-   * to reset the error counters, then back to normal mode.
-   * This is NOT done while holding spi1_mutex to avoid blocking other tasks
-   * during the mandatory inter-command delays. */
-  if (eflg & 0x20)
-  {
-    sys_log(ctx, "[CAN_RX] bus-off detectado (EFLG=0x%02X) — a recuperar MCP2515...", eflg);
-
-    tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
-    MCP2515_WriteRegister(REG_CANCTRL, 0x80); /* → config mode: resets TEC/REC */
-    tx_mutex_put(&ctx->spi1_mutex);
-
-    tx_thread_sleep(5);
-
-    tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
-    MCP2515_WriteRegister(REG_CANCTRL, 0x00); /* → normal mode */
-    tx_mutex_put(&ctx->spi1_mutex);
-
-    tx_thread_sleep(5);
-
-    sys_log(ctx, "[CAN_RX] MCP2515 recuperado de bus-off");
-  }
 }
 
 static void handle_emergency_stop(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
@@ -197,25 +172,6 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   Servo_SetAngle(servo_angle);
   s_rx.actual_steering_applied = steering;
 
-  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-  ctx->state.servo_angle = steering;
-  tx_mutex_put(&ctx->state_mutex);
-
-  /* Brake flag always overrides CC */
-  if (cmd->flags & CMD_FLAG_BRAKE)
-  {
-    tx_mutex_get(&g_cc_mutex, TX_WAIT_FOREVER);
-    CruiseControl_ForceOverride(&g_cruise_control);
-    tx_mutex_put(&g_cc_mutex);
-    Motor_Stop();
-    s_rx.actual_throttle_applied = 0;
-    return;
-  }
-
-  /* When CC is active, task_cruise_control drives throttle directly */
-  if (CruiseControl_IsActive(&g_cruise_control))
-    return;
-
   if (throttle < -100) throttle = -100;
   if (throttle > 100)  throttle = 100;
 
@@ -227,7 +183,7 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   if (throttle > (int8_t)limit)
     throttle = (int8_t)limit;
 
-  if (throttle == 0)
+  if ((cmd->flags & CMD_FLAG_BRAKE) || throttle == 0)
   {
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
@@ -300,28 +256,6 @@ static void handle_indicator_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
     //sys_log(ctx, "\033[1;33m[CAN_RX] INDICATOR -> %s\033[0m", names[state]);
 }
 
-static void handle_cc_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
-{
-    if (rx_msg->dlc < sizeof(CruiseControlCmd_t))
-        return;
-
-    if (!validate_crc8(rx_msg->data, sizeof(CruiseControlCmd_t)))
-    {
-        sys_log(ctx, "\033[1;31m[CAN_RX] CC_CMD CRC INVÁLIDO!\033[0m");
-        return;
-    }
-
-    tx_mutex_get(&g_cc_mutex, TX_WAIT_FOREVER);
-    CruiseControl_ProcessCommand(&g_cruise_control, (const CruiseControlCmd_t *)rx_msg->data);
-    uint8_t new_state = (uint8_t)g_cruise_control.state;
-    tx_mutex_put(&g_cc_mutex);
-
-    sys_log(ctx, "[CAN_RX] CC cmd=%u target=%.2f km/h state=%u",
-            rx_msg->data[0],
-            (float)(rx_msg->data[1] | ((uint16_t)rx_msg->data[2] << 8)) / 100.0f,
-            new_state);
-}
-
 static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   if (rx_msg->dlc < 1)
@@ -376,31 +310,21 @@ static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const V
   Servo_SetAngle(servo_angle);
   s_rx.actual_steering_applied = (int8_t)steering;
 
-  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-  ctx->state.servo_angle = (int8_t)steering;
-  tx_mutex_put(&ctx->state_mutex);
-
-  /* When CC is active, task_cruise_control drives throttle directly */
-  /* When CC is active, task_cruise_control drives throttle directly */
-    if (CruiseControl_IsActive(&g_cruise_control))
-      return;
-
-    // --- ALTERAÇÃO AQUI: Baixar o limite de 10 para 0 ---
-    if (throttle > 0)
-    {
-      Motor_Forward((uint8_t)throttle);
-      s_rx.actual_throttle_applied = (int8_t)throttle;
-    }
-    else if (throttle < 0)
-    {
-      Motor_Backward((uint8_t)(-throttle));
-      s_rx.actual_throttle_applied = (int8_t)throttle;
-    }
-    else
-    {
-      Motor_Stop();
-      s_rx.actual_throttle_applied = 0;
-    }
+  if (throttle > 10)
+  {
+    Motor_Forward((uint8_t)throttle);
+    s_rx.actual_throttle_applied = (int8_t)throttle;
+  }
+  else if (throttle < -10)
+  {
+    Motor_Backward((uint8_t)(-throttle));
+    s_rx.actual_throttle_applied = (int8_t)throttle;
+  }
+  else
+  {
+    Motor_Stop();
+    s_rx.actual_throttle_applied = 0;
+  }
 
   if (++s_rx.joystick_log_counter >= 10)
   {
@@ -420,8 +344,7 @@ static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg, const Ve
   {
     case CAN_ID_EMERGENCY_STOP: handle_emergency_stop(ctx, rx_msg, snap); break;
     case CAN_ID_MOTOR_CMD:      handle_motor_cmd(ctx, rx_msg, snap);      break;
-    case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx, snap);             break;
-    case CAN_ID_CC_CMD:         handle_cc_cmd(ctx, rx_msg);               break;
+    case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx, snap);            break;
     case CAN_ID_HEARTBEAT_AGL:  handle_heartbeat_agl(ctx, rx_msg, snap);  break;
     case CAN_ID_CMD_RELAY:      handle_relay_cmd(ctx, rx_msg, snap);      break;
     case CAN_ID_CMD_INDICATOR:  handle_indicator_cmd(ctx, rx_msg);        break;
@@ -498,7 +421,6 @@ void task_can_rx_step(SystemCtx* ctx)
     sys_log(ctx, "\033[1;33m[CAN_RX] STOP - Emergency/AEB LATCHED! (Reverse OK)\033[0m");
     Motor_Stop();
     s_rx.actual_throttle_applied = 0;
-    tx_thread_sleep(CAN_RX_SLEEP_TICKS); /* must yield — same-priority tasks (SRF08, AEB) would starve */
     return;
   }
 
@@ -508,7 +430,7 @@ void task_can_rx_step(SystemCtx* ctx)
   //
   // Below ~15% PWM the motor can't spin but also doesn't brake
   // (it just coasts). Use Motor_Stop() (electrical brake) instead.
-  #define AEB_BRAKE_THRESHOLD_PCT 20u  // = MIN_THROTTLE: below this motor doesn't spin
+  #define AEB_BRAKE_THRESHOLD_PCT 15u
 
   if (s_rx.actual_throttle_applied > 0)
   {

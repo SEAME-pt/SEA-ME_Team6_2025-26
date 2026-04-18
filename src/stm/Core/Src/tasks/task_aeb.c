@@ -109,7 +109,6 @@ typedef struct {
   uint8_t min_creep_pct; // minimum throttle floor in soft-braking zone (set 0 to disable)
   uint8_t limit_slew_up_pct;   // max throttle increase per 20ms step
   uint8_t limit_slew_down_pct; // max throttle decrease per 20ms step (faster for braking)
-  float d_limit_m;      // beyond this distance: always 100%; below: apply kinematic curve
 } AebParams;
 
 /* AEB module global instance (single instance for whole firmware) */
@@ -120,47 +119,31 @@ static const AebParams P = {
   .d_offset_m = 0.10f,
   .v_min_mps  = 0.10f,
 
-  .t_react_s    = 0.12f,
-  .a_brake_mps2 = 0.6f,    // travagem assumida (menor que 1.5 → d_stop ligeiramente maior → mais conservador)
+  .t_react_s    = 0.12f,   // real pipeline latency ~100ms, small margin
+  .a_brake_mps2 = 0.6f,    // realistic decel from PWM reduction (not electrical brake)
 
   .ttc_warn_s   = 0.8f,
-  .ttc_brake_s  = 0.5f,   // era 0.3s — ligeiramente mais margem
-  .margin_warn_m  = 0.30f, // era 0.05m
-  .margin_brake_m = 0.10f, // era 0.02m
+  .ttc_brake_s  = 0.5f,
+  .margin_warn_m  = 0.30f,
+  .margin_brake_m = 0.10f,
 
-  .speed_arm_mps  = 0.15f,
+  .speed_arm_mps  = 0.15f, // arm at lower speed (~540 m/h) for better coverage
   .speed_stop_mps = 0.10f,
-  .stop_hold_ms   = 600,   // era 300ms — evita LATCH por abrandamento momentâneo a baixa velocidade
+  .stop_hold_ms   = 300,
 
-  .lp_alpha = 0.70f,
+  .lp_alpha = 0.70f,       // faster filter response, median already removes spikes
 
   .max_srf_age_ms   = 200,
   .max_speed_age_ms = 200,
 
-  .safe_unlatch_dist_m  = 0.05f,
-  .safe_unlatch_hold_ms = 500u,
+  .safe_unlatch_dist_m = 0.15f,  // allow unlatch closer to walls
+  .safe_unlatch_hold_ms = 1000u,
 
-  /* PORQUÊ d_limit e a_comfort importam juntos:
-     O eco do chão dá d_eff=0.20m CONSTANTE enquanto a parede está >300mm.
-     O AEB "não vê" a parede aproximar — só a vê quando ela está <300mm.
-     Por isso, a velocidade do carro quando entra na zona de 300mm determina se para a tempo.
-
-     a_comfort controla o throttle máximo quando d_eff=0.20m (eco do chão):
-       a_comfort=0.60 → limit=29% → v≈0.48 m/s → d_stop≈163mm → bate na parede ✗
-       a_comfort=0.35 → limit=22% → v≈0.37 m/s → d_stop≈ 96mm → para com margem ✓
-       a_comfort=0.25 → limit=19% → Motor_Stop imediato (demasiado restritivo)
-
-     Motor_Stop activa quando limit < 20% (AEB_BRAKE_THRESHOLD em task_can_rx.c):
-       a_comfort=0.35: Motor_Stop a d_eff≈160mm → parede a ~260mm → carro para ✓
-
-     d_limit=0.30m: carro vai a 100% quando d_eff>300mm (parede >400mm, leitura correcta)
-                    carro entra na curva quando d_eff<300mm (eco do chão ou parede perto) */
-  .a_comfort_mps2 = 0.2f,
-  .v_max_mps = 1.67f,
+  .a_comfort_mps2 = 0.15f, // conservative: starts braking ~1.5m away at 40% throttle
+  .v_max_mps = 1.67f,      // real max: ~6000 m/h = 1.67 m/s
   .min_creep_pct = 0u,
-  .limit_slew_up_pct   = 5u,
-  .limit_slew_down_pct = 20u,
-  .d_limit_m = 0.90f       // carro a 100% para d_eff>300mm; curva cinemática abaixo disso
+  .limit_slew_up_pct   = 5u,   // gentle throttle increase
+  .limit_slew_down_pct = 10u   // faster decrease for braking responsiveness
 };
 
 /* Simple float clamp helper */
@@ -311,23 +294,16 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   if (s_aeb.st == AEB_LATCHED) {
     desired_limit = 0;
   } else if (s_aeb.st >= AEB_ARMED) {
-    if (d_eff >= P.d_limit_m) {
-      /* Beyond braking zone: full speed allowed */
-      desired_limit = 100;
-    } else {
-      /* Inside braking zone: kinematic curve v = sqrt(2 * a_comfort * d_eff)
-         With a_comfort=0.40 and d_limit_m=0.70:
-           at 70cm (d_eff=0.70): limit = sqrt(2*0.40*0.70)/1.67*100 = 45%
-           at 10cm (d_eff=0.10): limit = sqrt(2*0.40*0.10)/1.67*100 = 17% -> Motor_Stop
-           at  0cm (d_eff=0.00): limit = 0% */
-      float v_target = sqrtf(2.0f * P.a_comfort_mps2 * d_eff);
-      if (v_target > P.v_max_mps) v_target = P.v_max_mps;
+    /* Always use a_comfort for the kinematic curve.
+       a_comfort is the REAL deceleration from PWM reduction (conservative).
+       Using a higher 'a' would LOOSEN the limit (allow higher speed). */
+    float v_target = sqrtf(2.0f * P.a_comfort_mps2 * d_eff);
+    if (v_target > P.v_max_mps) v_target = P.v_max_mps;
 
-      float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
-      if (pct_f > 100.0f) pct_f = 100.0f;
+    float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
+    if (pct_f > 100.0f) pct_f = 100.0f;
 
-      desired_limit = (uint8_t)pct_f;
-    }
+    desired_limit = (uint8_t)pct_f;
   }
 
   // Asymmetric slew-rate: faster decrease (braking) than increase (resuming)

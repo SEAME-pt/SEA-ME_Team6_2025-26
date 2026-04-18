@@ -41,9 +41,6 @@
 #define TOF_THREAD_PRIORITY           14    /* Time-of-Flight distance sensor */
 #define TEMP_THREAD_PRIORITY          15    /* Temperature sensor */
 
-/* Cruise Control Thread */
-#define CC_THREAD_PRIORITY            12    /* Same as speed — needs fresh speed data */
-
 /* Low Priority Threads */
 #define INDICATOR_THREAD_PRIORITY     16    /* KS0064 indicator lights */
 
@@ -68,7 +65,6 @@
 #define IMU_THREAD_STACK_SIZE         2048
 #define TOF_THREAD_STACK_SIZE         4096
 #define SRF08_THREAD_STACK_SIZE       2048
-#define CC_THREAD_STACK_SIZE          1024
 #define INDICATOR_THREAD_STACK_SIZE   1024
 
 

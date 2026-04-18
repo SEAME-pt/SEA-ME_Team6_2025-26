@@ -7,7 +7,6 @@ typedef struct {
   TX_MUTEX printf_mutex;
   TX_MUTEX spi1_mutex;    /* protects MCP2515 SPI bus (shared by all threads) */
   TX_MUTEX i2c1_mutex;
-  TX_MUTEX i2c2_mutex;
 
   TX_MUTEX state_mutex;    // for shared VehicleState snapshot pattern
   VehicleState state;      // rpm, tof, mag for now

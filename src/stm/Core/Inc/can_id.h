@@ -21,13 +21,11 @@
 /* Commands (AGL -> STM32) */
 #define CAN_ID_MOTOR_CMD        0x200
 #define CAN_ID_CONFIG_CMD       0x201
-#define CAN_ID_CC_CMD           0x202   /* Cruise control commands */
 
 /* Status (STM32 -> AGL) */
 #define CAN_ID_MOTOR_STATUS     0x210
 #define CAN_ID_SERVO_STATUS     0x211
 #define CAN_ID_SYSTEM_STATE     0x212
-#define CAN_ID_CC_STATUS        0x213   /* Cruise control status */
 
 /* Sensors Fast (STM32 -> AGL) */
 #define CAN_ID_IMU_ACCEL        0x400

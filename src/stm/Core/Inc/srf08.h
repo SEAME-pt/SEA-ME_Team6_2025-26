@@ -30,26 +30,8 @@
 #define SRF08_DEFAULT_RANGE   255   // Range máximo por default
 
 // Valores recomendados para operação
-#define SRF08_RECOMMENDED_GAIN   1    // Gain mínimo: eco do chão mais fraco/intermitente (reduz falsos positivos)
+#define SRF08_RECOMMENDED_GAIN   6    // Gain baixo: reduz falsos ecos do chão/paredes (testar: 4-12)
 #define SRF08_RECOMMENDED_RANGE  140  // ~6m, bom compromisso
-
-// Distância mínima válida — leituras abaixo disto são eco do chão, não obstáculo
-//
-// CÁLCULO (sensor a ~138mm do chão real, feixe 55° → 27.5° de cada lado):
-//   D_eco_chão = H / sin(27.5°) = 138mm / 0.462 = ~300mm
-//
-// !! CONFLITO FÍSICO !!
-//   O eco do chão está a ~300mm.
-//   O AEB quer detectar paredes a partir de ~400mm.
-//   Threshold tem de ser > 300mm para rejeitar o eco do chão.
-//   → Detecção mínima fiável começa em ~400mm (não 300mm).
-//
-// Para detectar abaixo de 400mm: elevar o sensor (objectivo H > 200mm):
-//   H=200mm → eco~433mm → threshold=480mm, detecção a partir de ~480mm
-//   Ou inclinar ~15° para cima → eco vai para >500mm com H=138mm
-//
-// Threshold = 350mm: rejeita eco do chão (300mm), aceita paredes ≥350mm
-#define SRF08_MIN_VALID_DISTANCE_MM  30  // rejeita eco do chão (~300mm); sensor a ~138mm do solo, feixe 55°
 
 // Timing e polling
 #define SRF08_MAX_MEASUREMENT_TIME_MS  65   // Tempo máximo de medição (datasheet)
