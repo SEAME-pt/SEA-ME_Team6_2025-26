@@ -1714,18 +1714,16 @@ _None_
 		````md
 		---
 		id: ASSERT_L0_32
-		header: ADAS pipeline performance verified
-		text: "The ADAS perception pipeline has been verified to process camera input and\
-		  \ deliver stable, scenario-robust perception outputs meeting defined latency and\
-		  \ resource constraints.\n\n**Verified criteria:**\n1. **E2E latency measurements:**\
-		  \ Full pipeline processing from frame decode through postprocessing and render achieves:\n\
-		  \   - Normal scenario: median latency ≤ 70 ms with p95 ≤ 100 ms\n   - Shadow and\
-		  \ curve scenarios: p95 latency ≤ 120 ms\n2. **Scenario robustness:** Pipeline maintains\
-		  \ stable output quality and latency bounds across normal, low-light (shadow), and\
-		  \ curved road conditions\n3. **CPU efficiency:** Post-processing stage CPU utilization\
-		  \ averages ≤ 40% of single core with p95 peaks ≤ 60% of single core\n4. **Instrumented\
-		  \ verification:** Integration tests include per-stage timing instrumentation, CPU\
-		  \ profiling data, and scenario-tagged run classification\n"
+		header: "ADAS Pipeline Performance Verified"
+		text: |
+		  The ADAS real-time pipeline performance is verified by instrumented integration testing and profiling.
+		
+		  Asserted results to satisfy this item:
+		  1) In normal scenario, end-to-end latency from decode to render achieves median &lt;= 70 ms and p95 &lt;= 100 ms.
+		  2) In shadow and curve scenarios, end-to-end latency achieves p95 &lt;= 120 ms.
+		  3) Post-processing CPU usage remains within average &lt;= 40% and p95 &lt;= 60% of one CPU core.
+		
+		  Validation is based on per-stage timestamp traces, scenario-tagged runs, and CPU profiling outputs that demonstrate stable and repeatable performance under the defined operating conditions.
 		level: '1.32'
 		normative: true
 		references:

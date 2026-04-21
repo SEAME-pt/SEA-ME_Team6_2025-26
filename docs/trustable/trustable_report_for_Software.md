@@ -130,7 +130,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EVIDENCES-EVID_L0_29](EVIDENCES.md#evidences-evid_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_30](EVIDENCES.md#evidences-evid_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_31](EVIDENCES.md#evidences-evid_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EVIDENCES-EVID_L0_32](EVIDENCES.md#evidences-evid_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects performance measurement artifacts, scenario test results, and profiling data demonstrating the requirement is met. No evidence links available yet - will be synced from sprint documentation and integration test outputs when available. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_32](EVIDENCES.md#evidences-evid_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item tracks artifacts that prove compliance with L0-32 latency and robustness thresholds. Evidence collection is pending publication from scenario-tagged integration runs and CPU profiling outputs. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EXPECTATIONS ## {: data-toc-label="EXPECTATIONS"}
 
@@ -175,6 +175,6 @@ The contribution to the score of a parent item by a suspiciously linked child is
 _Generated for: Software_
 
 * _Repository root: /home/seame/Documents/SEA-ME_Team6_2025-26_
-* _Commit SHA: 144d59bd45f6f48813dc38455853916f48a7c7f7_
-* _Commit date/time: 2026-04-16 02:07:11+00:00 UTC_
-* _Commit tag: baseline-before-l0-32-test-109-g144d59b_
+* _Commit SHA: 7bde5bbee370fc9996446a71098aa8803ad1bdd1_
+* _Commit date/time: 2026-04-16 12:05:25+00:00 UTC_
+* _Commit tag: baseline-before-l0-32-test-111-g7bde5bb_

@@ -5794,7 +5794,7 @@
 
 | Item {style="width:25%"} | Summary {style="width:50%"} | Score {style="width:0%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- |
-| [EVIDENCES-EVID_L0_32](EVIDENCES.md#evidences-evid_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item collects performance measurement artifacts, scenario test results, and profiling data demonstrating the requirement is met. No evidence links available yet - will be synced from sprint documentation and integration test outputs when available. | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
+| [EVIDENCES-EVID_L0_32](EVIDENCES.md#evidences-evid_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item tracks artifacts that prove compliance with L0-32 latency and robustness thresholds. Evidence collection is pending publication from scenario-tagged integration runs and CPU profiling outputs. | 0.00 | ✔ Item Reviewed<br>✔ Link Reviewed |
 
 {% raw %}
 
@@ -5807,21 +5807,20 @@
 		````md
 		---
 		id: EXPECT_L0_32
-		header: ADAS real-time pipeline performance
-		text: "The ADAS perception pipeline shall process camera input and provide stable,\
-		  \ scenario-robust perception outputs meeting strict latency and resource constraints\
-		  \ for autonomous driving control applications.\n\n**Justification:** In low-speed\
-		  \ autonomous vehicles, end-to-end latency and scenario robustness are critical for\
-		  \ safe trajectory control. Real-time pipeline performance directly impacts the vehicle's\
-		  \ ability to respond to dynamic environmental changes (obstacles, lane markings)\
-		  \ under variable lighting and road conditions.\n\n**Acceptance Criteria:**\n1. **E2E\
-		  \ latency (full pipeline: decode→preprocess→infer→postprocess→render):**\n   - Normal\
-		  \ scenario: median ≤ 70 ms, p95 ≤ 100 ms\n   - Robust scenarios: p95 ≤ 120 ms (shadow\
-		  \ conditions, curves)\n2. **Scenario robustness:** System maintains latency bounds\
-		  \ across normal, low-light shadow scenarios, and curved road conditions\n3. **Post-processing\
-		  \ CPU usage:** Average ≤ 40% of one CPU core, p95 ≤ 60% of one CPU core\n4. **Verification\
-		  \ method:** Instrumented integration test with per-stage timestamps, CPU profiling,\
-		  \ and scenario-tagged runs (normal/shadow/curve)\n"
+		header: "ADAS Pipeline Latency and Robustness"
+		text: |
+		  The ADAS real-time pipeline shall process camera input and provide stable, scenario-robust perception outputs for low-speed autonomous driving, including normal, shadow, and curve scenarios.
+		
+		  Justification:
+		  End-to-end perception latency and robustness across challenging visual conditions are critical to keep trajectory control stable and safe.
+		
+		  Acceptance criteria:
+		  1) End-to-end latency (decode -&gt; preprocess -&gt; infer -&gt; postprocess -&gt; render) in normal scenario: median &lt;= 70 ms and p95 &lt;= 100 ms.
+		  2) Scenario robustness: end-to-end p95 &lt;= 120 ms in shadow and curve scenarios.
+		  3) Post-processing CPU usage: average &lt;= 40% of one CPU core and p95 &lt;= 60% of one CPU core.
+		
+		  Verification method:
+		  Instrumented integration test with per-stage timestamps, CPU profiling, and scenario-tagged runs (normal/shadow/curve), followed by statistical analysis of median and p95 metrics.
 		level: '1.32'
 		normative: true
 		references:
@@ -5844,31 +5843,17 @@
 		````md
 		---
 		id: EVID_L0_32
-		header: ADAS pipeline performance - Evidence
-		text: 'Evidence demonstrating that the ADAS perception pipeline meets real-time latency,
-		  scenario robustness, and CPU efficiency requirements for autonomous driving.
+		header: "ADAS Pipeline Performance Evidence"
+		text: |
+		  Evidence for L0-32 consists of instrumented integration test outputs and profiling artifacts demonstrating ADAS real-time pipeline performance under normal, shadow, and curve scenarios.
 		
+		  Expected evidence package:
+		  - Scenario-tagged latency logs with per-stage timestamps (decode, preprocess, infer, postprocess, render).
+		  - Statistical report with median and p95 latency per scenario.
+		  - CPU profiling report for the post-processing stage with average and p95 utilization.
+		  - Run configuration metadata (hardware/software build, model version, scenario dataset tags).
 		
-		  **Expected evidence artifacts:**
-		
-		  - Integration test reports with per-stage latency measurements (decode, preprocess,
-		  inference, postprocess, render)
-		
-		  - CPU profiling data showing post-processing resource utilization under normal and
-		  scenario-tagged runs
-		
-		  - Scenario test results: normal driving, shadow conditions (low-light scenarios),
-		  curved road segments
-		
-		  - Latency distribution plots (median, p95 percentiles) for each scenario
-		
-		  - Performance regression test results confirming latency and CPU bounds
-		
-		
-		  **Note:** Evidence collection pending. Test execution and data artifacts to be linked
-		  when available from sprint documentation and integration test runs.
-		
-		  '
+		  Until concrete artifacts are published, placeholder references are intentionally retained.
 		level: '1.32'
 		normative: true
 		references:
@@ -5877,8 +5862,8 @@
 		  description: TSF_PLACEHOLDER_EVIDENCE
 		score: 0.0
 		---
-		This evidence item collects performance measurement artifacts, scenario test results, and profiling data demonstrating the requirement is met.
-		No evidence links available yet - will be synced from sprint documentation and integration test outputs when available.
+		This evidence item tracks artifacts that prove compliance with L0-32 latency and robustness thresholds.
+		Evidence collection is pending publication from scenario-tagged integration runs and CPU profiling outputs.
 		
 		````
 

@@ -1852,21 +1852,20 @@ _None_
 		````md
 		---
 		id: EXPECT_L0_32
-		header: ADAS real-time pipeline performance
-		text: "The ADAS perception pipeline shall process camera input and provide stable,\
-		  \ scenario-robust perception outputs meeting strict latency and resource constraints\
-		  \ for autonomous driving control applications.\n\n**Justification:** In low-speed\
-		  \ autonomous vehicles, end-to-end latency and scenario robustness are critical for\
-		  \ safe trajectory control. Real-time pipeline performance directly impacts the vehicle's\
-		  \ ability to respond to dynamic environmental changes (obstacles, lane markings)\
-		  \ under variable lighting and road conditions.\n\n**Acceptance Criteria:**\n1. **E2E\
-		  \ latency (full pipeline: decode→preprocess→infer→postprocess→render):**\n   - Normal\
-		  \ scenario: median ≤ 70 ms, p95 ≤ 100 ms\n   - Robust scenarios: p95 ≤ 120 ms (shadow\
-		  \ conditions, curves)\n2. **Scenario robustness:** System maintains latency bounds\
-		  \ across normal, low-light shadow scenarios, and curved road conditions\n3. **Post-processing\
-		  \ CPU usage:** Average ≤ 40% of one CPU core, p95 ≤ 60% of one CPU core\n4. **Verification\
-		  \ method:** Instrumented integration test with per-stage timestamps, CPU profiling,\
-		  \ and scenario-tagged runs (normal/shadow/curve)\n"
+		header: "ADAS Pipeline Latency and Robustness"
+		text: |
+		  The ADAS real-time pipeline shall process camera input and provide stable, scenario-robust perception outputs for low-speed autonomous driving, including normal, shadow, and curve scenarios.
+		
+		  Justification:
+		  End-to-end perception latency and robustness across challenging visual conditions are critical to keep trajectory control stable and safe.
+		
+		  Acceptance criteria:
+		  1) End-to-end latency (decode -&gt; preprocess -&gt; infer -&gt; postprocess -&gt; render) in normal scenario: median &lt;= 70 ms and p95 &lt;= 100 ms.
+		  2) Scenario robustness: end-to-end p95 &lt;= 120 ms in shadow and curve scenarios.
+		  3) Post-processing CPU usage: average &lt;= 40% of one CPU core and p95 &lt;= 60% of one CPU core.
+		
+		  Verification method:
+		  Instrumented integration test with per-stage timestamps, CPU profiling, and scenario-tagged runs (normal/shadow/curve), followed by statistical analysis of median and p95 metrics.
 		level: '1.32'
 		normative: true
 		references:
