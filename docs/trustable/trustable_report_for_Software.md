@@ -25,37 +25,38 @@ The contribution to the score of a parent item by a suspiciously linked child is
 
 | Item {style="width:15%"} | Summary {style="width:55%"} | Score {style="width:0%"} | Score Origin {style="width:5%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- | --- |
-| [ASSERTIONS-ASSERT_L0_1](ASSERTIONS.md#assertions-assert_l0_1) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_2](ASSERTIONS.md#assertions-assert_l0_2) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_3](ASSERTIONS.md#assertions-assert_l0_3) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_4](ASSERTIONS.md#assertions-assert_l0_4) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_5](ASSERTIONS.md#assertions-assert_l0_5) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_6](ASSERTIONS.md#assertions-assert_l0_6) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_7](ASSERTIONS.md#assertions-assert_l0_7) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_8](ASSERTIONS.md#assertions-assert_l0_8) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_9](ASSERTIONS.md#assertions-assert_l0_9) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_10](ASSERTIONS.md#assertions-assert_l0_10) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_11](ASSERTIONS.md#assertions-assert_l0_11) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_12](ASSERTIONS.md#assertions-assert_l0_12) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_13](ASSERTIONS.md#assertions-assert_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_14](ASSERTIONS.md#assertions-assert_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_15](ASSERTIONS.md#assertions-assert_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_17](ASSERTIONS.md#assertions-assert_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_19](ASSERTIONS.md#assertions-assert_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_20](ASSERTIONS.md#assertions-assert_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_22](ASSERTIONS.md#assertions-assert_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_23](ASSERTIONS.md#assertions-assert_l0_23) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_24](ASSERTIONS.md#assertions-assert_l0_24) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_25](ASSERTIONS.md#assertions-assert_l0_25) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_26](ASSERTIONS.md#assertions-assert_l0_26) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_30](ASSERTIONS.md#assertions-assert_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSERTIONS-ASSERT_L0_31](ASSERTIONS.md#assertions-assert_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_1](ASSERTIONS.md#assertions-assert_l0_1) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_2](ASSERTIONS.md#assertions-assert_l0_2) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_3](ASSERTIONS.md#assertions-assert_l0_3) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_4](ASSERTIONS.md#assertions-assert_l0_4) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_5](ASSERTIONS.md#assertions-assert_l0_5) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_6](ASSERTIONS.md#assertions-assert_l0_6) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_7](ASSERTIONS.md#assertions-assert_l0_7) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_8](ASSERTIONS.md#assertions-assert_l0_8) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_9](ASSERTIONS.md#assertions-assert_l0_9) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_10](ASSERTIONS.md#assertions-assert_l0_10) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_11](ASSERTIONS.md#assertions-assert_l0_11) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_12](ASSERTIONS.md#assertions-assert_l0_12) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_13](ASSERTIONS.md#assertions-assert_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_14](ASSERTIONS.md#assertions-assert_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_15](ASSERTIONS.md#assertions-assert_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_16](ASSERTIONS.md#assertions-assert_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_17](ASSERTIONS.md#assertions-assert_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_18](ASSERTIONS.md#assertions-assert_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_19](ASSERTIONS.md#assertions-assert_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_20](ASSERTIONS.md#assertions-assert_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_21](ASSERTIONS.md#assertions-assert_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_22](ASSERTIONS.md#assertions-assert_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_23](ASSERTIONS.md#assertions-assert_l0_23) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_24](ASSERTIONS.md#assertions-assert_l0_24) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_25](ASSERTIONS.md#assertions-assert_l0_25) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_26](ASSERTIONS.md#assertions-assert_l0_26) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_27](ASSERTIONS.md#assertions-assert_l0_27) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_28](ASSERTIONS.md#assertions-assert_l0_28) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_29](ASSERTIONS.md#assertions-assert_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_30](ASSERTIONS.md#assertions-assert_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_31](ASSERTIONS.md#assertions-assert_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSERTIONS-ASSERT_L0_32](ASSERTIONS.md#assertions-assert_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for ASSUMPTIONS ## {: data-toc-label="ASSUMPTIONS"}
 
@@ -92,6 +93,7 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSUMPTIONS-ASSUMP_L0_29](ASSUMPTIONS.md#assumptions-assump_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_30](ASSUMPTIONS.md#assumptions-assump_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_31](ASSUMPTIONS.md#assumptions-assump_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_32](ASSUMPTIONS.md#assumptions-assump_l0_32) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EVIDENCES ## {: data-toc-label="EVIDENCES"}
 
@@ -128,42 +130,44 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [EVIDENCES-EVID_L0_29](EVIDENCES.md#evidences-evid_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects video recordings and logs that demonstrate the driver presence condition requirement is met. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_30](EVIDENCES.md#evidences-evid_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects test reports, photos, logs, and documentation that demonstrate the vehicle is ready for module 2. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 | [EVIDENCES-EVID_L0_31](EVIDENCES.md#evidences-evid_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | This evidence item collects test reports, logs, scripts, and documentation demonstrating the comprehensive OTA update system implementation. | 1.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EVIDENCES-EVID_L0_32](EVIDENCES.md#evidences-evid_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} | This evidence item tracks artifacts that prove compliance with L0-32 latency and robustness thresholds. Evidence collection is pending publication from scenario-tagged integration runs and CPU profiling outputs. | 0.00 | Missing | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EXPECTATIONS ## {: data-toc-label="EXPECTATIONS"}
 
 | Item {style="width:15%"} | Summary {style="width:55%"} | Score {style="width:0%"} | Score Origin {style="width:5%"} | Status {style="width:25%"} |
 | --- | --- | --- | --- | --- |
-| [EXPECTATIONS-EXPECT_L0_1](EXPECTATIONS.md#expectations-expect_l0_1) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_2](EXPECTATIONS.md#expectations-expect_l0_2) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_3](EXPECTATIONS.md#expectations-expect_l0_3) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_4](EXPECTATIONS.md#expectations-expect_l0_4) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_5](EXPECTATIONS.md#expectations-expect_l0_5) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_6](EXPECTATIONS.md#expectations-expect_l0_6) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_7](EXPECTATIONS.md#expectations-expect_l0_7) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_8](EXPECTATIONS.md#expectations-expect_l0_8) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_9](EXPECTATIONS.md#expectations-expect_l0_9) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_10](EXPECTATIONS.md#expectations-expect_l0_10) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_11](EXPECTATIONS.md#expectations-expect_l0_11) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_12](EXPECTATIONS.md#expectations-expect_l0_12) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_13](EXPECTATIONS.md#expectations-expect_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_14](EXPECTATIONS.md#expectations-expect_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_15](EXPECTATIONS.md#expectations-expect_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_16](EXPECTATIONS.md#expectations-expect_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_17](EXPECTATIONS.md#expectations-expect_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_18](EXPECTATIONS.md#expectations-expect_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_19](EXPECTATIONS.md#expectations-expect_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_20](EXPECTATIONS.md#expectations-expect_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_21](EXPECTATIONS.md#expectations-expect_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_22](EXPECTATIONS.md#expectations-expect_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_23](EXPECTATIONS.md#expectations-expect_l0_23) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_24](EXPECTATIONS.md#expectations-expect_l0_24) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_25](EXPECTATIONS.md#expectations-expect_l0_25) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_26](EXPECTATIONS.md#expectations-expect_l0_26) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_27](EXPECTATIONS.md#expectations-expect_l0_27) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_28](EXPECTATIONS.md#expectations-expect_l0_28) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_29](EXPECTATIONS.md#expectations-expect_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [EXPECTATIONS-EXPECT_L0_31](EXPECTATIONS.md#expectations-expect_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_1](EXPECTATIONS.md#expectations-expect_l0_1) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_2](EXPECTATIONS.md#expectations-expect_l0_2) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_3](EXPECTATIONS.md#expectations-expect_l0_3) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_4](EXPECTATIONS.md#expectations-expect_l0_4) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_5](EXPECTATIONS.md#expectations-expect_l0_5) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_6](EXPECTATIONS.md#expectations-expect_l0_6) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_7](EXPECTATIONS.md#expectations-expect_l0_7) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_8](EXPECTATIONS.md#expectations-expect_l0_8) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_9](EXPECTATIONS.md#expectations-expect_l0_9) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_10](EXPECTATIONS.md#expectations-expect_l0_10) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_11](EXPECTATIONS.md#expectations-expect_l0_11) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_12](EXPECTATIONS.md#expectations-expect_l0_12) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_13](EXPECTATIONS.md#expectations-expect_l0_13) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_14](EXPECTATIONS.md#expectations-expect_l0_14) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_15](EXPECTATIONS.md#expectations-expect_l0_15) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_16](EXPECTATIONS.md#expectations-expect_l0_16) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_17](EXPECTATIONS.md#expectations-expect_l0_17) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_18](EXPECTATIONS.md#expectations-expect_l0_18) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_19](EXPECTATIONS.md#expectations-expect_l0_19) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_20](EXPECTATIONS.md#expectations-expect_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_21](EXPECTATIONS.md#expectations-expect_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_22](EXPECTATIONS.md#expectations-expect_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_23](EXPECTATIONS.md#expectations-expect_l0_23) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_24](EXPECTATIONS.md#expectations-expect_l0_24) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_25](EXPECTATIONS.md#expectations-expect_l0_25) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_26](EXPECTATIONS.md#expectations-expect_l0_26) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_27](EXPECTATIONS.md#expectations-expect_l0_27) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_28](EXPECTATIONS.md#expectations-expect_l0_28) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_29](EXPECTATIONS.md#expectations-expect_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_30](EXPECTATIONS.md#expectations-expect_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_31](EXPECTATIONS.md#expectations-expect_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
+| [EXPECTATIONS-EXPECT_L0_32](EXPECTATIONS.md#expectations-expect_l0_32) {class="tsf-score" style="background-color:hsl(60.0, 100%, 47%)"} |  | 0.50 | Derived from supporting Statements | ✔ Item Reviewed<br>✔ All Children Linked |
 
 
 ---
@@ -171,6 +175,6 @@ The contribution to the score of a parent item by a suspiciously linked child is
 _Generated for: Software_
 
 * _Repository root: /home/seame/Documents/SEA-ME_Team6_2025-26_
-* _Commit SHA: edf374aeef9cee2c5fa78b592541cb07a7fc09a3_
-* _Commit date/time: 2026-03-18 01:34:01+00:00 UTC_
-* _Commit tag: v1.9.0-162-gedf374a_
+* _Commit SHA: 7bde5bbee370fc9996446a71098aa8803ad1bdd1_
+* _Commit date/time: 2026-04-16 12:05:25+00:00 UTC_
+* _Commit tag: baseline-before-l0-32-test-111-g7bde5bb_

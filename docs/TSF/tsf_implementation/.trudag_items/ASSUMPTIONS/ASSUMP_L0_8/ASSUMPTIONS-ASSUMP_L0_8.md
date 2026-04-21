@@ -4,8 +4,8 @@ header: 'Assumption: Connect the Rasp5 to the STM 32 (bidirectional) using Can..
 level: '1.8'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md
-  type: file
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_8/EXPECTATIONS-EXPECT_L0_8.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

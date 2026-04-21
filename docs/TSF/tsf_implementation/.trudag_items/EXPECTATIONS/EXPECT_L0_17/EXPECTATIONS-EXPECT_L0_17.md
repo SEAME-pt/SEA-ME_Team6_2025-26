@@ -6,17 +6,10 @@ text: The development process incorporates AI-assisted tools for code developmen
 level: '1.17'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_17/ASSERTIONS-ASSERT_L0_17.md
-  type: file
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_17/ASSERTIONS-ASSERT_L0_17.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---

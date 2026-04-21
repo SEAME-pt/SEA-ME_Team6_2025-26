@@ -3,7 +3,7 @@ id: EXPECT_L0_1
 header: System architecture defined
 text: The demonstrator car system has a documented architecture that describes all
   hardware and software components and their interactions.
-level: 1.1
+level: '1.1'
 normative: true
 references:
 - type: file
@@ -12,11 +12,4 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---

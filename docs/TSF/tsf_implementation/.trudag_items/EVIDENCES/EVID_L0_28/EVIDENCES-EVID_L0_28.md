@@ -35,9 +35,9 @@ references:
 - type: file
   path: docs/guides/Testing-Framework-Decision.md
 - type: file
-  path: docs/guides/Car_Architecture/circuit_image.png
+  path: docs/guides/Car_Architecture/Circuit Diagram.png
 - type: file
-  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+  path: docs/guides/Car_Architecture/Circuit Documentation.md
 - type: file
   path: docs/presentations/threadX/2025.11 Eclipse ThreadX_ A recipe for success with
     four simple ingredients.pdf
@@ -45,10 +45,6 @@ references:
   path: src/setup/scripts/r5-qt6-build.sh
 - type: file
   path: src/setup/scripts/qt6-build.sh
-- type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
 - type: file
   path: src/shared/backend/providers/vehicleprovider.hpp
 - type: file

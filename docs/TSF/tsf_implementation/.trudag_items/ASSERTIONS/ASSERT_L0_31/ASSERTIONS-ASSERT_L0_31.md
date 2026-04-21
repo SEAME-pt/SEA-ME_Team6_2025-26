@@ -19,36 +19,8 @@ references:
   path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_31/EXPECTATIONS-EXPECT_L0_31.md
 - type: file
   path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md
-- type: file
-  path: docs/guides/OTA/OTA_Implementation_Guide.md
-- type: file
-  path: src/ota/README.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: pending
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - SOTA Scripts
-    - COTA Configuration
-    - FOTA Firmware
-    - RAUC
-    - A/B Partitions
-    - Bundle Validation
-    - Slot Switching
-    - Health Checks
-    - Rollback Mechanism
-    - Data Persistence
-    tests:
-    - sota_application_update
-    - cota_config_push
-    - fota_firmware_flash
-    - rauc_bundle_creation
-    - rauc_bundle_installation
-    - slot_switching
-    - health_check_pass
-    - health_check_fail_rollback
-    - data_persistence
 ---

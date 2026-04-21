@@ -6,17 +6,10 @@ text: The demonstrator car hardware is fully assembled with all components corre
 level: '1.2'
 normative: true
 references:
-- path: ../assertions/ASSERT-L0-2.md
-  type: file
+- type: file
+  path: ../assertions/ASSERT-L0-2.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---
