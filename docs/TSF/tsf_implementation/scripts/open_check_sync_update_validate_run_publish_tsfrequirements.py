@@ -115,6 +115,20 @@ def is_vscode_cli_available() -> bool:
     return shutil.which('code') is not None
 
 
+def prompt_input(prompt: str, default: str = '') -> str:
+    """Read input safely; use defaults when stdin is non-interactive."""
+    try:
+        if not sys.stdin.isatty():
+            if default:
+                print(f"{prompt}{default} (auto-default: non-interactive)")
+            else:
+                print(f"{prompt}(auto-default: empty, non-interactive)")
+            return default
+        return input(prompt)
+    except EOFError:
+        return default
+
+
 def resolve_trudag_command(config) -> Optional[str]:
     """Resolve the trudag executable from local venvs first, then PATH."""
     candidates = [
@@ -796,17 +810,16 @@ For each item, fill the YAML frontmatter fields:
 - `text`: Detailed description
 
 **References rules:**
-- EXPECT: Only reference to `../assertions/ASSERT-L0-X.md`
-- ASSERT: Only reference to `../expectations/EXPECT-L0-X.md` and `../evidences/EVID-L0-X.md`
-- EVID: Reference to actual evidence files/URLs (NOT to EXPECT or ASSERT)
-- ASSUMP: Reference to `../expectations/EXPECT-L0-X.md`
+- Statement links (EXPECT/ASSERT/ASSUMP/EVID relationships) are represented in graph links, not mandatory frontmatter references.
+- EVID: Use `references` for real artifacts (files/URLs) that support evidence.
+- EXPECT/ASSERT/ASSUMP: `references` is optional; if used, point to supporting artifacts/context documents.
 
 **CRITICAL for EVID files (no real evidence yet):**
 - If reference has `description: TSF_PLACEHOLDER_EVIDENCE`, KEEP it unchanged.
 - This marker signals that evidence is still pending collection.
 - Only replace this marker with real evidence descriptions when actual evidence is ready.
 
-**DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (validators)
+**DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (when present for validators)
 
 **Quality bar:**
 - Keep headers specific and under 50 chars.
@@ -948,21 +961,21 @@ For each item, fill the YAML frontmatter fields:
         
         # Build item-type specific instructions for references
         if item_type == "EXPECT":
-            references_instruction = """- references: ONLY file references to the corresponding assertion.
-  Example:
+            references_instruction = """- references: MUST reference the corresponding ASSERT file ONLY.
+  Format:
   references:
     - type: file
       path: ../assertions/ASSERT-L0-{id}.md
-  ⚠️ DO NOT add URL references in expectations."""
+  ⚠️ DO NOT add any other file paths (docs/guides, etc.) or URLs."""
         elif item_type == "ASSERT":
-            references_instruction = """- references: ONLY file references to expectation and evidence files.
-  Example:
+            references_instruction = """- references: MUST reference the corresponding EXPECT and EVID files ONLY.
+  Format:
   references:
     - type: file
       path: ../expectations/EXPECT-L0-{id}.md
     - type: file
       path: ../evidences/EVID-L0-{id}.md
-  ⚠️ DO NOT add URL references in assertions."""
+  ⚠️ DO NOT add any other file paths (docs/guides, etc.) or URLs."""
         elif item_type == "EVID":
             references_instruction = """- references: Evidence sources including file paths and URLs.
   Example:
@@ -970,11 +983,16 @@ For each item, fill the YAML frontmatter fields:
     - type: file
       path: ../../sprints/sprint1.md
     - type: url
-      path: https://example.com/documentation
+      url: https://example.com/documentation
       description: External documentation source
-  ⚠️ DO NOT add references to assertions - evidences reference external sources only."""
+  ⚠️ Prefer real artifacts; avoid linking to expectations/assertions."""
         else:
-            references_instruction = "- references: Relevant file references only."
+            references_instruction = """- references: MUST reference the corresponding EXPECT file ONLY.
+  Format:
+  references:
+    - type: file
+      path: ../expectations/EXPECT-L0-{id}.md
+  ⚠️ DO NOT add any other file paths."""
         
         references_instruction = references_instruction.format(id=item_id)
         
@@ -994,9 +1012,9 @@ Please fill the following fields in the YAML frontmatter:
 1. Use the existing file structure, only fill empty fields
 2. Do NOT modify the 'id', 'level', 'reviewers', or 'review_status' fields
 3. Keep the YAML frontmatter format (between --- markers)
-4. EXPECT items: references ONLY to assertion file, NO URLs
-5. ASSERT items: references ONLY to expectation and evidence files, NO URLs
-6. EVID items: references to external sources (files, URLs), NO references to assertions"""
+4. Do not force statement-to-statement references in frontmatter
+5. EVID items: references should point to supporting artifacts (files/URLs)
+6. Keep YAML valid and avoid placeholder references unless explicitly needed"""
     
     def _generate_with_copilot_cli(self, item_type: str, item_id: str,
                                     requirement: str, file_path: Path) -> bool:
@@ -1236,6 +1254,10 @@ class ContentValidator:
             # EVID-specific placeholder detection using explicit marker.
             if item_type == 'EVID' and any(is_placeholder_evidence_reference(ref) for ref in references):
                 issues.append("Placeholder evidence marker in references")
+
+            # Placeholder evidence marker should not appear outside EVID files.
+            if item_type in {'EXPECT', 'ASSERT', 'ASSUMP'} and any(is_placeholder_evidence_reference(ref) for ref in references):
+                issues.append("Unexpected placeholder evidence marker in references")
         
         # Check item-type-specific required fields
         # EVID items must have score field
@@ -1250,10 +1272,52 @@ class ContentValidator:
             if evidence is None:
                 issues.append("Missing required 'evidence:' field (ASSUMP items need validator)")
             elif isinstance(evidence, dict):
-                if not evidence.get('type'):
+                ev_type = str(evidence.get('type', '')).strip()
+                config = evidence.get('configuration')
+
+                if not ev_type:
                     issues.append("Missing 'type' in evidence validator")
-                if not evidence.get('configuration'):
+                if not config:
                     issues.append("Missing 'configuration' in evidence validator")
+
+                # Semantic checks to catch template/default placeholder content.
+                if isinstance(config, dict):
+                    def has_placeholder_values(values):
+                        for value in values:
+                            sval = str(value).strip().lower()
+                            if not sval:
+                                return True
+                            if any(token in sval for token in ['todo', 'tbd', 'fixme', 'placeholder', 'example.com']):
+                                return True
+                        return False
+
+                    if ev_type == 'validate_software_dependencies':
+                        deps = config.get('dependencies')
+                        if deps is None:
+                            deps = config.get('packages', [])
+                        if not isinstance(deps, list) or len(deps) == 0:
+                            issues.append("ASSUMP validator has no dependencies/packages list")
+                        else:
+                            if has_placeholder_values(deps):
+                                issues.append("Placeholder values in ASSUMP dependencies")
+                            # Flag the template default often injected for auto-fixes.
+                            if len(deps) == 1 and str(deps[0]).strip().lower() == 'tsf tooling':
+                                issues.append("Template/default ASSUMP dependency: 'TSF tooling'")
+
+                    elif ev_type == 'validate_hardware_availability':
+                        comps = config.get('components', [])
+                        if not isinstance(comps, list) or len(comps) == 0:
+                            issues.append("ASSUMP validator has no components list")
+                        elif has_placeholder_values(comps):
+                            issues.append("Placeholder values in ASSUMP components")
+
+                    elif ev_type == 'validate_linux_environment':
+                        tools = config.get('required_tools', [])
+                        if tools and (not isinstance(tools, list) or has_placeholder_values(tools)):
+                            issues.append("Placeholder values in ASSUMP required_tools")
+
+                    else:
+                        issues.append(f"Unsupported ASSUMP validator type: {ev_type}")
         
         # Determine if needs regeneration
         needs_regeneration = len(issues) > 0
@@ -1394,8 +1458,8 @@ class ItemFileManager:
         requirement_text = text if text else 'TODO: Add requirement text'
         
         # Templates for each item type with correct reference structure
-        # NOTE: EVID files should NOT have 'evidence:' field - that's for ASSERT/ASSUMP
-        # NOTE: ASSERT files should have 'evidence:' with a valid validator type
+        # NOTE: EVID/EXPECT/ASSERT files should NOT have 'evidence:' field.
+        # NOTE: ASSUMP files keep 'evidence:' with a valid validator type.
         # Valid validators: validate_hardware_availability, validate_linux_environment, validate_software_dependencies
         templates = {
             'EXPECT': f"""---
@@ -1412,13 +1476,6 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-    type: validate_hardware_availability
-    configuration:
-        components:
-            - \"STM32\"
-            - \"CAN\"
-            - \"Raspberry Pi\"
 ---
 """,
             'ASSERT': f"""---
@@ -1437,11 +1494,6 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-      - "TSF Assertion Requirement"
 ---
 """,
             'EVID': f"""---
@@ -1559,7 +1611,17 @@ review_status: accepted
         # Parse YAML frontmatter
         yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
         if not yaml_match:
-            return False, ["No YAML frontmatter found"]
+            # Auto-repair common corruption: missing closing frontmatter delimiter.
+            # This prevents a single malformed file from breaking check/validate workflows.
+            delimiter_count = content.count('\n---') + (1 if content.startswith('---\n') else 0)
+            if content.startswith('---\n') and delimiter_count == 1:
+                content = content.rstrip() + "\n---\n"
+                yaml_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+                if yaml_match:
+                    fixes_applied.append("Recovered missing YAML frontmatter closing marker")
+                    modified = True
+            if not yaml_match:
+                return False, ["No YAML frontmatter found"]
         
         try:
             frontmatter = yaml.safe_load(yaml_match.group(1))
@@ -1589,26 +1651,29 @@ review_status: accepted
             frontmatter['review_status'] = 'accepted'
             fixes_applied.append("Added 'review_status: accepted'")
             modified = True
+
+        # Fix 3b: Normalize ID format (underscores -> hyphens)
+        current_id = frontmatter.get('id')
+        if isinstance(current_id, str) and '_' in current_id:
+            frontmatter['id'] = current_id.replace('_', '-')
+            fixes_applied.append(f"Normalized id format: {current_id} -> {frontmatter['id']}")
+            modified = True
+
+        # Fix 3c: Normalize level type to string for consistency.
+        # YAML parsing can turn unquoted levels (e.g., 1.1) into floats.
+        if 'level' in frontmatter and not isinstance(frontmatter.get('level'), str):
+            normalized_level = str(frontmatter.get('level'))
+            frontmatter['level'] = normalized_level
+            fixes_applied.append(f"Normalized level type to string: '{normalized_level}'")
+            modified = True
         
-        # Fix 4: EXPECT/ASSUMP files should have 'evidence:' with valid validator
+        # Fix 4: ASSUMP files should have 'evidence:' with valid validator
         valid_validators = ['validate_hardware_availability', 'validate_linux_environment', 'validate_software_dependencies']
-        if item_type_upper == 'EXPECT':
-            evidence = frontmatter.get('evidence', {})
-            if not evidence:
-                frontmatter['evidence'] = {
-                    'type': 'validate_hardware_availability',
-                    'configuration': {
-                        'components': ['STM32', 'CAN', 'Raspberry Pi']
-                    }
-                }
-                fixes_applied.append("Added default evidence validator for EXPECT")
-                modified = True
-            elif isinstance(evidence, dict):
-                ev_type = evidence.get('type', '')
-                if ev_type and ev_type not in valid_validators:
-                    frontmatter['evidence']['type'] = 'validate_hardware_availability'
-                    fixes_applied.append(f"Replaced invalid EXPECT validator '{ev_type}' with 'validate_hardware_availability'")
-                    modified = True
+
+        if item_type_upper in {'EXPECT', 'ASSERT'} and 'evidence' in frontmatter:
+            del frontmatter['evidence']
+            fixes_applied.append(f"Removed invalid 'evidence:' field from {item_type_upper} file")
+            modified = True
 
         if item_type_upper == 'ASSUMP':
             evidence = frontmatter.get('evidence', {})
@@ -1641,7 +1706,28 @@ review_status: accepted
                             fixes_applied.append("Normalized ASSUMP validator config: components -> dependencies")
                             modified = True
         
-        # Fix 5: Remove 'id' fields from references (should only have type and path)
+        # Fix 5: Normalize references for EXPECT/ASSERT/ASSUMP to canonical paths
+        if item_type_upper in {'EXPECT', 'ASSERT', 'ASSUMP'} and 'references' in frontmatter:
+            # item_id is the number part (e.g., "32"), not the full ID (e.g., "L0-32")
+            num = str(item_id).strip()
+            canonical_refs = []
+            
+            if item_type_upper == 'EXPECT':
+                canonical_refs = [{'type': 'file', 'path': f'../assertions/ASSERT-L0-{num}.md'}]
+            elif item_type_upper == 'ASSERT':
+                canonical_refs = [
+                    {'type': 'file', 'path': f'../expectations/EXPECT-L0-{num}.md'},
+                    {'type': 'file', 'path': f'../evidences/EVID-L0-{num}.md'}
+                ]
+            elif item_type_upper == 'ASSUMP':
+                canonical_refs = [{'type': 'file', 'path': f'../expectations/EXPECT-L0-{num}.md'}]
+            
+            if canonical_refs:
+                frontmatter['references'] = canonical_refs
+                fixes_applied.append(f"Normalized {item_type_upper} references to canonical paths")
+                modified = True
+        
+        # Fix 5b: Remove 'id' fields from references (should only have type and path)
         if 'references' in frontmatter and isinstance(frontmatter['references'], list):
             refs_fixed = False
             for ref in frontmatter['references']:
@@ -1846,7 +1932,7 @@ review_status: accepted
             print("   ⚠️  These files will be permanently deleted!")
             
             # Ask for confirmation
-            confirm = input("\n   Are you sure you want to remove these orphan files? [y/N]: ").strip().lower()
+            confirm = prompt_input("\n   Are you sure you want to remove these orphan files? [y/N]: ", default='n').strip().lower()
             
             if confirm == 'y':
                 for item_type, item_id, file_path in orphans:
@@ -2116,7 +2202,7 @@ def sync_evidence_from_sprints(config: Config, check_status: Dict[str, Any]) -> 
     print("   [e] Sync to EVID files only")
     print("   [n] Skip sync")
     
-    choice = input("\n>>> Choose option [y/t/e/n]: ").strip().lower()
+    choice = prompt_input("\n>>> Choose option [y/t/e/n]: ", default='n').strip().lower()
     
     if choice == 'n':
         print("   ⏭️  Skipping evidence sync")
@@ -2353,15 +2439,28 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
                 current_refs.append(new_ref)
                 new_refs_added = True
 
+        # Ensure references never empty (TruDAG requires non-empty list)
+        if not current_refs:
+            current_refs = [{
+                'type': 'url',
+                'url': PLACEHOLDER_EVIDENCE_URL,
+                'description': PLACEHOLDER_EVIDENCE_MARKER
+            }]
+            references_changed = True
+            new_refs_added = True
+
         if new_refs_added or references_changed or normalized_existing:
             # Update frontmatter
             frontmatter['references'] = current_refs
 
             # If at least one non-placeholder reference exists, mark as complete.
-            has_real_refs = len(current_refs) > 0
+            has_real_refs = any(
+                not is_placeholder_evidence_reference(ref)
+                for ref in current_refs
+            )
             if has_real_refs:
                 frontmatter['score'] = 1.0
-            elif had_placeholder_refs:
+            else:
                 frontmatter['score'] = 0.0
             
             # Rebuild file content
@@ -2419,7 +2518,7 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
         print("   [s] Skip all - don't remove any")
         print("   [q] Quit")
         
-        choice = input("\n>>> Choose option [r/d/s/q]: ").strip().lower()
+        choice = prompt_input("\n>>> Choose option [r/d/s/q]: ", default='s').strip().lower()
         
         if choice == 'q':
             print("❌ User requested quit.")
@@ -2456,7 +2555,7 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
         print("   [n] Skip all - don't regenerate any")
         print("   [q] Quit")
         
-        choice = input("\n>>> Choose option [a/s/n/q]: ").strip().lower()
+        choice = prompt_input("\n>>> Choose option [a/s/n/q]: ", default='n').strip().lower()
         
         if choice == 'q':
             print("❌ User requested quit.")
@@ -2476,7 +2575,7 @@ def sync_update(config: Config, check_status: Dict[str, Any]) -> Dict[str, Any]:
                 for issue in result.issues:
                     print(f"      └─ {issue}")
                 
-                item_choice = input(f"   Regenerate this item? [y/n]: ").strip().lower()
+                item_choice = prompt_input(f"   Regenerate this item? [y/n]: ", default='n').strip().lower()
                 
                 if item_choice == 'y':
                     status['ai_generation_needed'].append(
@@ -2640,6 +2739,18 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     else:
         print(f"   ⚠️  Validator not found: {validator_path}")
     
+    # Fail fast: do not run TruDAG if structural validation already failed.
+    if not status['validation_passed']:
+        print("\n⛔ Skipping TruDAG because item validation failed.")
+        print("   Fix validation errors first (e.g., missing/invalid YAML frontmatter), then rerun --validate.")
+        print("\n" + "-"*70)
+        print("✅ VALIDATE, RUN & PUBLISH Summary:")
+        print(f"   • Validation: {'✅ Passed' if status['validation_passed'] else '❌ Failed'}")
+        print(f"   • TruDAG: {'✅ Passed' if status['trudag_success'] else '❌ Skipped'}")
+        print(f"   • Errors: {len(status['errors'])}")
+        print(f"   • Warnings: {len(status['warnings'])}")
+        return status
+
     # 2. Run TruDAG (setup_trudag_clean.sh)
     print("\n🚀 Running TruDAG...")
     
@@ -2647,7 +2758,8 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     
     if trudag_script.exists():
         try:
-            print("   ⏳ Running TruDAG (this may take several minutes for 84 items)...")
+            item_count = sum(1 for _ in config.items_dir.rglob("*.md"))
+            print(f"   ⏳ Running TruDAG (this may take several minutes for {item_count} items)...")
             print("   📺 Live output:")
             print("   " + "-"*50)
             
@@ -2801,7 +2913,7 @@ Examples:
         if not deps_ok:
             print("\n⚠️  Some dependencies are missing. The script may not work correctly.")
             print("   Fix the issues above or run with --skip-diagnostics to proceed anyway.\n")
-            response = input(">>> Continue anyway? [y/n]: ").strip().lower()
+            response = prompt_input(">>> Continue anyway? [y/n]: ", default='n').strip().lower()
             if response != 'y':
                 print("   Exiting.")
                 sys.exit(1)

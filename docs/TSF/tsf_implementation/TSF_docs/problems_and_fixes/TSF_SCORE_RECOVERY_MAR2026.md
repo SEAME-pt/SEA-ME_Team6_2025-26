@@ -1,5 +1,19 @@
 # TSF Score Recovery - March 2026
 
+## April 2026 Follow-Up
+
+This document now also tracks post-recovery issues found in April 2026 and lives in `problems_and_fixes/`:
+
+1. Plugin warning noise (`localplugins.FileReference` shadowing built-in reference)
+  - Resolved by removing custom `FileReference` symbol from local plugin implementation.
+2. Interrupted runs misread as failures
+  - Clarified: `130/143` exits are signal interruptions, not score model regressions.
+3. Placeholder visibility consistency
+  - `--check` now reports semantic ASSUMP defaults in addition to EVID placeholder marker.
+
+Latest expected pending placeholders:
+- Pending placeholder tracking is reset for the manual retest.
+
 ## Table of Contents
 
 1. [Context](#1-context)
@@ -8,6 +22,7 @@
 4. [Validation command](#4-validation-command)
 5. [Files touched in this recovery](#5-files-touched-in-this-recovery)
 6. [Root cause analysis (RCA)](#6-root-cause-analysis-rca)
+7. [Related problem-resolution docs](#7-related-problem-resolution-docs)
 
 ## 1. Context
 
@@ -122,3 +137,13 @@ Preventive actions:
 - After any hashing logic change, always run full SHA rebuild before score validation.
 - Add graph completeness checks for each requirement chain (EXPECT/ASSERT/EVID/ASSUMP).
 - Add a pre-merge check to fail if any target EVID leaf remains at unintended `score: 0.0`.
+
+## 7. Related problem-resolution docs
+
+This recovery log is part of a wider troubleshooting trail:
+
+- `TSF_STRUCTURAL_ANALYSIS_REPORT.md`
+- `../VALIDATORS_GUIDE.md`
+- `../REFERENCES_GUIDE.md`
+
+Use this document for score-recovery chronology, and the structural analysis report for broader model/content issue tracking.

@@ -43,10 +43,10 @@ class AIGenerator:
         id_str = context.get('id', 'L0-X') if context else 'L0-X'
 
         prompts = {
-            'EXPECT': f"Generate a TSF EXPECTATION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, references, reviewers.",
-            'ASSERT': f"Generate a TSF ASSERTION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, references, reviewers.",
+            'EXPECT': f"Generate a TSF EXPECTATION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, optional references, reviewers.",
+            'ASSERT': f"Generate a TSF ASSERTION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, optional references, reviewers.",
             'EVID': f"Generate a TSF EVIDENCE item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, references, evidence configuration.",
-            'ASSUMP': f"Generate a TSF ASSUMPTION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, references, reviewers."
+            'ASSUMP': f"Generate a TSF ASSUMPTION item for requirement: {requirement_text}. Format as YAML frontmatter with id, header, text, level, normative, optional references, reviewers."
         }
 
         prompt = prompts.get(item_type, f"Generate TSF {item_type} for: {requirement_text}")
@@ -83,10 +83,6 @@ header: {requirement_text[:50]}...
 text: The system shall {requirement_text.lower()}.
 level: '1.{level_num}'
 normative: true
-references:
-- id: ASSERT-{id_str}
-  type: file
-  path: ../assertions/ASSERT-{id_str}.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -100,13 +96,6 @@ header: {requirement_text[:50]} is implemented
 text: The {item_type.lower()} shall verify that {requirement_text.lower()}.
 level: '1.{level_num}'
 normative: true
-references:
-- id: EXPECT-{id_str}
-  type: file
-  path: ../expectations/EXPECT-{id_str}.md
-- id: EVID-{id_str}
-  type: file
-  path: ../evidences/EVID-{id_str}.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
@@ -141,13 +130,6 @@ header: {requirement_text[:50]} environment
 text: The system assumes {requirement_text.lower()[:50]}...
 level: '1.{level_num}'
 normative: false
-references:
-- id: EXPECT-{id_str}
-  type: file
-  path: ../expectations/EXPECT-{id_str}.md
-- id: ASSERT-{id_str}
-  type: file
-  path: ../assertions/ASSERT-{id_str}.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

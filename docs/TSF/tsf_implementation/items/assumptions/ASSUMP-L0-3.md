@@ -4,8 +4,8 @@ header: 'Assumption: Target platform and drivers for software integration'
 level: '1.3'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-3.md
-  type: file
+- type: file
+  path: ../expectations/EXPECT-L0-3.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -93,7 +93,7 @@ references:
 - type: file
   path: docs/guides/OTA/OTA_multiversion-arch-sprint8.md
 - type: file
-  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+  path: docs/guides/Car_Architecture/Circuit Documentation.md
 - type: file
   path: docs/images/CanFeederArchitecture.jpg
 - type: file
@@ -114,10 +114,6 @@ references:
   path: src/ota/scripts/setup-ota-device.sh
 - type: file
   path: src/ota/scripts/benchmark-ota.sh
-- type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
 - type: file
   path: src/shared/backend/providers/vehicleprovider.hpp
 - type: file

@@ -4,11 +4,12 @@
 This validator performs comprehensive checks on TSF items:
 1. Front-matter validation: ensures required fields exist (id, header, text, level, normative)
 2. Extended validation:
-   - EXPECT-L0-N must reference ASSERT-L0-N
-   - ASSERT-L0-N must reference EVID-L0-N
-   - All items must have valid level format (1.<n>)
-   - References block validation (type, path, file existence)
-   - Reviewers block validation (name, email format)
+    - All items must have valid level format (1.<n>)
+    - References block validation (type, path, file existence)
+    - Reviewers block validation (name, email format)
+
+Note: Item-to-item reasoning should be represented by graph links (.dot),
+not enforced through frontmatter references.
 
 Exits with non-zero code when issues are found (suitable for CI).
 """
@@ -76,17 +77,6 @@ def parse_level(fm_text: str):
     if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
         val = val[1:-1]
     return val
-
-
-def has_reference(fm_text: str, target_id: str, target_path_suffix: str) -> bool:
-    """Check if front-matter contains a reference to target_id or path."""
-    if not fm_text:
-        return False
-    if re.search(rf"\b{re.escape(target_id)}\b", fm_text):
-        return True
-    if target_path_suffix in fm_text:
-        return True
-    return False
 
 
 def validate_reviewers_block(fm_text: str, item_path: Path):
@@ -158,43 +148,6 @@ def validate_references_block(fm_text: str, item_path: Path):
 def validate_extended():
     """Perform extended validation checks on TSF items."""
     issues = []
-    
-    # Check EXPECT -> ASSERT references
-    exp_dir = ROOT / 'expectations'
-    for p in sorted(exp_dir.glob('EXPECT-L0-*.md')):
-        m = re.search(r'L0-(\d+)', p.name)
-        if not m:
-            continue
-        n = m.group(1)
-        ast_id = f'ASSERT-L0-{n}'
-        ast_path = f'../assertions/{ast_id}.md'
-        fm_text = read_frontmatter(p)
-        if not fm_text:
-            issues.append(f'MISSING_FRONTMATTER: {p}')
-            continue
-        if not has_reference(fm_text, ast_id, ast_path):
-            issues.append(f'MISSING_EXPECT_ASSERT_REF: {p} -> {ast_id}')
-        issues += validate_references_block(fm_text, p)
-    
-    # Check ASSERT -> EVID references and level format
-    ast_dir = ROOT / 'assertions'
-    for p in sorted(ast_dir.glob('ASSERT-L0-*.md')):
-        m = re.search(r'L0-(\d+)', p.name)
-        if not m:
-            continue
-        n = m.group(1)
-        evid_id = f'EVID-L0-{n}'
-        evid_path = f'../evidences/{evid_id}.md'
-        fm_text = read_frontmatter(p)
-        if not fm_text:
-            issues.append(f'MISSING_FRONTMATTER: {p}')
-            continue
-        if not has_reference(fm_text, evid_id, evid_path):
-            issues.append(f'MISSING_ASSERT_EVID_REF: {p} -> {evid_id}')
-        issues += validate_references_block(fm_text, p)
-        lvl = parse_level(fm_text)
-        if not (isinstance(lvl, str) and re.match(r'^1\.\d+$', lvl)):
-            issues.append(f'INVALID_LEVEL_FORMAT: {p} level={lvl}')
     
     # Check all items level format
     for p in sorted(ROOT.rglob('*.md')):

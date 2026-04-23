@@ -148,7 +148,7 @@ references:
 - type: file
   path: docs/guides/OTA/OTA_multiversion-arch-sprint8.md
 - type: file
-  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+  path: docs/guides/Car_Architecture/Circuit Documentation.md
 - type: file
   path: docs/images/CANFrame.png
 - type: file
@@ -210,12 +210,6 @@ references:
   path: src/kuksa/kuksa_RPi5/inc/can_id.h
 - type: file
   path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
-- type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
-- type: file
-  path: src/tests/unit/mocks/stm32_mocks.cpp
 - type: file
   path: src/tests/unit/mocks/stm32u5xx_hal.h
 - type: file

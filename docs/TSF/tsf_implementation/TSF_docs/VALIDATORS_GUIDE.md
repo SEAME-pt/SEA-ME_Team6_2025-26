@@ -2,7 +2,17 @@
 
 This guide covers the validator architecture and implementation for the Trustable Software Framework (TSF) in the SEA:ME Team 6 project.
 
-**Last Updated:** February 2026
+**Last Updated:** April 2026
+
+Related guide:
+- `docs/TSF/tsf_implementation/TSF_docs/REFERENCES_GUIDE.md` (reference structure and placeholder policy)
+
+## April 2026 Validator Update
+
+- Added semantic checks in content validation for ASSUMP validator configuration.
+- ASSUMP entries using template/default values (for example `TSF tooling`) are now flagged by `--check`.
+- Placeholder evidence marker is treated as valid only for EVID context and flagged elsewhere.
+- This closes a previous visibility gap where EVID placeholders were detected but equivalent ASSUMP defaults were not.
 
 ---
 
@@ -10,15 +20,16 @@ This guide covers the validator architecture and implementation for the Trustabl
 
 1. [Script execution commands](#1-script-execution-commands)
 2. [Overview](#2-overview)
-3. [Two types of validators](#3-two-types-of-validators)
-4. [Structure validators (CI)](#4-structure-validators-ci)
-5. [Content validators (TruDAG)](#5-content-validators-trudag)
-6. [Validator configuration](#6-validator-configuration)
-7. [Score calculation](#7-score-calculation)
-8. [Creating custom validators](#8-creating-custom-validators)
-9. [Troubleshooting](#9-troubleshooting)
-10. [Best practices](#10-best-practices)
-11. [Post 0/124 fixes (Mar 2026)](#11-post-0124-fixes-mar-2026)
+3. [Why validators matter](#3-why-validators-matter)
+4. [Two types of validators](#4-two-types-of-validators)
+5. [Structure validators (CI)](#5-structure-validators-ci)
+6. [Content validators (TruDAG)](#6-content-validators-trudag)
+7. [Validator configuration](#7-validator-configuration)
+8. [Score calculation](#8-score-calculation)
+9. [Creating custom validators](#9-creating-custom-validators)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Best practices](#11-best-practices)
+12. [Post 0/124 fixes (Mar 2026)](#12-post-0124-fixes-mar-2026)
 
 ---
 
@@ -75,9 +86,61 @@ This separation ensures:
 - ✅ CI validators catch format errors early (before merge)
 - ✅ TruDAG validators assess quality and completeness (for scoring)
 
+## 3. Why Validators Matter
+
+In TSF, validators and references solve different but complementary problems:
+
+- `references` provide traceability links to artifacts (files/URLs) and parent/child statements.
+- `validators` provide automated confidence scoring when assumptions claim preconditions (hardware/software/environment) are true.
+
+Why we created them in this project:
+
+- to avoid manual-only review of 100+ items,
+- to make score changes reproducible across runs,
+- to surface missing evidence early in `--check`/`--validate`,
+- to keep requirement chains auditable from EXPECT -> ASSERT -> EVID/ASSUMP.
+
+References are documented in:
+- `docs/TSF/tsf_implementation/TSF_docs/REFERENCES_GUIDE.md`
+
+### Plugin Layout (Why You See 3 Paths)
+
+Current runtime paths:
+
+1. `.dotstop_extensions/` - real source of custom validators/references.
+- Runtime reference implementation source: `.dotstop_extensions/references.py`.
+2. `localplugins/` - symlink to `.dotstop_extensions` used by TruDAG import conventions.
+- Runtime import alias used by TruDAG: `localplugins/references.py`.
+- `localplugins` is a symlink to `.dotstop_extensions` (same code, different import path).
+
+3. `docs/TSF/tsf_implementation/.dotstop_extensions` - symlink used when running from `tsf_implementation`.
+- `docs/TSF/tsf_implementation/.dotstop_extensions` is a symlink to the same root folder to support runs from inside `tsf_implementation`.
+- Runtime execution symlink in TSF working dir: `docs/TSF/tsf_implementation/.dotstop_extensions`.
+
+These are not three independent implementations; they point to the same plugin code.
+- So there are three visible paths, but one practical codebase.
+
+Why this exists:
+
+- TruDAG/plugin loading expects `localplugins` import conventions in this workflow.
+- TSF scripts run from `docs/TSF/tsf_implementation`, where a local `.dotstop_extensions` path is expected.
+- Symlinks keep compatibility without duplicating plugin code.
+
+How theory becomes practice:
+
+1. You write `references:` blocks in item frontmatter (`items/expectations`, `items/assertions`, `items/evidences`, `items/assumptions`).
+2. TruDAG loads reference types (`file`, `url`) and resolves them through built-in and plugin classes.
+3. Custom URL handling in `.dotstop_extensions/references.py` applies repository-specific safeguards.
+4. Resolved reference content feeds hashing/scoring and appears in generated trustable artifacts.
+
+Design decision (April 2026):
+
+- Custom `FileReference` was removed to avoid symbol collision with built-in TruDAG `FileReference`.
+- Built-in file behavior remains active, and custom behavior is kept focused on URL reference handling.
+
 ---
 
-## 3. Two Types of Validators
+## 4. Two Types of Validators
 
 ### Structure Validators (CI)
 
@@ -104,7 +167,7 @@ This separation ensures:
 
 ---
 
-## 4. Structure Validators (CI)
+## 5. Structure Validators (CI)
 
 ### File Location
 
@@ -174,7 +237,7 @@ jobs:
 
 ---
 
-## 5. Content Validators (TruDAG)
+## 6. Content Validators (TruDAG)
 
 ### File Location
 
@@ -233,7 +296,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## 6. Validator Configuration
+## 7. Validator Configuration
 
 ### In ASSUMP Items
 
@@ -308,7 +371,7 @@ evidence:
 
 ---
 
-## 7. Score Calculation
+## 8. Score Calculation
 
 ### Scoring Formula
 
@@ -344,7 +407,7 @@ Result: `score = 2/3 = 0.67`
 
 ---
 
-## 8. Creating Custom Validators
+## 9. Creating Custom Validators
 
 ### Step 1: Add Function to validators.py
 
@@ -401,7 +464,7 @@ evidence:
 
 ---
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 ### "Cannot find a validator function for type X"
 
@@ -459,7 +522,7 @@ evidence:
 
 ---
 
-## 10. Best Practices
+## 11. Best Practices
 
 ### 1. Be Specific
 
@@ -500,7 +563,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## 11. Post 0/124 Fixes (Mar 2026)
+## 12. Post 0/124 Fixes (Mar 2026)
 
 Recent validator-related fixes applied after scoring dropped to `0/124`:
 

@@ -43,10 +43,6 @@ references:
 - type: file
   path: docs/demos/assembled-car1.jpeg
 - type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
-- type: file
   path: src/shared/backend/providers/vehicleprovider.hpp
 - type: file
   path: src/shared/backend/providers/vehicleprovider.cpp

@@ -36,21 +36,8 @@ normative: true
 references:
 - type: file
   path: ../assertions/ASSERT-L0-31.md
-- type: file
-  path: ../evidences/EVID-L0-31.md
-- type: file
-  path: docs/guides/OTA/OTA_Implementation_Guide.md
-- type: file
-  path: src/ota/README.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: pending
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---
