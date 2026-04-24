@@ -3,10 +3,27 @@ import ClusterTheme 1.0
 
 Item {
     anchors.fill: parent
-    Text {
+
+    Column {
         anchors.centerIn: parent
-        text: "To be added..."
-        color: BaseTheme.white
-        font.pixelSize: 18
+        spacing: 6
+
+        Text {
+            text: "To be added..."
+            color: BaseTheme.white
+            font.pixelSize: 18
+        }
+
+        Text {
+            text: adas.lateralDeviation
+            color: BaseTheme.white
+            font.pixelSize: 18
+        }
+
+        Text {
+            text: adas.laneStatus
+            color: BaseTheme.white
+            font.pixelSize: 18
+        }
     }
 }

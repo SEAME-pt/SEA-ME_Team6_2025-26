@@ -43,12 +43,14 @@ int main(int argc, char *argv[])
 
     std::vector<std::string> kuksaSignals = {
         "Vehicle.Speed",
-        "Vehicle.Exterior.AirTemperature",
-        "Vehicle.ADAS.ObstacleDetection.Front.Distance",
         "Vehicle.Powertrain.TractionBattery.CurrentVoltage",
         "Vehicle.Powertrain.ElectricMotor.Speed",
         "Vehicle.Powertrain.TractionBattery.IsCritical",
         "Vehicle.Powertrain.TractionBattery.IsLevelLow",
+        "Vehicle.Exterior.AirTemperature",
+        "Vehicle.ADAS.ObstacleDetection.Front.Distance",
+        "Vehicle.ADAS.LaneKeepAssist.LateralDeviation",
+        "Vehicle.ADAS.LaneKeepAssist.LaneStatus",
         "Vehicle.CurrentLocation.Heading",
         "Vehicle.Chassis.SteeringWheel.Angle"
     };

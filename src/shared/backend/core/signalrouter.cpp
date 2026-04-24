@@ -148,6 +148,12 @@ void SignalRouter::routeADASSignal(const QString &path, const QVariant &value)
     if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") {
         _adasProvider->updateFrontDistance(value.toDouble());
     }
+    else if (path == "Vehicle.ADAS.LaneKeepAssist.LateralDeviation") {
+        _adasProvider->updateLateralDeviation(value.toDouble());
+    }
+    else if (path == "Vehicle.ADAS.LaneKeepAssist.LaneStatus") {
+        _adasProvider->updateLaneStatus(value.toString());
+    }
     else {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;
     }
