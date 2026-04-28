@@ -110,7 +110,13 @@
   - E2E test with 2 models (UFLvs + Yolo8s)
   - Benchmark between Yolo8s vs Yolo8n-seg vs Yolo26n-seg 
   - ADAS Visualization on Qt HMI Cluster
-  - 
+    
+#### Inference Performance
+
+| Pipeline | FPS |
+|:---:|:---:|
+| UFLDv2 solo | 9.6 |
+| UFLDv2 + YOLOv8s dual | 7.1 |
 
 
 - **Demos**:
