@@ -57,7 +57,7 @@
 | **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 114**
+**Total Sprint Points: 117**
 
 ---
 
@@ -114,6 +114,8 @@
 
 
 - **Demos**:
+  - https://youtu.be/zCdsnTX1WNg
+  - 
 
  
 - **Docs updated**:
