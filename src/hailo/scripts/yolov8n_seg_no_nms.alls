@@ -1,0 +1,12 @@
+# yolov8n_seg_no_nms.alls
+# Hailo model script — removes NMS from device compilation.
+# NMS runs on host CPU (experimental-host-nms path).
+#
+# Used to compile YOLO26n-seg (and any yolov8-seg variant with custom head)
+# where the Hailo DFC allocator cannot fit the full nms_postprocess block.
+#
+# Tested and confirmed working: 2026-04-01 (planning doc §11D.10)
+# Recipe: yolov8n_seg  --  outputs: output0, output1
+# Result: "Successful Mapping (8m 6s) — HEF file written to yolov8n_seg.hef"
+
+normalization1 = normalization([0, 0, 0], [255, 255, 255])
