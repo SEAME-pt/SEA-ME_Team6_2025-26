@@ -18,3 +18,19 @@ Este guia mostra como usar o contexto do projeto sem o reinventar a cada tarefa.
 
 ## 5) Resultado esperado
 - Um ponto de entrada estável para qualquer pessoa retomar o trabalho rapidamente.
+
+## 6) Checkpoint atual
+
+### Estado guardado
+- A documentação `yolo_step_by_step/` foi criada para consolidar o fluxo E2E e o runbook de replicação.
+- O foco atual é manter o benchmark YOLO localmente enquanto a sessão remota está limitada.
+- O script fixado do `yolo26n-seg` continua como referência experimental com host-side NMS.
+
+### Como retomar depois
+1. Abrir `yolo_step_by_step/README.md` para o índice principal.
+2. Ler `yolo_step_by_step/00_full_lifecycle_e2e_step_by_step.md` para o contexto completo.
+3. Seguir `yolo_step_by_step/02_replication_runbook.md` para executar os passos.
+4. Consultar `yolo_step_by_step/05_known_issues_and_fixes.md` se houver erro.
+
+### Próximo passo sugerido
+- Validar localmente se há ficheiros novos a guardar em git e, quando a sessão remota voltar, continuar com a replicação do benchmark ou com a promoção dos scripts estáveis para `src/hailo/scripts`.

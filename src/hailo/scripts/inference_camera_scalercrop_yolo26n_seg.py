@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 """
 YOLO26n-seg com host-side NMS — ScalerCrop Camera
 Experimental variant: HEF compilado SEM NMS
@@ -26,8 +27,8 @@ from hailo_platform import (HEF, VDevice, HailoStreamInterface,
 import hailo_demo_common as demo_io
 
 # ── Configuração ──────────────────────────────────────────────────────────────
-HEF_PATH    = "/data/yolo26n_seg_320_h8_no_nms.hef"  # SEM NMS — host faz
-OUTPUT_PATH = "/data/demo_yolo26n_seg_scalercrop.mp4"
+HEF_PATH    = os.environ.get("HEF_PATH", "/data/yolo_benchmark/models/hef/yolo26n_seg_320_h8_no_nms.hef")
+OUTPUT_PATH = os.environ.get("OUTPUT_PATH", "/data/yolo_benchmark/results/demo_yolo26n_seg_scalercrop.mp4")
 
 # Câmara CSI — ScalerCrop
 SENSOR_W    = 4608
@@ -46,14 +47,50 @@ MODEL_W = 320  # NOTA: 320 para YOLO26n (mais rápido)
 MODEL_H = 320
 
 # Streams do HEF (SEM NMS)
-INPUT_STREAM   = "yolo26n_seg/input_layer1"
-OUTPUT_STREAM  = "yolo26n_seg/output0"     # detections [x, y, w, h, conf, class_0, ..., class_79, mask_0, ..., mask_31]
-MASK_STREAM    = "yolo26n_seg/output1"     # masks (se existir; verificar com hailortcli parse-hef)
+INPUT_STREAM   = "yolov8n_seg/input_layer1"
+OUTPUT_STREAM  = "yolov8n_seg/format_conversion16"  # tensor achatado de deteções
+MASK_STREAM    = "yolov8n_seg/conv109"              # proto de máscaras
 
-# Thresholds (fixados conforme protocolo)
-CONF_THRESH = 0.5   # conf mínima
-IOU_THRESH  = 0.6   # NMS iou
+# Thresholds: reduzir FPs antes de pensar em treino/fine-tuning
+# Thresholds: reduzir FPs antes de pensar em treino/fine-tuning
+CONF_THRESH = 0.50  # conf mínima
+IOU_THRESH  = 0.55  # NMS iou
 MASK_THRESH = 0.5   # limiar para máscara
+PRE_NMS_TOPK = 200
+MAX_DETECTIONS = 30
+
+ROAD_CLASS_NAMES = [
+    "linha_branca_continua",
+    "linha_branca_tracejada",
+    "linha_amarela_berma_direita",
+    "passadeira",
+    "stop_chao",
+    "estacionamento",
+    "fundo_pista",
+]
+
+
+def _class_name(cls_id):
+    if 0 <= int(cls_id) < len(ROAD_CLASS_NAMES):
+        return ROAD_CLASS_NAMES[int(cls_id)]
+    return f"class_{int(cls_id)}"
+
+
+def _pick_output_value(output, preferred_key):
+    if isinstance(output, dict):
+        preferred_hints = [preferred_key, "format_conversion16", "output0", "conv109"]
+        for hint in preferred_hints:
+            for key, candidate in output.items():
+                if hint in key and candidate is not None:
+                    if key != preferred_key:
+                        print(f"⚠️ Output '{preferred_key}' vazio; a usar '{key}'")
+                    return candidate
+        for key, candidate in output.items():
+            if candidate is not None:
+                print(f"⚠️ Output '{preferred_key}' vazio; a usar '{key}'")
+                return candidate
+        return None
+    return output
 
 BOX_COLOR   = (0, 255, 0)
 MASK_COLOR  = (0, 255, 0)  # verde para máscara
@@ -209,98 +246,154 @@ def nms(boxes, scores, thresh=IOU_THRESH):
     return np.array(keep)
 
 
-# ── Post-processing YOLO26n-seg (host-side NMS + máscara) ──────────────────────
-def yolo26n_seg_postprocess(hailo_output, conf_thresh=CONF_THRESH, iou_thresh=IOU_THRESH):
-    """
-    Parse YOLO26n-seg output (sem NMS do device).
-    
-    hailo_output é dict com chaves (verificar com hailortcli):
-    - "yolo26n_seg/output0": detections raw
-    - Possível "yolo26n_seg/output1": masks (opcional)
-    
-    Formato esperado (YOLO-style):
-    [x, y, w, h, conf, class_scores..., mask_values...]
-    
-    Returns:
-        boxes: (N, 4) [x1, y1, x2, y2] escalados
-        scores: (N,) confidence scores
-        classes: (N,) class indices
-        masks: (N, H, W) segmentation masks (ou None se não existir)
-    """
-    # Extrair output primário
-    output_key = None
-    for key in hailo_output.keys():
-        if "output" in key.lower():
-            output_key = key
+# ── Post-processing YOLO26n-seg (HEF real) ───────────────────────────────────
+def _sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
+def _xywh_to_xyxy(boxes):
+    x = boxes.copy()
+    x[:, 0] = boxes[:, 0] - boxes[:, 2] / 2.0
+    x[:, 1] = boxes[:, 1] - boxes[:, 3] / 2.0
+    x[:, 2] = boxes[:, 0] + boxes[:, 2] / 2.0
+    x[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.0
+    return x
+
+
+def _nms_numpy(boxes, scores, thresh=IOU_THRESH):
+    if len(boxes) == 0:
+        return np.array([], dtype=int)
+    x1 = boxes[:, 0]
+    y1 = boxes[:, 1]
+    x2 = boxes[:, 2]
+    y2 = boxes[:, 3]
+    areas = (x2 - x1) * (y2 - y1)
+    order = scores.argsort()[::-1]
+    keep = []
+    while order.size > 0:
+        i = order[0]
+        keep.append(i)
+        if order.size == 1:
             break
-    
-    if output_key is None:
+        xx1 = np.maximum(x1[i], x1[order[1:]])
+        yy1 = np.maximum(y1[i], y1[order[1:]])
+        xx2 = np.minimum(x2[i], x2[order[1:]])
+        yy2 = np.minimum(y2[i], y2[order[1:]])
+        w = np.maximum(0.0, xx2 - xx1)
+        h = np.maximum(0.0, yy2 - yy1)
+        inter = w * h
+        iou = inter / (areas[i] + areas[order[1:]] - inter + 1e-6)
+        order = order[1:][iou <= thresh]
+    return np.array(keep, dtype=int)
+
+
+def _decode_masks(proto, coeffs, boxes, out_h=FULL_H, out_w=FULL_W, mask_thresh=MASK_THRESH):
+    if proto is None or coeffs is None or len(coeffs) == 0:
+        return None
+    proto = np.array(proto)
+    coeffs = np.array(coeffs)
+    if proto.ndim == 4:
+        proto = proto[0]
+    if coeffs.ndim == 3:
+        coeffs = coeffs[0]
+    if proto.shape[-1] != coeffs.shape[-1]:
+        return None
+    mask = proto.reshape(-1, proto.shape[-1]) @ coeffs.T
+    mask = _sigmoid(mask).reshape(proto.shape[0], proto.shape[1], -1)
+    mask = np.transpose(mask, (2, 0, 1))
+    masks_out = []
+    for i, box in enumerate(boxes):
+        m = cv2.resize(mask[i].astype(np.float32), (out_w, out_h))
+        x1, y1, x2, y2 = box.astype(int)
+        crop = np.zeros_like(m, dtype=np.uint8)
+        x1 = max(0, min(out_w, x1))
+        x2 = max(0, min(out_w, x2))
+        y1 = max(0, min(out_h, y1))
+        y2 = max(0, min(out_h, y2))
+        crop[y1:y2, x1:x2] = (m[y1:y2, x1:x2] > mask_thresh).astype(np.uint8)
+        masks_out.append(crop)
+    return masks_out
+
+
+def _extract_yolo26_tensors(hailo_output):
+    """Extract proto and flattened prediction tensor from HEF outputs."""
+    if isinstance(hailo_output, dict):
+        items = list(hailo_output.items())
+    else:
+        items = [(f"out_{i}", arr) for i, arr in enumerate(hailo_output)]
+
+    proto = None
+    pred = None
+
+    for _, arr in items:
+        a = np.array(arr)
+        if a.ndim != 4:
+            continue
+        _, h, w, c = a.shape
+        if h == 80 and w == 80 and c == 32:
+            proto = a
+        elif h == 1 and w == 116 and c == 2100:
+            pred = a
+
+    return proto, pred
+
+
+def yolo26n_seg_postprocess(hailo_output, conf_thresh=CONF_THRESH, iou_thresh=IOU_THRESH):
+    """Parse HEF YOLO26n-seg where output is (1,1,116,2100)."""
+    if hailo_output is None:
         return np.empty((0, 4)), np.empty((0,)), np.empty((0,)), None
-    
-    raw_output = hailo_output[output_key][0]  # shape (num_detections, features)
-    
-    if raw_output is None or len(raw_output) == 0:
+    proto, pred = _extract_yolo26_tensors(hailo_output)
+    if proto is None or pred is None:
         return np.empty((0, 4)), np.empty((0,)), np.empty((0,)), None
 
-    # Parse detections
-    # Estrutura (tipicamente): [x, y, w, h, conf, class_0, ..., class_79, mask_0, ..., mask_31]
-    # Num classes: 80 (COCO standard)
-    # Mask values: tipicamente 32 (dimensão do proto mask)
-    
-    num_classes = 80  # COCO
-    num_mask_protos = 32
-    
-    detections = []
-    for det in raw_output:
-        if len(det) < (5 + num_classes):  # x, y, w, h, conf + classes
-            continue
-        
-        x, y, w, h = det[0], det[1], det[2], det[3]
-        conf = det[4]
-        class_scores = det[5:5+num_classes]
-        cls_id = np.argmax(class_scores)
-        cls_conf = class_scores[cls_id]
-        
-        # Filtrar por threshold
-        if cls_conf < conf_thresh:
-            continue
-        
-        # Converter (x, y, w, h) → (x1, y1, x2, y2) em coordenadas de modelo (320×320)
-        x1 = x - w / 2
-        y1 = y - h / 2
-        x2 = x + w / 2
-        y2 = y + h / 2
-        
-        # Extrair máscara (se disponível)
-        mask = None
-        if len(det) >= (5 + num_classes + num_mask_protos):
-            mask = det[5+num_classes:5+num_classes+num_mask_protos]
-        
-        detections.append({
-            'box': [x1, y1, x2, y2],
-            'conf': cls_conf,
-            'cls': cls_id,
-            'mask': mask
-        })
-    
-    if len(detections) == 0:
+    # (1,1,116,2100) -> (2100,116)
+    pred_flat = pred[0, 0].T.astype(np.float32)
+    if pred_flat.shape[1] < 116:
         return np.empty((0, 4)), np.empty((0,)), np.empty((0,)), None
-    
-    # Extrair boxes e scores
-    boxes = np.array([d['box'] for d in detections])
-    scores = np.array([d['conf'] for d in detections])
-    classes = np.array([d['cls'] for d in detections], dtype=int)
-    masks = [d['mask'] for d in detections]
-    
-    # Aplicar NMS
-    keep_idxs = nms(boxes, scores, iou_thresh)
-    
-    boxes_kept = boxes[keep_idxs]
-    scores_kept = scores[keep_idxs]
-    classes_kept = classes[keep_idxs]
-    masks_kept = [masks[i] for i in keep_idxs] if masks else None
-    
-    return boxes_kept, scores_kept, classes_kept, masks_kept
+
+    box_xywh = pred_flat[:, :4]
+    cls_logits = pred_flat[:, 4:84]
+    coeffs = pred_flat[:, 84:116]
+
+    boxes = _xywh_to_xyxy(box_xywh)
+    class_scores = _sigmoid(cls_logits)
+    cls_id = np.argmax(class_scores, axis=1)
+    cls_score = class_scores[np.arange(class_scores.shape[0]), cls_id]
+
+    keep = cls_score >= conf_thresh
+    boxes = boxes[keep]
+    scores_kept = cls_score[keep]
+    classes = cls_id[keep]
+    coeffs = coeffs[keep]
+
+    if len(boxes) == 0:
+        return np.empty((0, 4)), np.empty((0,)), np.empty((0,)), None
+
+    if len(scores_kept) > PRE_NMS_TOPK:
+        order = np.argsort(scores_kept)[::-1][:PRE_NMS_TOPK]
+        boxes = boxes[order]
+        scores_kept = scores_kept[order]
+        classes = classes[order]
+        coeffs = coeffs[order]
+
+    boxes[:, [0, 2]] = np.clip(boxes[:, [0, 2]], 0, MODEL_W - 1)
+    boxes[:, [1, 3]] = np.clip(boxes[:, [1, 3]], 0, MODEL_H - 1)
+
+    keep_idx = _nms_numpy(boxes, scores_kept, thresh=iou_thresh)
+    boxes = boxes[keep_idx]
+    scores_kept = scores_kept[keep_idx]
+    classes = classes[keep_idx]
+    coeffs = coeffs[keep_idx]
+
+    if len(scores_kept) > MAX_DETECTIONS:
+        order = np.argsort(scores_kept)[::-1][:MAX_DETECTIONS]
+        boxes = boxes[order]
+        scores_kept = scores_kept[order]
+        classes = classes[order]
+        coeffs = coeffs[order]
+
+    masks = _decode_masks(proto, coeffs, boxes, MODEL_H, MODEL_W)
+    return boxes, scores_kept, classes, masks
 
 
 def scale_boxes_to_full_frame(boxes):
@@ -317,6 +410,18 @@ def scale_boxes_to_full_frame(boxes):
     return b.astype(int)
 
 
+def scale_masks_to_full_frame(masks):
+    if not masks:
+        return masks
+    scaled = []
+    for m in masks:
+        if m is None:
+            scaled.append(None)
+        else:
+            scaled.append(cv2.resize(m.astype(np.uint8), (FULL_W, FULL_H), interpolation=cv2.INTER_NEAREST))
+    return scaled
+
+
 def decode_mask(mask_proto, mask_values, frame_h, frame_w, threshold=MASK_THRESH):
     """
     Decodificar máscara proto a partir dos coefficients.
@@ -329,19 +434,19 @@ def decode_mask(mask_proto, mask_values, frame_h, frame_w, threshold=MASK_THRESH
 
 def draw_detections(frame, boxes, scores, classes, masks=None):
     """Desenhar boxes e máscaras (se disponível)."""
+    overlay = frame.copy()
     for idx, (box, score, cls) in enumerate(zip(boxes, scores, classes)):
         x1, y1, x2, y2 = box
         cv2.rectangle(frame, (x1, y1), (x2, y2), BOX_COLOR, 2)
-        label = f"C{cls}:{score:.2f}"
+        label = f"{_class_name(cls)} {score:.2f}"
         cv2.putText(frame, label, (x1, max(0, y1 - 5)),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, TEXT_COLOR, 1)
-        
-        # Desenhar máscara se disponível
+
         if masks and idx < len(masks) and masks[idx] is not None:
-            # Placeholder: masks[idx] é array de 32 valores
-            # Renderizar como contorno ou overlay
-            pass
-    
+            mask = masks[idx].astype(bool)
+            overlay[mask] = (0.3 * overlay[mask] + 0.7 * np.array(MASK_COLOR)).astype(np.uint8)
+
+    frame[:] = cv2.addWeighted(overlay, 0.45, frame, 0.55, 0)
     return frame
 
 
@@ -467,7 +572,7 @@ def run_demo(duration_seconds=60, save_video=False, images_dir=None, loop=False,
 
                 try:
                     while True:
-                        if source.is_live and (time.time() - t_start) >= duration_seconds:
+                        if (time.time() - t_start) >= duration_seconds:
                             break
 
                         ret, frame, cam_count = source.read()
@@ -495,6 +600,7 @@ def run_demo(duration_seconds=60, save_video=False, images_dir=None, loop=False,
                         t0            = time.time()
                         boxes, scores, classes, masks = yolo26n_seg_postprocess(output)
                         boxes_full    = scale_boxes_to_full_frame(boxes)
+                        masks_full    = scale_masks_to_full_frame(masks)
                         t_post        = (time.time() - t0) * 1000
 
                         t_total   = t_pre + t_hailo + t_post
@@ -524,7 +630,7 @@ def run_demo(duration_seconds=60, save_video=False, images_dir=None, loop=False,
                               f"{num_dets:>7}")
 
                         if save_video and async_writer is not None:
-                            frame_out = draw_detections(frame.copy(), boxes_full, scores, classes, masks)
+                            frame_out = draw_detections(frame.copy(), boxes_full, scores, classes, masks_full)
                             frame_out = draw_overlay(frame_out, fps, frame_idx,
                                                      t_pre, t_hailo, t_post, num_dets)
                             async_writer.write(frame_out)

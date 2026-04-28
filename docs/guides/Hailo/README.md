@@ -29,6 +29,7 @@ Este diretório está organizado para separar claramente:
 - `60_planning/planning_step_by_step.md`: método para manter o plano vivo.
 - `90_history/`: histórico organizado de comandos/logs usados como evidência.
 - `90_history/evidence_step_by_step.md`: método para indexar evidência.
+- `yolo_step_by_step/`: pacote operacional de onboarding e replicação dos fluxos YOLO (setup -> inferência -> benchmark -> troubleshooting).
 - `backup/`: legado documental preservado, sem perda de conteúdo.
 
 ## Começar por aqui
@@ -42,6 +43,7 @@ Este diretório está organizado para separar claramente:
 7. Registar bloqueios em `50_issues/UFLDv2_issues_and_possible_fixes.md`.
 8. Atualizar plano em `60_planning/current_sprint_plan.md`.
 9. Indexar evidência em `90_history/evidence_index.md`.
+10. Para replicação YOLO de ponta a ponta, seguir `yolo_step_by_step/README.md`.
 
 ## Fluxo E2E de referência
 

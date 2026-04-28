@@ -1,0 +1,14 @@
+=== 2026-04-23T18:56:28+01:00 ===
+ M docs/guides/Hailo/README.md
+ M docs/guides/Hailo/context/context_step_by_step.md
+ M src/hailo/scripts/inference_camera_scalercrop_yolo26n_seg.py
+ M src/hailo/scripts/inference_camera_scalercrop_yolov8n_seg.py
+ M src/hailo/scripts/inference_camera_scalercrop_yolov8s.py
+?? .session_recovery/
+?? .tmp_yolo_fix/
+?? =
+?? docs/guides/Hailo/context/hailo_yolo_master_context.md
+?? docs/guides/Hailo/yolo_step_by_step/
+?? src/hailo/scripts/yolov8s_offline.py
+
+feature/Hailo/models_benchmarks
