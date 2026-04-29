@@ -4,6 +4,7 @@ import threading
 import queue
 import time
 import sys
+from collections import deque
 from hailo_platform import (HEF, VDevice, HailoStreamInterface,
                              InferVStreams, ConfigureParams,
                              InputVStreamParams, OutputVStreamParams,
@@ -53,9 +54,13 @@ OUT_SLICE4   = f"{MODEL_NAME}/slice4"   # exist_col NC(328)   = 2×41×4
 ROW_LANE_LIST = [1, 2]
 COL_LANE_LIST = [0, 3]
 
-EXIST_THRESHOLD = 0.7
-LOCAL_WIDTH     = 14
-MIN_LANE_PTS    = 3
+EXIST_THRESHOLD  = 0.7
+LOCAL_WIDTH      = 14
+MIN_LANE_PTS     = 3
+
+TEMPORAL_HISTORY  = 7   # frames de histórico temporal
+TEMPORAL_MIN_HITS = 2   # mínimo de detecções válidas no histórico para manter ponto
+SPATIAL_WINDOW    = 5   # janela de suavização espacial (moving average)
 
 LANE_COLORS = [
     (0,   0,   0),   # lane 0 (col) — não usada
@@ -262,18 +267,45 @@ def draw_lanes(frame, lanes):
             cv2.circle(frame, pt, 4, color, -1)
     return frame
 
-def smooth_lane(pts, window=5):
-    if len(pts) < window:
+class TemporalLaneSmoother:
+    """
+    Suavização temporal: mantém histórico de x por lane/row_idx.
+    Um ponto é emitido se aparecer em >= min_hits dos últimos `history` frames.
+    O x emitido é a média dos valores válidos no histórico.
+    """
+    def __init__(self, history=TEMPORAL_HISTORY, min_hits=TEMPORAL_MIN_HITS):
+        self.history  = history
+        self.min_hits = min_hits
+        self._hist = [[deque(maxlen=history) for _ in range(NUM_ROW)]
+                      for _ in range(NUM_LANES)]
+        self._y = [int(ROW_ANCHOR[r] * FULL_H) for r in range(NUM_ROW)]
+
+    def update(self, lanes):
+        smoothed = [[] for _ in range(NUM_LANES)]
+        for lane_idx in ROW_LANE_LIST:
+            y_to_x = {y: x for (x, y) in lanes[lane_idx]}
+            for row_idx in range(NUM_ROW):
+                self._hist[lane_idx][row_idx].append(y_to_x.get(self._y[row_idx]))
+            pts = []
+            for row_idx in range(NUM_ROW):
+                valid = [x for x in self._hist[lane_idx][row_idx] if x is not None]
+                if len(valid) >= self.min_hits:
+                    pts.append((int(np.mean(valid)), self._y[row_idx]))
+            smoothed[lane_idx] = pts
+        return smoothed
+
+
+def smooth_lane(pts, window=SPATIAL_WINDOW):
+    """Suavização espacial: moving average no eixo x entre pontos adjacentes."""
+    if len(pts) < 3:
         return pts
     xs = np.array([p[0] for p in pts], dtype=np.float32)
     ys = np.array([p[1] for p in pts], dtype=np.float32)
-    kernel = np.ones(window) / window
-    xs_smooth = np.convolve(xs, kernel, mode='same')
-    # Corta as extremidades afectadas pelo kernel
-    trim = window // 2
-    xs_trim = xs_smooth[trim:-trim]
-    ys_trim = ys[trim:-trim]
-    return [(int(x), int(y)) for x, y in zip(xs_trim, ys_trim)]
+    pad       = window // 2
+    xs_padded = np.pad(xs, pad, mode='edge')
+    kernel    = np.ones(window) / window
+    xs_smooth = np.convolve(xs_padded, kernel, mode='valid')
+    return [(int(x), int(y)) for x, y in zip(xs_smooth, ys)]
 
 def smooth_lanes(lanes):
     return [smooth_lane(lane) for lane in lanes]
@@ -345,6 +377,7 @@ def run_demo(frame_queue, duration_seconds=60, save_video=False):
                 t_start        = time.time()
                 times_all      = []
                 fps_acc        = []
+                temporal_smoother = TemporalLaneSmoother()
 
                 try:
                     while (time.time() - t_start) < duration_seconds:
@@ -370,6 +403,7 @@ def run_demo(frame_queue, duration_seconds=60, save_video=False):
                             output[OUT_SLICE4][0])
                         t_post = (time.time() - t0) * 1000
                         t0              = time.time()
+                        lanes = temporal_smoother.update(lanes)
                         lanes = smooth_lanes(lanes)
                         deviation, status = calc_lateral_deviation(lanes)
                         t_coords        = (time.time() - t0) * 1000
