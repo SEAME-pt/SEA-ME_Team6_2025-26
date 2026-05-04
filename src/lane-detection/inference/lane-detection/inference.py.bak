@@ -1,0 +1,256 @@
+import numpy as np
+import cv2
+import threading
+import queue
+import time
+import sys
+from hailo_platform import (HEF, VDevice, HailoStreamInterface,
+                             InferVStreams, ConfigureParams,
+                             InputVStreamParams, OutputVStreamParams,
+                             FormatType)
+import grpc
+from kuksa.val.v2 import val_pb2, val_pb2_grpc, types_pb2
+
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from config import (
+    HEF_PATH, WEIGHTS_PATH, OUTPUT_PATH,
+    FULL_W, FULL_H, CAM_FPS,
+    TRAIN_WIDTH, TRAIN_HEIGHT, CROP_RATIO,
+    INPUT_STREAM, OUTPUT_LAYER,
+    EXIST_THRESHOLD, TEMPORAL_HISTORY, TEMPORAL_MIN_HITS,
+    KUKSA_HOST, KUKSA_PORT, KUKSA_CA_CERT, KUKSA_TOKEN,
+    LKA_DEVIATION_PATH, LKA_STATUS_PATH,
+)
+from postprocess import (
+    load_weights, postprocess, decode_lanes,
+    calc_lateral_deviation, TemporalLaneSmoother, smooth_lanes,
+)
+from visualization import draw_lanes, draw_drivable_area, draw_overlay
+
+
+# ── KUKSA ──────────────────────────────────────────────────────────────────────
+_kuksa_queue = queue.Queue(maxsize=1)
+
+
+def _kuksa_worker(q):
+    token    = open(KUKSA_TOKEN).read().strip()
+    ca_certs = open(KUKSA_CA_CERT, "rb").read()
+    creds    = grpc.ssl_channel_credentials(root_certificates=ca_certs)
+    channel  = grpc.secure_channel(f"{KUKSA_HOST}:{KUKSA_PORT}", creds)
+    stub     = val_pb2_grpc.VALStub(channel)
+    metadata = [("authorization", f"Bearer {token}")]
+    print("[KUKSA] Thread iniciada (gRPC v2)")
+    while True:
+        deviation, status = q.get()
+        try:
+            req_dev = val_pb2.PublishValueRequest()
+            req_dev.signal_id.path = LKA_DEVIATION_PATH
+            req_dev.data_point.value.float = float(deviation)
+            stub.PublishValue(req_dev, metadata=metadata)
+            req_st = val_pb2.PublishValueRequest()
+            req_st.signal_id.path = LKA_STATUS_PATH
+            req_st.data_point.value.string = status
+            stub.PublishValue(req_st, metadata=metadata)
+        except Exception as e:
+            print(f"[KUKSA] Erro: {e}")
+
+
+def publish_deviation(deviation, status):
+    try:
+        _kuksa_queue.put_nowait((deviation if deviation is not None else 0.0, status))
+    except queue.Full:
+        pass
+
+
+# ── Writer assíncrono ──────────────────────────────────────────────────────────
+class AsyncVideoWriter:
+    def __init__(self, path, fps, width, height):
+        self._queue  = queue.Queue(maxsize=60)
+        self._writer = cv2.VideoWriter(
+            path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+        if not self._writer.isOpened():
+            raise RuntimeError(f"Não foi possível criar: {path}")
+        self._stop   = threading.Event()
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+
+    def _loop(self):
+        while not self._stop.is_set() or not self._queue.empty():
+            try:
+                frame = self._queue.get(timeout=0.1)
+                self._writer.write(frame)
+            except Exception:
+                continue
+
+    def write(self, frame):
+        try:
+            self._queue.put_nowait(frame)
+        except queue.Full:
+            pass
+
+    def release(self):
+        self._stop.set()
+        self._thread.join(timeout=10)
+        self._writer.release()
+
+
+# ── Pré-processamento ──────────────────────────────────────────────────────────
+def preprocess(frame):
+    """
+    BGR FULL_W×FULL_H → UINT8 (320, 800, 3)
+    Resize 800×400 → crop inferior 800×320 → RGB
+    """
+    resize_h = int(TRAIN_HEIGHT / CROP_RATIO)  # 400
+    img = cv2.resize(frame, (TRAIN_WIDTH, resize_h))
+    top = resize_h - TRAIN_HEIGHT               # 80
+    img = img[top:, :]
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return img.astype(np.uint8)
+
+
+# ── Pipeline principal ─────────────────────────────────────────────────────────
+def run(frame_queue, duration_seconds=60, save_video=False):
+    threading.Thread(target=_kuksa_worker, args=(_kuksa_queue,), daemon=True).start()
+
+    W1, b1, W2, b2 = load_weights(WEIGHTS_PATH)
+
+    print(f"\nFrame câmara:      {FULL_W}×{FULL_H} (via CameraBroker)")
+    print(f"Modelo recebe:     {TRAIN_WIDTH}×{TRAIN_HEIGHT} (crop_ratio={CROP_RATIO})")
+    print(f"HEF cortado:       /pool/Conv → conv37 (10,25,8) UINT8")
+    print(f"Post-processing:   CPU (dequant + FC1 + ReLU + FC2)")
+    print(f"EXIST_THRESHOLD:   {EXIST_THRESHOLD}")
+    print(f"Temporal smoother: history={TEMPORAL_HISTORY} min_hits={TEMPORAL_MIN_HITS}")
+
+    async_writer = None
+    if save_video:
+        async_writer = AsyncVideoWriter(OUTPUT_PATH, CAM_FPS, FULL_W, FULL_H)
+        print(f"A gravar: {OUTPUT_PATH}")
+
+    hef = HEF(HEF_PATH)
+    with VDevice() as target:
+        configure_params = ConfigureParams.create_from_hef(
+            hef, interface=HailoStreamInterface.PCIe)
+        network_groups = target.configure(hef, configure_params)
+        network_group  = network_groups[0]
+
+        input_params  = InputVStreamParams.make(network_group, format_type=FormatType.UINT8)
+        output_params = OutputVStreamParams.make(network_group, format_type=FormatType.UINT8)
+
+        with network_group.activate():
+            with InferVStreams(network_group, input_params, output_params) as pipeline:
+                print(f"\nA correr durante {duration_seconds}s — Ctrl+C para parar\n")
+                print(f"{'Frame':<7} {'Pre':>6} {'Hailo':>7} {'Post':>7} "
+                      f"{'Coords':>8} {'Total':>7} {'Lanes':>6} {'Dev':>8} {'Status'}")
+                print("─" * 78)
+
+                frame_idx         = 0
+                t_start           = time.time()
+                times_all         = []
+                fps_acc           = []
+                temporal_smoother = TemporalLaneSmoother()
+
+                try:
+                    while (time.time() - t_start) < duration_seconds:
+                        try:
+                            frame = frame_queue.get(timeout=0.1)
+                        except queue.Empty:
+                            continue
+
+                        t0    = time.time()
+                        img   = preprocess(frame)
+                        t_pre = (time.time() - t0) * 1000
+
+                        t0         = time.time()
+                        input_data = {INPUT_STREAM: img[np.newaxis]}
+                        output     = pipeline.infer(input_data)
+                        t_hailo    = (time.time() - t0) * 1000
+
+                        t0     = time.time()
+                        conv37 = output[OUTPUT_LAYER][0]
+                        loc_row_flat, loc_col_flat, exist_row_flat, exist_col_flat = \
+                            postprocess(conv37, W1, b1, W2, b2)
+                        lanes  = decode_lanes(loc_row_flat, loc_col_flat,
+                                              exist_row_flat, exist_col_flat)
+                        t_post = (time.time() - t0) * 1000
+
+                        t0                = time.time()
+                        lanes             = temporal_smoother.update(lanes)
+                        lanes             = smooth_lanes(lanes)
+                        deviation, status = calc_lateral_deviation(lanes)
+                        t_coords          = (time.time() - t0) * 1000
+
+                        publish_deviation(deviation, status)
+
+                        t_total   = t_pre + t_hailo + t_post + t_coords
+                        num_lanes = sum(1 for l in lanes if l)
+                        times_all.append(t_total)
+
+                        fps_acc.append(1000.0 / (t_total + 1e-9))
+                        if len(fps_acc) > 30:
+                            fps_acc.pop(0)
+                        fps = sum(fps_acc) / len(fps_acc)
+
+                        dev_str = f"{deviation:+.3f}" if deviation is not None else "   N/A"
+                        print(f"{frame_idx:<7} "
+                              f"{t_pre:>5.1f}ms "
+                              f"{t_hailo:>6.1f}ms "
+                              f"{t_post:>6.1f}ms "
+                              f"{t_coords:>7.1f}ms "
+                              f"{t_total:>6.1f}ms "
+                              f"{num_lanes:>6} "
+                              f"{dev_str:>8} "
+                              f"{status}")
+
+                        if save_video and async_writer is not None:
+                            frame_out = draw_drivable_area(frame.copy(), lanes)
+                            frame_out = draw_lanes(frame_out, lanes)
+                            frame_out = draw_overlay(
+                                frame_out, fps, frame_idx,
+                                t_pre, t_hailo, t_post, t_coords,
+                                deviation, status)
+                            async_writer.write(frame_out)
+
+                        frame_idx += 1
+
+                except KeyboardInterrupt:
+                    print("\nInterrompido.")
+
+    if async_writer is not None:
+        print("\nA aguardar gravação...")
+        async_writer.release()
+        print(f"Vídeo guardado: {OUTPUT_PATH}")
+
+    elapsed  = time.time() - t_start
+    real_fps = frame_idx / elapsed if elapsed > 0 else 0
+    avg      = sum(times_all) / len(times_all) if times_all else 0
+    sorted_t = sorted(times_all)
+    p50      = sorted_t[int(len(sorted_t) * 0.50)] if sorted_t else 0
+    p95      = sorted_t[int(len(sorted_t) * 0.95)] if sorted_t else 0
+
+    print("─" * 78)
+    print(f"\nResumo ({frame_idx} frames em {elapsed:.1f}s):")
+    print(f"   FPS real:          {real_fps:.1f}")
+    print(f"   FPS pipeline puro: {1000/avg:.1f}" if avg > 0 else "   FPS pipeline puro: N/A")
+    print(f"   Latência média:    {avg:.1f}ms")
+    print(f"   P50:               {p50:.1f}ms")
+    print(f"   P95:               {p95:.1f}ms")
+
+
+if __name__ == "__main__":
+    sys.path.insert(0, "/opt/seame/adas")
+    from camera_broker import CameraBroker
+
+    duration   = int(sys.argv[1]) if len(sys.argv) > 1 else 60
+    save_video = "--save" in sys.argv
+
+    print(f"SEAME Lane Detection | TuSimple cut v2 | {TRAIN_WIDTH}×{TRAIN_HEIGHT}")
+    print(f"HEF cortado em /pool/Conv | Post-processing CPU\n")
+
+    broker = CameraBroker(width=FULL_W, height=FULL_H, fps=CAM_FPS)
+    q = broker.register("lane_detection")
+    broker.start()
+
+    run(q, duration_seconds=duration, save_video=save_video)
+
+    broker.stop()
