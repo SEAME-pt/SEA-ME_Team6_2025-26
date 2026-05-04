@@ -8,8 +8,8 @@ from hailo_platform import (HEF, VDevice, HailoStreamInterface,
                              InferVStreams, ConfigureParams,
                              InputVStreamParams, OutputVStreamParams,
                              FormatType)
-import grpc
-from kuksa.val.v2 import val_pb2, val_pb2_grpc, types_pb2
+import socket
+import json
 
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -19,8 +19,7 @@ from config import (
     TRAIN_WIDTH, TRAIN_HEIGHT, CROP_RATIO,
     INPUT_STREAM, OUTPUT_LAYER,
     EXIST_THRESHOLD, TEMPORAL_HISTORY, TEMPORAL_MIN_HITS,
-    KUKSA_HOST, KUKSA_PORT, KUKSA_CA_CERT, KUKSA_TOKEN,
-    LKA_DEVIATION_PATH, LKA_STATUS_PATH, CAMERA_OFFSET_CM,
+    CAMERA_OFFSET_CM,
 )
 from postprocess import (
     load_weights, postprocess, decode_lanes,
@@ -125,36 +124,28 @@ def calc_lateral_deviation_cm(lanes, calib):
     return deviation, "right"
 
 
-# ── KUKSA ──────────────────────────────────────────────────────────────────────
-_kuksa_queue = queue.Queue(maxsize=1)
+# ── Socket ────────────────────────────────────────────────────────────────────
+LANE_KEEP_ASSIST_SOCKET = "/tmp/lane_keep_assist.sock"
+
+_socket_queue = queue.Queue(maxsize=1)
 
 
-def _kuksa_worker(q):
-    token    = open(KUKSA_TOKEN).read().strip()
-    ca_certs = open(KUKSA_CA_CERT, "rb").read()
-    creds    = grpc.ssl_channel_credentials(root_certificates=ca_certs)
-    channel  = grpc.secure_channel(f"{KUKSA_HOST}:{KUKSA_PORT}", creds)
-    stub     = val_pb2_grpc.VALStub(channel)
-    metadata = [("authorization", f"Bearer {token}")]
-    print("[KUKSA] Thread iniciada (gRPC v2)")
+def _socket_worker(q):
+    print("[Socket] Thread iniciada")
     while True:
         deviation, status = q.get()
         try:
-            req_dev = val_pb2.PublishValueRequest()
-            req_dev.signal_id.path = LKA_DEVIATION_PATH
-            req_dev.data_point.value.float = float(deviation)
-            stub.PublishValue(req_dev, metadata=metadata)
-            req_st = val_pb2.PublishValueRequest()
-            req_st.signal_id.path = LKA_STATUS_PATH
-            req_st.data_point.value.string = status
-            stub.PublishValue(req_st, metadata=metadata)
-        except Exception as e:
-            print(f"[KUKSA] Erro: {e}")
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                client.connect(LANE_KEEP_ASSIST_SOCKET)
+                payload = json.dumps({"deviation": deviation, "status": status}).encode()
+                client.sendall(len(payload).to_bytes(4, "big") + payload)
+        except (ConnectionRefusedError, FileNotFoundError):
+            pass
 
 
 def publish_deviation(deviation, status):
     try:
-        _kuksa_queue.put_nowait((deviation if deviation is not None else 0.0, status))
+        _socket_queue.put_nowait((deviation if deviation is not None else 0.0, status))
     except queue.Full:
         pass
 
@@ -207,7 +198,7 @@ def preprocess(frame):
 
 # ── Pipeline principal ─────────────────────────────────────────────────────────
 def run(frame_queue, duration_seconds=60, save_video=False):
-    threading.Thread(target=_kuksa_worker, args=(_kuksa_queue,), daemon=True).start()
+    threading.Thread(target=_socket_worker, args=(_socket_queue,), daemon=True).start()
 
     W1, b1, W2, b2 = load_weights(WEIGHTS_PATH)
     calib = Calibration()
