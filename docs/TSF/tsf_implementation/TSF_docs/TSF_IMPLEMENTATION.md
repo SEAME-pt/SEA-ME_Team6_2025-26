@@ -2,8 +2,22 @@
 
 This document describes the TSF (Trustable Software Framework) implementation for the PiRacer Warm-Up project, including the unified automation script, TruDAG integration, and validation workflows.
 
-**Last Updated:** March 2026  
+**Last Updated:** April 2026  
 **Authors:** SEA-ME Team 6
+
+## April 2026 Incident Notes
+
+1. Removed local plugin symbol collision:
+  - `localplugins.FileReference` conflicted with TruDAG built-in `FileReference`.
+  - Plugin now keeps only custom URL reference behavior.
+2. Clarified runtime interruptions:
+  - `exit 130` / `exit 143` correspond to interrupted runs, not validation regressions.
+3. Strengthened placeholder checks in `--check`:
+  - ASSUMP semantic defaults are now validated (for example `TSF tooling` template dependency).
+
+Current expected `--check` pending items in this branch:
+- placeholder evidence marker in references.
+- template/default dependency value.
 
 ---
 

@@ -4,7 +4,13 @@
 
 This document explains how Generative AI (GenAI) is integrated into the TSF automation workflow for the SEA:ME Team 6 project.
 
-**Last Updated:** March 2026
+**Last Updated:** April 2026
+
+## April 2026 Update
+
+- Local plugin warning noise was removed by resolving `FileReference` symbol collision with TruDAG internals.
+- `--check` now reports ASSUMP semantic defaults in addition to EVID placeholders.
+- Run logs with `exit 130/143` are now explicitly interpreted as interrupted sessions.
 
 ## Table of Contents
 

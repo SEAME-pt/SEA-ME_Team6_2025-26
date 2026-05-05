@@ -1,5 +1,11 @@
 # 🧩 Trustable Software Framework (TSF) — Overview and Implementation
 
+## April 2026 Update
+
+- Plugin collision warning resolved: removed custom `FileReference` symbol that shadowed TruDAG built-in reference.
+- Runtime exit codes `130/143` documented as interrupted runs rather than structural validation failures.
+- Placeholder detection now includes ASSUMP semantic defaults, improving parity with EVID placeholder reporting.
+
 ## Table of Contents
 
 - [1. What is TSF (Trustable Software Framework)](#1-what-is-tsf-trustable-software-framework)

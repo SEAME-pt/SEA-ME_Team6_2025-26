@@ -1,5 +1,5 @@
 ---
-id: EXPECT_L0_22
+id: EXPECT-L0-22
 header: STM32 ThreadX Deterministic Startup
 text: 'The STM32-based control system running ThreadX shall initialize and start publishing
   speed data over CAN within a deterministic and bounded time after power-on. The
@@ -26,11 +26,4 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---

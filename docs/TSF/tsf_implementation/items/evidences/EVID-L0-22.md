@@ -1,5 +1,5 @@
 ---
-id: EVID_L0_22
+id: EVID-L0-22
 header: STM32 ThreadX Startup Timing Evidence
 text: 'Evidence demonstrating that the STM32-based control system running ThreadX
   achieves deterministic startup within the required ≤ 100 ms time bound. This includes

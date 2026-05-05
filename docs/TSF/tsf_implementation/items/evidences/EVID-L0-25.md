@@ -95,7 +95,7 @@ references:
 - type: file
   path: docs/guides/Power Consumption Analysis.md
 - type: file
-  path: docs/guides/Car_Architecture/Circuit_Connection_Diagram.md
+  path: docs/guides/Car_Architecture/Circuit Documentation.md
 - type: file
   path: docs/images/CanFeederArchitecture.jpg
 - type: file

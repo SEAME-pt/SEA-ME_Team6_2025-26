@@ -15,10 +15,6 @@ references:
 - type: file
   path: docs/guides/AGL_ Joystick_installation_and_test.md
 - type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
-- type: file
   path: src/shared/backend/providers/vehicleprovider.hpp
 - type: file
   path: src/shared/backend/providers/vehicleprovider.cpp

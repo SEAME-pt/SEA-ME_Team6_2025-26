@@ -4,8 +4,8 @@ header: 'Assumption: CI/CD'
 level: '1.16'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-16.md
-  type: file
+- type: file
+  path: ../expectations/EXPECT-L0-16.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

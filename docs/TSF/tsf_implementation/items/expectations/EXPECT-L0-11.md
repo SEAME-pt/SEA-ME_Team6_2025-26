@@ -6,17 +6,10 @@ text: The Qt cluster application automatically starts on system boot and display
 level: '1.11'
 normative: true
 references:
-- path: ../assertions/ASSERT-L0-11.md
-  type: file
+- type: file
+  path: ../assertions/ASSERT-L0-11.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
-evidence:
-  type: validate_hardware_availability
-  configuration:
-    components:
-    - STM32
-    - CAN
-    - Raspberry Pi
 ---

@@ -65,12 +65,6 @@ references:
 - type: file
   path: src/kuksa/kuksa_RPi4_display/inc/can_id.h
 - type: file
-  path: src/hmi/assets/icons/car-inactive.svg
-- type: file
-  path: src/hmi/assets/icons/car-active.svg
-- type: file
-  path: src/tests/unit/mocks/stm32_mocks.cpp
-- type: file
   path: src/tests/unit/mocks/stm32u5xx_hal.h
 - type: file
   path: src/tests/unit/cpp/can_decode.hpp
