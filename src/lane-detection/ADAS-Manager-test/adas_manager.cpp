@@ -1,35 +1,28 @@
 #include "socket_receiver.hpp"
 #include "can_sender.hpp"
-#include <algorithm>
+#include "lka_controller.hpp"
 #include <atomic>
 #include <chrono>
-#include <cmath>
 #include <csignal>
 #include <cstdio>
 #include <mutex>
 #include <thread>
 
+// ── Sockets ───────────────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
 
 static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
 
 // ── State machine thresholds ──────────────────────────────────────────────────
-static constexpr int   DEGRADED_THRESHOLD_FRAMES  = 10;    // 200ms
-static constexpr int   EMERGENCY_THRESHOLD_MS     = 500;
-static constexpr int   RECOVERY_THRESHOLD_FRAMES  = 15;    // 300ms com lanes válidas para sair de EMERGENCY
+static constexpr int DEGRADED_THRESHOLD_FRAMES = 10;   // 200ms
+static constexpr int EMERGENCY_THRESHOLD_MS    = 500;
+static constexpr int RECOVERY_THRESHOLD_FRAMES = 15;   // 300ms de lanes válidas para recuperar
 
-// ── LKA parameters (ported from lka_steering_v1_2.py) ────────────────────────
-// NOTE: if deviation is in cm (calibration enabled), tune KP/KD/DEADBAND
-static constexpr float KP             = 3.0f;
-static constexpr float KI             = 0.0f;
-static constexpr float KD             = 3.0f;
-static constexpr float EMA_ALPHA      = 0.5f;   // smoothing: 0=no update, 1=no smooth
-static constexpr float DEADBAND       = 0.08f;   // ignore deviations below this
-static constexpr float SNAP           = 3.0f;    // PID outputs below this → steering=0
-static constexpr int   MAX_RATE       = 20;      // max steering change per tick
-static constexpr int   THROTTLE       = 0;       // set > 0 to move
+// ── Throttle ──────────────────────────────────────────────────────────────────
+static constexpr int THROTTLE = 25;
 
+// ── Signal ───────────────────────────────────────────────────────────────────
 static std::atomic<bool> running{true};
 static void on_signal(int) { running = false; }
 
@@ -45,36 +38,6 @@ static const char* state_str(AdasState s) {
     }
     return "?";
 }
-
-// ── PID (ported from lka_steering_v1_2.py) ───────────────────────────────────
-class PID {
-public:
-    PID(float kp, float ki, float kd) : kp_(kp), ki_(ki), kd_(kd) {}
-
-    void reset() { integral_ = 0.0f; prev_error_ = 0.0f; first_ = true; }
-
-    float compute(float error, float dt) {
-        if (first_) { first_ = false; prev_error_ = error; return 0.0f; }
-        if (dt <= 0.0f) return 0.0f;
-
-        float p = kp_ * error;
-
-        integral_ += error * dt;
-        integral_  = std::max(-100.0f, std::min(100.0f, integral_));
-        float i    = ki_ * integral_;
-
-        float d    = kd_ * (error - prev_error_) / dt;
-        prev_error_ = error;
-
-        return p + i + d;
-    }
-
-private:
-    float kp_, ki_, kd_;
-    float integral_   = 0.0f;
-    float prev_error_ = 0.0f;
-    bool  first_      = true;
-};
 
 // ── Shared state ──────────────────────────────────────────────────────────────
 struct SharedState {
@@ -131,6 +94,7 @@ int main() {
     else
         printf("[CAN] %s OK\n", CAN_CHANNEL);
 
+    LKAController lka(LKAConfig{});
     printf("[ADAS] Manager running. Ctrl+C to stop.\n");
 
     AdasState adas_state      = AdasState::INIT;
@@ -138,10 +102,6 @@ int main() {
     int       recovery_frames = 0;
     auto      degraded_since  = std::chrono::steady_clock::now();
     auto      last_tick       = std::chrono::steady_clock::now();
-
-    PID pid(KP, KI, KD);
-    float smooth_dev    = 0.0f;
-    int   last_steering = 0;
 
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -161,7 +121,6 @@ int main() {
             obj_valid  = state.object_valid;
         }
 
-        // lane_status=none (0) counts as no data — triggers DEGRADED
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
         // ── State transitions ─────────────────────────────────────────────────
@@ -172,7 +131,7 @@ int main() {
                     adas_state      = AdasState::ACTIVE;
                     degraded_frames = 0;
                     recovery_frames = 0;
-                    pid.reset();
+                    lka.reset();
                     printf("[ADAS] → ACTIVE (recovered)\n");
                 }
             } else {
@@ -189,7 +148,7 @@ int main() {
                     if (adas_state != AdasState::DEGRADED) {
                         adas_state     = AdasState::DEGRADED;
                         degraded_since = now;
-                        pid.reset();
+                        lka.reset();
                         printf("[ADAS] → DEGRADED\n");
                     }
                     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -208,51 +167,25 @@ int main() {
         int steering = 0;
 
         switch (adas_state) {
-            case AdasState::ACTIVE: {
-                float dev = lane.lateral_deviation;
-
-                // EMA smoothing on deviation (removes frame-to-frame noise)
-                smooth_dev = EMA_ALPHA * dev + (1.0f - EMA_ALPHA) * smooth_dev;
-
-                // Deadband
-                float filtered = (std::fabs(smooth_dev) < DEADBAND) ? 0.0f : smooth_dev;
-
-                // PID — target is centre (0), error = 0 - deviation
-                float output = pid.compute(-filtered, dt);
-
-                // Centre snap
-                if (std::fabs(output) < SNAP) output = 0.0f;
-
-                // Clamp + rate limit
-                output   = std::max(-100.0f, std::min(100.0f, output));
-                steering = static_cast<int>(std::round(output));
-                int delta = steering - last_steering;
-                if (std::abs(delta) > MAX_RATE)
-                    delta = (delta > 0) ? MAX_RATE : -MAX_RATE;
-                steering = std::max(-100, std::min(100, last_steering + delta));
-
+            case AdasState::ACTIVE:
+                steering = lka.compute(lane.lateral_deviation, dt);
                 can.send_control(static_cast<int16_t>(steering),
                                  static_cast<int16_t>(THROTTLE));
                 break;
-            }
 
             case AdasState::DEGRADED:
-                // Hold last known steering
-                steering = last_steering;
+                steering = lka.last_steering();
                 can.send_control(static_cast<int16_t>(steering),
                                  static_cast<int16_t>(THROTTLE));
                 break;
 
             case AdasState::EMERGENCY_STOP:
-                steering = 0;
                 can.send_control(0, 0);
                 break;
 
             case AdasState::INIT:
                 break;
         }
-
-        last_steering = steering;
 
         // ── Log ───────────────────────────────────────────────────────────────
         const char* lane_str = (lane.lane_status < 4)

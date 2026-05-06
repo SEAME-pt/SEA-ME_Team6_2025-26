@@ -8,6 +8,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cstdio>
 
 static constexpr const char* CAN_CHANNEL    = "can1";
 static constexpr uint32_t    CAN_ID_CONTROL = 0x500;
