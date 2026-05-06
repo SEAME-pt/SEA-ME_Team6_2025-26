@@ -13,14 +13,13 @@ Item {
     property string laneStatusValue: adas.laneStatus
     //? Helpers
     property real lateralDeviationTicks: 33
+    property real lateralDeviationMax: 30.0
     property int lateralDeviationMiddleIndex: Math.floor(lateralDeviationTicks / 2)
-    property int activatedUpTo: Math.round((lateralDeviationValue + 1) / 2 * (lateralDeviationTicks - 1))
+    property real lateralDeviationClamped: Math.max(-lateralDeviationMax, Math.min(lateralDeviationMax, lateralDeviationValue))
+    property int activatedUpTo: Math.round((lateralDeviationClamped / lateralDeviationMax + 1) / 2 * (lateralDeviationTicks - 1))
     property bool leftLaneDetected:  laneStatusValue === "both" || laneStatusValue === "left"
     property bool rightLaneDetected: laneStatusValue === "both" || laneStatusValue === "right"
     property bool laneWarningActive: !leftLaneDetected && !rightLaneDetected
-
-    //? Debug
-    property var debugDeviationHistory: [0.0, 0.07, 0.13, 0.22, 0.34, 0.45, 0.55, 0.64, 0.72, 0.78, 0.83, 0.87, 0.89, 0.88, 0.84, 0.78, 0.69, 0.58, 0.45, 0.30, 0.14, -0.02, -0.18, -0.33, -0.47, -0.58, -0.67, -0.74, -0.79, -0.82]
 
     Behavior on lateralDeviationValue {
         NumberAnimation {
@@ -195,11 +194,11 @@ Item {
                         var ctx = getContext("2d")
                         ctx.clearRect(0, 0, width, height)
 
-                        // var history = adas.lateralDeviationHistory
-                        var history = root.debugDeviationHistory
+                        var history = adas.lateralDeviationHistory
+                        //var history = root.debugDeviationHistory
                         if (history.length < 2) return
 
-                        var maxDeviation = 1.0
+                        var maxDeviation = root.lateralDeviationMax
                         var midY = height / 2
 
                         ctx.beginPath()

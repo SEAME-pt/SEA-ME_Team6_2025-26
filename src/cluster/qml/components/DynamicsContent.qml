@@ -6,24 +6,60 @@ Item {
 
     Column {
         anchors.centerIn: parent
-        spacing: 6
+        spacing: 4
 
         Text {
-            text: "To be added..."
+            text: "lateralDeviation: " + adas.lateralDeviation
             color: BaseTheme.white
-            font.pixelSize: 18
+            font.pixelSize: 10
         }
 
         Text {
-            text: adas.lateralDeviation
+            text: "laneStatus: " + adas.laneStatus
             color: BaseTheme.white
-            font.pixelSize: 18
+            font.pixelSize: 10
         }
 
         Text {
-            text: adas.laneStatus
+            text: "speedLimit: " + adas.speedLimit
             color: BaseTheme.white
-            font.pixelSize: 18
+            font.pixelSize: 10
+        }
+
+        Text {
+            text: "trafficLight: " + adas.trafficLight
+            color: BaseTheme.white
+            font.pixelSize: 10
+        }
+
+        Text {
+            text: "streetSignals: "
+            color: BaseTheme.white
+            font.pixelSize: 10
+        }
+
+        Repeater {
+            model: adas.streetSignals
+            Text {
+                text: modelData
+                color: BaseTheme.white
+                font.pixelSize: 10
+            }
+        }
+
+        Text {
+            text: "extras: "
+            color: BaseTheme.white
+            font.pixelSize: 10
+        }
+
+        Repeater {
+            model: adas.extras
+            Text {
+                text: modelData
+                color: BaseTheme.white
+                font.pixelSize: 10
+            }
         }
     }
 }

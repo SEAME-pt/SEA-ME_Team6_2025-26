@@ -12,6 +12,9 @@
 #include <QString>
 #include <QVariant>
 #include <QMap>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QStringList>
 #include <functional>
 
 class ADASProvider;
@@ -82,6 +85,7 @@ private:
      */
     template<typename T>
     bool isProviderRegistered(T* provider, const QString &providerName);
+    QStringList parseStringArray(const QString &jsonArrayStr);
 };
 
 #endif /* SIGNALROUTER_HPP */

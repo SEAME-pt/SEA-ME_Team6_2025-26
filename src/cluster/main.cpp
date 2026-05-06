@@ -51,6 +51,10 @@ int main(int argc, char *argv[])
         "Vehicle.ADAS.ObstacleDetection.Front.Distance",
         "Vehicle.ADAS.LaneKeepAssist.LateralDeviation",
         "Vehicle.ADAS.LaneKeepAssist.LaneStatus",
+        "Vehicle.ADAS.ObjectDetection.SpeedLimit",
+        "Vehicle.ADAS.ObjectDetection.TrafficLight",
+        "Vehicle.ADAS.ObjectDetection.StreetSignals",
+        "Vehicle.ADAS.ObjectDetection.Extras",
         "Vehicle.CurrentLocation.Heading",
         "Vehicle.Chassis.SteeringWheel.Angle"
     };

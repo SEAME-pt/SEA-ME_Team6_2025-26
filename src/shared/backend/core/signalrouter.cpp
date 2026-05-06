@@ -61,12 +61,25 @@ void SignalRouter::registerChassisProvider(ChassisProvider *provider)
     qDebug() << "[SignalRouter] ChassisProvider registered";
 }
 
+QStringList SignalRouter::parseStringArray(const QString &jsonArrayStr)
+{
+    QStringList res;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonArrayStr.toUtf8());
+    if (doc.isArray())
+    {
+        for (const QJsonValue &val : doc.array())
+            res << val.toString();
+    }
+    return res;
+}
+
 void SignalRouter::routeSignal(const QString &path, const QVariant &value)
 {
-    // qDebug() << "[SignalRouter] Routing:" << path << "on thread:" 
+    // qDebug() << "[SignalRouter] Routing:" << path << "on thread:"
     //          << (QThread::currentThread() == qApp->thread() ? "MAIN" : "WORKER");
 
-    if (!value.isValid()) {
+    if (!value.isValid())
+    {
         qWarning() << "[SignalRouter] Received invalid value for path:" << path;
         return;
     }
@@ -81,11 +94,13 @@ void SignalRouter::routeSignal(const QString &path, const QVariant &value)
     else if (path.startsWith("Vehicle.CurrentLocation"))
         routeCurrentLocationSignal(path, value);
     else if (path.startsWith("Vehicle.Chassis"))
-         routeChassisSignal(path, value);
-    else if (path.startsWith("Vehicle")){
+        routeChassisSignal(path, value);
+    else if (path.startsWith("Vehicle"))
+    {
         routeVehicleSignal(path, value);
     }
-    else {
+    else
+    {
         qWarning() << "[SignalRouter] Unhandled signal path:" << path;
         emit routingError(QString("Unhandled signal: %1").arg(path));
     }
@@ -96,19 +111,24 @@ void SignalRouter::routePowertrainSignal(const QString &path, const QVariant &va
     if (!isProviderRegistered(_powertrainProvider, "PowertrainProvider"))
         return;
 
-    if (path == "Vehicle.Powertrain.TractionBattery.CurrentVoltage") {
+    if (path == "Vehicle.Powertrain.TractionBattery.CurrentVoltage")
+    {
         _powertrainProvider->updateBatteryVoltage(value.toDouble());
     }
-    else if (path == "Vehicle.Powertrain.TractionBattery.IsLevelLow") {
+    else if (path == "Vehicle.Powertrain.TractionBattery.IsLevelLow")
+    {
         _powertrainProvider->updateBatteryLowStatus(value.toBool());
     }
-    else if (path == "Vehicle.Powertrain.TractionBattery.IsCritical") {
+    else if (path == "Vehicle.Powertrain.TractionBattery.IsCritical")
+    {
         _powertrainProvider->updateBatteryCriticalStatus(value.toBool());
     }
-    else if (path == "Vehicle.Powertrain.ElectricMotor.Speed") {
+    else if (path == "Vehicle.Powertrain.ElectricMotor.Speed")
+    {
         _powertrainProvider->updateMotorSpeed(value.toDouble());
     }
-    else {
+    else
+    {
         qDebug() << "[SignalRouter] Unknown powertrain signal:" << path;
     }
 }
@@ -118,24 +138,27 @@ void SignalRouter::routeExteriorSignal(const QString &path, const QVariant &valu
     if (!isProviderRegistered(_exteriorProvider, "ExteriorProvider"))
         return;
 
-    if (path == "Vehicle.Exterior.AirTemperature") {
+    if (path == "Vehicle.Exterior.AirTemperature")
+    {
         _exteriorProvider->updateAirTemperature(value.toDouble());
     }
-    else {
+    else
+    {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;
     }
 }
-
 
 void SignalRouter::routeVehicleSignal(const QString &path, const QVariant &value)
 {
     if (!isProviderRegistered(_vehicleProvider, "VehicleProvider"))
         return;
 
-    if (path == "Vehicle.Speed") {
+    if (path == "Vehicle.Speed")
+    {
         _vehicleProvider->updateSpeed(value.toDouble());
     }
-    else {
+    else
+    {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;
     }
 }
@@ -145,16 +168,28 @@ void SignalRouter::routeADASSignal(const QString &path, const QVariant &value)
     if (!isProviderRegistered(_adasProvider, "ADASProvider"))
         return;
 
-    if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") {
+    if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance")
         _adasProvider->updateFrontDistance(value.toDouble());
-    }
-    else if (path == "Vehicle.ADAS.LaneKeepAssist.LateralDeviation") {
+    else if (path == "Vehicle.ADAS.LaneKeepAssist.LateralDeviation")
         _adasProvider->updateLateralDeviation(value.toDouble());
-    }
-    else if (path == "Vehicle.ADAS.LaneKeepAssist.LaneStatus") {
+    else if (path == "Vehicle.ADAS.LaneKeepAssist.LaneStatus")
         _adasProvider->updateLaneStatus(value.toString());
+    else if (path == "Vehicle.ADAS.ObjectDetection.SpeedLimit")
+        _adasProvider->updateSpeedLimit(value.toDouble());
+    else if (path == "Vehicle.ADAS.ObjectDetection.TrafficLight")
+        _adasProvider->updateTrafficLight(value.toString());
+    else if (path == "Vehicle.ADAS.ObjectDetection.StreetSignals")
+    {
+        QStringList streetSignals = parseStringArray(value.toString());
+        _adasProvider->updateStreetSignals(streetSignals);
     }
-    else {
+    else if (path == "Vehicle.ADAS.ObjectDetection.Extras")
+    {
+        QStringList extras = parseStringArray(value.toString());
+        _adasProvider->updateExtras(extras);
+    }
+    else
+    {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;
     }
 }
@@ -164,10 +199,12 @@ void SignalRouter::routeCurrentLocationSignal(const QString &path, const QVarian
     if (!isProviderRegistered(_currentLocationProvider, "CurrentLocationProvider"))
         return;
 
-    if (path == "Vehicle.CurrentLocation.Heading") {
+    if (path == "Vehicle.CurrentLocation.Heading")
+    {
         _currentLocationProvider->updateHeading(value.toDouble());
     }
-    else {
+    else
+    {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;
     }
 }
@@ -177,19 +214,21 @@ void SignalRouter::routeChassisSignal(const QString &path, const QVariant &value
     if (!isProviderRegistered(_chassisProvider, "ChassisProvider"))
         return;
 
-    if (path == "Vehicle.Chassis.SteeringWheel.Angle") {
+    if (path == "Vehicle.Chassis.SteeringWheel.Angle")
+    {
         _chassisProvider->updateSteeringWheelAngle(value.toDouble());
     }
-    else {
+    else
+    {
         qDebug() << "[SignalRouter] Unknown chassis signal:" << path;
     }
 }
 
-
-template<typename T>
-bool SignalRouter::isProviderRegistered(T* provider, const QString &providerName)
+template <typename T>
+bool SignalRouter::isProviderRegistered(T *provider, const QString &providerName)
 {
-    if (!provider) {
+    if (!provider)
+    {
         qWarning() << "[SignalRouter]" << providerName << "not registered - signal dropped";
         emit routingError(QString("%1 not registered").arg(providerName));
         return false;
