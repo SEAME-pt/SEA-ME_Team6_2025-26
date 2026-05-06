@@ -117,7 +117,6 @@ public:
     void close_fd() {
         if (fd_ >= 0) {
             close(fd_);
-            unlink(path_);
             fd_ = -1;
         }
     }

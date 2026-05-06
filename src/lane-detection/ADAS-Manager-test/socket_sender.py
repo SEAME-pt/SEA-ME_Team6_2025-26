@@ -40,8 +40,8 @@ def _socket_worker(q):
                 *_LANE_OBJECT_MOCK,   # lane_right (mock)
             )
             sock.sendto(payload, SOCKET_PATH)
-        except FileNotFoundError:
-            pass
+        except Exception as e:
+            print(f"[Socket] Erro ao enviar: {e}")
 
 
 def start_socket_thread():
