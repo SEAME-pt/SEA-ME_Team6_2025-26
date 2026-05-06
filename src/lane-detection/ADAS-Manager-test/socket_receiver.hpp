@@ -26,6 +26,7 @@ struct __attribute__((packed)) LaneObject {
 };
 
 // lane_status encoding: 0=none, 1=left, 2=right, 3=both
+// LaneObject fields are mock zeros until MPC integration
 struct __attribute__((packed)) LaneFrame {
     float      lateral_deviation;
     uint8_t    lane_status;

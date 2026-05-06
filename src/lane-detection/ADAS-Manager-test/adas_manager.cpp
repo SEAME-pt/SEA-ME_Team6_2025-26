@@ -98,11 +98,17 @@ int main() {
         else
             printf("[ADAS] lane=DEGRADED          ");
 
-        if (obj_valid)
-            printf("  | obj=%s  dist=%.2fm\n",
-                   obj.object_detected ? "YES" : "NO ", obj.object_distance);
-        else
+        if (obj_valid) {
+            printf("  | obj=%u sign(s)", obj.count);
+            for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i)
+                printf("  [class=%u conf=%.2f dist=%.2fm]",
+                       obj.objects[i].class_id,
+                       obj.objects[i].confidence,
+                       obj.objects[i].distance);
+            printf("\n");
+        } else {
             printf("  | obj=DEGRADED\n");
+        }
     }
 
     t_lane.join();

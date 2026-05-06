@@ -121,37 +121,9 @@ def calc_lateral_deviation_cm(lanes, calib):
 
 
 # ── Socket (DGRAM — matches SocketReceiver in ADAS Manager C++) ───────────────
-SOCKET_PATH = "/tmp/adas_lane.sock"
-
-# lane_status → uint8 encoding (must match C++ decoder)
-_STATUS_ENCODE = {"none": 0, "left": 1, "right": 2, "both": 3}
-
-_socket_queue = queue.Queue(maxsize=1)
-
-
-def _socket_worker(q):
-    print("[Socket] Thread iniciada")
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-    while True:
-        deviation, status = q.get()
-        try:
-            status_byte = _STATUS_ENCODE.get(status, 0)
-            payload = struct.pack('=fB', deviation, status_byte)
-            sock.sendto(payload, SOCKET_PATH)
-        except FileNotFoundError:
-            pass
-
-
-def start_socket_thread():
-    t = threading.Thread(target=_socket_worker, args=(_socket_queue,), daemon=True)
-    t.start()
-
-
-def publish_deviation(deviation, status):
-    try:
-        _socket_queue.put_nowait((deviation if deviation is not None else 0.0, status))
-    except queue.Full:
-        pass
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '../ADAS-Manager-test'))
+from socket_sender import start_socket_thread, send_perception as publish_deviation
 
 
 # ── Writer assíncrono ──────────────────────────────────────────────────────────
@@ -209,7 +181,7 @@ def run(frame_queue, duration_seconds=60, save_video=False):
     print(f"Post-processing:   CPU (dequant + FC1 + ReLU + FC2)")
     print(f"EXIST_THRESHOLD:   {EXIST_THRESHOLD}")
     print(f"Temporal smoother: history={TEMPORAL_HISTORY} min_hits={TEMPORAL_MIN_HITS}")
-    print(f"Socket:            DGRAM {SOCKET_PATH}")
+    print(f"Socket:            DGRAM /tmp/adas_lane.sock")
 
     async_writer = None
     if save_video:
