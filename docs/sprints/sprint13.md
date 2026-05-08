@@ -1,6 +1,6 @@
 # 🏁 Sprint 13 — (28/04/2026 → 08/05/2026)
 
-> ## **Sprint Goal**: Continue ADAS features implementation
+> ## **Sprint Goal**: Car full lap with LKA and object detection implemented
 ---
 
 ## 📌 Epics
@@ -10,25 +10,25 @@
       - Define ADAS manager architecture (priority-based feature arbitration)
       - CAN message protocol for ADAS events (STM32 ↔ RPi5)
       - Implement basic ADAS event bus on ThreadX side
-   - [ ] ADAS Features (21)
+   - [x] ADAS Features (21)
       - Cruise Control PID finetuning
       - Improvement curve behavior algorithm 
       - Implement Lane Keep Assistant Control Task
-   - [ ] TSR (trafic sign recognition pipeline) (13)
+   - [x] TSR (trafic sign recognition pipeline) (13)
       - Communication flow from AI model to QT cluster
   - 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  - [ ] E2E refinement(13)
+  - [x] E2E refinement(13)
       - Fine-tuning UFLDv2
       - Car live test
-  - [ ] Benchmarks and tests refinement (21)
+  - [x] Benchmarks and tests refinement (21)
       - Test Yolo26s with current dataset 
       or  
       - Dataset Labelling to test seg models
-  - [ ] Yolo post-processing refinement (13)
+  - [x] Yolo post-processing refinement (13)
       - Script improvement
       - Treshholds refinement
-  - [ ] MPC (Model Predictive Control) (8)
+  - [x] MPC (Model Predictive Control) (8)
       - Spike
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
@@ -41,11 +41,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Benchmarks and Tests Refinement(21)** + **MPC (Model Predictive Control) (8)** + **Reorganize documentation (5)**| **34** | **-** |
-| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (21)** + **Reorganize documentation (5)**| **39** | **-** |
-| **David** | **ADAS manager architecture (13) + E2E Refinement (13)** + **Reorganize documentation (5)**| **31** | **-** |
-| **Vasco** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **YoloV8s post-processing refinement (13)** | **39** | **-** |
-| **Diogo** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **Reorganize documentation (5)** | **31** | **-** |
+| **João**  | **Benchmarks and Tests Refinement(21)** + **MPC (Model Predictive Control) (8)** + **Reorganize documentation (5)**| **34** | **34** |
+| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (21)** + **Reorganize documentation (5)**| **39** | **26** + **21** = **47** |
+| **David** | **ADAS manager architecture (13) + E2E Refinement (13)** + **Reorganize documentation (5)**| **31** | **18** + **21** = **39** |
+| **Vasco** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **YoloV8s post-processing refinement (13)** | **39** | **26** |
+| **Diogo** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **Reorganize documentation (5)** | **31** | **13** + **21** = **34** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 **Total Sprint Points: 107**
@@ -59,8 +59,8 @@
 | **Sprint 9** ✅ | 1-2 | Foundations & Spikes | Car v3.1, AEB start, AI/model research, OTA w/RAUC |
 | **Sprint 10** ✅ | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
 | **Sprint 11** ✅| 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |\
-| Sprint 12 ⚙| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
-| Sprint 13 | 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
+| **Sprint 12** ✅| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
+| **Sprint 13** ✅| 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
 | Sprint 14 | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
 
 ---
@@ -81,21 +81,88 @@
 ## 📈 Actual Progress
 ----
 
+- ### Sprint 13 points: **89 / 107** (without bonus points) - with bonus points we deliver 110 points
 
+- ### Bonus:
+  - camera calibration (intrinsic/extrinsic) (8) ✅
+  - LKA backwards (13) ✅
+  
+ ❌ Undone:
+  - ADAS manager architecture (13)
+  - Reorganize documentation (5)
+  
 ## ✅ Outcomes
 ------
+
+- **Delivered**:
+  - LKA
+  - Yolo detection done 
+  - Full Lap
+  - E2E test with 2 models (UFLvs + Yolo8s)
+  - Benchmark between Yolo8s vs Yolo26n vs Yolo8n-seg vs Yolo26n-seg 
+  - ADAS features such as TSR
+
+  
 
 
 - **Demos**:
 
- 
+
+
+**REAL_LIVE_DEMO**
+- Full Lap (in front and backwards) + Object Detection
+
+#### Inference Performance
+
+| Pipeline | FPS before | FPS now |
+|:---:|:---:|:---:|
+| UFLDv2 solo | 15 | 20 |
+| YOLOv8s | --- | 50 |
+| UFLDv2 + YOLOv8s | 7 | 10 |
+
+
+
+**BENCHMARK**
+- https://www.youtube.com/embed/Qxm4dSdpibA?si=SzgZe4EhWqxyD3Ko
+
+- https://www.youtube.com/embed/IovBwZrnXzo?si=KOCQon6FzjReVTrQ
+
+- <img width="1862" height="1171" alt="Screenshot from 2026-05-08 04-20-57" src="https://github.com/user-attachments/assets/99318661-d3e1-47dd-a5b2-71f26beccab8" />
+
+
+
+
+
+
 - **Docs updated**:
 
+**BENCHMARK**
+
+- ![benchmark_geral](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/sprint13_benchmark_consolidated.md)
+
+- ![benchmark_detailed](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/yolo8s_vs_yolo8nseg_vs_yolo26n_vs%20_yolo26nseg.md)
+
+- ![benchmark_matrix](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/benchmark_matrix.md)
+
+- ![benchmark_step_by_step](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/benchmark_step_by_step.md)
+
+- ![planning_sprint13_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/60_planning/planning_sprint13.md)
+
+- ![context_sprint13_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/context/context_sprint13.md)
+
+- ![onnx_conversion_explanation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/20_conversion/onnx_output_formats.md)
+
+
+**MPC/PID/PURE_PURSUIT**
+
+- ![MPC/PID/PurePursuit_spike](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/MPC/MPC_PID_PurePursuit_spike.md)
 
 # 🔎 Retrospective
 - ## **Went well**:
+- The highlight was the balance between individual autonomy and constant collaboration among the team, allowing that each member had individual autonomy while working together in a highly collaborative environment.
 
 - ## **To improve**:
+- Take time to review documentation and reorganize it.
 
 ## 🔗 Useful Links
 

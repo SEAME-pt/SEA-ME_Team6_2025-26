@@ -89,7 +89,7 @@
 
 ## 📈 Actual Progress
 ----
-- ### Sprint 11 points: **86 / 117** (without bonus points)
+- ### Sprint 12 points: **86 / 117** (without bonus points) - with bonus points we deliver 99 points
 
 - ### Bonus:
   - camera broker service (8) ✅
@@ -123,7 +123,7 @@
   - https://youtu.be/zCdsnTX1WNg
   - https://github.com/user-attachments/assets/429b363c-c5b9-4ff5-8705-497e58cb0113
 
- 
+
 - **Docs updated**:
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Benchmark_3_modelos_2026-04-28.md
 
