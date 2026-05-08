@@ -17,29 +17,52 @@ def load_weights(path):
     Carrega os pesos das FC layers do post-processing.
     W1: (2048, 2000)  b1: (2048,)
     W2: (39576, 2048) b2: (39576,)
+
+    W2 e b2 são cortados em load time para apenas as linhas correspondentes
+    às ego-lanes 1 e 2 (loc_row + exist_row), reduzindo 39576 → 11424 linhas.
     """
     w  = np.load(path)
     W1 = w["W1"]
     b1 = w["b1"]
-    W2 = w["W2"]
-    b2 = w["b2"]
-    print(f"[Weights] W1={W1.shape} b1={b1.shape} W2={W2.shape} b2={b2.shape}")
-    return W1, b1, W2, b2
+    W2_full = w["W2"]
+    b2_full = w["b2"]
+
+    # Índices das linhas a manter: loc_row lanes 1+2 e exist_row lanes 1+2
+    idx_loc_row   = np.arange(100 * 56 * 4).reshape(100, 56, 4)
+    rows_loc_row  = idx_loc_row[:, :, [1, 2]].flatten()       # 11200 linhas
+
+    idx_exist_row  = np.arange(2 * 56 * 4).reshape(2, 56, 4)
+    rows_exist_row = idx_exist_row[:, :, [1, 2]].flatten() + 38800  # 224 linhas
+
+    keep_rows = np.concatenate([rows_loc_row, rows_exist_row])  # 11424 total
+
+    W2 = np.ascontiguousarray(W2_full[keep_rows])
+    b2 = b2_full[keep_rows]
+
+    print(f"[Weights] W1={W1.shape} b1={b1.shape} "
+          f"W2={W2.shape} b2={b2.shape} "
+          f"(W2 cortado: {W2_full.shape[0]} → {len(keep_rows)} linhas, "
+          f"{W2_full.nbytes//1024//1024}MB → {W2.nbytes//1024//1024}MB)")
+    return W1, b1, W2, b2, keep_rows
 
 
 # ── Post-processing CPU ────────────────────────────────────────────────────────
-def postprocess(conv37_uint8, W1, b1, W2, b2):
+def postprocess(conv37_uint8, W1, b1, W2, b2, keep_rows=None):
     """
-    Recebe o tensor conv37 (10, 25, 8) UINT8 do Hailo e devolve os 4 slices
+    Recebe o tensor conv37 (10, 25, 8) UINT8 do Hailo e devolve os slices
     flat prontos para decode_lanes.
+
+    Se W2 foi cortado (keep_rows não None), o output tem 11424 elementos
+    correspondentes apenas às ego-lanes 1 e 2.
+    Caso contrário comportamento original com 39576 elementos.
 
     Pipeline:
         1. Dequantização: float = (uint8 - zp) * scale
         2. Transpose HWC→CHW: (10,25,8) → (8,10,25) para alinhar com ONNX
         3. Flatten → vector (2000,)
         4. FC1: W1 (2048×2000) @ x + b1 → ReLU
-        5. FC2: W2 (39576×2048) @ x + b2
-        6. Split em 4 slices: loc_row, loc_col, exist_row, exist_col
+        5. FC2: W2 (11424×2048) @ x + b2  [cortado]
+        6. Devolve loc_row_l1, loc_row_l2, exist_row_l1, exist_row_l2
     """
     x = (conv37_uint8.astype(np.float32) - QUANT_ZP) * QUANT_SCALE
     x = x.transpose(2, 0, 1).flatten()  # (10,25,8)→(8,10,25)→(2000,)
@@ -47,13 +70,16 @@ def postprocess(conv37_uint8, W1, b1, W2, b2):
     x = np.dot(W1, x) + b1
     x = np.maximum(x, 0)               # ReLU
 
-    x = np.dot(W2, x) + b2
+    x = np.dot(W2, x) + b2             # (11424,) se cortado
 
-    # loc_row:   4 × 56 × 100 = 22400
-    # loc_col:   4 × 41 × 100 = 16400
-    # exist_row: 4 × 56 × 2   = 448
-    # exist_col: 4 × 41 × 2   = 328
-    return x[:22400], x[22400:38800], x[38800:39248], x[39248:39576]
+    if keep_rows is None:
+        # comportamento original — W2 completo
+        return x[:22400], x[22400:38800], x[38800:39248], x[39248:39576]
+    else:
+        # W2 cortado: primeiros 11200 = loc_row lanes 1+2, últimos 224 = exist_row lanes 1+2
+        loc_row_lanes12   = x[:11200]    # (100, 56, 2) quando reshape
+        exist_row_lanes12 = x[11200:]    # (2, 56, 2) quando reshape
+        return loc_row_lanes12, exist_row_lanes12
 
 
 # ── Decode ─────────────────────────────────────────────────────────────────────
@@ -68,40 +94,83 @@ def _softmax_local(arr, max_idx, local_width):
     return float((scores * ind).sum()) + 0.5
 
 
-def decode_lanes(loc_row_flat, loc_col_flat, exist_row_flat, exist_col_flat,
+def decode_lanes(loc_row_flat, loc_col_flat_or_exist, exist_row_flat=None, exist_col_flat=None,
                  single_lane_mode=False):
     """
-    Decodifica os 4 slices do FC2 para coordenadas (x, y) no frame original.
+    Decodifica os slices do FC2 para coordenadas (x, y) no frame original.
     Só lanes 1 e 2 (row-based) são calculadas.
-    Devolve lista de 4 lanes, cada uma lista de (x, y).
+
+    Modo cortado (W2 sliced):
+        loc_row_flat:          (11200,) — loc_row lanes 1+2
+        loc_col_flat_or_exist: (224,)   — exist_row lanes 1+2
+        exist_row_flat:        None
+        exist_col_flat:        None
+
+    Modo original (W2 completo):
+        loc_row_flat, loc_col_flat_or_exist, exist_row_flat, exist_col_flat
+        todos presentes com shapes originais.
     """
-    loc_row   = loc_row_flat.reshape(NUM_CELL_ROW, NUM_ROW, NUM_LANES)
-    exist_row = exist_row_flat.reshape(2, NUM_ROW, NUM_LANES)
+    sliced_mode = exist_row_flat is None
 
-    def exist_scores(exist):
-        exp_e = np.exp(exist - exist.max(axis=0, keepdims=True))
-        return exp_e / exp_e.sum(axis=0, keepdims=True)
+    if sliced_mode:
+        # loc_row_lanes12: (100, 56, 2) — apenas lanes 1 e 2
+        loc_row_12   = loc_row_flat.reshape(100, 56, 2)
+        exist_row_12 = loc_col_flat_or_exist.reshape(2, 56, 2)
 
-    row_score = exist_scores(exist_row)  # (2, NUM_ROW, NUM_LANES)
-    lanes = [[] for _ in range(NUM_LANES)]
+        def exist_scores(exist):
+            exp_e = np.exp(exist - exist.max(axis=0, keepdims=True))
+            return exp_e / exp_e.sum(axis=0, keepdims=True)
 
-    for lane_idx in ROW_LANE_LIST:
-        pts = []
-        for row_idx in range(NUM_ROW):
-            if single_lane_mode:
-                threshold = min(EXIST_THRESHOLD_SINGLE + 0.2, 0.8) if row_idx <= 20 else EXIST_THRESHOLD_SINGLE
-            else:
-                threshold = EXIST_THRESHOLD if row_idx > 20 else EXIST_THRESHOLD_TOP
-            if row_score[1, row_idx, lane_idx] < threshold:
-                continue
-            max_idx = int(loc_row[:, row_idx, lane_idx].argmax())
-            out_x   = _softmax_local(loc_row[:, row_idx, lane_idx], max_idx, LOCAL_WIDTH)
-            x_full  = int(out_x / (NUM_CELL_ROW - 1) * FULL_W)
-            y_full  = int(ROW_ANCHOR[row_idx] * FULL_H)
-            pts.append((x_full, y_full))
-        lanes[lane_idx] = pts
+        row_score = exist_scores(exist_row_12)  # (2, 56, 2)
+        lanes = [[] for _ in range(NUM_LANES)]
 
-    return lanes
+        for i, lane_idx in enumerate(ROW_LANE_LIST):  # i=0→lane1, i=1→lane2
+            pts = []
+            for row_idx in range(NUM_ROW):
+                if single_lane_mode:
+                    threshold = min(EXIST_THRESHOLD_SINGLE + 0.2, 0.8) if row_idx <= 20 else EXIST_THRESHOLD_SINGLE
+                else:
+                    threshold = EXIST_THRESHOLD if row_idx > 20 else EXIST_THRESHOLD_TOP
+                if row_score[1, row_idx, i] < threshold:
+                    continue
+                max_idx = int(loc_row_12[:, row_idx, i].argmax())
+                out_x   = _softmax_local(loc_row_12[:, row_idx, i], max_idx, LOCAL_WIDTH)
+                x_full  = int(out_x / (NUM_CELL_ROW - 1) * FULL_W)
+                y_full  = int(ROW_ANCHOR[row_idx] * FULL_H)
+                pts.append((x_full, y_full))
+            lanes[lane_idx] = pts
+
+        return lanes
+
+    else:
+        # Modo original — W2 completo
+        loc_row   = loc_row_flat.reshape(NUM_CELL_ROW, NUM_ROW, NUM_LANES)
+        exist_row = exist_row_flat.reshape(2, NUM_ROW, NUM_LANES)
+
+        def exist_scores(exist):
+            exp_e = np.exp(exist - exist.max(axis=0, keepdims=True))
+            return exp_e / exp_e.sum(axis=0, keepdims=True)
+
+        row_score = exist_scores(exist_row)
+        lanes = [[] for _ in range(NUM_LANES)]
+
+        for lane_idx in ROW_LANE_LIST:
+            pts = []
+            for row_idx in range(NUM_ROW):
+                if single_lane_mode:
+                    threshold = min(EXIST_THRESHOLD_SINGLE + 0.2, 0.8) if row_idx <= 20 else EXIST_THRESHOLD_SINGLE
+                else:
+                    threshold = EXIST_THRESHOLD if row_idx > 20 else EXIST_THRESHOLD_TOP
+                if row_score[1, row_idx, lane_idx] < threshold:
+                    continue
+                max_idx = int(loc_row[:, row_idx, lane_idx].argmax())
+                out_x   = _softmax_local(loc_row[:, row_idx, lane_idx], max_idx, LOCAL_WIDTH)
+                x_full  = int(out_x / (NUM_CELL_ROW - 1) * FULL_W)
+                y_full  = int(ROW_ANCHOR[row_idx] * FULL_H)
+                pts.append((x_full, y_full))
+            lanes[lane_idx] = pts
+
+        return lanes
 
 
 # ── Desvio lateral ─────────────────────────────────────────────────────────────
