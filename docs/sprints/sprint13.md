@@ -41,11 +41,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Benchmarks and Tests Refinement(21)** + **MPC (Model Predictive Control) (8)** + **Reorganize documentation (5)**| **34** | **-** |
-| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (21)** + **Reorganize documentation (5)**| **39** | **-** |
-| **David** | **ADAS manager architecture (13) + E2E Refinement (13)** + **Reorganize documentation (5)**| **31** | **-** |
-| **Vasco** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **YoloV8s post-processing refinement (13)** | **39** | **-** |
-| **Diogo** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **Reorganize documentation (5)** | **31** | **-** |
+| **João**  | **Benchmarks and Tests Refinement(21)** + **MPC (Model Predictive Control) (8)** + **Reorganize documentation (5)**| **34** | **34** |
+| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (21)** + **Reorganize documentation (5)**| **39** | **26** + **21** = **47** |
+| **David** | **ADAS manager architecture (13) + E2E Refinement (13)** + **Reorganize documentation (5)**| **31** | **18** + **21** = **39** |
+| **Vasco** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **YoloV8s post-processing refinement (13)** | **39** | **26** |
+| **Diogo** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **Reorganize documentation (5)** | **31** | **13** + **21** = **34** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 **Total Sprint Points: 107**
