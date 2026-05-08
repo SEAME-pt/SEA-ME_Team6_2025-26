@@ -13,30 +13,30 @@
   - [ ] ADAS Features (13)
       - Cruise Control PID finetuning
       - Implement Lane Keep Assistant Control Task
-  - [ ] ADAS Visualization on Qt HMI Cluster (13)
+  - [x] ADAS Visualization on Qt HMI Cluster (13)
       - New cluster display elements: LDW indicator, AEB status, AI inference overlay
       - ADAS warning indicators (visual + state-based color changes)
       - Wire Kuksa.val ADAS signals to Qt UI
       - KUKSA Integration — Lane and Object Detection
       
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  - [ ] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (5)
-  - [ ] Computer Vision Pipeline (13)
+  - [x] Test real E2E (decode→preprocess→infer→postprocess→render) using UFLv2 (postprocess improvement) + Yolo8s (w/boxs in horizontal sinalization) in the race track (choosing between latency & precision) (5)
+  - [x] Computer Vision Pipeline (13)
       - Migration of post-processing to C++
       - Fine-tuning UFLDv2
       - C++ post-migration benchmark
-  - [ ] Dataset Labelling (5)
+  - [x] Dataset Labelling (5)
       - Dataset finetuning
-  - [ ] YoloV8 compilation and post-processing (8)
-  - [ ] Benchmarks and tests (26)
+  - [x] YoloV8 compilation and post-processing (8)
+  - [x] Benchmarks and tests (26)
       - Test YOLO26n-seg w/ split hybrid (decode→preprocess→infer→postprocess→render) and YOLO26s-seg w/ full INT8 (fallback to YOLO26s-seg hybrid) (decode→preprocess→infer)
       - Test YOLO8n-seg vs YOLO26n-seg
        
 - #### **Epic** — Project Management & Traceability Refinement - [#55](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315926&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C55)
-  - [ ] TSF presentation (5)    
+  - [x] TSF presentation (8)    
 
 - #### **Epic** - Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [ ] Headlights implementation (8)
+  - [x] Headlights implementation (8)
       - Implement functional headlights on the vehicle
        
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
@@ -50,14 +50,14 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Benchmarks and Tests (26)** + **TSF Presentation (5)** + **Reorganize documentation (5)**| **36** | **-** |
+| **João**  | **Benchmarks and Tests (26)** + **TSF Presentation (8)** + **Reorganize documentation (5)**| **39** | **-** |
 | **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (13)** + **Headlights implementation (8)** + **Reorganize documentation (5)**| **39** | **-** |
 | **David** | **ADAS manager architecture (13) + Test real E2E using UFLv2 + Yolo8s (5) + Computer Vision Pipeline (13)** + **Reorganize documentation (5)**| **36** | **-** |
 | **Vasco** | **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (8) + Computer Vision Pipeline (13)** | **31** | **-** |
 | **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 114**
+**Total Sprint Points: 117**
 
 ---
 
@@ -68,7 +68,7 @@
 | **Sprint 9** ✅ | 1-2 | Foundations & Spikes | Car v3.1, AEB start, AI/model research, OTA w/RAUC |
 | **Sprint 10** ✅ | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
 | **Sprint 11** ✅| 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |\
-| Sprint 12 ⚙| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
+| **Sprint 12** ✅| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
 | Sprint 13 | 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
 | Sprint 14 | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
 
@@ -89,22 +89,51 @@
 
 ## 📈 Actual Progress
 ----
+- ### Sprint 11 points: **86 / 117** (without bonus points)
+
+- ### Bonus:
+  - camera broker service (8) ✅
+  - server http to live visualization (5) ✅  
+
+- ❌ Undone:
+  - ADAS manager architecture (13)
+  - ADAS Features (13)
+  - Reorganize documentation (5)
+
 
 
 ## ✅ Outcomes
-------
+
+- **Delivered**:
+  - Headlights implementation
+  - camera broker service (8)
+  - E2E test with 2 models (UFLvs + Yolo8s)
+  - Benchmark between Yolo8s vs Yolo8n-seg vs Yolo26n-seg 
+  - ADAS Visualization on Qt HMI Cluster
+    
+#### Inference Performance
+
+| Pipeline | FPS |
+|:---:|:---:|
+| UFLDv2 solo | 9.6 |
+| UFLDv2 + YOLOv8s dual | 7.1 |
 
 
 - **Demos**:
+  - https://youtu.be/zCdsnTX1WNg
+  - https://github.com/user-attachments/assets/429b363c-c5b9-4ff5-8705-497e58cb0113
 
  
 - **Docs updated**:
-
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/guides/Benchmark_3_modelos_2026-04-28.md
 
 # 🔎 Retrospective
 - ## **Went well**:
+- A demanding sprint that was almost achieved. That was a positive point of the sprint. 
+- The team's alignment was essential for this and was another positive aspect to highlight.
 
 - ## **To improve**:
+- Better planning and team-building activities.
 
 ## 🔗 Useful Links
 
