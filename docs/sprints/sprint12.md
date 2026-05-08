@@ -50,11 +50,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Benchmarks and Tests (26)** + **TSF Presentation (8)** + **Reorganize documentation (5)**| **39** | **-** |
-| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (13)** + **Headlights implementation (8)** + **Reorganize documentation (5)**| **39** | **-** |
-| **David** | **ADAS manager architecture (13) + Test real E2E using UFLv2 + Yolo8s (5) + Computer Vision Pipeline (13)** + **Reorganize documentation (5)**| **36** | **-** |
-| **Vasco** | **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (8) + Computer Vision Pipeline (13)** | **31** | **-** |
-| **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **-** |
+| **João**  | **Benchmarks and Tests (26)** + **TSF Presentation (8)** + **Reorganize documentation (5)**| **39** | **34** |
+| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (13)** + **Headlights implementation (8)** + **Reorganize documentation (5)**| **39** | **8** + **13** bonus = **21** |
+| **David** | **ADAS manager architecture (13) + Test real E2E using UFLv2 + Yolo8s (5) + Computer Vision Pipeline (13)** + **Reorganize documentation (5)**| **36** | **18** |
+| **Vasco** | **Dataset Labelling (5) + Test real E2E using UFLv2 + Yolo8s (5) + YoloV8 compilation and post-processing (8) + Computer Vision Pipeline (13)** | **31** | **31** |
+| **Diogo** | **ADAS manager architecture (13)** + **ADAS Visualization on Qt HMI Cluster (13) + Computer Vision Pipeline (13)** | **39** | **26** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 **Total Sprint Points: 117**
