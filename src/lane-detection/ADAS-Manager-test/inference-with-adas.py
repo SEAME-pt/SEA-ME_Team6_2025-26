@@ -34,24 +34,29 @@ from pathlib import Path
 
 
 # ── Calibração da câmara ──────────────────────────────────────────────────────
-CALIB_DIR = Path("/data/seame-configs/camera")
+CALIB_DIR_FRONT = Path("/data/seame-configs/camera")
+CALIB_DIR_REAR  = Path("/data/seame-configs/camera_rear")
+INTRINSIC_DIR   = Path("/data/seame-configs/camera")  # mesma lente — partilhado
 
 
 class Calibration:
-    def __init__(self):
+    def __init__(self, is_rear=False):
         self.enabled = False
         self._undist_map1 = None
         self._undist_map2 = None
         self.H_img2world = None
 
+        calib_dir = CALIB_DIR_REAR if is_rear else CALIB_DIR_FRONT
+        cam_label = "REAR" if is_rear else "FRONT"
+
         files = {
-            "camera_matrix.npy": CALIB_DIR / "camera_matrix.npy",
-            "dist_coeffs.npy": CALIB_DIR / "dist_coeffs.npy",
-            "homography_img2world.npy": CALIB_DIR / "homography_img2world.npy",
+            "camera_matrix.npy": INTRINSIC_DIR / "camera_matrix.npy",
+            "dist_coeffs.npy": INTRINSIC_DIR / "dist_coeffs.npy",
+            "homography_img2world.npy": calib_dir / "homography_img2world.npy",
         }
         missing = [n for n, p in files.items() if not p.exists()]
         if missing:
-            print(f"[CALIB] Ficheiros em falta: {', '.join(missing)}")
+            print(f"[CALIB] [{cam_label}] Ficheiros em falta: {', '.join(missing)}")
             print(f"[CALIB] A correr SEM calibração")
             return
 
@@ -68,7 +73,7 @@ class Calibration:
             (FULL_W, FULL_H), cv2.CV_16SC2
         )
         self.enabled = True
-        print(f"[CALIB] OK — intrinsic + extrinsic loaded")
+        print(f"[CALIB] [{cam_label}] OK — intrinsic (shared) + extrinsic ({calib_dir.name}/) loaded")
 
     def undistort(self, frame):
         if not self.enabled:
@@ -159,21 +164,21 @@ class AsyncVideoWriter:
 
 
 # ── Pré-processamento ──────────────────────────────────────────────────────────
+_resize_h   = int(TRAIN_HEIGHT / CROP_RATIO)                          # 400
+_top_native = round(FULL_H * ((_resize_h - TRAIN_HEIGHT) / _resize_h))  # ≈123
+
 def preprocess(frame):
-    resize_h = int(TRAIN_HEIGHT / CROP_RATIO)  # 400
-    img = cv2.resize(frame, (TRAIN_WIDTH, resize_h))
-    top = resize_h - TRAIN_HEIGHT               # 80
-    img = img[top:, :]
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return img.astype(np.uint8)
+    img = frame[_top_native:, :]
+    img = cv2.resize(img, (TRAIN_WIDTH, TRAIN_HEIGHT), interpolation=cv2.INTER_AREA)
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
 # ── Pipeline principal ─────────────────────────────────────────────────────────
-def run(frame_queue, duration_seconds=60, save_video=False):
+def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
     start_socket_thread()
 
-    W1, b1, W2, b2 = load_weights(WEIGHTS_PATH)
-    calib = Calibration()
+    W1, b1, W2, b2, keep_rows = load_weights(WEIGHTS_PATH)
+    calib = Calibration(is_rear=is_rear)
 
     print(f"\nFrame câmara:      {FULL_W}×{FULL_H} (via CameraBroker)")
     print(f"Modelo recebe:     {TRAIN_WIDTH}×{TRAIN_HEIGHT} (crop_ratio={CROP_RATIO})")
@@ -220,11 +225,18 @@ def run(frame_queue, duration_seconds=60, save_video=False):
                         except queue.Empty:
                             continue
 
+                        t0       = time.time()
+                        frame    = calib.undistort(frame)
+                        t_undist = (time.time() - t0) * 1000
+
                         t0    = time.time()
-                        frame = calib.undistort(frame)
                         img   = preprocess(frame)
                         t_pre = (time.time() - t0) * 1000
 
+                        if frame_idx % 30 == 0:
+                            print(f"[TIMING] undist={t_undist:.1f}ms  pre={t_pre:.1f}ms")
+
+                        img        = np.ascontiguousarray(img)
                         t0         = time.time()
                         input_data = {INPUT_STREAM: img[np.newaxis]}
                         output     = pipeline.infer(input_data)
@@ -232,10 +244,9 @@ def run(frame_queue, duration_seconds=60, save_video=False):
 
                         t0     = time.time()
                         conv37 = output[OUTPUT_LAYER][0]
-                        loc_row_flat, loc_col_flat, exist_row_flat, exist_col_flat = \
-                            postprocess(conv37, W1, b1, W2, b2)
-                        lanes  = decode_lanes(loc_row_flat, loc_col_flat,
-                                              exist_row_flat, exist_col_flat,
+                        loc_row_lanes12, exist_row_lanes12 = \
+                            postprocess(conv37, W1, b1, W2, b2, keep_rows)
+                        lanes  = decode_lanes(loc_row_lanes12, exist_row_lanes12,
                                               single_lane_mode=single_lane_mode)
                         t_post = (time.time() - t0) * 1000
 
@@ -314,19 +325,32 @@ def run(frame_queue, duration_seconds=60, save_video=False):
 
 
 if __name__ == "__main__":
+    import argparse
     sys.path.insert(0, "/opt/seame/adas")
     from camera_broker import CameraBroker
 
-    duration   = int(sys.argv[1]) if len(sys.argv) > 1 else 60
-    save_video = "--save" in sys.argv
+    p = argparse.ArgumentParser(description="LKA Inference — UFLD + Socket")
+    p.add_argument("duration", type=int, nargs="?", default=60,
+                   help="Duração em segundos (default: 60)")
+    p.add_argument("--save",   action="store_true",
+                   help="Gravar vídeo anotado")
+    p.add_argument("--camera", type=int, default=1,
+                   help="Índice da câmara: 1=frente (default), 0=trás")
+    p.add_argument("--flip",   type=int, default=None,
+                   help="Flip: 0=vertical, 1=horizontal, -1=180° (câmara traseira)")
+    args = p.parse_args()
 
+    cam_label = "TRASEIRA (flip=-1)" if args.camera == 0 else "FRONTAL"
     print(f"SEAME Lane Detection | TuSimple cut v2 | {TRAIN_WIDTH}×{TRAIN_HEIGHT}")
+    print(f"Câmara: {cam_label} (index={args.camera})")
     print(f"HEF cortado em /pool/Conv | Post-processing CPU\n")
 
-    broker = CameraBroker(width=FULL_W, height=FULL_H, fps=CAM_FPS)
+    broker = CameraBroker(width=FULL_W, height=FULL_H, fps=CAM_FPS,
+                          camera=args.camera, flip=args.flip)
     q = broker.register("lane_detection")
     broker.start()
 
-    run(q, duration_seconds=duration, save_video=save_video)
+    run(q, duration_seconds=args.duration, save_video=args.save,
+        is_rear=(args.camera == 0))
 
     broker.stop()
