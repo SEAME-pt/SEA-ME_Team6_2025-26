@@ -105,6 +105,25 @@ Sprint 13 comparou 4 modelos YOLO (2 detect, 2 seg) em 3 stages: treino em PT, e
 | yolo26n_seg | ONNX hostdecode | 1.23 | 21.87 | 2.26 | 24.57 | 28.56 | 42.35 | 3.524 |
 | yolo26n_seg | HEF hostdecode (`_noproto`) | 1.45 | 11.37 | 6.35 | 17.57 | 20.21 | 22.02 | 1.549 |
 
+## Tabela 2C: Comparacao PT vs ONNX vs HEF (confidence)
+
+Referencia de origem dos numeros:
+- `.pt`: `phase_c_detailed_pt_metrics.json` (media dos 2 videos)
+- ONNX/HEF: compare hostdecode `teste1`, `MAX_FRAMES=30`
+
+| Modelo | PT mean_conf | PT p50_conf | ONNX mean_conf | ONNX p50_conf | HEF mean_conf | HEF p50_conf |
+|---|---:|---:|---:|---:|---:|---:|
+| `yolov8s_detect` | 0.6860 | 0.7360 | 0.7340 | 0.7704 | 0.7541 | 0.7792 |
+| `yolo26n_detect` | 0.6850 | 0.7460 | 0.7545 | 0.8017 | 0.7226 | 0.7629 |
+| `yolov8n_seg` | 0.6770 | 0.7100 | 0.4162 | 0.4062 | 0.3867 | 0.3950 |
+| `yolo26n_seg` | 0.6510 | 0.6500 | 0.2942 | 0.2951 | 0.2817 | 0.2681 |
+
+Leitura correta das metricas (`p50/p95`) para evitar confusao:
+- `p50_ms`, `p95_ms`, `p99_ms` = latencia (milissegundos, ms).
+- `p50_conf`, `p95_conf` = percentis de confidence (0..1), nao latencia.
+- Se o campo termina em `_ms`, e tempo.
+- Se o campo termina em `_conf`, e score de confianca.
+
 ## Cobertura de Métricas: Medido vs Falta
 
 Medido nesta corrida:

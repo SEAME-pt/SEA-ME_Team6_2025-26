@@ -49,6 +49,35 @@ This folder contains wrappers and utilities used during Sprint 13 to compare ONN
 - `run_compare_onnx_vs_hef_hostdecode.sh` depends on `run_onnx_hostdecode_sprint13.py`.
 - `run_phase_f_comparacao_com_vasco.sh` depends on `run_best_offline.py`.
 
+## Quick Commands (copy/paste)
+
+30-frame compare (table-focused):
+
+```bash
+VIDEO_NAME=teste1 MAX_FRAMES=30 CONF_DETECT=0.45 CONF_SEG=0.25 \
+bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
+```
+
+Full video compare (MAX_FRAMES=0):
+
+```bash
+VIDEO_NAME=teste1 MAX_FRAMES=0 CONF_DETECT=0.45 CONF_SEG=0.25 \
+bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
+```
+
+Organize `teste1` outputs into a timestamped consistency folder:
+
+```bash
+DEST=/home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/consistencia_teste1_$(date +%F_%H%M%S)
+mkdir -p "$DEST"
+cp -f /home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/teste1_* "$DEST"/
+echo "$DEST"
+```
+
+Metric naming reminder:
+- `p50_ms/p95_ms/p99_ms` are latency metrics in milliseconds.
+- `p50_conf/p95_conf` are confidence percentiles (0..1), not latency.
+
 ## Keep or remove guidance
 
 - Keep: `run_best_offline.py`, `run_compare_all4_onnx_vs_hef.sh`, `run_compare_onnx_vs_hef_hostdecode.sh`, `run_onnx_hostdecode_sprint13.py`, `run_phase_f_comparacao_com_vasco.sh`.

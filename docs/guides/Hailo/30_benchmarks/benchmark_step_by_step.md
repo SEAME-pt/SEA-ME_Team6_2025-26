@@ -248,3 +248,32 @@ bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_
 
 Script usado para modo Vasco-like:
 - `src/hailo/scripts/Vasquinho/run_best_offline.py`
+
+### 11.6 Comandos exatos para gerar compare e organizar em pasta de consistencia
+
+Run curto (30 frames), ideal para tabela comparativa rapida:
+
+```bash
+VIDEO_NAME=teste1 MAX_FRAMES=30 CONF_DETECT=0.45 CONF_SEG=0.25 \
+bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
+```
+
+Run completo (video inteiro):
+
+```bash
+VIDEO_NAME=teste1 MAX_FRAMES=0 CONF_DETECT=0.45 CONF_SEG=0.25 \
+bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
+```
+
+Guardar outputs do `teste1` numa pasta dedicada com timestamp:
+
+```bash
+DEST=/home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/consistencia_teste1_$(date +%F_%H%M%S)
+mkdir -p "$DEST"
+cp -f /home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/teste1_* "$DEST"/
+echo "$DEST"
+```
+
+Nota de nomenclatura para evitar ambiguidade:
+- `p50_ms`, `p95_ms`, `p99_ms` = latencia (milissegundos).
+- `p50_conf`, `p95_conf` = distribuicao de confidence (0..1), nao latencia.
