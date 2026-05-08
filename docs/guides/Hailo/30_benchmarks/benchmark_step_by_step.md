@@ -251,17 +251,22 @@ Script usado para modo Vasco-like:
 
 ### 11.6 Comandos exatos para gerar compare e organizar em pasta de consistencia
 
-Run curto (30 frames), ideal para tabela comparativa rapida:
+Run curto (30 frames), ideal para tabela comparativa rapida e para reproduzir os valores de referencia:
 
 ```bash
-VIDEO_NAME=teste1 MAX_FRAMES=30 CONF_DETECT=0.45 CONF_SEG=0.25 \
+rm -f /home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/teste1_*_hostdecode*.mp4 \
+	/home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/teste1_*_hostdecode*_stats.json
+
+VIDEO_NAME=teste1 MAX_FRAMES=30 HEF_VARIANT_SUFFIX=_vasco CONF_DETECT=0.45 CONF_SEG=0.25 \
 bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
 ```
+
+Sem `HEF_VARIANT_SUFFIX=_vasco`, o script usa os ficheiros `*_sprint13.hef` e pode voltar aos resultados com `p50_conf=0.5000` nos modelos detect.
 
 Run completo (video inteiro):
 
 ```bash
-VIDEO_NAME=teste1 MAX_FRAMES=0 CONF_DETECT=0.45 CONF_SEG=0.25 \
+VIDEO_NAME=teste1 MAX_FRAMES=0 HEF_VARIANT_SUFFIX=_vasco CONF_DETECT=0.45 CONF_SEG=0.25 \
 bash /home/seame/Documents/SEA-ME_Team6_2025-26/src/hailo/scripts/Vasquinho/run_compare_all4_onnx_vs_hef.sh
 ```
 
@@ -272,6 +277,22 @@ DEST=/home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_r
 mkdir -p "$DEST"
 cp -f /home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/teste1_* "$DEST"/
 echo "$DEST"
+```
+
+Para imprimir exatamente a tabela de referencia guardada na pasta de consistencia:
+
+```bash
+python3 - <<'PY'
+import json
+from pathlib import Path
+base=Path('/home/seame/Documents/AI/Yolo_benchmark/results/sprint13_runs/phase_f_agl_rerun/compare_onnx_vs_hef_hostdecode/consistencia_teste1_2026-05-08')
+files=sorted(base.glob('teste1_*_hostdecode_stats.json'))
+print('model                           type    backend           frames  real_fps  mean_conf  p50_conf  p95_conf')
+print('----------------------------------------------------------------------------------------------------------')
+for p in files:
+	d=json.loads(p.read_text())
+	print(f"{d['model']:<31} {d['model_type']:<7} {d.get('backend','hef_hostdecode'):<16} {d['num_frames']:>6} {d['real_fps']:>9.2f} {d['mean_conf']:>10.4f} {d['p50_conf']:>9.4f} {d['p95_conf']:>9.4f}")
+PY
 ```
 
 Nota de nomenclatura para evitar ambiguidade:
