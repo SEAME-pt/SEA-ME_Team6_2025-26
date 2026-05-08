@@ -114,17 +114,18 @@
 
 #### Inference Performance
 
-| Pipeline | FPS |
-|:---:|:---:|
-| UFLDv2 solo | 30 |
-| UFLDv2 + YOLOv8s dual | 13 |
+| Pipeline | FPS before | FPS now |
+|:---:|:---:|:---:|
+| UFLDv2 solo | 15 | 20 |
+| YOLOv8s | --- | 50 |
+| UFLDv2 + YOLOv8s | 7 | 10 |
 
 
 
 **BENCHMARK**
-- <iframe width="560" height="315" src="https://www.youtube.com/embed/Qxm4dSdpibA?si=SzgZe4EhWqxyD3Ko" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+- https://www.youtube.com/embed/Qxm4dSdpibA?si=SzgZe4EhWqxyD3Ko
 
-- <iframe width="560" height="315" src="https://www.youtube.com/embed/IovBwZrnXzo?si=KOCQon6FzjReVTrQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+- https://www.youtube.com/embed/IovBwZrnXzo?si=KOCQon6FzjReVTrQ
 
 - <img width="1862" height="1171" alt="Screenshot from 2026-05-08 04-20-57" src="https://github.com/user-attachments/assets/99318661-d3e1-47dd-a5b2-71f26beccab8" />
 
