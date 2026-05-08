@@ -1,6 +1,6 @@
 # 🏁 Sprint 13 — (28/04/2026 → 08/05/2026)
 
-> ## **Sprint Goal**: Car full lap with lka and object detection implemented
+> ## **Sprint Goal**: Car full lap with LKA and object detection implemented
 ---
 
 ## 📌 Epics
