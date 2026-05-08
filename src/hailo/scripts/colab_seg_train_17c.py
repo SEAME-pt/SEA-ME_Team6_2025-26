@@ -1,7 +1,7 @@
 """
 colab_seg_train_17c.py
 =======================
-Train yolov8n-seg + yolo26n-seg on the 17-class dataset.
+Train yolov8n-seg + yolo26n-seg on a Roboflow segmentation export.
 Run in Google Colab (GPU runtime: T4/L4/A100).
 
 Quick usage (Colab):
@@ -51,38 +51,100 @@ if not candidates:
     raise FileNotFoundError("train/images not found in extracted zip")
 TRAIN_IMG_SRC = candidates[0]
 TRAIN_LBL_SRC = TRAIN_IMG_SRC.replace("/images", "/labels")
+DATASET_ROOT = str(Path(TRAIN_IMG_SRC).parents[1])
+SOURCE_DATA_YAML = Path(DATASET_ROOT) / "data.yaml"
 print("train images:", TRAIN_IMG_SRC)
 print("train labels:", TRAIN_LBL_SRC)
+print("dataset root:", DATASET_ROOT)
 
-# CELL 3: create train/valid split
+src_valid_images = Path(DATASET_ROOT) / "valid" / "images"
+src_valid_labels = Path(DATASET_ROOT) / "valid" / "labels"
+src_test_images = Path(DATASET_ROOT) / "test" / "images"
+src_test_labels = Path(DATASET_ROOT) / "test" / "labels"
+
+def _count_files(p: Path, exts=None):
+    if not p.exists():
+        return 0
+    if exts is None:
+        return sum(1 for f in p.iterdir() if f.is_file())
+    exts = {e.lower() for e in exts}
+    return sum(1 for f in p.iterdir() if f.is_file() and f.suffix.lower() in exts)
+
+IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+has_source_valid = _count_files(src_valid_images, IMAGE_EXTS) > 0 and _count_files(src_valid_labels, {".txt"}) > 0
+has_source_test = _count_files(src_test_images, IMAGE_EXTS) > 0 and _count_files(src_test_labels, {".txt"}) > 0
+
+print("source valid available:", has_source_valid)
+print("source test available:", has_source_test)
+
+# CELL 3: prepare train/valid/test
 random.seed(SEED)
-all_imgs = sorted(Path(TRAIN_IMG_SRC).glob("*.jpg")) + sorted(Path(TRAIN_IMG_SRC).glob("*.jpeg")) + sorted(Path(TRAIN_IMG_SRC).glob("*.png"))
-all_imgs = sorted(set(all_imgs))
-random.shuffle(all_imgs)
+for split in ("train", "valid", "test"):
+    split_root = Path(SPLIT_DIR) / split
+    if split_root.exists():
+        shutil.rmtree(split_root)
 
-split_idx = int(0.8 * len(all_imgs))
-train_imgs = all_imgs[:split_idx]
-valid_imgs = all_imgs[split_idx:]
-print(f"split: {len(train_imgs)} train / {len(valid_imgs)} valid")
+def list_pairs(images_dir: Path, labels_dir: Path):
+    imgs = []
+    for ext in IMAGE_EXTS:
+        imgs.extend(images_dir.glob(f"*{ext}"))
+        imgs.extend(images_dir.glob(f"*{ext.upper()}"))
+    imgs = sorted(set(imgs))
+    pairs = []
+    for img in imgs:
+        lbl = labels_dir / f"{img.stem}.txt"
+        if lbl.exists():
+            pairs.append((img, lbl))
+    return pairs
 
-for split_name, img_list in [("train", train_imgs), ("valid", valid_imgs)]:
+def write_pairs(split_name: str, pairs):
     img_out = Path(SPLIT_DIR) / split_name / "images"
     lbl_out = Path(SPLIT_DIR) / split_name / "labels"
     img_out.mkdir(parents=True, exist_ok=True)
     lbl_out.mkdir(parents=True, exist_ok=True)
-    for img_path in img_list:
-        lbl_path = Path(TRAIN_LBL_SRC) / f"{img_path.stem}.txt"
+    for img_path, lbl_path in pairs:
         shutil.copy2(img_path, img_out / img_path.name)
-        if lbl_path.exists():
-            shutil.copy2(lbl_path, lbl_out / lbl_path.name)
+        shutil.copy2(lbl_path, lbl_out / lbl_path.name)
+
+train_pairs = list_pairs(Path(TRAIN_IMG_SRC), Path(TRAIN_LBL_SRC))
+if not train_pairs:
+    raise RuntimeError("No valid train image/label pairs found")
+
+if has_source_valid and has_source_test:
+    valid_pairs = list_pairs(src_valid_images, src_valid_labels)
+    test_pairs = list_pairs(src_test_images, src_test_labels)
+    if not valid_pairs or not test_pairs:
+        raise RuntimeError("Source valid/test were detected but pairs are empty after label matching")
+    write_pairs("train", train_pairs)
+    write_pairs("valid", valid_pairs)
+    write_pairs("test", test_pairs)
+    print(f"using source splits: train={len(train_pairs)} valid={len(valid_pairs)} test={len(test_pairs)}")
+else:
+    # Fallback only when export has train-only data.
+    random.shuffle(train_pairs)
+    n = len(train_pairs)
+    n_train = int(0.8 * n)
+    n_valid = int(0.1 * n)
+    train_out = train_pairs[:n_train]
+    valid_out = train_pairs[n_train:n_train + n_valid]
+    test_out = train_pairs[n_train + n_valid:]
+    write_pairs("train", train_out)
+    write_pairs("valid", valid_out)
+    write_pairs("test", test_out)
+    print("WARNING: source export has no valid/test; created deterministic local split from train")
+    print(f"local split: train={len(train_out)} valid={len(valid_out)} test={len(test_out)}")
 
 # CELL 4: write data.yaml
-CLASSES_17 = [
-    "50_maxspeed", "80_maxspeed", "Crosswalk", "Gate", "Pedestrians_crossing",
-    "Stop_sign", "Traffic_priority", "both_arrow", "car", "cars not allowed",
-    "left_cross", "obstacle", "right_cross", "traffic_lights_green",
-    "traffic_lights_off", "traffic_lights_red", "traffic_lights_yellow",
-]
+if SOURCE_DATA_YAML.exists():
+    src_cfg = yaml.safe_load(SOURCE_DATA_YAML.read_text())
+    SRC_NAMES = src_cfg.get("names", [])
+    SRC_NC = int(src_cfg.get("nc", len(SRC_NAMES)))
+    if isinstance(SRC_NAMES, dict):
+        SRC_NAMES = [SRC_NAMES[k] for k in sorted(SRC_NAMES.keys(), key=lambda x: int(x))]
+    if SRC_NC != len(SRC_NAMES):
+        raise ValueError(f"Source data.yaml mismatch: nc={SRC_NC}, len(names)={len(SRC_NAMES)}")
+else:
+    raise FileNotFoundError(f"Missing source data.yaml at {SOURCE_DATA_YAML}")
 
 DATA_YAML = f"{SPLIT_DIR}/data.yaml"
 with open(DATA_YAML, "w") as f:
@@ -91,8 +153,9 @@ with open(DATA_YAML, "w") as f:
             "path": SPLIT_DIR,
             "train": "train/images",
             "val": "valid/images",
-            "nc": 17,
-            "names": CLASSES_17,
+            "test": "test/images",
+            "nc": SRC_NC,
+            "names": SRC_NAMES,
         },
         f,
         default_flow_style=False,
@@ -101,11 +164,15 @@ with open(DATA_YAML, "w") as f:
 
 with open(DATA_YAML) as f:
     cfg = yaml.safe_load(f)
-assert cfg["nc"] == 17
+assert cfg["nc"] == SRC_NC
 print("data.yaml ok")
 
 # CELL 5: train yolov8n-seg
 from ultralytics import YOLO
+
+run_suffix = f"{SRC_NC}c"
+y8_run_name = f"yolov8n_seg_{run_suffix}"
+y26_run_name = f"yolo26n_seg_{run_suffix}"
 
 m8 = YOLO("yolov8n-seg.pt")
 m8.train(
@@ -118,7 +185,7 @@ m8.train(
     seed=SEED,
     deterministic=True,
     project=OUTPUT_DIR,
-    name="yolov8n_seg_17c",
+    name=y8_run_name,
     exist_ok=True,
     patience=20,
     amp=True,
@@ -126,7 +193,7 @@ m8.train(
     pretrained=True,
     optimizer="auto",
 )
-best_8n = f"{OUTPUT_DIR}/yolov8n_seg_17c/weights/best.pt"
+best_8n = f"{OUTPUT_DIR}/{y8_run_name}/weights/best.pt"
 assert os.path.exists(best_8n)
 print("best_8n:", best_8n)
 
@@ -142,7 +209,7 @@ m26.train(
     seed=SEED,
     deterministic=True,
     project=OUTPUT_DIR,
-    name="yolo26n_seg_17c",
+    name=y26_run_name,
     exist_ok=True,
     patience=20,
     amp=True,
@@ -150,7 +217,7 @@ m26.train(
     pretrained=True,
     optimizer="auto",
 )
-best_26n = f"{OUTPUT_DIR}/yolo26n_seg_17c/weights/best.pt"
+best_26n = f"{OUTPUT_DIR}/{y26_run_name}/weights/best.pt"
 assert os.path.exists(best_26n)
 print("best_26n:", best_26n)
 

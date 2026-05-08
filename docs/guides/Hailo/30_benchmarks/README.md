@@ -12,6 +12,7 @@ Benchmark comparável e rastreável:
 - `benchmark_step_by_step.md`
 - `benchmark_matrix.md`
 - `yolo8s_vs_yolo8seg_vs_yolo26seg.md`
+- `../../Benchmark_3_modelos_2026-04-28.md` (Sprint 12: 3-model comparison on Vasco dataset)
 
 ## Regra-chave
 

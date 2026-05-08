@@ -92,8 +92,8 @@ log "Phase 0 - preflight"
 [[ -f "${ALLS_SRC}" ]] || fail "Missing model script: ${ALLS_SRC}"
 
 if [[ ${SKIP_ONNX} -eq 0 || ${SKIP_COMPILE_8N} -eq 0 || ${SKIP_COMPILE_26N} -eq 0 ]]; then
-  [[ -f "${SEG8N_PT}" ]] || fail "Missing seg weight: ${SEG8N_PT}. Run colab_seg_train_17c.py first."
-  [[ -f "${SEG26N_PT}" ]] || fail "Missing seg weight: ${SEG26N_PT}. Run colab_seg_train_17c.py first."
+  [[ -f "${SEG8N_PT}" ]] || fail "Missing seg weight: ${SEG8N_PT}. Run colab_seg_train_17c.ipynb (or matching training flow) first."
+  [[ -f "${SEG26N_PT}" ]] || fail "Missing seg weight: ${SEG26N_PT}. Run colab_seg_train_17c.ipynb (or matching training flow) first."
 fi
 
 python3 -c "from ultralytics import YOLO" >/dev/null 2>&1 || fail "ultralytics missing"

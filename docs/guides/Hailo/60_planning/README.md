@@ -9,6 +9,10 @@ Planeamento vivo do sprint atual:
 
 Ficheiro ativo atual:
 - `AI_implementation_planning.md`
+- `planning_sprint13.md`
+
+Referência Sprint 12:
+- `../../Benchmark_3_modelos_2026-04-28.md` (baseline comparison, decision rationale)
 
 Template recomendado para plano corrente:
 - `current_sprint_plan.md`

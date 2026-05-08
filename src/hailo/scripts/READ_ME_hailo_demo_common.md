@@ -1,16 +1,32 @@
- hailo_demo_common.py serve como biblioteca utilitária partilhada pelos teus scripts de inferência.
+# Hailo Demo Common - Runtime Notes
 
-Para que ele existe
+`hailo_demo_common.py` is the shared runtime utility module used by the camera/offline inference scripts in this folder.
 
-Evitar duplicação: em vez de repetir o mesmo código em inference_camera_scalercrop_*.py.
-Unificar comportamento: câmara, pasta de imagens, gravação de vídeo, e parsing de argumentos ficam iguais em todos os scripts.
-O que ele fornece
+## Why this module exists
 
-CameraFrameSource: lê frames da câmara (Picamera2) com ScalerCrop.
-ImageFolderSource: lê imagens de uma pasta (--images-dir) para modo offline.
-AsyncVideoWriter: grava vídeo em background sem bloquear o loop de inferência.
-build_arg_parser(...): argumentos padrão (duration, --save, --images-dir, --loop, --output).
-make_frame_source(...): escolhe automaticamente entre câmara ou pasta.
-resize_for_output(...): garante resolução de saída consistente.
-Em resumo: ele é o “módulo comum de I/O” dos demos Hailo. Sem ele, cada script teria muito código repetido.
+- Avoid duplicated code across `inference_camera_scalercrop_*.py` scripts.
+- Keep CLI behavior consistent for all model-specific scripts.
+- Provide a single I/O implementation for camera mode and offline image-folder mode.
+
+## What it provides
+
+- `CameraFrameSource`: frame acquisition from Picamera2 with ScalerCrop.
+- `ImageFolderSource`: offline frame source using `--images-dir`.
+- `AsyncVideoWriter`: non-blocking video writing.
+- `build_arg_parser(...)`: standard CLI args (`duration`, `--save`, `--images-dir`, `--loop`, `--output`).
+- `make_frame_source(...)`: selects camera vs folder source based on arguments.
+- `resize_for_output(...)`: keeps output video dimensions consistent.
+
+## Sprint 13 status
+
+Current scripts to keep (active workflow):
+
+- `inference_camera_scalercrop_yolov8s.py`
+- `inference_camera_scalercrop_yolov8n.py`
+- `inference_camera_scalercrop_yolov8n_seg.py`
+- `inference_camera_scalercrop_yolo26n_seg.py`
+
+Deletion rule:
+
+- Only remove a script after confirming it has no references in repo scripts/docs and no active benchmark dependency.
 
