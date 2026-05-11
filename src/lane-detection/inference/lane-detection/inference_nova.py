@@ -8,55 +8,144 @@ from hailo_platform import (HEF, VDevice, HailoStreamInterface,
                              InferVStreams, ConfigureParams,
                              InputVStreamParams, OutputVStreamParams,
                              FormatType)
-import grpc
-from kuksa.val.v2 import val_pb2, val_pb2_grpc, types_pb2
+import socket
+import json
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import (
     HEF_PATH, WEIGHTS_PATH, OUTPUT_PATH,
     FULL_W, FULL_H, CAM_FPS,
     TRAIN_WIDTH, TRAIN_HEIGHT, CROP_RATIO,
     INPUT_STREAM, OUTPUT_LAYER,
     EXIST_THRESHOLD, TEMPORAL_HISTORY, TEMPORAL_MIN_HITS,
-    KUKSA_HOST, KUKSA_PORT, KUKSA_CA_CERT, KUKSA_TOKEN,
-    LKA_DEVIATION_PATH, LKA_STATUS_PATH,
+    CAMERA_OFFSET_CM,
 )
 from postprocess import (
     load_weights, postprocess, decode_lanes,
     calc_lateral_deviation, TemporalLaneSmoother, smooth_lanes,
 )
 from visualization import draw_lanes, draw_drivable_area, draw_overlay
+from pathlib import Path
 
 
-# ── KUKSA ──────────────────────────────────────────────────────────────────────
-_kuksa_queue = queue.Queue(maxsize=1)
+# ── Calibração da câmara ──────────────────────────────────────────────────────
+CALIB_DIR = Path("/data/seame-configs/camera")
 
 
-def _kuksa_worker(q):
-    token    = open(KUKSA_TOKEN).read().strip()
-    ca_certs = open(KUKSA_CA_CERT, "rb").read()
-    creds    = grpc.ssl_channel_credentials(root_certificates=ca_certs)
-    channel  = grpc.secure_channel(f"{KUKSA_HOST}:{KUKSA_PORT}", creds)
-    stub     = val_pb2_grpc.VALStub(channel)
-    metadata = [("authorization", f"Bearer {token}")]
-    print("[KUKSA] Thread iniciada (gRPC v2)")
+class Calibration:
+    """Loads intrinsic + extrinsic calibration for undistortion and BEV."""
+
+    def __init__(self):
+        self.enabled = False
+        self._undist_map1 = None
+        self._undist_map2 = None
+        self.H_img2world = None
+
+        files = {
+            "camera_matrix.npy": CALIB_DIR / "camera_matrix.npy",
+            "dist_coeffs.npy": CALIB_DIR / "dist_coeffs.npy",
+            "homography_img2world.npy": CALIB_DIR / "homography_img2world.npy",
+        }
+        missing = [n for n, p in files.items() if not p.exists()]
+        if missing:
+            print(f"[CALIB] Ficheiros em falta: {', '.join(missing)}")
+            print(f"[CALIB] A correr SEM calibração")
+            return
+
+        camera_matrix = np.load(files["camera_matrix.npy"])
+        dist_coeffs = np.load(files["dist_coeffs.npy"])
+        self.H_img2world = np.load(files["homography_img2world.npy"])
+
+        new_matrix, _ = cv2.getOptimalNewCameraMatrix(
+            camera_matrix, dist_coeffs,
+            (FULL_W, FULL_H), 0, (FULL_W, FULL_H)
+        )
+        self._undist_map1, self._undist_map2 = cv2.initUndistortRectifyMap(
+            camera_matrix, dist_coeffs, None, new_matrix,
+            (FULL_W, FULL_H), cv2.CV_16SC2
+        )
+        self.enabled = True
+        print(f"[CALIB] OK — intrinsic + extrinsic loaded")
+
+    def undistort(self, frame):
+        if not self.enabled:
+            return frame
+        return cv2.remap(frame, self._undist_map1, self._undist_map2,
+                         cv2.INTER_LINEAR)
+
+    def pixels_to_world(self, points_px):
+        """Convert list of (x,y) pixel tuples to world coords (cm)."""
+        if not self.enabled or self.H_img2world is None:
+            return None
+        pts = np.array(points_px, dtype=np.float32).reshape(-1, 1, 2)
+        return cv2.perspectiveTransform(pts, self.H_img2world).reshape(-1, 2)
+
+
+def calc_lateral_deviation_cm(lanes, calib):
+    """
+    Calculate lateral deviation in cm using homography.
+    Falls back to pixel-based calc if calibration is unavailable.
+    """
+    from postprocess import calc_lateral_deviation as _fallback
+
+    def bottom_points(pts, n=5):
+        if len(pts) < 3:
+            return None
+        sorted_pts = sorted(pts, key=lambda p: p[1], reverse=True)
+        return sorted_pts[:n]
+
+    left_pts = bottom_points(lanes[1])
+    right_pts = bottom_points(lanes[2])
+
+    has_left = left_pts is not None
+    has_right = right_pts is not None
+
+    if not has_left and not has_right:
+        return None, "none"
+
+    if has_left:
+        left_world = calib.pixels_to_world(left_pts)
+        left_x = float(np.mean(left_world[:, 0]))
+    if has_right:
+        right_world = calib.pixels_to_world(right_pts)
+        right_x = float(np.mean(right_world[:, 0]))
+
+    if has_left and has_right:
+        lane_center = (left_x + right_x) / 2.0
+        deviation = -lane_center - CAMERA_OFFSET_CM
+        return deviation, "both"
+
+    if has_left:
+        deviation = -(left_x + 15.0) - CAMERA_OFFSET_CM
+        return deviation, "left"
+
+    deviation = -(right_x - 15.0) - CAMERA_OFFSET_CM
+    return deviation, "right"
+
+
+# ── Socket ────────────────────────────────────────────────────────────────────
+LANE_KEEP_ASSIST_SOCKET = "/tmp/lane_keep_assist.sock"
+
+_socket_queue = queue.Queue(maxsize=1)
+
+
+def _socket_worker(q):
+    print("[Socket] Thread iniciada")
     while True:
         deviation, status = q.get()
         try:
-            req_dev = val_pb2.PublishValueRequest()
-            req_dev.signal_id.path = LKA_DEVIATION_PATH
-            req_dev.data_point.value.float = float(deviation)
-            stub.PublishValue(req_dev, metadata=metadata)
-            req_st = val_pb2.PublishValueRequest()
-            req_st.signal_id.path = LKA_STATUS_PATH
-            req_st.data_point.value.string = status
-            stub.PublishValue(req_st, metadata=metadata)
-        except Exception as e:
-            print(f"[KUKSA] Erro: {e}")
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                client.connect(LANE_KEEP_ASSIST_SOCKET)
+                payload = json.dumps({"deviation": deviation, "status": status}).encode()
+                client.sendall(len(payload).to_bytes(4, "big") + payload)
+        except (ConnectionRefusedError, FileNotFoundError):
+            pass
 
 
 def publish_deviation(deviation, status):
     try:
-        _kuksa_queue.put_nowait((deviation if deviation is not None else 0.0, status))
+        _socket_queue.put_nowait((deviation if deviation is not None else 0.0, status))
     except queue.Full:
         pass
 
@@ -109,9 +198,10 @@ def preprocess(frame):
 
 # ── Pipeline principal ─────────────────────────────────────────────────────────
 def run(frame_queue, duration_seconds=60, save_video=False):
-    threading.Thread(target=_kuksa_worker, args=(_kuksa_queue,), daemon=True).start()
+    threading.Thread(target=_socket_worker, args=(_socket_queue,), daemon=True).start()
 
     W1, b1, W2, b2 = load_weights(WEIGHTS_PATH)
+    calib = Calibration()
 
     print(f"\nFrame câmara:      {FULL_W}×{FULL_H} (via CameraBroker)")
     print(f"Modelo recebe:     {TRAIN_WIDTH}×{TRAIN_HEIGHT} (crop_ratio={CROP_RATIO})")
@@ -147,6 +237,8 @@ def run(frame_queue, duration_seconds=60, save_video=False):
                 times_all         = []
                 fps_acc           = []
                 temporal_smoother = TemporalLaneSmoother()
+                prev_status       = None
+                single_lane_mode  = False
 
                 try:
                     while (time.time() - t_start) < duration_seconds:
@@ -156,6 +248,7 @@ def run(frame_queue, duration_seconds=60, save_video=False):
                             continue
 
                         t0    = time.time()
+                        frame = calib.undistort(frame)
                         img   = preprocess(frame)
                         t_pre = (time.time() - t0) * 1000
 
@@ -169,16 +262,26 @@ def run(frame_queue, duration_seconds=60, save_video=False):
                         loc_row_flat, loc_col_flat, exist_row_flat, exist_col_flat = \
                             postprocess(conv37, W1, b1, W2, b2)
                         lanes  = decode_lanes(loc_row_flat, loc_col_flat,
-                                              exist_row_flat, exist_col_flat)
+                                              exist_row_flat, exist_col_flat,
+                                              single_lane_mode=single_lane_mode)
                         t_post = (time.time() - t0) * 1000
 
                         t0                = time.time()
                         lanes             = temporal_smoother.update(lanes)
                         lanes             = smooth_lanes(lanes)
-                        deviation, status = calc_lateral_deviation(lanes)
+                        if calib.enabled:
+                            deviation, status = calc_lateral_deviation_cm(lanes, calib)
+                        else:
+                            deviation, status = calc_lateral_deviation(lanes)
                         t_coords          = (time.time() - t0) * 1000
 
                         publish_deviation(deviation, status)
+
+                        if prev_status == "both" and status in ("left", "right"):
+                            single_lane_mode = True
+                        elif status == "both":
+                            single_lane_mode = False
+                        prev_status = status
 
                         t_total   = t_pre + t_hailo + t_post + t_coords
                         num_lanes = sum(1 for l in lanes if l)
@@ -189,7 +292,9 @@ def run(frame_queue, duration_seconds=60, save_video=False):
                             fps_acc.pop(0)
                         fps = sum(fps_acc) / len(fps_acc)
 
-                        dev_str = f"{deviation:+.3f}" if deviation is not None else "   N/A"
+                        dev_str = (f"{deviation:+.1f}cm" if calib.enabled and deviation is not None
+                                   else f"{deviation:+.3f}" if deviation is not None
+                                   else "   N/A")
                         print(f"{frame_idx:<7} "
                               f"{t_pre:>5.1f}ms "
                               f"{t_hailo:>6.1f}ms "
