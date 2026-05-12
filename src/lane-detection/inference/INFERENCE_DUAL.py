@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SEAME — Dual Inference Pipeline v14
+SEAME — Dual Inference Pipeline v15
   • UFLDv2 (cut v2)   — Lane Detection   — Hailo-8 PCIe
   • best_model        — Object Detection — Hailo-8 PCIe
 
@@ -11,8 +11,11 @@ Optimizações acumuladas:
   v9:  LPost corre em thread CPU durante YHailo (NPU idle) — overlap estrutural
   v10: LPost usa extensão C++ (OpenBLAS, sem GIL) — overlap efectivo ~13ms
   v11: fix visualização — re-distort de pontos para display
-  v14: fix socket sender — publica em /tmp/adas_lane.sock (ADAS Manager)
+  v15: fix socket sender — publica em /tmp/adas_lane.sock (ADAS Manager)
        remove KUKSA directo; corrige assinatura publish_deviation(dev, status)
+  v15: lane hold com decaimento — quando status="none", mantém o último desvio
+       válido por HOLD_FRAMES frames com multiplicador HOLD_DECAY por frame.
+       O ADAS Manager não entra em DEGRADED durante o hold.
 """
 
 import numpy as np
@@ -77,7 +80,7 @@ from socket_sender import (start_socket_thread, send_perception as publish_devia
 # Configuração YOLO (best_model)
 # ══════════════════════════════════════════════════════════════════════════════
 YOLO_HEF_PATH = "/data/yolov8s.hef"
-OUTPUT_PATH   = "/data/demo_dual_v14.mp4"
+OUTPUT_PATH   = "/data/demo_dual_v15.mp4"
 
 MODEL_W = 640
 MODEL_H = 640
@@ -109,6 +112,10 @@ INTRINSIC_DIR   = Path("/data/seame-configs/camera")
 
 _resize_h   = int(TRAIN_HEIGHT / CROP_RATIO)
 _top_native = round(FULL_H * ((_resize_h - TRAIN_HEIGHT) / _resize_h))
+
+# ── Lane hold parameters ──────────────────────────────────────────────────────
+HOLD_FRAMES = 10    # frames a manter o último desvio (~0.9s a 11fps)
+HOLD_DECAY  = 0.85  # multiplicador por frame — ~20% do valor original ao fim
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -229,6 +236,38 @@ def calc_lateral_deviation_cm(lanes, calib):
     if has_left:
         return -(left_x + 15.0) - CAMERA_OFFSET_CM, "left"
     return -(right_x - 15.0) - CAMERA_OFFSET_CM, "right"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Lane Hold
+# ══════════════════════════════════════════════════════════════════════════════
+class LaneHold:
+    """
+    Quando status="none", mantém o último desvio válido por HOLD_FRAMES frames
+    com decaimento multiplicativo. Devolve o status da última lane válida para
+    o ADAS Manager não entrar em DEGRADED durante o hold.
+    Ao esgotar o hold, devolve (None, "none") e deixa o ADAS degradar.
+    """
+    def __init__(self, hold_frames=HOLD_FRAMES, decay=HOLD_DECAY):
+        self._hold_frames  = hold_frames
+        self._decay        = decay
+        self._last_dev     = 0.0
+        self._last_status  = "none"
+        self._hold_counter = 0
+
+    def update(self, deviation, status):
+        if status != "none":
+            self._last_dev     = deviation if deviation is not None else 0.0
+            self._last_status  = status
+            self._hold_counter = 0
+            return deviation, status
+
+        if self._hold_counter < self._hold_frames:
+            self._hold_counter += 1
+            self._last_dev *= self._decay
+            return self._last_dev, self._last_status
+
+        return None, "none"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -388,7 +427,8 @@ def draw_detections(frame, boxes, scores, classes):
 def draw_overlay_dual(frame, fps, frame_idx,
                       t_lane_pre, t_lane_hailo, t_lane_post, t_coords,
                       t_yolo_pre, t_yolo_hailo, t_yolo_post,
-                      num_lanes, num_dets, deviation, status, calib_enabled):
+                      num_lanes, num_dets, deviation, status, calib_enabled,
+                      hold_active=False):
     h, w = frame.shape[:2]
     overlay = frame.copy()
     cv2.rectangle(overlay, (0, 0), (235, 215), (0, 0, 0), -1)
@@ -396,29 +436,30 @@ def draw_overlay_dual(frame, fps, frame_idx,
 
     dev_str   = (f"{deviation:+.1f}cm" if calib_enabled and deviation is not None
                  else f"{deviation:+.3f}" if deviation is not None else "N/A")
-    dev_color = (0, 255, 0) if status == "both" else (0, 165, 255)
+    hold_str  = " HOLD" if hold_active else ""
+    dev_color = (0, 165, 255) if hold_active else (0, 255, 0) if status == "both" else (0, 165, 255)
 
     lines = [
-        (f"FPS:           {fps:.1f}",                   (0, 255, 0)),
-        ("── Lane ──────────────────",                  (180, 180, 180)),
-        (f"  Pre:         {t_lane_pre:.1f}ms",          (200, 200, 200)),
-        (f"  Hailo:       {t_lane_hailo:.1f}ms",        (200, 200, 200)),
-        (f"  Post:        {t_lane_post:.1f}ms",         (200, 200, 200)),
-        (f"  Coords:      {t_coords:.1f}ms",            (200, 200, 200)),
-        (f"  Lanes:       {num_lanes}",                 (255, 255, 255)),
-        (f"  Dev:         {dev_str} [{status}]",        dev_color),
-        ("── YOLO ──────────────────",                  (180, 180, 180)),
-        (f"  Pre:         {t_yolo_pre:.1f}ms",          (200, 200, 200)),
-        (f"  Hailo:       {t_yolo_hailo:.1f}ms",        (200, 200, 200)),
-        (f"  Post:        {t_yolo_post:.1f}ms",         (200, 200, 200)),
-        (f"  Detec.:      {num_dets}",                  (255, 255, 255)),
-        (f"Frame: {frame_idx}",                         (255, 255, 255)),
+        (f"FPS:           {fps:.1f}",                          (0, 255, 0)),
+        ("── Lane ──────────────────",                         (180, 180, 180)),
+        (f"  Pre:         {t_lane_pre:.1f}ms",                 (200, 200, 200)),
+        (f"  Hailo:       {t_lane_hailo:.1f}ms",               (200, 200, 200)),
+        (f"  Post:        {t_lane_post:.1f}ms",                (200, 200, 200)),
+        (f"  Coords:      {t_coords:.1f}ms",                   (200, 200, 200)),
+        (f"  Lanes:       {num_lanes}",                        (255, 255, 255)),
+        (f"  Dev:         {dev_str} [{status}]{hold_str}",     dev_color),
+        ("── YOLO ──────────────────",                         (180, 180, 180)),
+        (f"  Pre:         {t_yolo_pre:.1f}ms",                 (200, 200, 200)),
+        (f"  Hailo:       {t_yolo_hailo:.1f}ms",               (200, 200, 200)),
+        (f"  Post:        {t_yolo_post:.1f}ms",                (200, 200, 200)),
+        (f"  Detec.:      {num_dets}",                         (255, 255, 255)),
+        (f"Frame: {frame_idx}",                                (255, 255, 255)),
     ]
     for i, (text, color) in enumerate(lines):
         cv2.putText(frame, text, (5, 16 + i * 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.33, color, 1)
 
-    cv2.putText(frame, "SEAME | UFLDv2 + best_model (v14 — socket → ADAS Manager)",
+    cv2.putText(frame, "SEAME | UFLDv2 + best_model (v15 — lane hold + decay)",
                 (w - 310, h - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (200, 200, 200), 1)
     return frame
 
@@ -436,7 +477,8 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
         W2 = np.ascontiguousarray(W2, dtype=np.float32)
         b2 = np.ascontiguousarray(b2, dtype=np.float32)
 
-    calib = Calibration(is_rear=is_rear)
+    calib     = Calibration(is_rear=is_rear)
+    lane_hold = LaneHold()
 
     pp_backend = "C++ (OpenBLAS)" if _cpp_postprocess is not None else "Python (numpy)"
     print(f"\nFrame câmara:      {FULL_W}×{FULL_H} (via CameraBroker)")
@@ -548,6 +590,11 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                     deviation, status = calc_lateral_deviation(lanes)
                 t_coords          = (time.time() - t0) * 1000
 
+                # ── Lane hold com decaimento ──────────────────────────────────
+                raw_status        = status
+                deviation, status = lane_hold.update(deviation, status)
+                hold_active       = (raw_status == "none" and status != "none")
+
                 # ── Publicar no ADAS Manager via socket ───────────────────────
                 publish_deviation(deviation, status)
 
@@ -586,9 +633,10 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                     fps_acc.pop(0)
                 fps = sum(fps_acc) / len(fps_acc)
 
-                dev_str = (f"{deviation:+.1f}cm" if calib.enabled and deviation is not None
-                           else f"{deviation:+.3f}" if deviation is not None
-                           else "   N/A")
+                dev_str  = (f"{deviation:+.1f}cm" if calib.enabled and deviation is not None
+                            else f"{deviation:+.3f}" if deviation is not None
+                            else "   N/A")
+                hold_tag = " HOLD" if hold_active else ""
                 print(f"{frame_idx:<7} "
                       f"{t_lane_pre:>5.1f}ms "
                       f"{t_lane_hailo:>6.1f}ms "
@@ -601,7 +649,7 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                       f"{num_lanes:>6} "
                       f"{num_dets:>5} "
                       f"{dev_str:>9} "
-                      f"{status}")
+                      f"{status}{hold_tag}")
 
                 if save_video and async_writer is not None:
                     frame_out  = draw_drivable_area(frame.copy(), lanes_disp)
@@ -611,7 +659,8 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                         frame_out, fps, frame_idx,
                         t_lane_pre, t_lane_hailo, t_lane_post, t_coords,
                         t_yolo_pre, t_yolo_hailo, t_yolo_post,
-                        num_lanes, num_dets, deviation, status, calib.enabled)
+                        num_lanes, num_dets, deviation, status, calib.enabled,
+                        hold_active)
                     async_writer.write(frame_out)
 
                 frame_idx += 1
@@ -650,7 +699,7 @@ if __name__ == "__main__":
     sys.path.insert(0, "/opt/seame/adas")
     from camera_broker import CameraBroker
 
-    p = argparse.ArgumentParser(description="SEAME Dual Inference v14 — socket → ADAS Manager")
+    p = argparse.ArgumentParser(description="SEAME Dual Inference v15 — socket → ADAS Manager")
     p.add_argument("duration", type=int, nargs="?", default=60)
     p.add_argument("--save",   action="store_true")
     p.add_argument("--camera", type=int, default=1,
@@ -660,7 +709,7 @@ if __name__ == "__main__":
     args = p.parse_args()
 
     cam_label = "TRASEIRA (flip=-1)" if args.camera == 0 else "FRONTAL"
-    print(f"SEAME | Dual Inference v14: UFLDv2 (lane) + best_model (objects)")
+    print(f"SEAME | Dual Inference v15: UFLDv2 (lane) + best_model (objects)")
     print(f"Câmara: {cam_label} (index={args.camera}) | {FULL_W}×{FULL_H} @ {CAM_FPS}fps")
     print(f"PostProcess: C++ (OpenBLAS, sem GIL) | Overlap: YPre/LHailo + LPost/YHailo\n")
 
