@@ -26,12 +26,52 @@
 #define SRF08_CMD_RANGE_US    0x52  // Resultado em microsegundos
 
 // Valores default do sensor (após power-on)
-#define SRF08_DEFAULT_GAIN    16    // Gain default do sensor
+#define SRF08_DEFAULT_GAIN    4    // Gain default do sensor
 #define SRF08_DEFAULT_RANGE   255   // Range máximo por default
 
 // Valores recomendados para operação
-#define SRF08_RECOMMENDED_GAIN   6    // Gain baixo: reduz falsos ecos do chão/paredes (testar: 4-12)
+//
+// GANHO — principal knob para supressão de eco do chão:
+//   O sinal de eco do chão é fraco porque chega de forma oblíqua (ângulo do feixe
+//   + reflexão difusa). Um obstáculo frontal ao mesmo ganho devolve sinal muito
+//   mais forte. Ao ajustar o ganho, o eco do chão cai abaixo do threshold de
+//   detecção enquanto obstáculos directos ainda são detectados.
+//
+//   Gain 1  → sensor quase cego, detecta apenas reflectores muito próximos (<50cm)
+//   Gain 6  → bom para ambientes interiores, alcance ~1m, eco do chão suprimido
+//   Gain 8  → bom compromisso: alcance ~1.5m, adequado para AEB a 30-80cm
+//   Gain 16 → default de fábrica: alcance ~3m mas capta ecos do chão e laterais
+//   Gain 25+ → máxima sensibilidade, requer montagem muito cuidada
+//
+#define SRF08_RECOMMENDED_GAIN   8    // Bom compromisso: ~1.5m alcance, eco do chão suprimido
 #define SRF08_RECOMMENDED_RANGE  140  // ~6m, bom compromisso
+
+// Distância mínima válida — protecção à dead zone do sensor (≥3cm hardware).
+//
+// GEOMETRIA ACTUAL (sensor a 110mm do chão, inclinado 5° para cima, feixe ±27.5°):
+//   Feixe mais baixo = 5° tilt - 27.5° half-angle = -22.5° abaixo horizontal
+//   D_eco_chão (medida inclinada) = 110 / sin(22.5°) = 110 / 0.3827 ≈ 287mm
+//
+// O eco do chão aparece a ~287mm. SRF08_RECOMMENDED_GAIN=8 deve suprimilo
+// porque o sinal oblíquo (22.5° fora do eixo + reflexão difusa do chão) é
+// muito mais fraco que um eco frontal directo à mesma distância.
+//
+// Se ecos do chão a ~287mm persistirem nos logs (ver "[SRF08] raw=28Xmm")
+// apesar de nada estar à frente, reduzir gain para 6 ou 4.
+//
+// INTERACÇÃO COM AEB (task_aeb.c, d_offset_m=0.10m, d_limit_m=0.90m):
+//   d_eff = distance_mm/1000 - 0.10
+//   Eco do chão a 287mm → d_eff = 0.187m
+//   Motor_Stop threshold ≈ 21% (speed_limit < 20% em task_can_rx.c)
+//   Com d_limit_m=0.90m e a_comfort_mps2=0.2:
+//     v_target = sqrt(2 × 0.2 × 0.187) = 0.274 m/s → limit = 16% → Motor_Stop!
+//   → Se eco do chão persistir com gain=8, o carro fica bloqueado.
+//   → Solução: reduzir gain até o eco desaparecer. Não alterar d_limit_m para
+//     compensar — isso apenas mascara o problema e quebra o AEB para obstáculos reais.
+//
+// NOTA: este threshold (50mm) NÃO filtra ecos do chão (287mm > 50mm).
+// Apenas rejeita artefactos dentro da dead zone do hardware (~30mm).
+#define SRF08_MIN_VALID_DISTANCE_MM  50  // dead zone protection; ver geometria acima
 
 // Timing e polling
 #define SRF08_MAX_MEASUREMENT_TIME_MS  65   // Tempo máximo de medição (datasheet)
