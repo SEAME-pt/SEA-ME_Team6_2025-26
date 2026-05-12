@@ -1,51 +1,27 @@
 # 🏁 Sprint 14 — (12/05/2026 → 22/05/2026)
 
-> ## **Sprint Goal**: Documentation (Module closing) + Full ADAS implementation (features & manager) + MPC
 > ## **Sprint Goal**: Integration of ADAS features into ADAS Manager
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  **novas**
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (13)
   - [ ] Integration of ADAS Manager logic into Firmware - STM32 (13)
   - [ ] Integration of Object Detection into Emergency Brake Logic (13)
   - [ ] Transformation of Basic Cruise Control into Adaptive Cruise Control (13)
   - [ ] Full Integration of ADAS into Cluster (13)
   ---
-  - [ ] ADAS manager architecture (13)
-      - Define ADAS manager architecture
-      - ADAS manager state machine 
-   - [ ] ADAS Features (21)
-      - Parking assistance (PA) 
-      - Adaptative Cruise Control (ACC)
-      - Truck Platooning (TP - Bonus)
-  ---
 
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  **novas**
   - [ ] Object Detection Distance Measurement (13)
   - [ ] Object Avoidance Implementation (13)
-  ---
-  - [ ] Yolo8s integration in the car and ADAS manager (13)
-    - Object detection and swerve
-    - Stop using emergency braking
-    - Reduces speed if it detects 50 or 80 sign
-    - Slows down at a pedestrian crossing, priority sign, or danger sign
-    - Stops at a stop sign and at a pedestrian crossing.
-  - [ ] Yolo 26 combined test (5)
-      - Test Yolo26s with UFLv2 on hailo 8
-  - [ ] MPC (Model Predictive Control) (13)
-      - Practical Spike
   ---
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Reorganize documentation (5)
       - Reorganize documentation on the repository
-  - [ ] Update documentation (40)
-      - Update all the documentation regarding benchmark (Joao), Yolo8s (Vasco), UFLV2(David), ADAS features (Ruben & Diogo) 
   - [ ] ADR (8)
       - Create Architecture Decision Record (ADR) that explains the research work behind the selection of the models to be implemented in the car.
   
@@ -56,14 +32,14 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Update Documentation (8)** + **Reorganize documentation (5)** + **MPC (Model Predictive Control) (13)** + **ADR (8)** + **Yolo 26 combined test (5)** | **39** | **-** |
-| **Ruben** | **Update Documentation (8)** + **Reorganize documentation (5)** + **ADAS manager architecture (13)** + **ADAS Features (21)** | **47** | **-** |
-| **David** | **Update Documentation (8)** + **Reorganize documentation (5)** + **ADAS manager architecture (13)** + **ADAS Features (21)** | **39** | **-** |
-| **Vasco** | **Update Documentation (8)** + **Reorganize documentation (5)** + **ADAS manager architecture (13)** + **Yolo8s integration in the car (13)** | **39** | **-** |
-| **Diogo** | **Update Documentation (8)** + **Reorganize documentation (5)** + **ADAS manager architecture (13)** + **ADAS Features (21)** | **47** | **-** |
+| **João**  | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **-** |
+| **Ruben** | **Reorganize documentation (5)** + **Integration of Object Detection into Emergency Brake Logic** (13) + **Transformation of Basic Cruise Control into Adaptive Cruise Control** (13) | **31** | **-** |
+| **David** | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **-** |
+| **Vasco** | **Reorganize documentation (5)** + **Object Detection Distance Measurement** (13) + **Object Avoidance Implementation** (13) + **ADR** (8) | **39** | **-** |
+| **Diogo** | **Reorganize documentation (5)** + **Integration of Traffic Sign Recognition into ADAS Manager** (13) + **Full Integration of ADAS into Cluster** (13) | **31** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
-**Total Sprint Points: 118**
+**Total Sprint Points: 91**
 
 ---
 
@@ -96,7 +72,7 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 14 points: ** / 107** (without bonus points)
+- ### Sprint 14 points: ** / 91** (without bonus points)
 
 - ### Bonus:
 
