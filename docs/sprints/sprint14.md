@@ -1,6 +1,6 @@
 # 🏁 Sprint 14 — (12/05/2026 → 22/05/2026)
 
-> ## **Sprint Goal**: Full Adas implementation (features & manager) + MPC + Documentation (Module end)
+> ## **Sprint Goal**: Documentation (Module closing) + Full ADAS implementation (features & manager) + MPC
 ---
 
 ## 📌 Epics
