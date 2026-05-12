@@ -1,24 +1,34 @@
 # 🏁 Sprint 14 — (12/05/2026 → 22/05/2026)
 
 > ## **Sprint Goal**: Documentation (Module closing) + Full ADAS implementation (features & manager) + MPC
+> ## **Sprint Goal**: Integration of ADAS features into ADAS Manager
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+  **novas**
+  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (13)
+  - [ ] Integration of ADAS Manager logic into Firmware - STM32 (13)
+  - [ ] Integration of Object Detection into Emergency Brake Logic (13)
+  - [ ] Transformation of Basic Cruise Control into Adaptive Cruise Control (13)
+  - [ ] Full Integration of ADAS into Cluster (13)
+  ---
   - [ ] ADAS manager architecture (13)
-      - Define ADAS manager architecture (priority-based feature arbitration)
+      - Define ADAS manager architecture
       - ADAS manager state machine 
-      - CAN message protocol for ADAS events (STM32 ↔ RPi5)
-      - Implement basic ADAS event bus on ThreadX side
    - [ ] ADAS Features (21)
       - Parking assistance (PA) 
       - Adaptative Cruise Control (ACC)
       - Truck Platooning (TP - Bonus)
+  ---
 
-- NOTE: Bonus tasks that we won´t be doing: Blind-spot detection
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
+  **novas**
+  - [ ] Object Detection Distance Measurement (13)
+  - [ ] Object Avoidance Implementation (13)
+  ---
   - [ ] Yolo8s integration in the car and ADAS manager (13)
     - Object detection and swerve
     - Stop using emergency braking
@@ -29,6 +39,7 @@
       - Test Yolo26s with UFLv2 on hailo 8
   - [ ] MPC (Model Predictive Control) (13)
       - Practical Spike
+  ---
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Reorganize documentation (5)
