@@ -20,11 +20,11 @@
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
   - [ ] Yolo8s integration in the car and ADAS manager (13)
-		- object detection and swerve 
-		- stop using emergency braking
-		- reduces speed if it detects 50 or 80 sign
-		- slows down at a pedestrian crossing, priority sign, or danger sign
-		- stops at a stop sign and at a pedestrian crossing.
+   - Object detection and swerve
+   - Stop using emergency braking
+   - Reduces speed if it detects 50 or 80 sign
+   - Slows down at a pedestrian crossing, priority sign, or danger sign
+   - Stops at a stop sign and at a pedestrian crossing.
   - [ ] Yolo 26 combined test (5)
       - Test Yolo26s with UFLv2 on hailo 8
   - [ ] MPC (Model Predictive Control) (13)
