@@ -15,11 +15,17 @@
       - Parking assistance (PA) 
       - Adaptative Cruise Control (ACC)
       - Truck Platooning (TP - Bonus)
-	    - NOTE: Bonus tasks that we won´t be doing: Blind-spot detection
+
+- NOTE: Bonus tasks that we won´t be doing: Blind-spot detection
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
   - [ ] Yolo8s integration in the car (13)
-		- Integration of Yolo26 with ADAS manager: Does the car detect the object and swerve? Or does it stop using emergency braking? This is in the first phase. In a second phase, it reduces speed if it detects an object of 50 or 80 km/h, or slows down at a pedestrian crossing, priority sign, or danger sign, and stops at a stop sign and at a pedestrian crossing.
+		- Integration of Yolo26 with ADAS manager: 
+			- object detection and swerve,or 
+			- stop using emergency braking, or 
+			- reduces speed if it detects 50 or 80 sign, or 
+			- slows down at a pedestrian crossing, priority sign, or danger sign, or 
+			- stops at a stop sign and at a pedestrian crossing.
   - [ ] Yolo 26 combined test (5)
       - Test Yolo26s with UFLv2 on hailo 8
   - [ ] MPC (Model Predictive Control) (13)
