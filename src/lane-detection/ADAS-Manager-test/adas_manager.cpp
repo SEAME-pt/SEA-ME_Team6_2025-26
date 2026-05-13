@@ -1,6 +1,7 @@
 #include "socket_receiver.hpp"
 #include "can_sender.hpp"
 #include "lka_controller.hpp"
+#include "joystick_receiver.hpp"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -27,6 +28,7 @@ static void on_signal(int) { running = false; }
 
 // ── State machine ─────────────────────────────────────────────────────────────
 enum class AdasState { INIT, ACTIVE, DEGRADED, EMERGENCY_STOP };
+enum class DriveMode  { MANUAL, AUTONOMOUS };
 
 static const char* state_str(AdasState s) {
     switch (s) {
@@ -75,6 +77,14 @@ public:
         running_ = true;
         thread_  = std::thread(&KuksaBridge::_loop, this);
         return true;
+    }
+
+    void pub_mode(DriveMode mode) {
+        if (!pipe_) return;
+        char buf[32];
+        snprintf(buf, sizeof(buf), "D %s\n",
+                 mode == DriveMode::MANUAL ? "MANUAL" : "AUTONOMOUS");
+        _enqueue(buf);
     }
 
     void pub_lane(float deviation, uint8_t status_code) {
@@ -170,6 +180,10 @@ struct SharedState {
     bool        lane_valid   = false;
     ObjectFrame object{};
     bool        object_valid = false;
+    int8_t      joy_steering = 0;
+    int8_t      joy_throttle = 0;
+    bool        joy_valid    = false;
+    bool        joy_toggle   = false;
 };
 
 // ── Receiver threads ──────────────────────────────────────────────────────────
@@ -199,6 +213,28 @@ void object_thread(SharedState& state) {
         std::lock_guard<std::mutex> lk(state.mtx);
         state.object_valid = ok;
         if (ok) state.object = frame;
+    }
+    rx.close_fd();
+}
+
+void joystick_thread(SharedState& state) {
+    JoystickReceiver rx;
+    if (rx.init() < 0) {
+        fprintf(stderr, "[JOY] Failed to init socket %s\n", JOYSTICK_SOCKET);
+        return;
+    }
+    printf("[JOY] Listening on %s\n", JOYSTICK_SOCKET);
+
+    while (running) {
+        JoystickMsg msg = rx.receive();
+        std::lock_guard<std::mutex> lk(state.mtx);
+        if (msg.type == JoystickMsg::Type::J) {
+            state.joy_steering = msg.steering;
+            state.joy_throttle = msg.throttle;
+            state.joy_valid    = true;
+        } else if (msg.type == JoystickMsg::Type::T) {
+            state.joy_toggle = true;
+        }
     }
     rx.close_fd();
 }
@@ -256,8 +292,9 @@ int main() {
 
     // ── Receiver threads ──────────────────────────────────────────────────────
     SharedState state;
-    std::thread t_lane(lane_thread,   std::ref(state));
-    std::thread t_obj (object_thread, std::ref(state));
+    std::thread t_lane(lane_thread,     std::ref(state));
+    std::thread t_obj (object_thread,   std::ref(state));
+    std::thread t_joy (joystick_thread, std::ref(state));
 
     // ── CAN ───────────────────────────────────────────────────────────────────
     CanSender can;
@@ -270,6 +307,7 @@ int main() {
     printf("[ADAS] Manager running. Ctrl+C to stop.\n");
 
     AdasState adas_state      = AdasState::INIT;
+    DriveMode drive_mode      = DriveMode::MANUAL;
     int       degraded_frames = 0;
     int       recovery_frames = 0;
     auto      degraded_since  = std::chrono::steady_clock::now();
@@ -294,75 +332,114 @@ int main() {
             obj_valid  = state.object_valid;
         }
 
-        bool lane_ok = lane_valid && (lane.lane_status != 0);
+        bool   joy_toggle;
+        int8_t joy_steering, joy_throttle;
+        bool   joy_valid;
+        {
+            std::lock_guard<std::mutex> lk(state.mtx);
+            joy_toggle   = state.joy_toggle;
+            joy_steering = state.joy_steering;
+            joy_throttle = state.joy_throttle;
+            joy_valid    = state.joy_valid;
+            state.joy_toggle = false;
+        }
 
-        // ── State transitions ─────────────────────────────────────────────────
-        if (adas_state == AdasState::EMERGENCY_STOP) {
-            if (lane_ok) {
-                recovery_frames++;
-                if (recovery_frames >= RECOVERY_THRESHOLD_FRAMES) {
-                    adas_state      = AdasState::ACTIVE;
-                    degraded_frames = 0;
-                    recovery_frames = 0;
-                    lka.reset();
-                    printf("[ADAS] → ACTIVE (recovered)\n");
-                }
-            } else {
-                recovery_frames = 0;
-            }
-        } else {
-            if (lane_ok) {
+        if (joy_toggle) {
+            drive_mode = (drive_mode == DriveMode::MANUAL)
+                         ? DriveMode::AUTONOMOUS : DriveMode::MANUAL;
+            if (drive_mode == DriveMode::AUTONOMOUS) {
+                adas_state      = AdasState::INIT;
                 degraded_frames = 0;
                 recovery_frames = 0;
-                adas_state      = AdasState::ACTIVE;
-            } else {
-                degraded_frames++;
-                if (degraded_frames >= DEGRADED_THRESHOLD_FRAMES) {
-                    if (adas_state != AdasState::DEGRADED) {
-                        adas_state     = AdasState::DEGRADED;
-                        degraded_since = now;
-                        lka.reset();
-                        printf("[ADAS] → DEGRADED\n");
-                    }
-                    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        now - degraded_since).count();
-                    if (ms >= EMERGENCY_THRESHOLD_MS) {
-                        adas_state      = AdasState::EMERGENCY_STOP;
+                lka.reset();
+            }
+            printf("[ADAS] Drive mode → %s\n",
+                   drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTONOMOUS");
+            bridge.pub_mode(drive_mode);
+        }
+
+        bool lane_ok = lane_valid && (lane.lane_status != 0);
+
+        if (drive_mode == DriveMode::AUTONOMOUS) {
+            if (adas_state == AdasState::EMERGENCY_STOP) {
+                if (lane_ok) {
+                    recovery_frames++;
+                    if (recovery_frames >= RECOVERY_THRESHOLD_FRAMES) {
+                        adas_state      = AdasState::ACTIVE;
+                        degraded_frames = 0;
                         recovery_frames = 0;
-                        printf("[ADAS] → EMERGENCY_STOP\n");
-                        can.send_control(0, 0);
+                        lka.reset();
+                        printf("[ADAS] → ACTIVE (recovered)\n");
+                    }
+                } else {
+                    recovery_frames = 0;
+                }
+            } else {
+                if (lane_ok) {
+                    degraded_frames = 0;
+                    recovery_frames = 0;
+                    adas_state      = AdasState::ACTIVE;
+                } else {
+                    degraded_frames++;
+                    if (degraded_frames >= DEGRADED_THRESHOLD_FRAMES) {
+                        if (adas_state != AdasState::DEGRADED) {
+                            adas_state     = AdasState::DEGRADED;
+                            degraded_since = now;
+                            lka.reset();
+                            printf("[ADAS] → DEGRADED\n");
+                        }
+                        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            now - degraded_since).count();
+                        if (ms >= EMERGENCY_THRESHOLD_MS) {
+                            adas_state      = AdasState::EMERGENCY_STOP;
+                            recovery_frames = 0;
+                            printf("[ADAS] → EMERGENCY_STOP\n");
+                            can.send_control(0, 0);
+                        }
                     }
                 }
             }
         }
 
-        // ── Object throttle override ──────────────────────────────────────────
-        int throttle_limit = obj_throttle_limit(obj, obj_valid,
-                                                OBJ_CONF_THRESH, COLLISION_DIST_M);
-        int throttle = std::min(THROTTLE, throttle_limit);
+        // ── Drive mode: MANUAL forwards joystick, AUTONOMOUS runs LKA ────────
+        int steering      = 0;
+        int throttle      = 0;
+        int throttle_limit = THROTTLE;
 
-        // ── LKA control ───────────────────────────────────────────────────────
-        int steering = 0;
-
-        switch (adas_state) {
-            case AdasState::ACTIVE:
-                steering = lka.compute(lane.lateral_deviation, dt);
+        if (drive_mode == DriveMode::MANUAL) {
+            if (joy_valid) {
+                steering = joy_steering;
+                throttle = joy_throttle;
                 can.send_control(static_cast<int16_t>(steering),
                                  static_cast<int16_t>(throttle));
-                break;
-
-            case AdasState::DEGRADED:
-                steering = lka.last_steering();
-                can.send_control(static_cast<int16_t>(steering),
-                                 static_cast<int16_t>(throttle));
-                break;
-
-            case AdasState::EMERGENCY_STOP:
+            } else {
                 can.send_control(0, 0);
-                break;
+            }
+        } else {
+            throttle_limit = obj_throttle_limit(obj, obj_valid,
+                                                OBJ_CONF_THRESH, COLLISION_DIST_M);
+            throttle = std::min(THROTTLE, throttle_limit);
 
-            case AdasState::INIT:
-                break;
+            switch (adas_state) {
+                case AdasState::ACTIVE:
+                    steering = lka.compute(lane.lateral_deviation, dt);
+                    can.send_control(static_cast<int16_t>(steering),
+                                     static_cast<int16_t>(throttle));
+                    break;
+
+                case AdasState::DEGRADED:
+                    steering = lka.last_steering();
+                    can.send_control(static_cast<int16_t>(steering),
+                                     static_cast<int16_t>(throttle));
+                    break;
+
+                case AdasState::EMERGENCY_STOP:
+                    can.send_control(0, 0);
+                    break;
+
+                case AdasState::INIT:
+                    break;
+            }
         }
 
         // ── KUKSA publish (não bloqueia — enfileira na bridge thread) ─────────
@@ -375,7 +452,8 @@ int main() {
         const char* lane_str = (lane.lane_status < 4)
                                ? LANE_STATUS_STR[lane.lane_status] : "?";
 
-        printf("[ADAS][%-14s] ", state_str(adas_state));
+        printf("[ADAS][%-14s][%s] ", state_str(adas_state),
+               drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTO  ");
 
         if (lane_valid)
             printf("lane=%-5s  dev=%+.2f  steer=%+4d  throttle=%3d",
@@ -405,6 +483,7 @@ int main() {
     bridge.stop();
     t_lane.join();
     t_obj.join();
+    t_joy.join();
     printf("[ADAS] Shutdown.\n");
     return 0;
 }

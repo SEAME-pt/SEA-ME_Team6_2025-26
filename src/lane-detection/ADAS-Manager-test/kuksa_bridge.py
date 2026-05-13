@@ -20,6 +20,7 @@ KUKSA_PORT    = 55555
 KUKSA_CA_CERT = "/etc/kuksa/tls/ca.crt"
 KUKSA_TOKEN   = "/etc/kuksa/jwt/publisher.jwt"
 
+_P_DRIVE_MODE  = "Vehicle.ADAS.DrivingMode"
 _P_DEVIATION   = "Vehicle.ADAS.LaneKeepAssist.LateralDeviation"
 _P_STATUS      = "Vehicle.ADAS.LaneKeepAssist.LaneStatus"
 _P_OBJ_ENABLED = "Vehicle.ADAS.ObjectDetection.IsEnabled"
@@ -92,6 +93,11 @@ def main():
                 _, dev_s, status = line.split(" ", 2)
                 _pub_float(stub, meta,  _P_DEVIATION, float(dev_s))
                 _pub_string(stub, meta, _P_STATUS,    status)
+
+            elif line.startswith("D "):
+                # D <mode>  — MANUAL or AUTONOMOUS
+                _, mode = line.split(" ", 1)
+                _pub_string(stub, meta, _P_DRIVE_MODE, mode)
 
             elif line.startswith("O "):
                 # O <speed_limit> <traffic_light> <signs_json> <extras_json>
