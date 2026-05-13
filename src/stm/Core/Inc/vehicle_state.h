@@ -28,4 +28,6 @@ typedef struct {
     uint32_t rpm_ts;
     uint32_t tof_ts;
     uint32_t imu_ts;
+
+    int8_t   servo_angle;     // steering % applied (-100..+100), 0 = straight
 } VehicleState;

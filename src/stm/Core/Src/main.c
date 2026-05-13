@@ -90,7 +90,7 @@ static void SystemPower_Config(void);
 
 #define MATRIX_ADDR_1  0x71
 #define MATRIX_ADDR_2  0x74
-
+/*
 void matrix_init(I2C_HandleTypeDef *hi2c, uint8_t addr) {
     uint8_t cmd;
 
@@ -135,7 +135,7 @@ void matrix_write_column(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t col) {
     HAL_I2C_Master_Transmit(hi2c, addr << 1, packet, 17, 100);
 }
 
-
+*/
 
 
 
@@ -211,6 +211,11 @@ int main(void)
   uint8_t found_count = 0;
 
   printf("=== I2C1 Scanner ===\r\n");
+
+
+
+
+
   printf("Scanning addresses 0x01 to 0x7F...\r\n\r\n");
 
   for (uint8_t addr = 1; addr < 128; addr++)
@@ -245,11 +250,7 @@ int main(void)
 
   HAL_Delay(100);  // pequena pausa a seguir ao boot
 
-  matrix_init(&hi2c1, MATRIX_ADDR_1);
-  matrix_init(&hi2c1, MATRIX_ADDR_2);
-
-  matrix_all_on(&hi2c1, MATRIX_ADDR_1);
-  matrix_all_on(&hi2c1, MATRIX_ADDR_2);
+  /* KS0064 matrices moved to I2C2 — initialised by task_indicator_init() */
 
 
   // Inicia o PWM no TIM1_CH1 (PA8)

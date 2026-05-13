@@ -109,6 +109,7 @@ typedef struct {
   uint8_t min_creep_pct; // minimum throttle floor in soft-braking zone (set 0 to disable)
   uint8_t limit_slew_up_pct;   // max throttle increase per 20ms step
   uint8_t limit_slew_down_pct; // max throttle decrease per 20ms step (faster for braking)
+  float d_limit_m;      // beyond this distance: always 100%; below: apply kinematic curve
 } AebParams;
 
 /* AEB module global instance (single instance for whole firmware) */
@@ -119,31 +120,59 @@ static const AebParams P = {
   .d_offset_m = 0.10f,
   .v_min_mps  = 0.10f,
 
-  .t_react_s    = 0.12f,   // real pipeline latency ~100ms, small margin
-  .a_brake_mps2 = 0.6f,    // realistic decel from PWM reduction (not electrical brake)
+  .t_react_s    = 0.12f,
+  .a_brake_mps2 = 0.6f,    // travagem assumida (menor que 1.5 → d_stop ligeiramente maior → mais conservador)
 
   .ttc_warn_s   = 0.8f,
-  .ttc_brake_s  = 0.5f,
-  .margin_warn_m  = 0.30f,
-  .margin_brake_m = 0.10f,
+  .ttc_brake_s  = 0.5f,   // era 0.3s — ligeiramente mais margem
+  .margin_warn_m  = 0.30f, // era 0.05m
+  .margin_brake_m = 0.10f, // era 0.02m
 
-  .speed_arm_mps  = 0.15f, // arm at lower speed (~540 m/h) for better coverage
+  .speed_arm_mps  = 0.15f,
   .speed_stop_mps = 0.10f,
-  .stop_hold_ms   = 300,
+  .stop_hold_ms   = 600,   // era 300ms — evita LATCH por abrandamento momentâneo a baixa velocidade
 
-  .lp_alpha = 0.70f,       // faster filter response, median already removes spikes
+  .lp_alpha = 0.70f,
 
   .max_srf_age_ms   = 200,
   .max_speed_age_ms = 200,
 
-  .safe_unlatch_dist_m = 0.15f,  // allow unlatch closer to walls
-  .safe_unlatch_hold_ms = 1000u,
+  .safe_unlatch_dist_m  = 0.05f,
+  .safe_unlatch_hold_ms = 500u,
 
-  .a_comfort_mps2 = 0.15f, // conservative: starts braking ~1.5m away at 40% throttle
-  .v_max_mps = 1.67f,      // real max: ~6000 m/h = 1.67 m/s
+  /* PORQUÊ d_limit e a_comfort importam juntos:
+     d_limit_m: d_eff acima do qual carro vai a 100%. Abaixo: curva v=sqrt(2*a_comfort*d_eff).
+     Motor_Stop activado em task_can_rx.c quando speed_limit < ~20%.
+
+     GEOMETRIA SENSOR (montagem actual -- ver srf08.h para calculo completo):
+       sensor 110mm do chao, 5 graus tilt -> eco do chao a ~287mm -> d_eff = 0.187m
+       Com a_comfort=0.6: limit = sqrt(2x0.6x0.187)/1.67x100 = 28% -> acima Motor_Stop OK
+
+     REQUISITO CINEMATICO (a_comfort = a_brake = 0.6):
+       Para parar com a_brake=0.6 antes da parede, a velocidade de entrada na curva
+       a d_limit deve ser <= v_limit = sqrt(2*a_comfort*d_limit).
+       Com d_limit=2.5m: v_limit = sqrt(2*0.6*2.5) = 1.73 m/s > v_max=1.67 m/s -> OK
+       Mesmo a 100% o carro entra ABAIXO da curva -> converge sempre.
+
+     CURVA com d_limit=2.5m, a_comfort=0.6 (obstáculo real):
+       2500mm: d_eff=2.40m -> 100% (entrada na curva)
+       2000mm: d_eff=1.90m -> 92.8%
+       1500mm: d_eff=1.40m -> 79.6%
+       1000mm: d_eff=0.90m -> 63.8%
+        500mm: d_eff=0.40m -> 42.5%
+        300mm: d_eff=0.20m -> 30.1%
+        200mm: d_eff=0.10m -> 21.3%
+        100mm: d_eff=0.00m ->  0% (parede)
+       Motor_Stop a ~d_eff=93mm (sensor ~193mm)
+
+     ECO DO CHAO com a_comfort=0.6:
+       d_eff=0.187m -> limit = sqrt(2x0.6x0.187)/1.67x100 = 28.4% -> sem Motor_Stop */
+  .a_comfort_mps2 = 0.6f,
+  .v_max_mps = 1.67f,
   .min_creep_pct = 0u,
-  .limit_slew_up_pct   = 5u,   // gentle throttle increase
-  .limit_slew_down_pct = 10u   // faster decrease for braking responsiveness
+  .limit_slew_up_pct   = 5u,
+  .limit_slew_down_pct = 20u,
+  .d_limit_m = 2.5f     // 100% para d_eff>2.5m; curva v=sqrt(2*0.6*d_eff) abaixo
 };
 
 /* Simple float clamp helper */
@@ -294,16 +323,23 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   if (s_aeb.st == AEB_LATCHED) {
     desired_limit = 0;
   } else if (s_aeb.st >= AEB_ARMED) {
-    /* Always use a_comfort for the kinematic curve.
-       a_comfort is the REAL deceleration from PWM reduction (conservative).
-       Using a higher 'a' would LOOSEN the limit (allow higher speed). */
-    float v_target = sqrtf(2.0f * P.a_comfort_mps2 * d_eff);
-    if (v_target > P.v_max_mps) v_target = P.v_max_mps;
+    if (d_eff >= P.d_limit_m) {
+      /* Beyond braking zone: full speed allowed */
+      desired_limit = 100;
+    } else {
+      /* Inside braking zone: kinematic curve v = sqrt(2 * a_comfort * d_eff)
+         With a_comfort=0.6 and d_limit_m=2.5:
+           at 250cm (d_eff=2.40): limit = sqrt(2*0.6*2.40)/1.67*100 = 100%
+           at 100cm (d_eff=0.90): limit = sqrt(2*0.6*0.90)/1.67*100 = 64%
+           at  10cm (d_eff=0.00): limit = 0% -> Motor_Stop */
+      float v_target = sqrtf(2.0f * P.a_comfort_mps2 * d_eff);
+      if (v_target > P.v_max_mps) v_target = P.v_max_mps;
 
-    float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
-    if (pct_f > 100.0f) pct_f = 100.0f;
+      float pct_f = (P.v_max_mps > 0.1f) ? (100.0f * (v_target / P.v_max_mps)) : 100.0f;
+      if (pct_f > 100.0f) pct_f = 100.0f;
 
-    desired_limit = (uint8_t)pct_f;
+      desired_limit = (uint8_t)pct_f;
+    }
   }
 
   // Asymmetric slew-rate: faster decrease (braking) than increase (resuming)
@@ -321,8 +357,11 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   //added log to see if soft braking is active
   #define COLOR_GREEN   "\x1b[32m"
   #define COLOR_RESET   "\x1b[0m"
-  sys_log(ctx, COLOR_GREEN "[AEB] current_speed=%.2f desired_limit=%u%%" COLOR_RESET,
-          v_mps, desired_limit);
+
+  //sys_log(ctx, COLOR_GREEN "[AEB] current_speed=%.2f desired_limit=%u%%" COLOR_RESET,
+  //        v_mps, desired_limit);
+
+
 
   /* -------- 7) State machine --------
      OFF   -> ARMED when speed is enough to care
@@ -413,8 +452,8 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
 
     mcp_send_message(CAN_ID_AEB_STOP, (uint8_t*)&aeb_frame, sizeof(aeb_frame));
 
-    sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
-          aeb_frame.warn, aeb_frame.brake );
+    //sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
+    //      aeb_frame.warn, aeb_frame.brake );
 
 
   /* -------- 9) Publish AEB outputs into shared state --------

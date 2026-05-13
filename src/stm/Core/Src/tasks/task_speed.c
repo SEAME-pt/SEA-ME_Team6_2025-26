@@ -20,7 +20,8 @@ void task_speed_step(SystemCtx* ctx)
     /* Convert counted pulses into RPM/speed */
     Speedometer_CalculateSpeed(ctx);
 
-    sys_log(ctx, "[Speedometer] pulses=%u", pulse_hits);
+    //sys_log(ctx, "[Speedometer] pulses=%u", pulse_hits);
+
     float speed_kmh = Speedometer_GetSpeed();
     float rpm_f     = Speedometer_GetRPM();
 
@@ -63,9 +64,9 @@ void task_speed_step(SystemCtx* ctx)
                      (uint8_t*)&wheel_frame,
                      sizeof(wheel_frame));
 
-    sys_log(ctx,
-        "[Speed] RPM=%d | Speed=%lu m/h | Pulses=%lu",
-        wheel_frame.rpm,
-        (unsigned long)speed_mh,
-        (unsigned long)wheel_frame.total_pulses);
+    //sys_log(ctx,
+    //    "[Speed] RPM=%d | Speed=%lu m/h | Pulses=%lu",
+    //    wheel_frame.rpm,
+    //    (unsigned long)speed_mh,
+    //    (unsigned long)wheel_frame.total_pulses);
 }
