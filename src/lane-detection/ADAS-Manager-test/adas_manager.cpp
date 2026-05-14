@@ -218,11 +218,19 @@ void object_thread(SharedState& state) {
 }
 
 void joystick_thread(SharedState& state) {
+    static constexpr int RETRY_INTERVAL_MS = 1000;
+
     JoystickReceiver rx;
-    if (rx.init() < 0) {
-        fprintf(stderr, "[JOY] Failed to init socket %s\n", JOYSTICK_SOCKET);
-        return;
+
+    // Retry loop — recovers from transient init failures without killing the thread
+    while (running) {
+        if (rx.init() >= 0) break;
+        fprintf(stderr, "[JOY] Failed to init %s — retry in %dms\n",
+                JOYSTICK_SOCKET, RETRY_INTERVAL_MS);
+        std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_INTERVAL_MS));
     }
+
+    if (!running) return;
     printf("[JOY] Listening on %s\n", JOYSTICK_SOCKET);
 
     while (running) {
