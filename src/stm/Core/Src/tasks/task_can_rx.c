@@ -198,6 +198,10 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
 
   s_rx.current_drive_mode = (DriveMode_t)cmd->mode;
 
+  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+  ctx->state.drive_mode = (DriveMode_t)cmd->mode;
+  tx_mutex_put(&ctx->state_mutex);
+
   int8_t steering = cmd->steering;
   if (steering < -100) steering = -100;
   if (steering > 100)  steering = 100;
