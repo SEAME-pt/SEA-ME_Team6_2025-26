@@ -185,6 +185,10 @@ struct SharedState {
     int8_t      joy_throttle = 0;
     bool        joy_valid    = false;
     bool        joy_toggle   = false;
+
+    std::chrono::steady_clock::time_point last_lane_ts{};
+    std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_joy_ts{};
 };
 
 // ── Receiver threads ──────────────────────────────────────────────────────────
@@ -198,7 +202,10 @@ void lane_thread(SharedState& state) {
         bool ok = rx.receiveLatest(frame);
         std::lock_guard<std::mutex> lk(state.mtx);
         state.lane_valid = ok;
-        if (ok) state.lane = frame;
+        if (ok) {
+            state.lane        = frame;
+            state.last_lane_ts = std::chrono::steady_clock::now();
+        }
     }
     rx.close_fd();
 }
@@ -213,7 +220,10 @@ void object_thread(SharedState& state) {
         bool ok = rx.receiveLatest(frame);
         std::lock_guard<std::mutex> lk(state.mtx);
         state.object_valid = ok;
-        if (ok) state.object = frame;
+        if (ok) {
+            state.object      = frame;
+            state.last_obj_ts  = std::chrono::steady_clock::now();
+        }
     }
     rx.close_fd();
 }
@@ -241,6 +251,7 @@ void joystick_thread(SharedState& state) {
             state.joy_steering = msg.steering;
             state.joy_throttle = msg.throttle;
             state.joy_valid    = true;
+            state.last_joy_ts  = std::chrono::steady_clock::now();
         } else if (msg.type == JoystickMsg::Type::T) {
             state.joy_toggle = true;
         }
@@ -287,8 +298,11 @@ int main() {
     const int   DEGRADED_THRESHOLD_FRAMES = static_cast<int>(get("degraded_threshold_frames",  10.0f));
     const int   EMERGENCY_THRESHOLD_MS    = static_cast<int>(get("emergency_threshold_ms",    500.0f));
     const int   RECOVERY_THRESHOLD_FRAMES = static_cast<int>(get("recovery_threshold_frames",  15.0f));
-    const float OBJ_CONF_THRESH           = get("obj_conf_thresh", 0.60f);
-    const float COLLISION_DIST_M          = get("collision_dist_m", 0.30f);
+    const float OBJ_CONF_THRESH           = get("obj_conf_thresh",   0.60f);
+    const float COLLISION_DIST_M          = get("collision_dist_m",  0.30f);
+    const int   LANE_TIMEOUT_MS           = static_cast<int>(get("lane_timeout_ms",  500.0f));
+    const int   OBJ_TIMEOUT_MS            = static_cast<int>(get("obj_timeout_ms",  1000.0f));
+    const int   JOY_TIMEOUT_MS            = static_cast<int>(get("joy_timeout_ms",   200.0f));
 
     printf("[CONFIG] kp=%.1f ki=%.1f kd=%.1f deadband=%.1f throttle=%d\n",
            lka_cfg.kp, lka_cfg.ki, lka_cfg.kd, lka_cfg.deadband, THROTTLE);
@@ -321,6 +335,8 @@ int main() {
     int       recovery_frames = 0;
     auto      degraded_since  = std::chrono::steady_clock::now();
     auto      last_tick       = std::chrono::steady_clock::now();
+    bool      lane_was_stale  = true;
+    bool      joy_was_stale   = true;
 
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -333,25 +349,56 @@ int main() {
         LaneFrame   lane{};
         ObjectFrame obj{};
         bool lane_valid, obj_valid;
+        std::chrono::steady_clock::time_point lane_ts, obj_ts;
         {
             std::lock_guard<std::mutex> lk(state.mtx);
             lane       = state.lane;
             lane_valid = state.lane_valid;
+            lane_ts    = state.last_lane_ts;
             obj        = state.object;
             obj_valid  = state.object_valid;
+            obj_ts     = state.last_obj_ts;
         }
 
         bool   joy_toggle;
         int8_t joy_steering, joy_throttle;
         bool   joy_valid;
+        std::chrono::steady_clock::time_point joy_ts;
         {
             std::lock_guard<std::mutex> lk(state.mtx);
             joy_toggle   = state.joy_toggle;
             joy_steering = state.joy_steering;
             joy_throttle = state.joy_throttle;
             joy_valid    = state.joy_valid;
+            joy_ts       = state.last_joy_ts;
             state.joy_toggle = false;
         }
+
+        // ── Watchdog: override valid flags if timestamps are stale ────────────
+        auto lane_age_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - lane_ts).count();
+        auto obj_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - obj_ts).count();
+        auto joy_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - joy_ts).count();
+
+        bool lane_stale = lane_valid && (lane_age_ms > LANE_TIMEOUT_MS);
+        bool joy_stale  = joy_valid  && (joy_age_ms  > JOY_TIMEOUT_MS);
+
+        if (lane_stale) {
+            lane_valid = false;
+            if (!lane_was_stale)
+                fprintf(stderr, "[WDG] lane thread stale (%ldms) — forcing DEGRADED\n",
+                        (long)lane_age_ms);
+        }
+        if (obj_age_ms > OBJ_TIMEOUT_MS)
+            obj_valid = false;
+        if (joy_stale && drive_mode == DriveMode::MANUAL) {
+            joy_valid = false;
+            if (!joy_was_stale)
+                fprintf(stderr, "[WDG] joystick stale (%ldms) — safe stop\n",
+                        (long)joy_age_ms);
+        }
+
+        lane_was_stale = lane_stale;
+        joy_was_stale  = joy_stale && (drive_mode == DriveMode::MANUAL);
 
         if (joy_toggle) {
             drive_mode = (drive_mode == DriveMode::MANUAL)

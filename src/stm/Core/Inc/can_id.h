@@ -42,9 +42,6 @@
 #define CAN_ID_SRF08_DISTANCE   0x423
 #define CAN_ID_GESTURE          0x424
 
-/* Joystick (temporary)*/
-#define CAN_ID_JOYSTICK			0x500
-
 /* Heartbeat */
 #define CAN_ID_HEARTBEAT_AGL    0x700
 #define CAN_ID_HEARTBEAT_STM32  0x701
