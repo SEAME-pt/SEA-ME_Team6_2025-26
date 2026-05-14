@@ -2,6 +2,7 @@
 #include "can_sender.hpp"
 #include "lka_controller.hpp"
 #include "joystick_receiver.hpp"
+#include "../../kuksa/kuksa_RPi5/inc/can_id.h"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -402,7 +403,8 @@ int main() {
                             adas_state      = AdasState::EMERGENCY_STOP;
                             recovery_frames = 0;
                             printf("[ADAS] → EMERGENCY_STOP\n");
-                            can.send_control(0, 0);
+                            can.send_motor_cmd(0, 0, DRIVE_MODE_AUTONOMOUS,
+                                               CMD_FLAG_EMERGENCY_STOP);
                         }
                     }
                 }
@@ -418,10 +420,11 @@ int main() {
             if (joy_valid) {
                 steering = joy_steering;
                 throttle = joy_throttle;
-                can.send_control(static_cast<int16_t>(steering),
-                                 static_cast<int16_t>(throttle));
+                can.send_motor_cmd(static_cast<int8_t>(steering),
+                                   static_cast<int8_t>(throttle),
+                                   DRIVE_MODE_MANUAL);
             } else {
-                can.send_control(0, 0);
+                can.send_motor_cmd(0, 0, DRIVE_MODE_MANUAL);
             }
         } else {
             throttle_limit = obj_throttle_limit(obj, obj_valid,
@@ -431,18 +434,21 @@ int main() {
             switch (adas_state) {
                 case AdasState::ACTIVE:
                     steering = lka.compute(lane.lateral_deviation, dt);
-                    can.send_control(static_cast<int16_t>(steering),
-                                     static_cast<int16_t>(throttle));
+                    can.send_motor_cmd(static_cast<int8_t>(steering),
+                                       static_cast<int8_t>(throttle),
+                                       DRIVE_MODE_AUTONOMOUS);
                     break;
 
                 case AdasState::DEGRADED:
                     steering = lka.last_steering();
-                    can.send_control(static_cast<int16_t>(steering),
-                                     static_cast<int16_t>(throttle));
+                    can.send_motor_cmd(static_cast<int8_t>(steering),
+                                       static_cast<int8_t>(throttle),
+                                       DRIVE_MODE_AUTONOMOUS);
                     break;
 
                 case AdasState::EMERGENCY_STOP:
-                    can.send_control(0, 0);
+                    can.send_motor_cmd(0, 0, DRIVE_MODE_AUTONOMOUS,
+                                       CMD_FLAG_EMERGENCY_STOP);
                     break;
 
                 case AdasState::INIT:
@@ -486,7 +492,7 @@ int main() {
     }
 
     // ── Shutdown ──────────────────────────────────────────────────────────────
-    can.send_control(0, 0);
+    can.send_motor_cmd(0, 0, DRIVE_MODE_IDLE);
     can.close_fd();
     bridge.stop();
     t_lane.join();
