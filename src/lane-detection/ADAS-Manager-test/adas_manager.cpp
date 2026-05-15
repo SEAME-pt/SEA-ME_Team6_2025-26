@@ -2,7 +2,7 @@
 #include "can_sender.hpp"
 #include "lka_controller.hpp"
 #include "joystick_receiver.hpp"
-#include "../../kuksa/kuksa_RPi5/inc/can_id.h"
+#include "can_id.h"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
