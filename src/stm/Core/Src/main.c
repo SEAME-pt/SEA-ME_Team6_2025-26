@@ -34,8 +34,6 @@
 /* USER CODE BEGIN Includes */
 #include "lps22hh.h"
 #include <stdio.h>
-#include "stm32_can_benchmark.h"
-
 #include "motor_control.h"
 #include "srf08.h"
 /* USER CODE END Includes */

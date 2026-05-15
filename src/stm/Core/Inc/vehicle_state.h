@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "can_id.h"
 
 typedef struct {
     uint32_t rpm;
@@ -29,5 +30,6 @@ typedef struct {
     uint32_t tof_ts;
     uint32_t imu_ts;
 
-    int8_t   servo_angle;     // steering % applied (-100..+100), 0 = straight
+    int8_t      servo_angle;   // steering % applied (-100..+100), 0 = straight
+    DriveMode_t drive_mode;   // MANUAL=1, AUTONOMOUS=2
 } VehicleState;

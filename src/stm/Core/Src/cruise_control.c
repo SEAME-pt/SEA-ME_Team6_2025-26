@@ -1,7 +1,7 @@
 /*
  * cruise_control.c
  *
- * Basic Cruise Control (V1) - PI speed controller
+ * Adaptive Cruise Control (V2) - PI speed controller with target rate limiting
  *
  * Created on: Mar 2026
  *     Author: rcosta-c
@@ -62,12 +62,12 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
     switch ((CruiseControlCommand_t)cmd->command)
     {
     case CC_CMD_SET_SPEED:
-        /* Just store the target — doesn't activate by itself */
+        /* Setpoint update — accepted from HMI or ADAS Manager.
+         * active_target_kmh is NOT snapped here; the rate limiter in
+         * CruiseControl_Update will track this new value smoothly. */
         if (requested_speed >= CC_SPEED_MIN && requested_speed <= CC_SPEED_MAX)
         {
             cc->target_speed_kmh = requested_speed;
-            /* If already active, PI continues with new target (live adjust) */
-            /* If OFF/OVERRIDE, target is stored for next ACTIVATE/RESUME */
         }
         break;
 
@@ -81,6 +81,10 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
             cc->last_error = 0.0f;
             cc->stall_timer_ms = 0;
             cc->activation_grace_ms = 0;    /* Stall detection suspended for CC_STALL_GRACE_MS */
+
+            /* Seed active_target at current speed so the rate limiter ramps up
+             * from where we are, avoiding an instant step into the PI on activation. */
+            cc->active_target_kmh = cc->current_speed_kmh;
         }
         break;
 
@@ -88,6 +92,7 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
         cc->state = CC_STATE_OFF;
         cc->integral = 0.0f;
         cc->applied_throttle = 0.0f;
+        cc->active_target_kmh = 0.0f;
         /* target_speed_kmh is NOT cleared — available for resume */
         break;
 
@@ -96,6 +101,7 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
         cc->integral = 0.0f;
         cc->applied_throttle = 0.0f;
         cc->target_speed_kmh = 0.0f;       /* Clear target completely */
+        cc->active_target_kmh = 0.0f;
         break;
 
     case CC_CMD_RESUME:
@@ -107,6 +113,9 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
             /* Don't reset integral — let it resume smoothly */
             cc->stall_timer_ms = 0;
             cc->activation_grace_ms = 0;    /* Fresh grace period on resume too */
+
+            /* Seed active_target at current speed for smooth resume */
+            cc->active_target_kmh = cc->current_speed_kmh;
         }
         break;
 
@@ -119,12 +128,43 @@ void CruiseControl_ProcessCommand(CruiseControl_t *cc, const CruiseControlCmd_t 
 
 
 /*============================================================================
+ * Target rate limiter — smooths ADAS-driven setpoint changes
+ *============================================================================*/
+
+/**
+ * Track target_speed_kmh into active_target_kmh at a bounded rate.
+ *
+ * Without this, a large step from the ADAS Manager (e.g. user 10 km/h →
+ * TSR-50 mapped to 4 km/h) would feed a -6 km/h error step into the PI,
+ * saturating throttle to 0 and producing a jerky decel. Rate-limiting the
+ * setpoint converts the step into a ramp the PI can track linearly.
+ *
+ * Asymmetric: deceleration is permitted faster than acceleration (matches
+ * real car ACC behavior — comfort on speed-up, responsiveness on slow-down).
+ */
+static void update_active_target(CruiseControl_t *cc, float dt_s)
+{
+    float delta = cc->target_speed_kmh - cc->active_target_kmh;
+    float max_up = CC_TARGET_RAMP_UP_KMH_S * dt_s;
+    float max_down = CC_TARGET_RAMP_DOWN_KMH_S * dt_s;
+
+    if (delta > max_up)
+        cc->active_target_kmh += max_up;
+    else if (delta < -max_down)
+        cc->active_target_kmh -= max_down;
+    else
+        cc->active_target_kmh = cc->target_speed_kmh;
+}
+
+
+/*============================================================================
  * PI Controller — the core
  *============================================================================*/
 
 static float pi_compute(CruiseControl_t *cc, float dt_s)
 {
-    float error = cc->target_speed_kmh - cc->current_speed_kmh;
+    /* PI tracks active_target (rate-limited), not the raw setpoint. */
+    float error = cc->active_target_kmh - cc->current_speed_kmh;
 
     /*
      * Dead-band: if within tolerance, don't accumulate integral error.
@@ -204,7 +244,14 @@ void CruiseControl_Update(CruiseControl_t *cc, float current_speed_kmh)
 
     float dt_s = (float)CC_TASK_PERIOD_MS / 1000.0f;
 
-    /* --- Safety checks --- */
+    /* --- Setpoint rate limiting (ACC adaptation smoothing) --- */
+    update_active_target(cc, dt_s);
+
+    /* --- Safety checks ---
+     *
+     * NOTE: stall detection compares against active_target_kmh, not the raw
+     * setpoint. During a downward ramp (user 10 → TSR 4), this avoids spurious
+     * stall triggers while the rate limiter is still tracking down. */
 
     /* Count up grace period: stall detection only starts after CC_STALL_GRACE_MS.
      * This prevents false stall triggers during initial ramp-up from low speed. */
@@ -213,11 +260,11 @@ void CruiseControl_Update(CruiseControl_t *cc, float current_speed_kmh)
         cc->activation_grace_ms += CC_TASK_PERIOD_MS;
     }
 
-    /* Speed dropped too far below target (obstacle, stuck, wheel off ground).
+    /* Speed dropped too far below the active target (obstacle, stuck, wheel off ground).
      * Only evaluated after grace period expires. */
     if (cc->activation_grace_ms >= CC_STALL_GRACE_MS &&
-        cc->current_speed_kmh < (cc->target_speed_kmh - CC_SPEED_DROP_THRESHOLD) &&
-        cc->target_speed_kmh > CC_SPEED_MIN)
+        cc->current_speed_kmh < (cc->active_target_kmh - CC_SPEED_DROP_THRESHOLD) &&
+        cc->active_target_kmh > CC_SPEED_MIN)
     {
         cc->stall_timer_ms += CC_TASK_PERIOD_MS;
         if (cc->stall_timer_ms >= CC_STALL_TIMEOUT_MS)
@@ -276,6 +323,7 @@ void CruiseControl_ForceOverride(CruiseControl_t *cc)
         cc->applied_throttle = 0.0f;
         cc->integral = 0.0f;
         cc->stall_timer_ms = 0;
-        /* target preserved for resume */
+        cc->active_target_kmh = 0.0f;
+        /* target_speed_kmh preserved for resume */
     }
 }

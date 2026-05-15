@@ -39,9 +39,6 @@ typedef struct
   uint16_t motor_current_estimate_ma;
   uint8_t  motor_status_counter;
   DriveMode_t current_drive_mode;
-
-  uint8_t  cmd_log_counter;
-  uint8_t  joystick_log_counter;
 } TaskCanRx;
 
 static TaskCanRx s_rx;
@@ -198,6 +195,10 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
 
   s_rx.current_drive_mode = (DriveMode_t)cmd->mode;
 
+  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+  ctx->state.drive_mode = (DriveMode_t)cmd->mode;
+  tx_mutex_put(&ctx->state_mutex);
+
   int8_t steering = cmd->steering;
   if (steering < -100) steering = -100;
   if (steering > 100)  steering = 100;
@@ -253,20 +254,6 @@ static void handle_motor_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   }
 
   s_rx.motor_current_estimate_ma = (uint16_t)(abs(throttle) * 20); // ~2A @ 100%
-
-  if (++s_rx.cmd_log_counter >= 10)
-  {
-    s_rx.cmd_log_counter = 0;
-    //sys_log(ctx,
-    //  "\033[1;32m[CAN_RX] MotorCmd: T=%d S=%d Mode=%u Flags=0x%02X\033[0m",
-    //  throttle, steering, cmd->mode, cmd->flags
-    //);
-  }
-}
-
-static void handle_config_cmd(SystemCtx* ctx, const VehicleState* snap)
-{
-  sys_log(ctx, "\033[1;33m[CAN_RX] ConfigCmd recebido (não implementado)\033[0m");
 }
 
 static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
@@ -281,11 +268,6 @@ static void handle_heartbeat_agl(SystemCtx* ctx, const CAN_Message_t* rx_msg, co
   }
 
   const Heartbeat_t* hb = (const Heartbeat_t*)rx_msg->data;
-
-  //sys_log(ctx,
-  //  "\033[1;32m[CAN_RX] Heartbeat AGL: State=%u Uptime=%lu ms Errors=0x%02X\033[0m",
-  //  hb->state, hb->uptime_ms, hb->errors
-  //);
 
   // TODO watchdog timeout logic
 }
@@ -306,7 +288,7 @@ static void handle_indicator_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
     task_indicator_set_state(state);
 
     static const char* const names[] = { "OFF", "PISCA_ESQ", "PISCA_DIR", "FAROIS", "ALERTA" };
-    //sys_log(ctx, "\033[1;33m[CAN_RX] INDICATOR -> %s\033[0m", names[state]);
+    (void)names;
 }
 
 static void handle_cc_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg)
@@ -350,91 +332,16 @@ static void handle_relay_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg, const 
   }
 }
 
-static void handle_joystick(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
-{
-  if (rx_msg->dlc < 4)
-    return;
-
-  int16_t steering = (int16_t)(rx_msg->data[0] | (rx_msg->data[1] << 8));
-  int16_t throttle = (int16_t)(rx_msg->data[2] | (rx_msg->data[3] << 8));
-
-  bool any_stop = (snap->emergency_stop_active || snap->aeb_stop_active);
-
-   if (any_stop && throttle >= 0)
-   {
-     sys_log(ctx, "\033[1;33m[CAN_RX] Joystick Forward BLOCKED - Emergency/AEB! (Reverse OK)\033[0m");
-     Motor_Stop();
-     s_rx.actual_throttle_applied = 0;
-     return;
-   }
-
-  if (steering < -100) steering = -100;
-  if (steering > 100)  steering = 100;
-  if (throttle < -100) throttle = -100;
-  if (throttle > 100)  throttle = 100;
-
-  // Apply global max cap first, then AEB/SRF08 speed limit (tightest wins)
-  uint8_t limit = AEB_MAX_THROTTLE_PCT;
-  if (snap->srf08_speed_limit < limit) limit = snap->srf08_speed_limit;
-  if (snap->aeb_speed_limit   < limit) limit = snap->aeb_speed_limit;
-
-  if (throttle > (int8_t)limit)
-    throttle = (int8_t)limit;
-
-  uint8_t servo_angle = (uint8_t)((100 - steering) * 180 / 200);
-  Servo_SetAngle(servo_angle);
-  s_rx.actual_steering_applied = (int8_t)steering;
-
-  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
-  ctx->state.servo_angle = (int8_t)steering;
-  tx_mutex_put(&ctx->state_mutex);
-
-  /* When CC is active, task_cruise_control drives throttle directly */
-  /* When CC is active, task_cruise_control drives throttle directly */
-    if (CruiseControl_IsActive(&g_cruise_control))
-      return;
-
-    // --- ALTERAÇÃO AQUI: Baixar o limite de 10 para 0 ---
-    if (throttle > 0)
-    {
-      Motor_Forward((uint8_t)throttle);
-      s_rx.actual_throttle_applied = (int8_t)throttle;
-    }
-    else if (throttle < 0)
-    {
-      Motor_Backward((uint8_t)(-throttle));
-      s_rx.actual_throttle_applied = (int8_t)throttle;
-    }
-    else
-    {
-      Motor_Stop();
-      s_rx.actual_throttle_applied = 0;
-    }
-
-  if (++s_rx.joystick_log_counter >= 10)
-  {
-    s_rx.joystick_log_counter = 0;
-    /*
-    sys_log(ctx,
-      "\033[1;34m[CAN_RX] Joystick: S=%d (%u°) T=%d\033[0m",
-      (int)steering, (unsigned)servo_angle, (int)throttle
-
-    );*/
-  }
-}
-
 static void process_one_rx(SystemCtx* ctx, const CAN_Message_t* rx_msg, const VehicleState* snap)
 {
   switch (rx_msg->id)
   {
     case CAN_ID_EMERGENCY_STOP: handle_emergency_stop(ctx, rx_msg, snap); break;
     case CAN_ID_MOTOR_CMD:      handle_motor_cmd(ctx, rx_msg, snap);      break;
-    case CAN_ID_CONFIG_CMD:     handle_config_cmd(ctx, snap);             break;
     case CAN_ID_CC_CMD:         handle_cc_cmd(ctx, rx_msg);               break;
     case CAN_ID_HEARTBEAT_AGL:  handle_heartbeat_agl(ctx, rx_msg, snap);  break;
     case CAN_ID_CMD_RELAY:      handle_relay_cmd(ctx, rx_msg, snap);      break;
     case CAN_ID_CMD_INDICATOR:  handle_indicator_cmd(ctx, rx_msg);        break;
-    case CAN_ID_JOYSTICK:       handle_joystick(ctx, rx_msg, snap);       break;
 
     default:
       sys_log(ctx, "\033[1;36m[CAN_RX] ID desconhecido: 0x%03lX\033[0m", rx_msg->id);
@@ -467,27 +374,12 @@ void task_can_rx_init(SystemCtx* ctx)
     sys_log(ctx, "\033[1;31m[CAN_RX] ERRO ao inicializar Servo! Status: %d\033[0m",
             s_rx.servo_init_status);
 
-  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x201, 0x500, 0x700, 0x601, 0x602)...\033[0m");
+  sys_log(ctx, "\033[1;36m[CAN_RX] Aguardando comandos (0x200, 0x202, 0x700, 0x601, 0x602)...\033[0m");
 }
 
 void task_can_rx_step(SystemCtx* ctx)
 {
-  /* ---- CANINTF diagnostic: print raw register every 3 s ---- */
-  static uint32_t canintf_log_tick = 0;
-  canintf_log_tick += CAN_RX_SLEEP_TICKS;
-  if (canintf_log_tick >= 3000u)
-  {
-    canintf_log_tick = 0;
-    tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
-    uint8_t canintf = MCP2515_ReadRegister(REG_CANINTF);
-    uint8_t canstat = MCP2515_ReadRegister(REG_CANSTAT);
-    uint8_t eflg    = MCP2515_ReadRegister(REG_EFLG);
-    tx_mutex_put(&ctx->spi1_mutex);
-    //sys_log(ctx, "[CAN_RX] CANINTF=0x%02X CANSTAT=0x%02X EFLG=0x%02X",
-    //        canintf, canstat, eflg);
-  }
-
-  // periodic work (same behavior)
+  // periodic work
   send_motor_status_if_due();
   clear_mcp_flags_if_due(ctx);
 

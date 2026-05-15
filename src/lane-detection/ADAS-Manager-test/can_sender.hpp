@@ -10,9 +10,10 @@
 #include <unistd.h>
 #include <cstdio>
 
-static constexpr const char* CAN_CHANNEL    = "can1";
-static constexpr uint32_t    CAN_ID_CONTROL = 0x500;
-static constexpr uint32_t    CAN_ID_ESTOP   = 0x001;
+static constexpr const char* CAN_CHANNEL     = "can1";
+static constexpr uint32_t    CAN_ID_MOTOR    = 0x200;
+static constexpr uint32_t    CAN_ID_JOYSTICK = 0x500;
+static constexpr uint32_t    CAN_ID_ESTOP    = 0x001;
 
 // CRC-8 (poly=0x07, init=0x00) — matches lka_safety_monitor.py
 static uint8_t _crc8(const uint8_t* data, size_t len) {
@@ -49,17 +50,37 @@ public:
         return fd_;
     }
 
-    // CAN 0x500 — struct.pack('<hh', steering, throttle) — matches lka_steering_v1_2.py
+    // CAN 0x200 — MotorCmd_t — matches STM32 handle_motor_cmd()
+    bool send_motor_cmd(int8_t steering, int8_t throttle,
+                        uint8_t mode, uint8_t flags = 0) {
+        uint8_t body[7];
+        body[0] = static_cast<uint8_t>(throttle);
+        body[1] = static_cast<uint8_t>(steering);
+        body[2] = flags;
+        body[3] = mode;
+        body[4] = 0;           // reserved
+        body[5] = 0;           // reserved
+        body[6] = counter_++ % 15;
+
+        struct can_frame frame{};
+        frame.can_id  = CAN_ID_MOTOR;
+        frame.can_dlc = 8;
+        memcpy(frame.data, body, 7);
+        frame.data[7] = _crc8(body, 7);
+        bool ok = _send(frame);
+        printf("[CAN] 0x%03X steer=%+d throttle=%d mode=%u %s\n",
+               CAN_ID_MOTOR, steering, throttle, mode, ok ? "OK" : "FAIL");
+        return ok;
+    }
+
+    // CAN 0x500 — legacy joystick format (int16 LE) — kept for compatibility
     bool send_control(int16_t steering, int16_t throttle) {
         struct can_frame frame{};
-        frame.can_id  = CAN_ID_CONTROL;
+        frame.can_id  = CAN_ID_JOYSTICK;
         frame.can_dlc = 4;
         memcpy(frame.data,     &steering, 2);
         memcpy(frame.data + 2, &throttle, 2);
-        bool ok = _send(frame);
-        printf("[CAN] 0x%03X steer=%+d throttle=%d %s\n",
-               CAN_ID_CONTROL, steering, throttle, ok ? "OK" : "FAIL");
-        return ok;
+        return _send(frame);
     }
 
     // CAN 0x001 — EmergencyStop_t — matches lka_safety_monitor.py
@@ -91,5 +112,6 @@ private:
     }
 
     const char* channel_;
-    int         fd_ = -1;
+    int         fd_       = -1;
+    uint8_t     counter_  = 0;
 };

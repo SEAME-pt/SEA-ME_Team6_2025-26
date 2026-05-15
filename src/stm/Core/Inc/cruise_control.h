@@ -1,8 +1,14 @@
 /*
  * cruise_control.h
  *
- * Basic Cruise Control (V1) - ThreadX Task
+ * Adaptive Cruise Control (V2) - ThreadX Task
  * Maintains target speed via PI controller on DC motors.
+ *
+ * V1: Fixed target set via HMI.
+ * V2 (ACC): Target may be dynamically updated by the ADAS Manager (RPi5)
+ *           based on TSR (traffic sign recognition) and curve detection.
+ *           From the STM32's perspective the source is transparent — every
+ *           target update arrives as CC_CMD_SET_SPEED on CAN_ID_CC_CMD (0x202).
  *
  * Created on: Mar 2026
  *     Author: rcosta-c
@@ -43,6 +49,19 @@
 #define CC_SPEED_MAX                15.0f   /* Above this, CC refuses to activate (PiRacer safety) */
 #define CC_SPEED_TOLERANCE          0.3f    /* "Close enough" band — reduces jitter near target */
 
+/* --- Target rate limiter (ACC-specific, km/h per second) ---
+ *
+ * The setpoint (target_speed_kmh) received from CAN is not fed directly to the
+ * PI controller. Instead, an internal "active_target_kmh" tracks the requested
+ * setpoint at a bounded rate. This prevents PI saturation and aggressive
+ * throttle transients when the ADAS Manager issues large step changes
+ * (e.g. user set 10 km/h, TSR sign detected → 4 km/h).
+ *
+ * Asymmetric: cars adapt down faster than up.
+ */
+#define CC_TARGET_RAMP_UP_KMH_S     1.5f   /* Max rate of target increase (km/h per second) */
+#define CC_TARGET_RAMP_DOWN_KMH_S   3.0f   /* Max rate of target decrease (km/h per second) */
+
 /* --- Safety --- */
 #define CC_SPEED_DROP_THRESHOLD     2.0f    /* If actual speed drops this much below target, override (stall/blocked) */
 #define CC_STALL_TIMEOUT_MS         2000    /* If stall condition persists this long, abort */
@@ -71,13 +90,15 @@ typedef enum {
     CC_CMD_OFF = 0,         /* Deactivate and clear target */
     CC_CMD_ACTIVATE,        /* Activate with current target */
     CC_CMD_DEACTIVATE,      /* Deactivate, keep target for resume */
-    CC_CMD_SET_SPEED,       /* Set new target speed */
+    CC_CMD_SET_SPEED,       /* Set new target speed (HMI or ADAS Manager) */
     CC_CMD_RESUME,          /* Resume from OVERRIDE with previous target */
     CC_CMD_INCREMENT,       /* +0.5 km/h (future V2) */
     CC_CMD_DECREMENT        /* -0.5 km/h (future V2) */
 } CruiseControlCommand_t;
 
-/* CAN frame: CC Command (0x202) - AGL -> STM32 */
+/* CAN frame: CC Command (0x202) - AGL -> STM32
+ * Source may be the HMI (user input) or the ADAS Manager (TSR/curve adaptation).
+ * The STM32 treats both sources identically. */
 typedef struct __attribute__((packed)) {
     uint8_t  command;           /* CruiseControlCommand_t */
     uint16_t target_speed;      /* 0.01 km/h units (e.g., 400 = 4.00 km/h) */
@@ -89,7 +110,7 @@ typedef struct __attribute__((packed)) {
 /* CAN frame: CC Status (0x213) - STM32 -> AGL */
 typedef struct __attribute__((packed)) {
     uint8_t  state;             /* CruiseControlState_t */
-    uint16_t target_speed;      /* 0.01 km/h */
+    uint16_t target_speed;      /* 0.01 km/h - the requested setpoint */
     uint16_t current_speed;     /* 0.01 km/h */
     int8_t   applied_throttle;  /* -100 to +100 % */
     uint8_t  counter;
@@ -102,7 +123,8 @@ typedef struct {
     CruiseControlState_t state;
 
     /* Speed */
-    float target_speed_kmh;
+    float target_speed_kmh;         /* Requested setpoint (from HMI or ADAS Manager) */
+    float active_target_kmh;        /* Internal target fed to PI — tracks target_speed_kmh at bounded rate */
     float current_speed_kmh;
 
     /* PI controller */
