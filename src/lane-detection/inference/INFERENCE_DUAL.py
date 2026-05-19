@@ -69,11 +69,16 @@ except ImportError:
     print("[PostProcess] AVISO: C++ não disponível — a usar Python (overlap ineficaz)")
 
 # ── Socket → ADAS Manager ─────────────────────────────────────────────────────
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'ADAS-Manager-test'))
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _script_dir)                                              # mesmo dir do script
+sys.path.insert(0, os.path.join(_script_dir, 'ADAS-Manager-Motor-Control')) # RPi5 layout
+sys.path.insert(0, os.path.join(_script_dir, '../ADAS-Manager-test'))       # repo layout
 from socket_sender import (start_socket_thread, send_perception as publish_deviation,
                            send_objects as publish_objects,
-                           SIGN_STOP, SIGN_YIELD, SIGN_SPEED_30, SIGN_SPEED_50, SIGN_UNKNOWN)
+                           SIGN_UNKNOWN, SIGN_STOP, SIGN_YIELD,
+                           SIGN_SPEED_30, SIGN_SPEED_50, SIGN_SPEED_80,
+                           SIGN_OBSTACLE, SIGN_PEDESTRIAN,
+                           SIGN_TL_GREEN, SIGN_TL_RED, SIGN_TL_YELLOW)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -91,10 +96,36 @@ IOU_THRESH   = 0.40
 MIN_BOX_SIZE = 0.04
 
 YOLO_CLASS_MAP = {
-    # calibrar com IDs reais do best_model
+    0:  SIGN_SPEED_50,
+    1:  SIGN_SPEED_80,
+    2:  SIGN_PEDESTRIAN,   # Crosswalk
+    3:  SIGN_UNKNOWN,      # Gate
+    4:  SIGN_PEDESTRIAN,   # Pedestrians_crossing
+    5:  SIGN_STOP,         # Stop_sign
+    6:  SIGN_YIELD,        # Traffic_priority
+    7:  SIGN_UNKNOWN,      # both_arrow
+    8:  SIGN_OBSTACLE,     # car
+    9:  SIGN_UNKNOWN,      # cars not allowed
+    10: SIGN_UNKNOWN,      # left_cross
+    11: SIGN_OBSTACLE,     # obstacle
+    12: SIGN_UNKNOWN,      # right_cross
+    13: SIGN_TL_GREEN,     # traffic_lights_green
+    14: SIGN_UNKNOWN,      # traffic_lights_off
+    15: SIGN_TL_RED,       # traffic_lights_red
+    16: SIGN_TL_YELLOW,    # traffic_lights_yellow
 }
 
-_DIST_K = 60.0  # calibrar empiricamente (K / box_height_px = dist_m)
+_DIST_K          = 420.2   # K = altura_px × distância_m (calibrado por Vasco, erro ~8%)
+_DIST_MIN        = 0.3
+_DIST_MAX        = 8.0
+FOV_H            = 51.3    # FOV horizontal medido (graus)
+CAMERA_OFFSET_PX = -21     # câmara 21px à direita do centro do carro
+
+
+def get_theta_cam(cx_px: float) -> float:
+    """Ângulo horizontal em graus. 0=frente, +=direita, -=esquerda."""
+    image_center_x = FULL_W / 2 + CAMERA_OFFSET_PX
+    return (cx_px - image_center_x) * (FOV_H / FULL_W)
 
 YOLO_STREAMS = [
     ("best_model/conv41", "best_model/conv42", 8),
@@ -116,6 +147,10 @@ _top_native = round(FULL_H * ((_resize_h - TRAIN_HEIGHT) / _resize_h))
 # ── Lane hold parameters ──────────────────────────────────────────────────────
 HOLD_FRAMES = 10    # frames a manter o último desvio (~0.9s a 11fps)
 HOLD_DECAY  = 0.85  # multiplicador por frame — ~20% do valor original ao fim
+
+# ── Single-lane deviation boost ───────────────────────────────────────────────
+SINGLE_LANE_BOOST_THRESHOLD = 5.0   # cm — abaixo deste valor não há boost
+SINGLE_LANE_BOOST_FACTOR    = 1.5   # multiplicador acima do threshold
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -236,6 +271,15 @@ def calc_lateral_deviation_cm(lanes, calib):
     if has_left:
         return -(left_x + 15.0) - CAMERA_OFFSET_CM, "left"
     return -(right_x - 15.0) - CAMERA_OFFSET_CM, "right"
+
+
+def apply_single_lane_boost(deviation, status):
+    """Amplifica desvio quando só uma lane é visível e |deviation| > threshold."""
+    if status not in ("left", "right") or deviation is None:
+        return deviation
+    if abs(deviation) < SINGLE_LANE_BOOST_THRESHOLD:
+        return deviation
+    return deviation * SINGLE_LANE_BOOST_FACTOR
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -595,6 +639,9 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 deviation, status = lane_hold.update(deviation, status)
                 hold_active       = (raw_status == "none" and status != "none")
 
+                # ── Single-lane boost ────────────────────────────────────────
+                deviation = apply_single_lane_boost(deviation, status)
+
                 # ── Publicar no ADAS Manager via socket ───────────────────────
                 publish_deviation(deviation, status)
 
@@ -619,7 +666,11 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                     sign_cls = YOLO_CLASS_MAP.get(int(cls_id), SIGN_UNKNOWN)
                     box_h_px = (box[3] - box[1]) * FULL_H
                     dist_m   = _DIST_K / box_h_px if box_h_px > 0 else 0.0
-                    obj_list.append((sign_cls, float(score), dist_m))
+                    if dist_m > _DIST_MAX or dist_m < _DIST_MIN:
+                        dist_m = 9999.0
+                    cx_px    = ((box[0] + box[2]) / 2.0) * FULL_W
+                    theta    = get_theta_cam(cx_px)
+                    obj_list.append((sign_cls, float(score), dist_m, theta))
                 publish_objects(obj_list)
 
                 # ── Métricas ──────────────────────────────────────────────────

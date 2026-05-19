@@ -91,7 +91,8 @@ def main():
             if line.startswith("L "):
                 # L <deviation> <status>
                 _, dev_s, status = line.split(" ", 2)
-                _pub_float(stub, meta,  _P_DEVIATION, float(dev_s))
+                dev = max(-50.0, min(50.0, float(dev_s)))  # VSS bounds
+                _pub_float(stub, meta,  _P_DEVIATION, dev)
                 _pub_string(stub, meta, _P_STATUS,    status)
 
             elif line.startswith("D "):

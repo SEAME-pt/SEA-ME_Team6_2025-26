@@ -37,11 +37,17 @@ struct __attribute__((packed)) LaneFrame {
 // ── Object detection ──────────────────────────────────────────────────────────
 
 enum SignClass : uint8_t {
-    SIGN_UNKNOWN  = 0,
-    SIGN_STOP     = 1,
-    SIGN_YIELD    = 2,
-    SIGN_SPEED_30 = 3,
-    SIGN_SPEED_50 = 4,
+    SIGN_UNKNOWN     = 0,
+    SIGN_STOP        = 1,   // stop_sign
+    SIGN_YIELD       = 2,   // traffic_priority
+    SIGN_SPEED_30    = 3,
+    SIGN_SPEED_50    = 4,   // speed_50
+    SIGN_SPEED_80    = 5,   // speed_80
+    SIGN_OBSTACLE    = 6,   // car, obstacle
+    SIGN_PEDESTRIAN  = 7,   // crosswalk, pedestrians_crossing
+    SIGN_TL_GREEN    = 8,   // traffic_lights_green
+    SIGN_TL_RED      = 9,   // traffic_lights_red
+    SIGN_TL_YELLOW   = 10,  // traffic_lights_yellow
 };
 
 #define MAX_OBJECTS 4
@@ -50,6 +56,7 @@ struct __attribute__((packed)) DetectedObject {
     uint8_t class_id;     // SignClass
     float   confidence;
     float   distance;     // metres
+    float   theta_cam;    // horizontal angle deg: 0=straight, +=right, -=left (Vasco fills this)
 };
 
 struct __attribute__((packed)) ObjectFrame {
