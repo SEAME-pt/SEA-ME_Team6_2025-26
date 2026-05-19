@@ -270,21 +270,22 @@ def modo_interativo(controller):
     print("  Q - Sair\n")
     print(f"  Modo inicial: {Colors.CYAN}{controller.mode}{Colors.NC}\n")
 
-    steering = 0
-    throttle = 0
-    step     = 10
+    steering  = 0
+    throttle  = 0
+    step      = 10
+    last_send = 0.0
 
     old_settings = termios.tcgetattr(sys.stdin)
     try:
         tty.setcbreak(sys.stdin.fileno())
 
         while True:
-            if select.select([sys.stdin], [], [], 0.1)[0]:
+            # Lê tecla com timeout de 20ms (50Hz)
+            if select.select([sys.stdin], [], [], SEND_INTERVAL)[0]:
                 key = sys.stdin.read(1).lower()
 
                 if key == 't':
                     controller.send_toggle()
-                    # Reset valores ao entrar em AUTONOMOUS
                     if controller.mode == 'AUTONOMOUS':
                         steering = 0
                         throttle = 0
@@ -309,13 +310,13 @@ def modo_interativo(controller):
                 elif key == ' ':
                     steering = 0
                     throttle = 0
-                else:
-                    continue
 
-                # Só envia J em MANUAL
-                if controller.mode == 'MANUAL':
-                    controller.send_command(steering, throttle)
-                    controller.print_status(steering, throttle)
+            # Envia continuamente a 50Hz em MANUAL (com ou sem tecla premida)
+            now = time.monotonic()
+            if controller.mode == 'MANUAL' and (now - last_send) >= SEND_INTERVAL:
+                controller.send_command(steering, throttle)
+                controller.print_status(steering, throttle)
+                last_send = now
 
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
