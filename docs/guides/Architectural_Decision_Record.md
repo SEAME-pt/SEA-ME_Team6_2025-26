@@ -53,3 +53,48 @@
 | 1      | 36.61 | 27.31            | 27.27    | 27.63    | 28.66    | 25.76    | 30.81    | 0.36   | 8.2         | 11.2        |
 | 2      | 36.66 | 27.28            | 27.27    | 27.56    | 28.04    | 25.78    | 28.47    | 0.27   | 8.4         | 11.6        |
 
+
+# Why did we choose UFLDv2?
+
+After evaluating several lane detection approaches, UFLDv2 stood out as the best option for our project for multiple reasons:
+
+**Existing Hailo ecosystem support**
+
+  - One of the biggest factors behind our decision was the amount of existing work available for running UFLDv2 on Hailo hardware.
+    There were already reference implementations, compiled HEF examples, and DFC compilation guides available, which greatly reduced the integration complexity and overall development risk.
+    Given our limited development time, this was an extremely important advantage.
+
+  - Backbone and pooling layers run on the Hailo-8 NPU
+
+  - Fully-connected layers and post-processing run on the RPi5 CPU
+
+**Lightweight and suitable for real-time inference**
+
+  - UFLDv2 is lightweight enough to run efficiently on the Hailo-8 accelerator while still maintaining good lane detection accuracy.
+    This allowed us to split the pipeline efficiently between the Hailo-8 and the Raspberry Pi 5 CPU:
+    
+  - Good real-time performance
+    
+  - After optimising the post-processing stage — including migrating critical computations to a C++ shared library using OpenBLAS — the complete pipeline reaches around 12.5 FPS from frame          capture to final lane coordinate output. For our ADAS use case, this performance is sufficient for real-time operation. Flexible and easy to fine-tune
+
+  - Another important advantage is that UFLDv2 can be fine-tuned easily on custom datasets. This was essential because public lane detection datasets mainly contain outdoor highway environments, while our competition track is:
+
+  - Indoors
+    
+  - Artificially lit
+
+  - Using simplified lane markings
+
+  - Fixed and repetitive in layout
+
+Fine-tuning on our own recorded dataset significantly improved robustness and detection consistency on the real circuit.
+
+**Why did we switch from the CULane model to the TuSimple model?**
+
+  - Initially, we used the CULane pre-trained weights, but the model struggled with curved lane detection. After analysing the issue, we discovered that the main limitation came from the number of row anchors used by the model:
+
+  - CULane configuration uses 18 row anchors
+
+  - TuSimple configuration uses 56 row anchors
+
+The higher anchor density in the TuSimple configuration provides much finer vertical sampling of lane points, which is especially important for accurately following curves. After switching to the TuSimple pre-trained weights, we observed a clear improvement in curve tracking accuracy and overall lane stability.
