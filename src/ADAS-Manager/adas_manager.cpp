@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "socket_receiver.hpp"
 #include "can_sender.hpp"
 #include "lka_controller.hpp"
@@ -10,12 +11,9 @@
 #include <condition_variable>
 #include <csignal>
 #include <cstdio>
-#include <fstream>
 #include <mutex>
 #include <queue>
-#include <string>
 #include <thread>
-#include <unordered_map>
 
 // ── Sockets / Config ──────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
@@ -188,6 +186,21 @@ private:
 };
 
 // ── Shared state ──────────────────────────────────────────────────────────────
+struct StateSnapshot {
+    LaneFrame   lane{};
+    bool        lane_valid   = false;
+    ObjectFrame object{};
+    bool        object_valid = false;
+    int8_t      joy_steering = 0;
+    int8_t      joy_throttle = 0;
+    bool        joy_valid    = false;
+    bool        joy_toggle   = false;
+
+    std::chrono::steady_clock::time_point last_lane_ts{};
+    std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_joy_ts{};
+};
+
 struct SharedState {
     std::mutex  mtx;
     LaneFrame   lane{};
@@ -203,6 +216,23 @@ struct SharedState {
     std::chrono::steady_clock::time_point last_obj_ts{};
     std::chrono::steady_clock::time_point last_joy_ts{};
 
+    StateSnapshot snapshot() {
+        std::lock_guard<std::mutex> lk(mtx);
+        StateSnapshot s;
+        s.lane         = lane;
+        s.lane_valid   = lane_valid;
+        s.last_lane_ts = last_lane_ts;
+        s.object       = object;
+        s.object_valid = object_valid;
+        s.last_obj_ts  = last_obj_ts;
+        s.joy_steering = joy_steering;
+        s.joy_throttle = joy_throttle;
+        s.joy_valid    = joy_valid;
+        s.joy_toggle   = joy_toggle;
+        s.last_joy_ts  = last_joy_ts;
+        joy_toggle     = false;
+        return s;
+    }
 };
 
 // ── Receiver threads ──────────────────────────────────────────────────────────
@@ -376,33 +406,18 @@ int main() {
                         now - last_tick).count() / 1e6f;
         last_tick = now;
 
-        LaneFrame   lane{};
-        ObjectFrame obj{};
-        bool lane_valid, obj_valid;
-        std::chrono::steady_clock::time_point lane_ts, obj_ts;
-        {
-            std::lock_guard<std::mutex> lk(state.mtx);
-            lane       = state.lane;
-            lane_valid = state.lane_valid;
-            lane_ts    = state.last_lane_ts;
-            obj        = state.object;
-            obj_valid  = state.object_valid;
-            obj_ts     = state.last_obj_ts;
-        }
-
-        bool   joy_toggle;
-        int8_t joy_steering, joy_throttle;
-        bool   joy_valid;
-        std::chrono::steady_clock::time_point joy_ts;
-        {
-            std::lock_guard<std::mutex> lk(state.mtx);
-            joy_toggle   = state.joy_toggle;
-            joy_steering = state.joy_steering;
-            joy_throttle = state.joy_throttle;
-            joy_valid    = state.joy_valid;
-            joy_ts       = state.last_joy_ts;
-            state.joy_toggle = false;
-        }
+        StateSnapshot      snap         = state.snapshot();
+        const LaneFrame&   lane         = snap.lane;
+        const ObjectFrame& obj          = snap.object;
+        bool               lane_valid   = snap.lane_valid;
+        bool               obj_valid    = snap.object_valid;
+        bool               joy_valid    = snap.joy_valid;
+        const auto&        lane_ts      = snap.last_lane_ts;
+        const auto&        obj_ts       = snap.last_obj_ts;
+        const auto&        joy_ts       = snap.last_joy_ts;
+        const bool         joy_toggle   = snap.joy_toggle;
+        const int8_t       joy_steering = snap.joy_steering;
+        const int8_t       joy_throttle = snap.joy_throttle;
 
         // ── Watchdog: override valid flags if timestamps are stale ────────────
         auto lane_age_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - lane_ts).count();
