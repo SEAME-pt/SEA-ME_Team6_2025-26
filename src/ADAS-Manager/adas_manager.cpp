@@ -378,6 +378,117 @@ static void change_drive_mode(
     bridge.pub_mode(drive_mode);
 }
 
+// ── Drive output ──────────────────────────────────────────────────────────────
+struct DriveOutput {
+    int steering       = 0;
+    int throttle       = 0;
+    int throttle_limit = 0;
+};
+
+// ── Manual driving ────────────────────────────────────────────────────────────
+static DriveOutput manual_driving(
+    bool joy_valid,
+    int8_t joy_steering,
+    int8_t joy_throttle,
+    int default_throttle,
+    bool& estop_sent,
+    CanSender& can)
+{
+    DriveOutput out;
+    out.throttle_limit = default_throttle;
+    if (joy_valid) {
+        out.steering = joy_steering;
+        out.throttle = joy_throttle;
+        can.send_ctrl_cmd(CTRL_MODE_MANUAL,
+                          static_cast<int8_t>(out.steering),
+                          static_cast<int8_t>(out.throttle));
+    } else {
+        can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0);
+    }
+    if (estop_sent) {
+        can.send_estop(0);
+        estop_sent = false;
+    }
+    return out;
+}
+
+// ── Autonomous driving ────────────────────────────────────────────────────────
+static DriveOutput autonomous_driving(
+    AdasState adas_state,
+    const LaneFrame& lane,
+    const ObjectFrame& obj,
+    bool obj_valid,
+    float dt,
+    const AdasConfig& cfg,
+    LKAController& lka,
+    OAController& oa,
+    bool& estop_sent,
+    CanSender& can)
+{
+    DriveOutput out;
+
+    float nearest_dist_m = 9999.0f;
+    float nearest_theta  = 0.0f;
+    bool  cam_valid_oa   = false;
+    if (obj_valid) {
+        for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i) {
+            if (obj.objects[i].distance < nearest_dist_m) {
+                nearest_dist_m = obj.objects[i].distance;
+                nearest_theta  = obj.objects[i].theta_cam;
+                cam_valid_oa   = true;
+            }
+        }
+    }
+
+    out.throttle_limit = obj_throttle_limit(obj, obj_valid,
+                                            cfg.obj_conf_thresh, cfg.collision_dist_m);
+    out.throttle = std::min(cfg.throttle, out.throttle_limit);
+
+    bool do_send = false;
+    switch (adas_state) {
+        case AdasState::ACTIVE:
+            out.steering = lka.compute(lane.lateral_deviation, dt);
+            do_send      = true;
+            if (estop_sent) { can.send_estop(0); estop_sent = false; }
+            break;
+
+        case AdasState::DEGRADED:
+            out.steering = lka.last_steering();
+            do_send      = true;
+            break;
+
+        case AdasState::EMERGENCY_STOP:
+            can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
+                              0, HEADWAY_MEDIUM, /*aeb_request=*/true);
+            break;
+
+        case AdasState::INIT:
+            break;
+    }
+
+    if (do_send) {
+        if (cfg.oa_enabled) {
+            int dt_ms = static_cast<int>(dt * 1000.0f);
+            OAResult oa_res = oa.step(9999.0f, nearest_dist_m,
+                                      nearest_theta, cam_valid_oa, dt_ms);
+            if (oa_res.state == OAState::EVADING) {
+                out.steering = oa_res.steering;
+                out.throttle = oa_res.throttle;
+            } else if (oa_res.state == OAState::BLOCKED) {
+                can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
+                                  0, HEADWAY_MEDIUM, /*aeb_request=*/true);
+                do_send = false;
+            }
+        }
+        if (do_send)
+            can.send_ctrl_cmd(CTRL_MODE_LKA,
+                              static_cast<int8_t>(out.steering),
+                              static_cast<int8_t>(out.throttle));
+    }
+
+    return out;
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 int main() {
     signal(SIGINT,  on_signal);
@@ -476,87 +587,16 @@ int main() {
             adas_state_machine(lane_ok, now, cfg, adas_state, degraded_frames,
                                recovery_frames, degraded_since, estop_sent, lka, can);
 
-        // ── Drive mode: MANUAL forwards joystick, AUTONOMOUS runs LKA ────────
-        int steering      = 0;
-        int throttle      = 0;
-        int throttle_limit = cfg.throttle;
+        // ── Drive ─────────────────────────────────────────────────────────────
+        DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
+            ? manual_driving(joy_valid, joy_steering, joy_throttle,
+                             cfg.throttle, estop_sent, can)
+            : autonomous_driving(adas_state, lane, obj, obj_valid, dt,
+                                 cfg, lka, oa, estop_sent, can);
 
-        if (drive_mode == DriveMode::MANUAL) {
-            if (joy_valid) {
-                steering = joy_steering;
-                throttle = joy_throttle;
-                can.send_ctrl_cmd(CTRL_MODE_MANUAL,
-                                  static_cast<int8_t>(steering),
-                                  static_cast<int8_t>(throttle));
-            } else {
-                can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0);
-            }
-            if (estop_sent) {
-                can.send_estop(0);
-                estop_sent = false;
-            }
-        } else {
-            // Find nearest object for OA (by distance)
-            float nearest_dist_m = 9999.0f;
-            float nearest_theta  = 0.0f;
-            bool  cam_valid_oa   = false;
-            if (obj_valid) {
-                for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i) {
-                    if (obj.objects[i].distance < nearest_dist_m) {
-                        nearest_dist_m = obj.objects[i].distance;
-                        nearest_theta  = obj.objects[i].theta_cam;
-                        cam_valid_oa   = true;
-                    }
-                }
-            }
-
-            throttle_limit = obj_throttle_limit(obj, obj_valid,
-                                                cfg.obj_conf_thresh, cfg.collision_dist_m);
-            throttle = std::min(cfg.throttle, throttle_limit);
-
-            // Compute LKA steering — send deferred until after OA check
-            bool do_send = false;
-            switch (adas_state) {
-                case AdasState::ACTIVE:
-                    steering = lka.compute(lane.lateral_deviation, dt);
-                    do_send  = true;
-                    if (estop_sent) { can.send_estop(0); estop_sent = false; }
-                    break;
-
-                case AdasState::DEGRADED:
-                    steering = lka.last_steering();
-                    do_send  = true;
-                    break;
-
-                case AdasState::EMERGENCY_STOP:
-                    can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
-                                      0, HEADWAY_MEDIUM, /*aeb_request=*/true);
-                    break;
-
-                case AdasState::INIT:
-                    break;
-            }
-
-            if (do_send) {
-                if (cfg.oa_enabled) {
-                    int dt_ms = static_cast<int>(dt * 1000.0f);
-                    OAResult oa_res = oa.step(9999.0f, nearest_dist_m,
-                                              nearest_theta, cam_valid_oa, dt_ms);
-                    if (oa_res.state == OAState::EVADING) {
-                        steering = oa_res.steering;
-                        throttle = oa_res.throttle;
-                    } else if (oa_res.state == OAState::BLOCKED) {
-                        can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
-                                          0, HEADWAY_MEDIUM, /*aeb_request=*/true);
-                        do_send = false;
-                    }
-                }
-                if (do_send)
-                    can.send_ctrl_cmd(CTRL_MODE_LKA,
-                                      static_cast<int8_t>(steering),
-                                      static_cast<int8_t>(throttle));
-            }
-        }
+        const int steering       = drive_out.steering;
+        const int throttle       = drive_out.throttle;
+        const int throttle_limit = drive_out.throttle_limit;
 
         // ── KUKSA publish (não bloqueia — enfileira na bridge thread) ─────────
         if (lane_valid)
