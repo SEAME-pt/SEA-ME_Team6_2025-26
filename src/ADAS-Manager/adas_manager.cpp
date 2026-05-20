@@ -489,6 +489,49 @@ static DriveOutput autonomous_driving(
     return out;
 }
 
+// ── Tick log ─────────────────────────────────────────────────────────────────
+static void log_tick(
+    AdasState adas_state,
+    DriveMode drive_mode,
+    OAController& oa,
+    bool lane_valid,
+    const LaneFrame& lane,
+    bool obj_valid,
+    const ObjectFrame& obj,
+    int steering,
+    int throttle,
+    int throttle_limit,
+    int default_throttle)
+{
+    const char* lane_str = (lane.lane_status < 4)
+                           ? LANE_STATUS_STR[lane.lane_status] : "?";
+
+    printf("[ADAS][%-14s][%s][OA:%s] ", state_str(adas_state),
+           drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTO  ",
+           oa_state_str(oa.state()));
+
+    if (lane_valid)
+        printf("lane=%-5s  dev=%+.2f  steer=%+4d  throttle=%3d",
+               lane_str, lane.lateral_deviation, steering, throttle);
+    else
+        printf("lane=---              steer=%+4d  throttle=%3d",
+               steering, throttle);
+
+    if (obj_valid && obj.count > 0) {
+        printf("  | obj=%u", obj.count);
+        for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i)
+            printf("  [cls=%u conf=%.2f dist=%.2fm]",
+                   obj.objects[i].class_id,
+                   obj.objects[i].confidence,
+                   obj.objects[i].distance);
+        if (throttle_limit < default_throttle)
+            printf("  *** THROTTLE OVERRIDE=%d ***", throttle_limit);
+        printf("\n");
+    } else {
+        printf("  | obj=---\n");
+    }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 int main() {
     signal(SIGINT,  on_signal);
@@ -605,33 +648,8 @@ int main() {
             bridge.pub_objects(obj);
 
         // ── Log ───────────────────────────────────────────────────────────────
-        const char* lane_str = (lane.lane_status < 4)
-                               ? LANE_STATUS_STR[lane.lane_status] : "?";
-
-        printf("[ADAS][%-14s][%s][OA:%s] ", state_str(adas_state),
-               drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTO  ",
-               oa_state_str(oa.state()));
-
-        if (lane_valid)
-            printf("lane=%-5s  dev=%+.2f  steer=%+4d  throttle=%3d",
-                   lane_str, lane.lateral_deviation, steering, throttle);
-        else
-            printf("lane=---              steer=%+4d  throttle=%3d",
-                   steering, throttle);
-
-        if (obj_valid && obj.count > 0) {
-            printf("  | obj=%u", obj.count);
-            for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i)
-                printf("  [cls=%u conf=%.2f dist=%.2fm]",
-                       obj.objects[i].class_id,
-                       obj.objects[i].confidence,
-                       obj.objects[i].distance);
-            if (throttle_limit < cfg.throttle)
-                printf("  *** THROTTLE OVERRIDE=%d ***", throttle_limit);
-            printf("\n");
-        } else {
-            printf("  | obj=---\n");
-        }
+        log_tick(adas_state, drive_mode, oa, lane_valid, lane,
+                 obj_valid, obj, steering, throttle, throttle_limit, cfg.throttle);
     }
 
     // ── Shutdown ──────────────────────────────────────────────────────────────
