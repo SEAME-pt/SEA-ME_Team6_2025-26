@@ -297,6 +297,62 @@ static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
     return 100;
 }
 
+// ── ADAS state machine (AUTONOMOUS only) ─────────────────────────────────────
+static void adas_state_machine(
+    bool lane_ok,
+    std::chrono::steady_clock::time_point now,
+    const AdasConfig& cfg,
+    AdasState& adas_state,
+    int& degraded_frames,
+    int& recovery_frames,
+    std::chrono::steady_clock::time_point& degraded_since,
+    bool& estop_sent,
+    LKAController& lka,
+    CanSender& can)
+{
+    if (adas_state == AdasState::EMERGENCY_STOP) {
+        if (lane_ok) {
+            recovery_frames++;
+            if (recovery_frames >= cfg.recovery_threshold_frames) {
+                adas_state      = AdasState::ACTIVE;
+                degraded_frames = 0;
+                recovery_frames = 0;
+                lka.reset();
+                printf("[ADAS] → ACTIVE (recovered)\n");
+            }
+        } else {
+            recovery_frames = 0;
+        }
+    } else {
+        if (lane_ok) {
+            degraded_frames = 0;
+            recovery_frames = 0;
+            adas_state      = AdasState::ACTIVE;
+        } else {
+            degraded_frames++;
+            if (degraded_frames >= cfg.degraded_threshold_frames) {
+                if (adas_state != AdasState::DEGRADED) {
+                    adas_state     = AdasState::DEGRADED;
+                    degraded_since = now;
+                    lka.reset();
+                    printf("[ADAS] → DEGRADED\n");
+                }
+                auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    now - degraded_since).count();
+                if (ms >= cfg.emergency_threshold_ms) {
+                    adas_state      = AdasState::EMERGENCY_STOP;
+                    recovery_frames = 0;
+                    printf("[ADAS] → EMERGENCY_STOP\n");
+                    if (!estop_sent) {
+                        can.send_estop(1, 0x10);
+                        estop_sent = true;
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 int main() {
     signal(SIGINT,  on_signal);
@@ -407,49 +463,9 @@ int main() {
 
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
-        if (drive_mode == DriveMode::AUTONOMOUS) {
-            if (adas_state == AdasState::EMERGENCY_STOP) {
-                if (lane_ok) {
-                    recovery_frames++;
-                    if (recovery_frames >= cfg.recovery_threshold_frames) {
-                        adas_state      = AdasState::ACTIVE;
-                        degraded_frames = 0;
-                        recovery_frames = 0;
-                        lka.reset();
-                        printf("[ADAS] → ACTIVE (recovered)\n");
-                    }
-                } else {
-                    recovery_frames = 0;
-                }
-            } else {
-                if (lane_ok) {
-                    degraded_frames = 0;
-                    recovery_frames = 0;
-                    adas_state      = AdasState::ACTIVE;
-                } else {
-                    degraded_frames++;
-                    if (degraded_frames >= cfg.degraded_threshold_frames) {
-                        if (adas_state != AdasState::DEGRADED) {
-                            adas_state     = AdasState::DEGRADED;
-                            degraded_since = now;
-                            lka.reset();
-                            printf("[ADAS] → DEGRADED\n");
-                        }
-                        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-                            now - degraded_since).count();
-                        if (ms >= cfg.emergency_threshold_ms) {
-                            adas_state      = AdasState::EMERGENCY_STOP;
-                            recovery_frames = 0;
-                            printf("[ADAS] → EMERGENCY_STOP\n");
-                            if (!estop_sent) {
-                                can.send_estop(1, 0x10);
-                                estop_sent = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        if (drive_mode == DriveMode::AUTONOMOUS)
+            adas_state_machine(lane_ok, now, cfg, adas_state, degraded_frames,
+                               recovery_frames, degraded_since, estop_sent, lka, can);
 
         // ── Drive mode: MANUAL forwards joystick, AUTONOMOUS runs LKA ────────
         int steering      = 0;
