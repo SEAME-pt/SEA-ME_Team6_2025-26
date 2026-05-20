@@ -20,6 +20,17 @@ struct AdasConfig {
     int   obj_timeout_ms            = 1000;
     int   joy_timeout_ms            = 200;
     bool  oa_enabled                = true;
+
+    // Adaptive Cruise Control
+    bool  acc_enabled      = false;
+    float acc_target_kmh   = 3.5f;
+    int   acc_headway      = 1;
+
+    // Curve slowdown
+    float curve_gain        = 0.9f;
+    float curve_min_factor  = 0.6f;
+    float curve_ema_alpha   = 0.2f;
+    float single_line_factor = 0.6f;
 };
 
 static AdasConfig load_adas_config(const char* path) {
@@ -64,6 +75,15 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.obj_timeout_ms            = static_cast<int>(get("obj_timeout_ms",  1000.0f));
     cfg.joy_timeout_ms            = static_cast<int>(get("joy_timeout_ms",   200.0f));
     cfg.oa_enabled                = get("oa_enabled", 1.0f) >= 0.5f;
+
+    cfg.acc_enabled       = get("acc_enabled",     0.0f) >= 0.5f;
+    cfg.acc_target_kmh    = get("acc_target_kmh",  3.5f);
+    cfg.acc_headway       = static_cast<int>(get("acc_headway", 1.0f));
+
+    cfg.curve_gain         = get("curve_gain",         0.9f);
+    cfg.curve_min_factor   = get("curve_min_factor",   0.6f);
+    cfg.curve_ema_alpha    = get("curve_ema_alpha",    0.2f);
+    cfg.single_line_factor = get("single_line_factor", 0.6f);
 
     cfg.oa.wheelbase_m      = get("oa_wheelbase_m",      0.18f);
     cfg.oa.car_width_m      = get("oa_car_width_m",      0.20f);
