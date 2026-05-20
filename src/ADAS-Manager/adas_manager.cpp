@@ -353,6 +353,31 @@ static void adas_state_machine(
     }
 }
 
+// ── Drive mode toggle ─────────────────────────────────────────────────────────
+static void change_drive_mode(
+    DriveMode& drive_mode,
+    AdasState& adas_state,
+    int& degraded_frames,
+    int& recovery_frames,
+    LKAController& lka,
+    OAController& oa,
+    KuksaBridge& bridge)
+{
+    drive_mode = (drive_mode == DriveMode::MANUAL)
+                 ? DriveMode::AUTONOMOUS : DriveMode::MANUAL;
+
+    adas_state      = AdasState::INIT;
+    degraded_frames = 0;
+    recovery_frames = 0;
+    oa.reset();
+    if (drive_mode == DriveMode::AUTONOMOUS)
+        lka.reset();
+
+    printf("[ADAS] Drive mode → %s\n",
+           drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTONOMOUS");
+    bridge.pub_mode(drive_mode);
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 int main() {
     signal(SIGINT,  on_signal);
@@ -441,25 +466,9 @@ int main() {
         lane_was_stale = lane_stale;
         joy_was_stale  = joy_stale && (drive_mode == DriveMode::MANUAL);
 
-        if (joy_toggle) {
-            drive_mode = (drive_mode == DriveMode::MANUAL)
-                         ? DriveMode::AUTONOMOUS : DriveMode::MANUAL;
-            if (drive_mode == DriveMode::AUTONOMOUS) {
-                adas_state      = AdasState::INIT;
-                degraded_frames = 0;
-                recovery_frames = 0;
-                lka.reset();
-                oa.reset();
-            } else {
-                adas_state      = AdasState::INIT;
-                degraded_frames = 0;
-                recovery_frames = 0;
-                oa.reset();
-            }
-            printf("[ADAS] Drive mode → %s\n",
-                   drive_mode == DriveMode::MANUAL ? "MANUAL" : "AUTONOMOUS");
-            bridge.pub_mode(drive_mode);
-        }
+        if (joy_toggle)
+            change_drive_mode(drive_mode, adas_state, degraded_frames, recovery_frames,
+                              lka, oa, bridge);
 
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
