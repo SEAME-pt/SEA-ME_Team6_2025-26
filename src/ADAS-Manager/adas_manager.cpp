@@ -41,27 +41,6 @@ static const char* state_str(AdasState s) {
     return "?";
 }
 
-// ── Config loader ─────────────────────────────────────────────────────────────
-static std::unordered_map<std::string, float> load_config(const char* path) {
-    std::unordered_map<std::string, float> cfg;
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        printf("[CONFIG] %s not found — using defaults\n", path);
-        return cfg;
-    }
-    std::string line;
-    while (std::getline(f, line)) {
-        if (line.empty() || line[0] == '#') continue;
-        auto eq = line.find('=');
-        if (eq == std::string::npos) continue;
-        std::string key = line.substr(0, eq);
-        try { cfg[key] = std::stof(line.substr(eq + 1)); }
-        catch (...) {}
-    }
-    printf("[CONFIG] Loaded %s (%zu keys)\n", path, cfg.size());
-    return cfg;
-}
-
 // ── KUKSA Bridge — thread assíncrona ─────────────────────────────────────────
 // O loop de controlo chama pub_lane / pub_objects sem bloquear.
 // A thread de bridge faz o fprintf/fflush ao pipe do subprocess.
@@ -325,46 +304,7 @@ int main() {
     signal(SIGPIPE, SIG_IGN);   // kuksa bridge subprocess can die; ignore broken pipe
 
     // ── Config ────────────────────────────────────────────────────────────────
-    auto cfg = load_config(CONFIG_PATH);
-    auto get = [&](const char* k, float def) -> float {
-        auto it = cfg.find(k); return it != cfg.end() ? it->second : def;
-    };
-
-    LKAConfig lka_cfg;
-    lka_cfg.kp        = get("kp",        4.0f);
-    lka_cfg.ki        = get("ki",        0.0f);
-    lka_cfg.kd        = get("kd",        3.0f);
-    lka_cfg.ema_alpha = get("ema_alpha", 0.5f);
-    lka_cfg.deadband  = get("deadband",  2.0f);
-    lka_cfg.snap      = get("snap",      2.0f);
-    lka_cfg.max_rate  = static_cast<int>(get("max_rate", 20.0f));
-
-    const int   THROTTLE                  = static_cast<int>(get("throttle",                   25.0f));
-    const int   DEGRADED_THRESHOLD_FRAMES = static_cast<int>(get("degraded_threshold_frames",  10.0f));
-    const int   EMERGENCY_THRESHOLD_MS    = static_cast<int>(get("emergency_threshold_ms",    500.0f));
-    const int   RECOVERY_THRESHOLD_FRAMES = static_cast<int>(get("recovery_threshold_frames",  15.0f));
-    const float OBJ_CONF_THRESH           = get("obj_conf_thresh",   0.60f);
-    const float COLLISION_DIST_M          = get("collision_dist_m",  0.30f);
-    const int   LANE_TIMEOUT_MS           = static_cast<int>(get("lane_timeout_ms",  500.0f));
-    const int   OBJ_TIMEOUT_MS            = static_cast<int>(get("obj_timeout_ms",  1000.0f));
-    const int   JOY_TIMEOUT_MS            = static_cast<int>(get("joy_timeout_ms",   200.0f));
-    const bool  OA_ENABLED                = get("oa_enabled", 1.0f) >= 0.5f;
-
-    OAConfig oa_cfg;
-    oa_cfg.wheelbase_m      = get("oa_wheelbase_m",      0.18f);
-    oa_cfg.car_width_m      = get("oa_car_width_m",      0.20f);
-    oa_cfg.margin_m         = get("oa_margin_m",         0.08f);
-    oa_cfg.critical_dist_m  = get("oa_critical_dist_m",  0.60f);
-    oa_cfg.servo_max_deg    = get("oa_servo_max_deg",    15.0f);
-    oa_cfg.throttle_evading = get("oa_throttle_evading", 15.0f);
-    oa_cfg.evade_ms         = static_cast<int>(get("oa_evade_ms",    600.0f));
-    oa_cfg.straight_ms      = static_cast<int>(get("oa_straight_ms", 400.0f));
-    oa_cfg.return_ms        = static_cast<int>(get("oa_return_ms",   600.0f));
-
-    printf("[CONFIG] kp=%.1f ki=%.1f kd=%.1f deadband=%.1f throttle=%d\n",
-           lka_cfg.kp, lka_cfg.ki, lka_cfg.kd, lka_cfg.deadband, THROTTLE);
-    printf("[CONFIG] obj_conf_thresh=%.2f collision_dist=%.2fm\n",
-           OBJ_CONF_THRESH, COLLISION_DIST_M);
+    AdasConfig cfg = load_adas_config(CONFIG_PATH);
 
     // ── KUKSA bridge (thread separada — não bloqueia o loop de controlo) ──────
     KuksaBridge bridge;
@@ -383,8 +323,8 @@ int main() {
     else
         printf("[CAN] %s OK\n", CAN_CHANNEL);
 
-    LKAController lka(lka_cfg);
-    OAController  oa(oa_cfg);
+    LKAController lka(cfg.lka);
+    OAController  oa(cfg.oa);
 
     printf("[ADAS] Manager running. Ctrl+C to stop.\n");
 
@@ -424,8 +364,8 @@ int main() {
         auto obj_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - obj_ts).count();
         auto joy_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - joy_ts).count();
 
-        bool lane_stale = lane_valid && (lane_age_ms > LANE_TIMEOUT_MS);
-        bool joy_stale  = joy_valid  && (joy_age_ms  > JOY_TIMEOUT_MS);
+        bool lane_stale = lane_valid && (lane_age_ms > cfg.lane_timeout_ms);
+        bool joy_stale  = joy_valid  && (joy_age_ms  > cfg.joy_timeout_ms);
 
         if (lane_stale) {
             lane_valid = false;
@@ -433,7 +373,7 @@ int main() {
                 fprintf(stderr, "[WDG] lane thread stale (%ldms) — forcing DEGRADED\n",
                         (long)lane_age_ms);
         }
-        if (obj_age_ms > OBJ_TIMEOUT_MS)
+        if (obj_age_ms > cfg.obj_timeout_ms)
             obj_valid = false;
         if (joy_stale && drive_mode == DriveMode::MANUAL) {
             joy_valid = false;
@@ -471,7 +411,7 @@ int main() {
             if (adas_state == AdasState::EMERGENCY_STOP) {
                 if (lane_ok) {
                     recovery_frames++;
-                    if (recovery_frames >= RECOVERY_THRESHOLD_FRAMES) {
+                    if (recovery_frames >= cfg.recovery_threshold_frames) {
                         adas_state      = AdasState::ACTIVE;
                         degraded_frames = 0;
                         recovery_frames = 0;
@@ -488,7 +428,7 @@ int main() {
                     adas_state      = AdasState::ACTIVE;
                 } else {
                     degraded_frames++;
-                    if (degraded_frames >= DEGRADED_THRESHOLD_FRAMES) {
+                    if (degraded_frames >= cfg.degraded_threshold_frames) {
                         if (adas_state != AdasState::DEGRADED) {
                             adas_state     = AdasState::DEGRADED;
                             degraded_since = now;
@@ -497,7 +437,7 @@ int main() {
                         }
                         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
                             now - degraded_since).count();
-                        if (ms >= EMERGENCY_THRESHOLD_MS) {
+                        if (ms >= cfg.emergency_threshold_ms) {
                             adas_state      = AdasState::EMERGENCY_STOP;
                             recovery_frames = 0;
                             printf("[ADAS] → EMERGENCY_STOP\n");
@@ -514,7 +454,7 @@ int main() {
         // ── Drive mode: MANUAL forwards joystick, AUTONOMOUS runs LKA ────────
         int steering      = 0;
         int throttle      = 0;
-        int throttle_limit = THROTTLE;
+        int throttle_limit = cfg.throttle;
 
         if (drive_mode == DriveMode::MANUAL) {
             if (joy_valid) {
@@ -546,8 +486,8 @@ int main() {
             }
 
             throttle_limit = obj_throttle_limit(obj, obj_valid,
-                                                OBJ_CONF_THRESH, COLLISION_DIST_M);
-            throttle = std::min(THROTTLE, throttle_limit);
+                                                cfg.obj_conf_thresh, cfg.collision_dist_m);
+            throttle = std::min(cfg.throttle, throttle_limit);
 
             // Compute LKA steering — send deferred until after OA check
             bool do_send = false;
@@ -573,7 +513,7 @@ int main() {
             }
 
             if (do_send) {
-                if (OA_ENABLED) {
+                if (cfg.oa_enabled) {
                     int dt_ms = static_cast<int>(dt * 1000.0f);
                     OAResult oa_res = oa.step(9999.0f, nearest_dist_m,
                                               nearest_theta, cam_valid_oa, dt_ms);
@@ -621,7 +561,7 @@ int main() {
                        obj.objects[i].class_id,
                        obj.objects[i].confidence,
                        obj.objects[i].distance);
-            if (throttle_limit < THROTTLE)
+            if (throttle_limit < cfg.throttle)
                 printf("  *** THROTTLE OVERRIDE=%d ***", throttle_limit);
             printf("\n");
         } else {
