@@ -77,15 +77,17 @@ After evaluating several lane detection approaches, UFLDv2 stood out as the best
     
   - After optimising the post-processing stage — including migrating critical computations to a C++ shared library using OpenBLAS — the complete pipeline reaches around 12.5 FPS from frame          capture to final lane coordinate output. For our ADAS use case, this performance is sufficient for real-time operation. Flexible and easy to fine-tune
 
+**Fine tunning**
+
   - Another important advantage is that UFLDv2 can be fine-tuned easily on custom datasets. This was essential because public lane detection datasets mainly contain outdoor highway environments, while our competition track is:
 
-  - Indoors
+    - Indoors
     
-  - Artificially lit
+    - Artificially lit
 
-  - Using simplified lane markings
+    - Using simplified lane markings
 
-  - Fixed and repetitive in layout
+    - Fixed and repetitive in layout
 
 Fine-tuning on our own recorded dataset significantly improved robustness and detection consistency on the real circuit.
 
