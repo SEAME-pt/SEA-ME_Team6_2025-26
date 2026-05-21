@@ -6,8 +6,8 @@
 
 struct OAConfig {
     float wheelbase_m      = 0.18f;
-    float car_width_m      = 0.20f;
-    float margin_m         = 0.08f;
+    float car_width_m      = 0.18f;
+    float margin_m         = 0.03f;
     float critical_dist_m  = 0.60f;
     float servo_max_deg    = 15.0f;
     float throttle_evading = 15.0f;
