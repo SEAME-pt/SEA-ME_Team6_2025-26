@@ -72,18 +72,38 @@ class VehicleController:
             self.sock.sendto(b"T\n", self.socket_path)
             self.mode = 'AUTONOMOUS' if self.mode == 'MANUAL' else 'MANUAL'
             print(f"\n{Colors.YELLOW}[MODE] → {self.mode}{Colors.NC}")
-        except (FileNotFoundError, OSError):
-            pass
+        except (FileNotFoundError, OSError) as e:
+            print(f"\n{Colors.RED}[TOGGLE] Falhou — ADAS Manager não está a correr? ({e}){Colors.NC}")
+
+    def force_manual(self):
+        """Força MANUAL no ADAS Manager independentemente do estado actual"""
+        try:
+            self.sock.sendto(b"M\n", self.socket_path)
+            self.mode = 'MANUAL'
+            print(f"\n{Colors.CYAN}[MODE] → MANUAL (forçado){Colors.NC}")
+        except (FileNotFoundError, OSError) as e:
+            print(f"\n{Colors.RED}[FORCE MANUAL] Falhou ({e}){Colors.NC}")
+
+    def force_auto(self):
+        """Força AUTONOMOUS no ADAS Manager independentemente do estado actual"""
+        try:
+            self.sock.sendto(b"A\n", self.socket_path)
+            self.mode = 'AUTONOMOUS'
+            print(f"\n{Colors.YELLOW}[MODE] → AUTONOMOUS (forçado){Colors.NC}")
+        except (FileNotFoundError, OSError) as e:
+            print(f"\n{Colors.RED}[FORCE AUTO] Falhou ({e}){Colors.NC}")
 
     def set_manual(self):
-        """Força regresso a MANUAL (envia T se necessário)"""
-        if self.mode != 'MANUAL':
+        """Força regresso a MANUAL — usa comando directo (sem toggle)"""
+        self.force_manual()
+
+    def sync_to_adas(self):
+        """Envia M ao arranque para garantir sincronização com ADAS Manager"""
+        try:
+            self.sock.sendto(b"M\n", self.socket_path)
             self.mode = 'MANUAL'
-            try:
-                self.sock.sendto(b"T\n", self.socket_path)
-            except (FileNotFoundError, OSError):
-                pass
-            print(f"\n{Colors.CYAN}[MODE] → MANUAL (joystick activo){Colors.NC}")
+        except (FileNotFoundError, OSError):
+            pass
 
     def print_status(self, steering, throttle):
         """Imprime status formatado"""
@@ -258,14 +278,16 @@ def modo_testes(controller):
 def modo_interativo(controller):
     """Controlo via teclado (WASD) com toggle MANUAL/AUTONOMOUS"""
 
-    # Garantir modo MANUAL
-    controller.set_manual()
+    # Sincronizar com ADAS Manager — força MANUAL independentemente do estado anterior
+    controller.sync_to_adas()
 
     print(f"\n{Colors.BOLD}=== MODO INTERATIVO (WASD) → socket → ADAS Manager ==={Colors.NC}")
     print("Controles:")
     print("  W/S - Throttle (frente/trás)")
     print("  A/D - Steering (esquerda/direita)")
     print("  T   - Toggle MANUAL / AUTONOMOUS")
+    print("  M   - Forçar MANUAL")
+    print("  U   - Forçar AUTONOMOUS")
     print("  Espaço - STOP")
     print("  Q - Sair\n")
     print(f"  Modo inicial: {Colors.CYAN}{controller.mode}{Colors.NC}\n")
@@ -289,6 +311,16 @@ def modo_interativo(controller):
                     if controller.mode == 'AUTONOMOUS':
                         steering = 0
                         throttle = 0
+                    continue
+
+                if key == 'm':
+                    controller.force_manual()
+                    continue
+
+                if key == 'u':
+                    controller.force_auto()
+                    steering = 0
+                    throttle = 0
                     continue
 
                 if key == 'q':

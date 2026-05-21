@@ -11,7 +11,7 @@ static constexpr const char* JOYSTICK_SOCKET    = "/tmp/adas_joystick.sock";
 static constexpr int         JOYSTICK_TIMEOUT_MS = 60;
 
 struct JoystickMsg {
-    enum class Type : uint8_t { NONE, J, T } type = Type::NONE;
+    enum class Type : uint8_t { NONE, J, T, FORCE_MANUAL, FORCE_AUTO } type = Type::NONE;
     int8_t steering = 0;
     int8_t throttle = 0;
 };
@@ -59,6 +59,10 @@ private:
         JoystickMsg msg{};
         if (s[0] == 'T') {
             msg.type = JoystickMsg::Type::T;
+        } else if (s[0] == 'M') {
+            msg.type = JoystickMsg::Type::FORCE_MANUAL;
+        } else if (s[0] == 'A') {
+            msg.type = JoystickMsg::Type::FORCE_AUTO;
         } else if (s[0] == 'J') {
             int st = 0, th = 0;
             if (sscanf(s, "J %d %d", &st, &th) == 2) {
