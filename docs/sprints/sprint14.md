@@ -7,22 +7,21 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (13)
-  - [ ] Integration of ADAS Manager logic into Firmware - STM32 (13)
-  - [ ] Integration of Object Detection into Emergency Brake Logic (13)
-  - [ ] Transformation of Basic Cruise Control into Adaptive Cruise Control (13)
+  - [X] Integration of ADAS Manager logic into Firmware - STM32 (13)
+  - [X] Integration of Object Detection into Emergency Brake Logic (13)
+  - [X] Transformation of Basic Cruise Control into Adaptive Cruise Control (13)
   - [ ] Full Integration of ADAS into Cluster (13)
   ---
 
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  - [ ] Object Detection Distance Measurement (13)
-  - [ ] Object Avoidance Implementation (13)
+  - [X] Object Detection Distance Measurement (13)
+  - [X] Object Avoidance Implementation (13)
   ---
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Reorganize documentation (5)
-      - Reorganize documentation on the repository
-  - [ ] ADR (8)
+  - [X] ADR (8)
       - Create Architecture Decision Record (ADR) that explains the research work behind the selection of the models to be implemented in the car.
   
 ---
@@ -32,10 +31,10 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **-** |
-| **Ruben** | **Reorganize documentation (5)** + **Integration of Object Detection into Emergency Brake Logic** (13) + **Transformation of Basic Cruise Control into Adaptive Cruise Control** (13) | **31** | **-** |
-| **David** | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **-** |
-| **Vasco** | **Reorganize documentation (5)** + **Object Detection Distance Measurement** (13) + **Object Avoidance Implementation** (13) + **ADR** (8) | **39** | **-** |
+| **João**  | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **26** |
+| **Ruben** | **Reorganize documentation (5)** + **Integration of Object Detection into Emergency Brake Logic** (13) + **Transformation of Basic Cruise Control into Adaptive Cruise Control** (13) | **31** | **26** |
+| **David** | **Reorganize documentation (5)** + **Integration of ADAS Manager logic into Firmware — STM32** (13) + **Object Avoidance Implementation** (13) | **31** | **26** |
+| **Vasco** | **Reorganize documentation (5)** + **Object Detection Distance Measurement** (13) + **Object Avoidance Implementation** (13) + **ADR** (8) | **39** | **34** |
 | **Diogo** | **Reorganize documentation (5)** + **Integration of Traffic Sign Recognition into ADAS Manager** (13) + **Full Integration of ADAS into Cluster** (13) | **31** | **-** |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
@@ -49,35 +48,35 @@
 |--------|-------|-------|------------------|
 | **Sprint 9** ✅ | 1-2 | Foundations & Spikes | Car v3.1, AEB start, AI/model research, OTA w/RAUC |
 | **Sprint 10** ✅ | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
-| **Sprint 11** ✅| 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |\
+| **Sprint 11** ✅| 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |
 | **Sprint 12** ✅| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
 | **Sprint 13** ✅| 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
-| Sprint 14 | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
+| **Sprint 14** ✅| 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
 
 ---
 
-## 🎯 ADAS Module Goals Mapping
+## 🎯 ADAS Module Goals
 
-| Module Goal | Sprint 10 Contribution |
+| Module Goal | Achieved |
 |-------------|----------------------|
-| **Goal 1**: ADAS features (AEB, LDW, ACC, TSR) | LDW — lane departure warning via UFLDv2 inference + threshold detection; ACC — basic cruise control implementation |
-| **Goal 2**: Perception, Control, Localization | Camera capture pipeline in AGL; Hailo-8 inference integration; YOLOv8-s training for object detection; second camera integration |
-| **Goal 3**: CARLA simulation | Not this sprint |
-| **Goal 4**: AI/ML/Deep Learning for ADAS | UFLDv2 HEF deployment on Hailo-8; YOLOv8-s model training; lane detection algorithm; end-to-end latency benchmarking |
-| **Goal 5**: GenAI applied to ADAS | Not this sprint |
-| **Goal 6**: OTA updates for ADAS | Not this sprint |
+| **Goal 1**: ADAS features (AEB, LDW, ACC, TSR) | AEB, LDW, ACC, TSR on the making |
+| **Goal 2**: Perception, Control, Localization | Perception, Control, Simulation |
+| **Goal 3**: CARLA simulation | Yes |
+| **Goal 4**: AI/ML/Deep Learning for ADAS | Yolov8-s for Object Detection and Avoidance and UltraFastLaneV2 for Lane Detection |
+| **Goal 5**: GenAI applied to ADAS | Familiarized |
+| **Goal 6**: OTA updates for ADAS | Not achieved |
 
 ---
 
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 14 points: ** / 91** (without bonus points)
-
-- ### Bonus:
-
-  
+- ### Sprint 14 points: **60 / 91**
+ 
  ❌ Undone:
+- Integration of Traffic Sign Recognition into ADAS Manager (13)
+- Full Integration of ADAS into Cluster (13)
+- Reorganize documentation (5)
 
   
 ## ✅ Outcomes
