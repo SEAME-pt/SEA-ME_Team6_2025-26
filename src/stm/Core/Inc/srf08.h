@@ -43,7 +43,10 @@
 //   Gain 16 → default de fábrica: alcance ~3m mas capta ecos do chão e laterais
 //   Gain 25+ → máxima sensibilidade, requer montagem muito cuidada
 //
-#define SRF08_RECOMMENDED_GAIN   8    // Bom compromisso: ~1.5m alcance, eco do chão suprimido
+#define SRF08_RECOMMENDED_GAIN   4    // Eco do chão a 530mm suprimido (17° off-axis); alcance ~1m
+                                       // Era 8 mas persistia eco do chão a ~530mm (raio 17° off-axis,
+                                       // mais forte que o eco a 287mm a 22.5° → gain=8 não o suprime).
+                                       // Se obstáculos reais a >80cm deixarem de ser detectados → gain=7.
 #define SRF08_RECOMMENDED_RANGE  140  // ~6m, bom compromisso
 
 // Distância mínima válida — protecção à dead zone do sensor (≥3cm hardware).

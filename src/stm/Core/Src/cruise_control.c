@@ -190,19 +190,26 @@ static float pi_compute(CruiseControl_t *cc, float dt_s)
     /*
      * Deadzone compensation: the motor doesn't spin below a certain PWM.
      * If PI wants any positive throttle but below the deadzone, snap up to
-     * the deadzone threshold. This prevents the integral from winding up
-     * while the motor sits still, which causes the kick-stop-reverse cycle.
+     * the deadzone threshold so the motor at least turns.
      *
-     * When we boost past the deadzone, freeze the integral for this tick
-     * so it doesn't accumulate "free" error that will discharge later.
+     * Two guards:
+     *   - error > 0: only boost when we actually want to accelerate. If the
+     *     setpoint just dropped (TSR 80→50), integral residue from the ramp
+     *     can keep `output` marginally positive while P is strongly negative;
+     *     snapping that would lock us at 15% throttle.
+     *   - output > 0: don't lift a clamped-to-zero output back up.
+     *
+     * The integral is allowed to keep winding up while the snap fires. This
+     * is on purpose: if the motor saturates at the deadzone speed below the
+     * target (e.g. target 4 km/h, motor settles at 1.4 km/h with 15% PWM),
+     * we want integral to grow so output eventually exceeds the deadzone and
+     * the motor gets more PWM. The earlier "undo integral inside the snap"
+     * version starved integral and pinned throttle at 15% forever during
+     * sustained acceleration.
      */
-    if (output > 0.0f && output < CC_MOTOR_DEADZONE_PCT)
+    if (error > 0.0f && output > 0.0f && output < CC_MOTOR_DEADZONE_PCT)
     {
         output = CC_MOTOR_DEADZONE_PCT;
-        /* Undo this tick's integral accumulation — motor is being boosted,
-         * not responding to the real PI output */
-        cc->integral -= error * dt_s;
-        cc->integral = clampf(cc->integral, CC_INTEGRAL_MIN, CC_INTEGRAL_MAX);
     }
 
     cc->last_error = error;

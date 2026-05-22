@@ -10,6 +10,7 @@ typedef struct {
     uint8_t  srf08_valid;
     uint8_t  srf08_speed_limit;
     uint8_t  emergency_stop_active;
+    uint32_t emergency_stop_ts;       // HAL_GetTick() quando emergency_stop_active foi setado a 1; usado para watchdog/auto-clear
     int16_t  accel_mg[3];      // x,y,z in milli-g
     int16_t  gyro_dps[3];      // x,y,z in 0.1 deg/s
     int16_t  mag_mG[3];        // x,y,z in milli-Gauss
