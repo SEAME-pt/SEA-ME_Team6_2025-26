@@ -70,10 +70,13 @@ except ImportError:
 
 # ── Socket → ADAS Manager ─────────────────────────────────────────────────────
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'ADAS-Manager-test-v10'))
+                                '..', '..', 'ADAS-Manager'))
 from socket_sender import (start_socket_thread, send_perception as publish_deviation,
                            send_objects as publish_objects,
-                           SIGN_STOP, SIGN_YIELD, SIGN_SPEED_30, SIGN_SPEED_50, SIGN_UNKNOWN)
+                           SIGN_UNKNOWN, SIGN_STOP, SIGN_YIELD,
+                           SIGN_SPEED_30, SIGN_SPEED_50, SIGN_SPEED_80,
+                           SIGN_OBSTACLE, SIGN_PEDESTRIAN,
+                           SIGN_TL_GREEN, SIGN_TL_RED, SIGN_TL_YELLOW)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -92,22 +95,22 @@ MIN_BOX_SIZE = 0.04
 
 YOLO_CLASS_MAP = {
     0:  SIGN_SPEED_50,      # 50_maxspeed
-    1:  SIGN_UNKNOWN,       # 80_maxspeed  ← não tens constante para 80
-    2:  SIGN_UNKNOWN,       # Crosswalk
+    1:  SIGN_SPEED_80,      # 80_maxspeed
+    2:  SIGN_PEDESTRIAN,    # Crosswalk
     3:  SIGN_UNKNOWN,       # Gate
-    4:  SIGN_UNKNOWN,       # Pedestrians_crossing
+    4:  SIGN_PEDESTRIAN,    # Pedestrians_crossing
     5:  SIGN_STOP,          # Stop_sign
-    6:  SIGN_YIELD,         # Traffic_priority  ← assumindo que é cedência
+    6:  SIGN_YIELD,         # Traffic_priority
     7:  SIGN_UNKNOWN,       # both_arrow
-    8:  SIGN_UNKNOWN,       # car
+    8:  SIGN_OBSTACLE,      # car
     9:  SIGN_UNKNOWN,       # cars not allowed
     10: SIGN_UNKNOWN,       # left_cross
-    11: SIGN_UNKNOWN,       # obstacle
+    11: SIGN_OBSTACLE,      # obstacle
     12: SIGN_UNKNOWN,       # right_cross
-    13: SIGN_UNKNOWN,       # traffic_lights_green
+    13: SIGN_TL_GREEN,      # traffic_lights_green
     14: SIGN_UNKNOWN,       # traffic_lights_off
-    15: SIGN_UNKNOWN,       # traffic_lights_red
-    16: SIGN_UNKNOWN,       # traffic_lights_yellow
+    15: SIGN_TL_RED,        # traffic_lights_red
+    16: SIGN_TL_YELLOW,     # traffic_lights_yellow
 }
 
 _K_SIGN          = 37.8   # calibrado por Vasco com classe 9 (sinais), erro ~8%
@@ -965,7 +968,7 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 hold_active       = (raw_status == "none" and status != "none")
 
                 # ── Publicar no ADAS Manager via socket ───────────────────────
-                publish_deviation(deviation, status)
+                publish_deviation(deviation if deviation is not None else 0.0, status)
 
                 # ── Re-distort para display ───────────────────────────────────
                 lanes_disp = [calib.undistorted_to_distorted(l) for l in lanes]
@@ -1002,7 +1005,7 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                     cx_px    = ((box[0] + box[2]) / 2.0) * FULL_W
                     theta    = get_theta_cam(cx_px)
                     obj_data.append((dist_m, theta))
-                    obj_list.append((sign_cls, float(score), dist_m))
+                    obj_list.append((sign_cls, float(score), dist_m, theta))
                 publish_objects(obj_list)
 
                 # ── Métricas ──────────────────────────────────────────────────
