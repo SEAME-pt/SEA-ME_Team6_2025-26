@@ -172,8 +172,10 @@ struct StateSnapshot {
     bool        object_valid = false;
     int8_t      joy_steering = 0;
     int8_t      joy_throttle = 0;
-    bool        joy_valid    = false;
-    bool        joy_toggle   = false;
+    bool        joy_valid        = false;
+    bool        joy_toggle       = false;
+    bool        joy_force_manual = false;
+    bool        joy_force_auto   = false;
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
@@ -183,13 +185,15 @@ struct StateSnapshot {
 struct SharedState {
     std::mutex  mtx;
     LaneFrame   lane{};
-    bool        lane_valid   = false;
+    bool        lane_valid       = false;
     ObjectFrame object{};
-    bool        object_valid = false;
-    int8_t      joy_steering = 0;
-    int8_t      joy_throttle = 0;
-    bool        joy_valid    = false;
-    bool        joy_toggle   = false;
+    bool        object_valid     = false;
+    int8_t      joy_steering     = 0;
+    int8_t      joy_throttle     = 0;
+    bool        joy_valid        = false;
+    bool        joy_toggle       = false;
+    bool        joy_force_manual = false;
+    bool        joy_force_auto   = false;
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
@@ -207,9 +211,13 @@ struct SharedState {
         s.joy_steering = joy_steering;
         s.joy_throttle = joy_throttle;
         s.joy_valid    = joy_valid;
-        s.joy_toggle   = joy_toggle;
-        s.last_joy_ts  = last_joy_ts;
-        joy_toggle     = false;
+        s.joy_toggle       = joy_toggle;
+        s.joy_force_manual = joy_force_manual;
+        s.joy_force_auto   = joy_force_auto;
+        s.last_joy_ts      = last_joy_ts;
+        joy_toggle         = false;
+        joy_force_manual   = false;
+        joy_force_auto     = false;
         return s;
     }
 };
@@ -277,6 +285,10 @@ void joystick_thread(SharedState& state) {
             state.last_joy_ts  = std::chrono::steady_clock::now();
         } else if (msg.type == JoystickMsg::Type::T) {
             state.joy_toggle = true;
+        } else if (msg.type == JoystickMsg::Type::FORCE_MANUAL) {
+            state.joy_force_manual = true;
+        } else if (msg.type == JoystickMsg::Type::FORCE_AUTO) {
+            state.joy_force_auto = true;
         }
     }
     rx.close_fd();
@@ -432,7 +444,8 @@ static DriveOutput autonomous_driving(
     bool  cam_valid_oa   = false;
     if (obj_valid) {
         for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i) {
-            if (obj.objects[i].distance < nearest_dist_m) {
+            if (obj.objects[i].class_id == SIGN_OBSTACLE &&
+                obj.objects[i].distance < nearest_dist_m) {
                 nearest_dist_m = obj.objects[i].distance;
                 nearest_theta  = obj.objects[i].theta_cam;
                 cam_valid_oa   = true;
@@ -444,10 +457,27 @@ static DriveOutput autonomous_driving(
                                             cfg.obj_conf_thresh, cfg.collision_dist_m);
     out.throttle = std::min(cfg.throttle, out.throttle_limit);
 
+    // Run OA first — freeze LKA integrator during maneuver
+    static bool prev_oa_active = false;
+    OAResult oa_res;
+    bool oa_active = false;
+    if (cfg.oa_enabled && (adas_state == AdasState::ACTIVE ||
+                           adas_state == AdasState::DEGRADED)) {
+        int dt_ms = static_cast<int>(dt * 1000.0f);
+        oa.adapt_timings(static_cast<float>(cfg.throttle));
+        oa_res    = oa.step(9999.0f, nearest_dist_m, nearest_theta,
+                            cam_valid_oa, dt_ms);
+        oa_active = (oa_res.state == OAState::EVADING);
+        if (prev_oa_active && !oa_active)
+            lka.reset();  // OA just finished — clear wound-up integral
+    }
+    prev_oa_active = oa_active;
+
     bool do_send = false;
     switch (adas_state) {
         case AdasState::ACTIVE:
-            out.steering = lka.compute(lane.lateral_deviation, dt);
+            out.steering = oa_active ? lka.last_steering()
+                                     : lka.compute(lane.lateral_deviation, dt);
             do_send      = true;
             if (estop_sent) { can.send_estop(0); estop_sent = false; }
             break;
@@ -468,10 +498,7 @@ static DriveOutput autonomous_driving(
 
     if (do_send) {
         if (cfg.oa_enabled) {
-            int dt_ms = static_cast<int>(dt * 1000.0f);
-            OAResult oa_res = oa.step(9999.0f, nearest_dist_m,
-                                      nearest_theta, cam_valid_oa, dt_ms);
-            if (oa_res.state == OAState::EVADING) {
+            if (oa_active) {
                 out.steering = oa_res.steering;
                 out.throttle = oa_res.throttle;
             } else if (oa_res.state == OAState::BLOCKED) {
@@ -520,10 +547,11 @@ static void log_tick(
     if (obj_valid && obj.count > 0) {
         printf("  | obj=%u", obj.count);
         for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i)
-            printf("  [cls=%u conf=%.2f dist=%.2fm]",
+            printf("  [cls=%u conf=%.2f dist=%.2fm theta=%+.1fdeg]",
                    obj.objects[i].class_id,
                    obj.objects[i].confidence,
-                   obj.objects[i].distance);
+                   obj.objects[i].distance,
+                   obj.objects[i].theta_cam);
         if (throttle_limit < default_throttle)
             printf("  *** THROTTLE OVERRIDE=%d ***", throttle_limit);
         printf("\n");
@@ -620,15 +648,34 @@ int main() {
         lane_was_stale = lane_stale;
         joy_was_stale  = joy_stale && (drive_mode == DriveMode::MANUAL);
 
-        if (joy_toggle)
+        if (snap.joy_force_manual && drive_mode != DriveMode::MANUAL) {
+            drive_mode = DriveMode::MANUAL;
+            oa.reset();
+            bridge.pub_mode(drive_mode);
+            printf("[ADAS] → MANUAL (forced by client)\n");
+        } else if (snap.joy_force_auto && drive_mode != DriveMode::AUTONOMOUS) {
+            drive_mode      = DriveMode::AUTONOMOUS;
+            adas_state      = AdasState::INIT;
+            degraded_frames = 0;
+            recovery_frames = 0;
+            lka.reset();
+            oa.reset();
+            bridge.pub_mode(drive_mode);
+            printf("[ADAS] → AUTONOMOUS (forced by client)\n");
+        } else if (joy_toggle) {
             change_drive_mode(drive_mode, adas_state, degraded_frames, recovery_frames,
                               lka, oa, bridge);
+        }
 
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
+        // During OA maneuver the car intentionally leaves the lane — don't degrade
+        bool oa_maneuver_active = (oa.state() != OAState::NORMAL);
+
         if (drive_mode == DriveMode::AUTONOMOUS)
-            adas_state_machine(lane_ok, now, cfg, adas_state, degraded_frames,
-                               recovery_frames, degraded_since, estop_sent, lka, can);
+            adas_state_machine(lane_ok || oa_maneuver_active, now, cfg, adas_state,
+                               degraded_frames, recovery_frames, degraded_since,
+                               estop_sent, lka, can);
 
         // ── Drive ─────────────────────────────────────────────────────────────
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)

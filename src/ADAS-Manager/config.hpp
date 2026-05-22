@@ -86,14 +86,28 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.single_line_factor = get("single_line_factor", 0.6f);
 
     cfg.oa.wheelbase_m      = get("oa_wheelbase_m",      0.18f);
-    cfg.oa.car_width_m      = get("oa_car_width_m",      0.20f);
-    cfg.oa.margin_m         = get("oa_margin_m",         0.08f);
+    cfg.oa.car_width_m      = get("oa_car_width_m",      0.18f);
+    cfg.oa.margin_m         = get("oa_margin_m",         0.03f);
     cfg.oa.critical_dist_m  = get("oa_critical_dist_m",  0.60f);
     cfg.oa.servo_max_deg    = get("oa_servo_max_deg",    15.0f);
-    cfg.oa.throttle_evading = get("oa_throttle_evading", 15.0f);
-    cfg.oa.evade_ms         = static_cast<int>(get("oa_evade_ms",    600.0f));
-    cfg.oa.straight_ms      = static_cast<int>(get("oa_straight_ms", 400.0f));
-    cfg.oa.return_ms        = static_cast<int>(get("oa_return_ms",   600.0f));
+    cfg.oa.throttle_evading = get("oa_throttle_evading", 20.0f);
+
+    // Adaptive timing — lo setpoint
+    cfg.oa.throttle_lo    = get("oa_throttle_lo",    20.0f);
+    cfg.oa.evade_ms_lo    = static_cast<int>(get("oa_evade_ms_lo",    1700.0f));
+    cfg.oa.straight_ms_lo = static_cast<int>(get("oa_straight_ms_lo",  700.0f));
+    cfg.oa.return_ms_lo   = static_cast<int>(get("oa_return_ms_lo",   2500.0f));
+
+    // Adaptive timing — hi setpoint
+    cfg.oa.throttle_hi    = get("oa_throttle_hi",    28.0f);
+    cfg.oa.evade_ms_hi    = static_cast<int>(get("oa_evade_ms_hi",    1000.0f));
+    cfg.oa.straight_ms_hi = static_cast<int>(get("oa_straight_ms_hi",  200.0f));
+    cfg.oa.return_ms_hi   = static_cast<int>(get("oa_return_ms_hi",   1800.0f));
+
+    // Initialise current timings from lo setpoint
+    cfg.oa.evade_ms    = cfg.oa.evade_ms_lo;
+    cfg.oa.straight_ms = cfg.oa.straight_ms_lo;
+    cfg.oa.return_ms   = cfg.oa.return_ms_lo;
 
     printf("[CONFIG] kp=%.1f ki=%.1f kd=%.1f deadband=%.1f throttle=%d\n",
            cfg.lka.kp, cfg.lka.ki, cfg.lka.kd, cfg.lka.deadband, cfg.throttle);

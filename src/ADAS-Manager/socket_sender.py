@@ -59,6 +59,8 @@ def send_perception(deviation: float, status: str):
     """
     if _lane_sock is None:
         return
+    if deviation is None:
+        deviation = 0.0
     status_byte = _STATUS_MAP.get(status, 0)
     payload = (struct.pack('<fB', float(deviation), status_byte)
                + _LANE_OBJ_ZERO

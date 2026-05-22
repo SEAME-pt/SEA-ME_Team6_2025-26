@@ -6,14 +6,27 @@
 
 struct OAConfig {
     float wheelbase_m      = 0.18f;
-    float car_width_m      = 0.20f;
-    float margin_m         = 0.08f;
+    float car_width_m      = 0.18f;
+    float margin_m         = 0.03f;
     float critical_dist_m  = 0.60f;
     float servo_max_deg    = 15.0f;
-    float throttle_evading = 15.0f;
-    int   evade_ms         = 600;   // phase 1: steer to clear obstacle
-    int   straight_ms      = 400;   // phase 2: straight past obstacle
-    int   return_ms        = 600;   // phase 3: symmetric return (= evade_ms)
+    float throttle_evading = 20.0f;
+
+    // Current timings — updated by adapt_timings(), initialised from lo setpoint
+    int   evade_ms    = 1700;
+    int   straight_ms =  700;
+    int   return_ms   = 2500;
+
+    // Adaptive timing: two calibrated throttle setpoints
+    float throttle_lo    = 20.0f;
+    int   evade_ms_lo    = 1700;
+    int   straight_ms_lo =  700;
+    int   return_ms_lo   = 2500;
+
+    float throttle_hi    = 28.0f;
+    int   evade_ms_hi    = 1000;
+    int   straight_ms_hi =  200;
+    int   return_ms_hi   = 1800;
 };
 
 enum class OAState { NORMAL, EVADING, BLOCKED };
@@ -37,6 +50,17 @@ static const char* oa_state_str(OAState s) {
 class OAController {
 public:
     explicit OAController(const OAConfig& cfg) : cfg_(cfg) {}
+
+    // Interpolates evade/straight/return timings from throttle — only in IDLE
+    void adapt_timings(float throttle) {
+        if (phase_ != OAPhase::IDLE) return;
+        float t = std::clamp((throttle - cfg_.throttle_lo) /
+                             (cfg_.throttle_hi - cfg_.throttle_lo),
+                             0.0f, 1.0f);
+        cfg_.evade_ms    = static_cast<int>(cfg_.evade_ms_lo    + (cfg_.evade_ms_hi    - cfg_.evade_ms_lo)    * t);
+        cfg_.straight_ms = static_cast<int>(cfg_.straight_ms_lo + (cfg_.straight_ms_hi - cfg_.straight_ms_lo) * t);
+        cfg_.return_ms   = static_cast<int>(cfg_.return_ms_lo   + (cfg_.return_ms_hi   - cfg_.return_ms_lo)   * t);
+    }
 
     // dt_ms: elapsed milliseconds since last call (typically 20)
     OAResult step(float d_srf_m, float d_cam_m, float theta_cam_deg,
@@ -62,13 +86,12 @@ public:
     }
 
     void reset() {
-        phase_    = OAPhase::IDLE;
-        timer_ms_ = 0;
+        phase_          = OAPhase::IDLE;
+        timer_ms_       = 0;
         evade_steering_ = 0;
     }
 
 private:
-    // Called only in IDLE — checks for obstacle and triggers maneuver
     OAResult _idle(float d_srf_m, float d_cam_m, float theta_cam_deg, bool cam_valid) {
         const float clearance = cfg_.car_width_m / 2.0f + cfg_.margin_m;
 
@@ -87,11 +110,9 @@ private:
         if (!srf_trigger && !cam_in_path)
             return { OAState::NORMAL, 0, 0 };
 
-        // SRF triggered but no YOLO angle — can't compute maneuver
         if (!cam_in_path)
             return { OAState::BLOCKED, 0, 0 };
 
-        // Compute target waypoint: pass obstacle with clearance
         float y_alvo = (y_obj >= 0.0f) ? (y_obj - clearance) : (y_obj + clearance);
 
         if (std::abs(y_alvo) < 1e-4f)
@@ -99,14 +120,13 @@ private:
 
         float R         = (x_obj * x_obj + y_alvo * y_alvo) / (2.0f * std::abs(y_alvo));
         float alpha_deg = std::atan(cfg_.wheelbase_m / R) * (180.0f / static_cast<float>(M_PI));
-        if (y_obj >= 0.0f) alpha_deg = -alpha_deg;  // obstacle right → steer left
+        if (y_obj >= 0.0f) alpha_deg = -alpha_deg;
 
         float normalised = (alpha_deg / cfg_.servo_max_deg) * 100.0f;
 
         if (std::abs(normalised) > 100.0f)
             return { OAState::BLOCKED, 0, 0 };
 
-        // Commit to maneuver — store steering, start EVADE phase
         evade_steering_ = static_cast<int8_t>(std::clamp(normalised, -100.0f, 100.0f));
         phase_          = OAPhase::EVADE;
         timer_ms_       = 0;
@@ -118,14 +138,13 @@ private:
         };
     }
 
-    // Advances timer, transitions to next phase when done
     OAResult _run_phase(int8_t steering, int duration_ms, OAPhase next, int dt_ms) {
         timer_ms_ += dt_ms;
         if (timer_ms_ >= duration_ms) {
             timer_ms_ = 0;
             phase_    = next;
             if (next == OAPhase::IDLE)
-                return { OAState::NORMAL, 0, 0 };  // maneuver complete — LKA takes over
+                return { OAState::NORMAL, 0, 0 };
         }
         return {
             OAState::EVADING,
