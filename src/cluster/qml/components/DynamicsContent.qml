@@ -2,7 +2,9 @@ import QtQuick
 import ClusterTheme 1.0
 
 Item {
-    anchors.fill: parent
+    width: 400
+    height: 600
+    anchors.centerIn: parent
 
     Column {
         anchors.centerIn: parent
@@ -33,7 +35,7 @@ Item {
         }
 
         Text {
-            text: "streetSignals: "
+            text: "streetSignals: " + adas.streetSignals.length
             color: BaseTheme.white
             font.pixelSize: 10
         }
@@ -48,7 +50,7 @@ Item {
         }
 
         Text {
-            text: "extras: "
+            text: "extras: " + adas.extras.length
             color: BaseTheme.white
             font.pixelSize: 10
         }

@@ -85,7 +85,7 @@ private:
      */
     template<typename T>
     bool isProviderRegistered(T* provider, const QString &providerName);
-    QStringList parseStringArray(const QString &jsonArrayStr);
+    QStringList parseStringArray(const QVariant &value);
 };
 
 #endif /* SIGNALROUTER_HPP */

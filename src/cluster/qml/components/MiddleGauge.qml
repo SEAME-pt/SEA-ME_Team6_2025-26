@@ -16,7 +16,7 @@ Item {
     property real maxBattery: 12.6
     property real minBattery: 9.82
     property real currAutonomy: 0
-    property string currBatteryIcon: "qrc:/assets/icons/battery.png"
+    property string currBatteryIcon: "qrc:/assets/icons/battery.svg"
     property bool isBatteryWarning: false
     property bool isBatteryDanger: false
     property string speedUnit: "km/h"
@@ -45,7 +45,7 @@ Item {
 
     Behavior on displaySpeed {
         NumberAnimation {
-            duration: 500
+            duration: 250
             easing.type: Easing.InOutQuad
         }
     }

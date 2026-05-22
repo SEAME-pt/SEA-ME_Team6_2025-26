@@ -12,6 +12,7 @@
 #include "providers/chassisprovider.hpp"
 #include <QThread>
 #include <QCoreApplication>
+#include <QJsonObject>
 
 SignalRouter::SignalRouter(QObject *parent)
     : QObject(parent),
@@ -61,15 +62,21 @@ void SignalRouter::registerChassisProvider(ChassisProvider *provider)
     qDebug() << "[SignalRouter] ChassisProvider registered";
 }
 
-QStringList SignalRouter::parseStringArray(const QString &jsonArrayStr)
+QStringList SignalRouter::parseStringArray(const QVariant &value)
 {
     QStringList res;
-    QJsonDocument doc = QJsonDocument::fromJson(jsonArrayStr.toUtf8());
-    if (doc.isArray())
-    {
-        for (const QJsonValue &val : doc.array())
-            res << val.toString();
+    const QVariantList list = value.value<QVariantList>();
+    if (!list.isEmpty()) {
+        for (const QVariant &v : list)
+            res << v.toString();
+        return res;
     }
+    // Fallback: JSON string
+    QJsonDocument doc = QJsonDocument::fromJson(value.toString().toUtf8());
+    QJsonArray array = doc.isArray() ? doc.array()
+                                     : doc.object().value("values").toArray();
+    for (const QJsonValue &v : array)
+        res << v.toString();
     return res;
 }
 
@@ -180,14 +187,17 @@ void SignalRouter::routeADASSignal(const QString &path, const QVariant &value)
         _adasProvider->updateTrafficLight(value.toString());
     else if (path == "Vehicle.ADAS.ObjectDetection.StreetSignals")
     {
-        QStringList streetSignals = parseStringArray(value.toString());
-        _adasProvider->updateStreetSignals(streetSignals);
+        QStringList streetSignals = parseStringArray(value);
+        if (!streetSignals.isEmpty())
+            _adasProvider->updateStreetSignals(streetSignals);
     }
     else if (path == "Vehicle.ADAS.ObjectDetection.Extras")
     {
-        QStringList extras = parseStringArray(value.toString());
-        _adasProvider->updateExtras(extras);
+        QStringList extras = parseStringArray(value);
+        if (!extras.isEmpty())
+            _adasProvider->updateExtras(extras);
     }
+    // else if (path == "Vehicle.ADAS.DrivingMode")
     else
     {
         qDebug() << "[SignalRouter] Unknown top-level signal:" << path;

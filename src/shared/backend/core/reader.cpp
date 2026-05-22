@@ -54,6 +54,13 @@ QVariant ReaderWorker::datapoint_to_variant(const kuksa::val::v2::Datapoint &dp)
             return QVariant(v.bool_());
         case kuksa::val::v2::Value::kString:
             return QVariant(QString::fromStdString(v.string()));
+        case kuksa::val::v2::Value::kStringArray:
+        {
+            QVariantList list;
+            for (const auto &s : v.string_array().values())
+                list << QString::fromStdString(s);
+            return QVariant(list);
+        }
         default:
             return QVariant();
     }

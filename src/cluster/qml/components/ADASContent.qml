@@ -265,7 +265,7 @@ Item {
                 }
 
                 Text {
-                    text: "67"
+                    text: "0"
                     color: BaseTheme.white
                     font.pixelSize: 18
                     font.bold: true
@@ -283,7 +283,7 @@ Item {
                 }
 
                 Text {
-                    text: "67"
+                    text: "0"
                     color: BaseTheme.white
                     font.pixelSize: 18
                     font.bold: true

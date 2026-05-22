@@ -53,7 +53,16 @@
         <file>assets/icons/stop-inactive.svg</file>
         <file>assets/icons/stop-active.svg</file>
         <file>assets/icons/warning.svg</file>
-    
+        <file>assets/icons/stop-signal.svg</file>
+        <file>assets/icons/50-speed-limit.svg</file>
+        <file>assets/icons/80-speed-limit.svg</file>
+        <file>assets/icons/forward-icon-black.svg</file>
+        <file>assets/icons/forward-icon-white.svg</file>
+        <file>assets/icons/neutral-icon-black.svg</file>
+        <file>assets/icons/neutral-icon-white.svg</file>
+        <file>assets/icons/reverse-icon-black.svg</file>
+        <file>assets/icons/reverse-icon-white.svg</file>
+
         <!-- Images  -->
         <file>assets/images/brisa-logo.png</file>
         <file>assets/images/critical-techworks-logo.png</file>
