@@ -83,6 +83,12 @@
 ------
 
 - **Delivered**:
+- Basic implementation of obstacle avoidance
+- Implementation of adaptative cruise control
+- ADR
+- Distance measured from the inference
+- LKA visuailization on cluster
+- Signal detected Visualization
   
   
 - **Demos**:
@@ -106,10 +112,10 @@ https://www.youtube.com/shorts/WfnoQ8bGTzY
 
 # 🔎 Retrospective
 - ## **Went well**:
-- 
+- Most of the tasks went well and we where able to implement many adas features.
 
 - ## **To improve**:
-- 
+- Motivation
 
 ## 🔗 Useful Links
 
