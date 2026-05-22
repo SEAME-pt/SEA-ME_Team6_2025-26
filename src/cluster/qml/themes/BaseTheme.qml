@@ -29,9 +29,9 @@ QtObject {
     readonly property color gaugeBatteryEmpty: "#881633"
 
     //? Information Colors
-    readonly property color success: "#378b1b"
-    readonly property color warning: "#F0D500"
-    readonly property color danger: "#F32013"
+    readonly property color success: "#4E9367"
+    readonly property color warning: "#edca30"
+    readonly property color danger: "#881633"
     readonly property color info: "#1E88E5"
 
     //? Accent / Vibrant color

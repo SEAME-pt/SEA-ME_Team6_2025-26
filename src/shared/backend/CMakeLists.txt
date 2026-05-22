@@ -55,6 +55,17 @@ else()
 endif()
 
 # ============================================================================
+# GSTREAMER CONFIGURATION
+# ============================================================================
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GST REQUIRED
+    gstreamer-1.0
+    gstreamer-app-1.0
+    gstreamer-video-1.0
+)
+message(STATUS "[Backend] GStreamer includes: ${GST_INCLUDE_DIRS}")
+
+# ============================================================================
 # SHARED BACKEND LIBRARY
 # ============================================================================
 add_library(Backend STATIC
@@ -87,6 +98,7 @@ target_include_directories(Backend PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/core
     ${CMAKE_CURRENT_SOURCE_DIR}/providers
+    ${GST_INCLUDE_DIRS}
 )
 
 # ============================================================================
@@ -103,6 +115,9 @@ target_link_libraries(Backend PUBLIC
 # ============================================================================
 if(IS_CROSS_COMPILE)
     target_link_libraries(Backend PUBLIC
+        gstreamer-1.0
+        gstapp-1.0
+        gstvideo-1.0
         grpc++
         grpc
         gpr
@@ -202,6 +217,7 @@ else()
     target_link_libraries(Backend PUBLIC
         gRPC::grpc++
         protobuf::libprotobuf
+        ${GST_LIBRARIES} 
     )
 endif()
 
