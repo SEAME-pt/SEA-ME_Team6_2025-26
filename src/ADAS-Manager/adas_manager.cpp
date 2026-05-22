@@ -464,6 +464,7 @@ static DriveOutput autonomous_driving(
     if (cfg.oa_enabled && (adas_state == AdasState::ACTIVE ||
                            adas_state == AdasState::DEGRADED)) {
         int dt_ms = static_cast<int>(dt * 1000.0f);
+        oa.adapt_timings(static_cast<float>(cfg.throttle));
         oa_res    = oa.step(9999.0f, nearest_dist_m, nearest_theta,
                             cam_valid_oa, dt_ms);
         oa_active = (oa_res.state == OAState::EVADING);
