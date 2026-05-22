@@ -668,9 +668,13 @@ int main() {
 
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
+        // During OA maneuver the car intentionally leaves the lane — don't degrade
+        bool oa_maneuver_active = (oa.state() != OAState::NORMAL);
+
         if (drive_mode == DriveMode::AUTONOMOUS)
-            adas_state_machine(lane_ok, now, cfg, adas_state, degraded_frames,
-                               recovery_frames, degraded_since, estop_sent, lka, can);
+            adas_state_machine(lane_ok || oa_maneuver_active, now, cfg, adas_state,
+                               degraded_frames, recovery_frames, degraded_since,
+                               estop_sent, lka, can);
 
         // ── Drive ─────────────────────────────────────────────────────────────
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
