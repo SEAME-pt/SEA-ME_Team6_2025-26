@@ -72,9 +72,9 @@ static uint8_t speed_thread_stack[SPEED_THREAD_STACK_SIZE];
 static uint8_t imu_thread_stack[IMU_THREAD_STACK_SIZE];
 static uint8_t tof_thread_stack[TOF_THREAD_STACK_SIZE];
 static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
-static uint8_t battery_thread_stack[1024];
+static uint8_t battery_thread_stack[BATTERY_THREAD_STACK_SIZE];
 static uint8_t indicator_thread_stack[INDICATOR_THREAD_STACK_SIZE];
-static uint8_t aeb_thread_stack[1024];
+static uint8_t aeb_thread_stack[AEB_THREAD_STACK_SIZE];
 static uint8_t cc_thread_stack[CC_THREAD_STACK_SIZE];
 
 /* Mutex for printf protection */
@@ -285,7 +285,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
                        Battery_Thread_Entry,
                        0,
                        battery_thread_stack,
-                       1024,
+                       BATTERY_THREAD_STACK_SIZE,
                        15, /* Priority 15 (low priority - slow sensor) */
                        15,
                        TX_NO_TIME_SLICE,

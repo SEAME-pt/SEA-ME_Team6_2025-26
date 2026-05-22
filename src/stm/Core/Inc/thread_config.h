@@ -68,7 +68,9 @@
 #define IMU_THREAD_STACK_SIZE         2048
 #define TOF_THREAD_STACK_SIZE         4096
 #define SRF08_THREAD_STACK_SIZE       2048
-#define CC_THREAD_STACK_SIZE          1024
+#define CC_THREAD_STACK_SIZE          2048  /* float printf needs ~600B; was 1024 (too small) */
+#define AEB_THREAD_STACK_SIZE         2048  /* float printf in task_aeb; was 1024 hardcoded */
+#define BATTERY_THREAD_STACK_SIZE     2048  /* INA226 I2C + printf; was 1024 hardcoded */
 #define INDICATOR_THREAD_STACK_SIZE   1024
 
 

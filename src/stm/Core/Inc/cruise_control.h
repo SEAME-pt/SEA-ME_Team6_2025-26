@@ -26,15 +26,15 @@
  *============================================================================*/
 
 /* --- PI Controller Gains --- */
-#define CC_KP                       5.0f   /* Proportional gain (start 5-15, raise if sluggish, lower if oscillating) */
-#define CC_KI                       3.0f    /* Integral gain (start 0.5-2, raise if steady-state error persists) */
+#define CC_KP                       18.0f  /* Proportional gain (start 5-15, raise if sluggish, lower if oscillating) */
+#define CC_KI                       3.0f   /* Integral gain (start 0.5-2, raise if steady-state error persists) */
 
 /* --- Anti-windup: caps the integral accumulator (in throttle %) --- */
 #define CC_INTEGRAL_MAX             50.0f
 #define CC_INTEGRAL_MIN             0.0f    /* No negative integral — CC is forward-only */
 
 /* --- Throttle rate limiter (max change per cycle, in %) --- */
-#define CC_THROTTLE_RAMP_UP         20.0f    /* Max throttle increase per tick (smooth accel) */
+#define CC_THROTTLE_RAMP_UP         60.0f    /* Max throttle increase per tick (smooth accel) */
 #define CC_THROTTLE_RAMP_DOWN       80.0f    /* Max throttle decrease per tick (slightly faster decel) */
 
 /* --- Throttle output limits (%) --- */
@@ -47,7 +47,7 @@
 /* --- Speed thresholds (km/h) --- */
 #define CC_SPEED_MIN                0.0f    /* Below this, CC refuses to activate (Hall unreliable) */
 #define CC_SPEED_MAX                15.0f   /* Above this, CC refuses to activate (PiRacer safety) */
-#define CC_SPEED_TOLERANCE          0.3f    /* "Close enough" band — reduces jitter near target */
+#define CC_SPEED_TOLERANCE          0.1f    /* "Close enough" band — reduces jitter near target */
 
 /* --- Target rate limiter (ACC-specific, km/h per second) ---
  *
@@ -59,8 +59,8 @@
  *
  * Asymmetric: cars adapt down faster than up.
  */
-#define CC_TARGET_RAMP_UP_KMH_S     1.5f   /* Max rate of target increase (km/h per second) */
-#define CC_TARGET_RAMP_DOWN_KMH_S   3.0f   /* Max rate of target decrease (km/h per second) */
+#define CC_TARGET_RAMP_UP_KMH_S     25.0f  /* Max rate of target increase (km/h per second) */
+#define CC_TARGET_RAMP_DOWN_KMH_S   12.0f  /* Max rate of target decrease (km/h per second) */
 
 /* --- Safety --- */
 #define CC_SPEED_DROP_THRESHOLD     2.0f    /* If actual speed drops this much below target, override (stall/blocked) */

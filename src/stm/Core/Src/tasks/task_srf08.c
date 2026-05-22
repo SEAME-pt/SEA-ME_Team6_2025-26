@@ -72,6 +72,12 @@ typedef struct
 
   // one-time banner printed
   uint8_t printed_banner;
+
+  /* Timestamp (tx_time_get ticks) when recovery_count first hit MAX_RECOVERIES.
+   * Used to implement the back-off: wait SRF08_RECOVERY_BACKOFF_MS before
+   * allowing a new burst of recovery attempts, instead of giving up forever. */
+  uint32_t give_up_ts;
+  uint8_t  give_up_logged;   /* 1 after the "limite atingido" message is printed */
 } TaskSRF08;
 
 /* After this many consecutive clean readings, reset recovery_count to 0.
@@ -83,7 +89,12 @@ typedef struct
 /* Number of consecutive bad cycles before attempting I2C + sensor recovery.
  * At ~70 ms/cycle: 8 cycles ≈ 560 ms of confirmed failure before reset. */
 #define SRF08_RECOVERY_THRESHOLD   8u
-#define SRF08_MAX_RECOVERIES      10u   /* give up after this many attempts */
+/* Maximum consecutive recovery attempts before backing off.
+ * After SRF08_MAX_RECOVERIES failures, the driver waits SRF08_RECOVERY_BACKOFF_MS
+ * before trying again (instead of giving up permanently, which required a physical
+ * STM32 reset to clear).  The backoff counter resets after each stable period. */
+#define SRF08_MAX_RECOVERIES      10u
+#define SRF08_RECOVERY_BACKOFF_MS 30000u  /* 30 s between recovery bursts */
 
 static TaskSRF08 s_srf;
 
@@ -92,9 +103,13 @@ void task_srf08_init(SystemCtx* ctx)
     // Zero-init the full struct — preserve recovery_count across re-inits
     // so we don't lose track of how many recoveries have been attempted.
     uint8_t saved_recovery_count = s_srf.recovery_count;
+    uint8_t saved_give_up_logged = s_srf.give_up_logged;
+    uint32_t saved_give_up_ts   = s_srf.give_up_ts;
     TaskSRF08 z = {0};
     s_srf = z;
     s_srf.recovery_count = saved_recovery_count;
+    s_srf.give_up_logged = saved_give_up_logged;
+    s_srf.give_up_ts     = saved_give_up_ts;
     /* Safe initial fallback: far-debounce outputs this until the first close
      * reading is confirmed.  Zero would be interpreted as "obstacle at sensor"
      * and trigger immediate emergency stop during the first 3 cycles. */
@@ -104,6 +119,84 @@ void task_srf08_init(SystemCtx* ctx)
     s_srf.hsrf08.addr = SRF08_DEFAULT_ADDR;
 
     sys_log(ctx, "[SRF08] init...");
+
+    /* (A-pre) Unconditional I2C bus flush before attempting any communication.
+     *
+     * After a STM32 soft-reset (button or NVIC), the STM32 I2C peripheral
+     * reinitialises but the SRF08 retains its previous state.  If the STM32
+     * was reset mid-transaction, the SRF08 I2C state machine is stuck waiting
+     * for more data bytes or a STOP that never came.  Any new transaction will
+     * be interpreted as a continuation of that stale transaction → wrong
+     * register writes → sensor misconfigured or silently locked.
+     *
+     * Sending 9 SCL pulses + a STOP condition unconditionally flushes the
+     * SRF08's I2C state machine back to idle before we attempt IsDeviceReady.
+     * This eliminates the class of "needs physical Reset to work" bugs.
+     */
+    {
+        tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+
+        /* Temporarily deInit to take manual control of the pins */
+        HAL_I2C_DeInit(&hi2c1);
+        tx_thread_sleep(2);
+
+        GPIO_InitTypeDef gpio = {0};
+
+        /* Read SDA state before clocking */
+        gpio.Pin  = GPIO_PIN_9;
+        gpio.Mode = GPIO_MODE_INPUT;
+        gpio.Pull = GPIO_PULLUP;
+        HAL_GPIO_Init(GPIOB, &gpio);
+        uint8_t sda_was_low = (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET);
+
+        /* SCL as open-drain output, start HIGH */
+        gpio.Pin   = GPIO_PIN_8;
+        gpio.Mode  = GPIO_MODE_OUTPUT_OD;
+        gpio.Pull  = GPIO_NOPULL;
+        gpio.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(GPIOB, &gpio);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+        tx_thread_sleep(1);
+
+        /* 9 SCL pulses */
+        for (uint8_t i = 0; i < 9; i++) {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+            tx_thread_sleep(1);
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+            tx_thread_sleep(1);
+        }
+
+        /* STOP condition: SDA LOW → SDA HIGH while SCL HIGH */
+        gpio.Pin  = GPIO_PIN_9;
+        gpio.Mode = GPIO_MODE_OUTPUT_OD;
+        HAL_GPIO_Init(GPIOB, &gpio);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+        tx_thread_sleep(1);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+        tx_thread_sleep(1);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+        tx_thread_sleep(2);
+
+        /* Restore I2C alternate function on PB8/PB9 */
+        gpio.Pin       = GPIO_PIN_8 | GPIO_PIN_9;
+        gpio.Mode      = GPIO_MODE_AF_OD;
+        gpio.Pull      = GPIO_NOPULL;
+        gpio.Speed     = GPIO_SPEED_FREQ_LOW;
+        gpio.Alternate = GPIO_AF4_I2C1;
+        HAL_GPIO_Init(GPIOB, &gpio);
+
+        HAL_I2C_Init(&hi2c1);
+        tx_thread_sleep(5);
+
+        tx_mutex_put(&ctx->i2c1_mutex);
+
+        sys_log(ctx, "[SRF08] pre-flush I2C: 9 SCL + STOP (SDA_antes=%s)",
+                sda_was_low ? "LOW (bus estava bloqueado!)" : "HIGH (bus OK)");
+
+        /* Give the SRF08 time to complete any internally queued operation
+         * after seeing the STOP condition */
+        tx_thread_sleep(50);
+    }
 
     // (A) check ready — use mutex to avoid I2C contention with IMU/ToF
     tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
@@ -222,16 +315,34 @@ void task_srf08_init(SystemCtx* ctx)
 static void srf08_recover_i2c(SystemCtx* ctx)
 {
     if (s_srf.recovery_count >= SRF08_MAX_RECOVERIES) {
-        /* Too many attempts — sensor or bus is permanently broken.
-         * Log once and stop trying. */
-        if (s_srf.recovery_count == SRF08_MAX_RECOVERIES) {
-            s_srf.recovery_count++;   /* prevent repeat log */
+        /* Too many consecutive recovery attempts.
+         * Instead of giving up permanently (which required a physical STM32 reset
+         * to clear), we wait SRF08_RECOVERY_BACKOFF_MS and then reset the counter
+         * to try a fresh burst of recoveries.  This avoids the need to physically
+         * press Reset just to unblock a sensor that might self-heal. */
+        uint32_t now_t = (uint32_t)tx_time_get();
+
+        if (!s_srf.give_up_logged) {
+            s_srf.give_up_logged = 1;
+            s_srf.give_up_ts     = now_t;
             sys_log(ctx,
-                "\033[1;31m[SRF08] RECOVERY: limite atingido (%u). "
-                "Sensor/barramento I2C1 inacessivel.\033[0m",
-                SRF08_MAX_RECOVERIES);
+                "\033[1;31m[SRF08] RECOVERY: %u tentativas sem sucesso — "
+                "a aguardar %u s antes de nova tentativa.\033[0m",
+                SRF08_MAX_RECOVERIES, SRF08_RECOVERY_BACKOFF_MS / 1000u);
         }
-        return;
+
+        /* Check if the backoff period has elapsed */
+        if ((now_t - s_srf.give_up_ts) >= SRF08_RECOVERY_BACKOFF_MS) {
+            sys_log(ctx,
+                "\033[1;33m[SRF08] RECOVERY: backoff expirado — "
+                "a repor contador e tentar de novo.\033[0m");
+            s_srf.recovery_count = 0;
+            s_srf.give_up_logged = 0;
+            s_srf.give_up_ts     = 0;
+            /* Fall through to attempt recovery below */
+        } else {
+            return;
+        }
     }
 
     s_srf.recovery_count++;

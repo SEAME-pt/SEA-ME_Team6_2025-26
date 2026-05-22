@@ -50,6 +50,7 @@ typedef struct {
   bool initialized;
   uint32_t safe_clear_ms;
   uint8_t last_limit;
+  uint32_t latched_total_ms;  /* total time spent in LATCHED; force-unlatch after timeout */
 } AebCtx;
 
 /* -----------------------------
@@ -188,7 +189,7 @@ static void aeb_reset(AebCtx* a) {
   a->below_stop_ms = 0;
   a->initialized = false;
   a->safe_clear_ms = 0;
-  //a->last_limit = 0;
+  a->latched_total_ms = 0;
   a->last_limit = 100; // start with no speed limit
 }
 
@@ -410,11 +411,12 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
     case AEB_LATCHED:
       warn = true;
       brake = true;  /* Only LATCHED forces Motor_Stop() via aeb_stop_active */
-      /*
-        UNLATCH policy:
-        If we are basically stopped AND the obstacle is far away for long enough,
-        we clear the latch and return to OFF.
 
+      /* Accumulate total time in LATCHED for the force-unlatch timeout */
+      s_aeb.latched_total_ms += dt_ms;
+
+      /*
+        UNLATCH policy A — normal: stopped + obstacle gone long enough.
         Condition:
           speed < speed_stop_mps
           AND filtered distance > safe_unlatch_dist_m
@@ -424,15 +426,43 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
         s_aeb.safe_clear_ms += dt_ms;
 
         if (s_aeb.safe_clear_ms >= P.safe_unlatch_hold_ms) {
-          // Unlatch: go OFF and release brake request
           s_aeb.st = AEB_OFF;
           brake = false;
           warn = false;
           s_aeb.below_stop_ms = 0;
           s_aeb.safe_clear_ms = 0;
+          s_aeb.latched_total_ms = 0;
+          sys_log(ctx, "\033[1;32m[AEB] Unlatch normal (dist OK + parado)\033[0m");
         }
       } else {
         s_aeb.safe_clear_ms = 0;
+      }
+
+      /*
+        UNLATCH policy B — timeout: LATCHED há demasiado tempo.
+        Se passaram AEB_LATCH_TIMEOUT_MS ms sem conseguir desbloquear pelas
+        condições normais (sensor inválido, obstáculo falso, eco do chão, etc.),
+        força o reset para OFF.  O AEB re-arma imediatamente no próximo ciclo
+        se o obstáculo for real — é seguro fazer este reset.
+
+        O Manager deve enviar EmergencyStop(active=0) antes de comandar
+        movimento, mas este timeout é um safety-net adicional.
+      */
+#define AEB_LATCH_TIMEOUT_MS  5000u   /* 5 segundos de LATCHED → força OFF */
+      if (s_aeb.latched_total_ms >= AEB_LATCH_TIMEOUT_MS) {
+        s_aeb.st = AEB_OFF;
+        brake = false;
+        warn = false;
+        s_aeb.below_stop_ms  = 0;
+        s_aeb.safe_clear_ms  = 0;
+        s_aeb.latched_total_ms = 0;
+        sys_log(ctx,
+          "\033[1;33m[AEB] TIMEOUT %us — force-unlatch!"
+          " d_eff=%umm srf_ok=%d v=%.2fm/s\033[0m",
+          AEB_LATCH_TIMEOUT_MS / 1000u,
+          (unsigned)(d_eff * 1000.0f),
+          (int)srf_ok,
+          v_mps);
       }
       break;
   }
@@ -445,18 +475,77 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
   uint32_t dstop_mm = (d_stop > 65.0f)? 65000u : (uint32_t)(d_stop * 1000.0f);
 
 
-  /* Build CAN frame */
+  /* -------- 8b) Compute d_eff_mm for CAN frame (clamped to uint16_t) -------- */
+  uint16_t d_eff_mm_u16 = (d_eff > 65.0f) ? 65535u : (uint16_t)(d_eff * 1000.0f);
+
+  /* -------- 9) Build and send CAN AEB status frame (0x002) --------
+     Extended frame: warn, brake, state, speed_limit_pct, d_eff_mm, ttc_ms.
+     Parseable with: candump can0  (see can_id.h for byte layout)
+  */
+  {
     AEB_t aeb_frame;
-    aeb_frame.warn = warn ? 1: 0;
-    aeb_frame.brake = s_aeb.st == AEB_BRAKING ? 1 : 0;
+    aeb_frame.warn            = warn ? 1u : 0u;
+    aeb_frame.brake           = (s_aeb.st == AEB_BRAKING) ? 1u : 0u;
+    aeb_frame.state           = (uint8_t)s_aeb.st;
+    aeb_frame.speed_limit_pct = desired_limit;
+    aeb_frame.d_eff_mm        = d_eff_mm_u16;
+    aeb_frame.ttc_ms          = (uint16_t)((ttc_ms > 65535u) ? 65535u : ttc_ms);
 
     mcp_send_message(CAN_ID_AEB_STOP, (uint8_t*)&aeb_frame, sizeof(aeb_frame));
+  }
 
-    //sys_log(ctx, "[AEB] Warning=%d | Braking=%d /h\n",
-    //      aeb_frame.warn, aeb_frame.brake );
+  /* -------- 10) Periodic diagnostic log (~1 s @ 50 Hz AEB) --------
+     Prints what the AEB is doing and WHY it is staying in the current state.
+     Useful via SWV/ITM in STM32CubeIDE or via serial retarget.
 
+     State names: OFF=0 ARMED=1 WARN=2 BRAKING=3 LATCHED=4
+  */
+  static uint32_t s_log_tick = 0;
+  if (++s_log_tick >= 50u) {   /* 50 AEB steps × ~20 ms = ~1 s */
+    s_log_tick = 0;
 
-  /* -------- 9) Publish AEB outputs into shared state --------
+    static const char* const STATE_NAME[] = {
+      "OFF", "ARMED", "WARN", "BRAKING", "LATCHED"
+    };
+    const char* st_name = (s_aeb.st <= AEB_LATCHED)
+                          ? STATE_NAME[s_aeb.st] : "???";
+
+    if (s_aeb.st == AEB_LATCHED) {
+      /* Extra detail: show exactly what is preventing unlatch */
+      bool spd_ok_u  = (v_mps < P.speed_stop_mps);
+      bool dist_ok_u = (d_eff > P.safe_unlatch_dist_m);
+      sys_log(ctx,
+        "\033[1;31m[AEB] LATCHED"
+        " | dist_raw=%umm d_eff=%umm(%.0fmm req) v=%.2fm/s(%.2f req)"
+        " | spd_ok=%d dist_ok=%d safe_ms=%lu/%lu"
+        " | srf_valid=%d lim=%u%%\033[0m",
+        snap.srf08_distance_mm,
+        (unsigned)(d_eff * 1000.0f),
+        P.safe_unlatch_dist_m * 1000.0f,
+        v_mps, P.speed_stop_mps,
+        (int)spd_ok_u, (int)dist_ok_u,
+        (unsigned long)s_aeb.safe_clear_ms,
+        (unsigned long)P.safe_unlatch_hold_ms,
+        (int)snap.srf08_valid,
+        desired_limit);
+    } else {
+      sys_log(ctx,
+        "[AEB] %s | dist=%umm d_eff=%umm v=%.2fm/s"
+        " | TTC=%ums lim=%u%% warn=%d stop=%d srf_ok=%d spd_ok=%d",
+        st_name,
+        snap.srf08_distance_mm,
+        (unsigned)(d_eff * 1000.0f),
+        v_mps,
+        (unsigned)ttc_ms,
+        desired_limit,
+        (int)warn,
+        (int)brake,
+        (int)srf_ok,
+        (int)spd_ok);
+    }
+  }
+
+  /* -------- 11) Publish AEB outputs into shared state --------
      The actuation thread reads these flags.
      aeb_stop_active = 1 means "block forward + stop motor"
   */
@@ -476,4 +565,36 @@ void task_aeb_step(SystemCtx* ctx, uint32_t dt_ms) {
   if (!ctx) return;
   if (dt_ms == 0) dt_ms = 1; // guard against zero dt
   aeb_step_internal(ctx, dt_ms);
+}
+
+/*
+  Force-reset the AEB state machine to OFF and clear all stop flags.
+
+  Called when the ADAS Manager explicitly sends EmergencyStop_t(active=0),
+  meaning the operator is asserting the situation is safe and the vehicle
+  should be allowed to move again.
+
+  Safety rationale: the AEB step runs every ~20 ms.  If an obstacle is still
+  present on the next cycle, AEB will re-arm (→ARMED) and potentially
+  re-latch (→LATCHED) within 1-2 cycles.  The brief window where aeb_stop_active
+  is 0 while an obstacle exists is at most one AEB period (20 ms), which is
+  safe because the kinematic speed limit is still enforced by the step function.
+*/
+void task_aeb_force_reset(SystemCtx* ctx)
+{
+  if (!ctx) return;
+
+  aeb_reset(&s_aeb);
+
+  const uint32_t now_ms = (uint32_t)tx_time_get();
+
+  tx_mutex_get(&ctx->state_mutex, TX_WAIT_FOREVER);
+  ctx->state.aeb_stop_active  = 0;
+  ctx->state.aeb_warn         = 0;
+  ctx->state.aeb_speed_limit  = 100;
+  ctx->state.aeb_state        = (uint8_t)AEB_OFF;
+  ctx->state.aeb_ts           = now_ms;
+  tx_mutex_put(&ctx->state_mutex);
+
+  sys_log(ctx, "\033[1;32m[AEB] Force-reset by Manager — AEB OFF, bloqueio levantado\033[0m");
 }
