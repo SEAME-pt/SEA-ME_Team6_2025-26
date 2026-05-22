@@ -87,8 +87,17 @@
   
 - **Demos**:
 
+<img width="1600" height="1203" alt="WhatsApp Image 2026-05-22 at 15 08 39" src="https://github.com/user-attachments/assets/e82e5260-c6dc-4472-a532-97e346d57b63" />
 
+<img width="1600" height="1203" alt="WhatsApp Image 2026-05-22 at 15 08 43" src="https://github.com/user-attachments/assets/162ee4f1-8eb4-4143-b225-c7a004668930" />
 
+<img width="1600" height="1203" alt="WhatsApp Image 2026-05-22 at 15 08 48" src="https://github.com/user-attachments/assets/03151873-48ae-4e35-993e-e90872af348f" />
+
+<img width="396" height="357" alt="WhatsApp Image 2026-05-22 at 15 14 54" src="https://github.com/user-attachments/assets/2684c30a-44ac-4bdc-afc1-d085b2167956" />
+
+<img width="396" height="357" alt="WhatsApp Image 2026-05-22 at 15 14 54(1)" src="https://github.com/user-attachments/assets/ecac5392-d357-49a5-9c37-34a663262db6" />
+
+https://www.youtube.com/shorts/WfnoQ8bGTzY
 
 
 
