@@ -318,6 +318,7 @@ static void adas_state_machine(
     int& degraded_frames,
     int& recovery_frames,
     std::chrono::steady_clock::time_point& degraded_since,
+    std::chrono::steady_clock::time_point& emergency_since,
     bool& estop_sent,
     LKAController& lka,
     CanSender& can)
@@ -330,10 +331,53 @@ static void adas_state_machine(
                 degraded_frames = 0;
                 recovery_frames = 0;
                 lka.reset();
+                if (estop_sent) {
+                    can.send_estop(0);
+                    estop_sent = false;
+                }
                 printf("[ADAS] → ACTIVE (recovered)\n");
             }
         } else {
             recovery_frames = 0;
+        }
+
+        /* Timeout-based recovery — deadlock breaker.
+         *
+         * Cenários reais que isto resolve:
+         *   1) Carro pára via STM32 AEB (SRF08) numa posição onde a câmara
+         *      já não vê lane suficiente. lane_ok fica falso indefinidamente,
+         *      recovery normal nunca dispara.
+         *   2) Câmara é tapada momentaneamente → EMERGENCY_STOP. Ao destapar,
+         *      o detector de lane pode demorar a estabilizar; entretanto o
+         *      Manager continua a enviar aeb_request=true em cada tick,
+         *      bloqueando o STM32.
+         *
+         * Solução: ao fim de emergency_timeout_ms em EMERGENCY_STOP, força
+         * regresso a DEGRADED (não ACTIVE, por segurança). Em DEGRADED:
+         *   - autonomous_driving NÃO envia aeb_request → STM32 fica livre
+         *   - se lane voltar a aparecer → transita normal para ACTIVE
+         *   - se lane continuar perdida → re-entra em EMERGENCY_STOP após
+         *     emergency_threshold_ms (timer recomeça com degraded_since=now)
+         *
+         * IMPORTANTE: só aplicar se ainda estamos em EMERGENCY_STOP — se
+         * o bloco anterior já fez recovery via lane_ok, não sobrescrever.
+         */
+        if (adas_state == AdasState::EMERGENCY_STOP) {
+            auto emergency_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - emergency_since).count();
+            if (emergency_ms >= cfg.emergency_timeout_ms) {
+                adas_state      = AdasState::DEGRADED;
+                degraded_since  = now;
+                recovery_frames = 0;
+                if (estop_sent) {
+                    can.send_estop(0);
+                    estop_sent = false;
+                }
+                printf("[ADAS] EMERGENCY_STOP timeout %lds → DEGRADED"
+                       " (lane=%s — recovery via timeout)\n",
+                       (long)(cfg.emergency_timeout_ms / 1000),
+                       lane_ok ? "OK" : "lost");
+            }
         }
     } else {
         if (lane_ok) {
@@ -353,6 +397,7 @@ static void adas_state_machine(
                     now - degraded_since).count();
                 if (ms >= cfg.emergency_threshold_ms) {
                     adas_state      = AdasState::EMERGENCY_STOP;
+                    emergency_since = now;
                     recovery_frames = 0;
                     printf("[ADAS] → EMERGENCY_STOP\n");
                     if (!estop_sent) {
@@ -596,6 +641,7 @@ int main() {
     int       degraded_frames = 0;
     int       recovery_frames = 0;
     auto      degraded_since  = std::chrono::steady_clock::now();
+    auto      emergency_since = std::chrono::steady_clock::now();
     auto      last_tick       = std::chrono::steady_clock::now();
     bool      lane_was_stale  = true;
     bool      joy_was_stale   = true;
@@ -675,7 +721,7 @@ int main() {
         if (drive_mode == DriveMode::AUTONOMOUS)
             adas_state_machine(lane_ok || oa_maneuver_active, now, cfg, adas_state,
                                degraded_frames, recovery_frames, degraded_since,
-                               estop_sent, lka, can);
+                               emergency_since, estop_sent, lka, can);
 
         // ── Drive ─────────────────────────────────────────────────────────────
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
