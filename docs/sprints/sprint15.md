@@ -28,19 +28,18 @@
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
   - [ ] Full Integration of ADAS into Cluster (8)
 ---
+## **Total Sprint Points: 105 (89 + 16)**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
 | **João**  | Vehicle-to-Infrastructure (21) + Emergency Vehicle Priority (13) | 34 | |
-| **Ruben** | Car hardware remodeling (13) | 13 | |
 | **David** | ADAS Manager Tuning (13) + Deploy GitHub releases directly to the car (13) | 26 | |
-| **Vasco** | Retrain YOLO model (8) + Emergency Vehicle Priority (13) | 21 | |
+| **Vasco** | Emergency Vehicle Priority (13) + Retrain YOLO model (8) | 21 | |
 | **Diogo** | Integration of Traffic Sign Recognition into ADAS Manager (8) + Full Integration of ADAS into Cluster (8) + Deploy GitHub releases directly to the car (13) | 29 | |
+| **Ruben** | Car hardware remodeling (13) | 13 | |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
-
-**Total Sprint Points: 105 (89 + 16)**
 
 ---
 
