@@ -340,7 +340,7 @@ void MX_ThreadX_Init(void)
 
   /* USER CODE END Before_Kernel_Start */
 
-  tx_kernel_enter();
+  tx_kernel_enter(); // Serve para iniciar o kernel do ThreadX e começar a execução das threads criadas. O controle é transferido para o ThreadX a partir deste ponto.
 
   /* USER CODE BEGIN Kernel_Start_Error */
 

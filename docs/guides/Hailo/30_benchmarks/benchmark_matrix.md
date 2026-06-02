@@ -9,7 +9,23 @@ Comparar as quatro opções E2E de forma justa e decidir qual deve seguir para a
 - **C:** `UFLDv2 + YOLOv8n-seg`
 - **D:** `SegFormer + YOLOv8s`
 
-## O que medir
+# ===== CENÁRIOS =====
+for SC in normal curva cruzamento sombra; do
+  # YOLOv8s
+  python3 /data/scripts/yolo_realtime/inference_camera_scalercrop_yolov8s.py 60 --save \
+    --output /data/results/bench_runs/yolov8s/demo_yolov8s_${SC}.mp4 \
+    | tee /data/results/bench_runs/yolov8s/yolov8s_${SC}.log
+
+  # YOLOv8n-seg
+  python3 /data/scripts/yolo_realtime/inference_camera_scalercrop_yolov8n_seg.py 60 --save \
+    --output /data/results/bench_runs/yolov8n_seg/demo_yolov8n_seg_${SC}.mp4 \
+    | tee /data/results/bench_runs/yolov8n_seg/yolov8n_seg_${SC}.log
+
+  # YOLO26n-seg
+  python3 /data/scripts/yolo_realtime/inference_camera_scalercrop_yolo26n_seg.py 60 --save \
+    --output /data/results/bench_runs/yolo26n_seg/demo_yolo26n_seg_${SC}.mp4 \
+    | tee /data/results/bench_runs/yolo26n_seg/yolo26n_seg_${SC}.log
+done## O que medir
 - `FPS` E2E médio e mínimo.
 - Latência `p50`, `p95`, `p99`.
 - `CPU` média e máxima.
