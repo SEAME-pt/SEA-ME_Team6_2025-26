@@ -17,28 +17,8 @@ static TX_MUTEX *motor_i2c_mutex = NULL;
 // Debug flag - set to 1 to see I2C writes (disabled now that it works)
 #define MOTOR_DEBUG_ENABLED 0
 
-// Re-send protection: only transmit if command or speed changed per channel
-static uint8_t last_cmd_cha   = 0xFF;
-static uint8_t last_speed_cha = 0xFF;
-static uint8_t last_cmd_chb   = 0xFF;
-static uint8_t last_speed_chb = 0xFF;
-
 // External mutex for printf protection
 extern TX_MUTEX printf_mutex;
-
-/**
-  * @brief  Map percentage speed (0-100) to PWM value with deadzone & max limits
-  * @param  speed: 0 to 100 (%)
-  * @retval PWM value (0, or MOTOR_MIN_PWM to MOTOR_MAX_PWM)
-  */
-static uint8_t map_speed_to_pwm(uint8_t speed)
-{
-    if (speed == 0) return 0;
-    if (speed >= 100) return MOTOR_MAX_PWM;
-
-    /* Mapeia a percentagem (1 a 99) para o intervalo utilizável (MIN a MAX) */
-    return (uint8_t)(MOTOR_MIN_PWM + ((speed - 1) * (MOTOR_MAX_PWM - MOTOR_MIN_PWM) / 99));
-}
 
 /**
   * @brief  Send command to single motor channel (Grove protocol)
@@ -61,8 +41,7 @@ static HAL_StatusTypeDef Motor_SendCommand(uint8_t cmd, uint8_t channel, uint8_t
     tx_mutex_put(&printf_mutex);
 #endif
 
-    // Espera ~5ms sem bloquear o CPU (substitui o HAL_Delay de 50ms)
-    tx_thread_sleep(5);
+    HAL_Delay(10); // Increased delay for ATmega8 processing
     return status;
 }
 
@@ -86,8 +65,7 @@ static HAL_StatusTypeDef Motor_SendSimpleCommand(uint8_t cmd, uint8_t value)
     tx_mutex_put(&printf_mutex);
 #endif
 
-    // Espera ~2ms sem bloquear o CPU (substitui o HAL_Delay de 10ms)
-    tx_thread_sleep(2);
+    HAL_Delay(10); // Increased delay for ATmega8 processing
     return status;
 }
 
@@ -103,8 +81,10 @@ HAL_StatusTypeDef Motor_Init(SystemCtx* ctx, I2C_HandleTypeDef *hi2c)
     current_speed = 0;
     motor_i2c_mutex = &ctx->i2c1_mutex;
 
-    // É seguro manter HAL_Delay aqui porque ocorre no setup (antes de o ThreadX arrancar)
-    HAL_Delay(100);
+    HAL_Delay(100); // Wait for motor driver power-up
+
+    // Note: Do NOT send NOT_STANDBY or initial BRAKE - they interfere!
+    // Module is ready to receive motor commands directly
 
     return HAL_OK;
 }
@@ -125,12 +105,6 @@ HAL_StatusTypeDef Motor_Stop(void)
     status = Motor_SendCommand(MOTOR_CMD_BRAKE, MOTOR_CHB, 0);
     if (status != HAL_OK) return status;
 
-    // Reset re-send state so next direction command always goes through
-    last_cmd_cha   = 0xFF;
-    last_speed_cha = 0xFF;
-    last_cmd_chb   = 0xFF;
-    last_speed_chb = 0xFF;
-
     current_speed = 0;
     return HAL_OK;
 }
@@ -144,28 +118,19 @@ HAL_StatusTypeDef Motor_Forward(uint8_t speed)
 {
     HAL_StatusTypeDef status;
 
+    // Limit speed to 100%
     if (speed > 100) speed = 100;
 
-    // Converter percentagem para PWM aplicando limites MIN e MAX
-    uint8_t pwm_value = map_speed_to_pwm(speed);
+    // Convert percentage to 0-255
+    uint8_t pwm_value = (uint8_t)((speed * 255) / 100);
 
-    // Send CW (clockwise/forward) command to Motor A (only if changed)
-    if (MOTOR_CMD_CW != last_cmd_cha || pwm_value != last_speed_cha)
-    {
-        status = Motor_SendCommand(MOTOR_CMD_CW, MOTOR_CHA, pwm_value);
-        if (status != HAL_OK) return status;
-        last_cmd_cha   = MOTOR_CMD_CW;
-        last_speed_cha = pwm_value;
-    }
+    // Send CW (clockwise/forward) command to Motor A
+    status = Motor_SendCommand(MOTOR_CMD_CW, MOTOR_CHA, pwm_value);
+    if (status != HAL_OK) return status;
 
-    // Send CW (clockwise/forward) command to Motor B (only if changed)
-    if (MOTOR_CMD_CW != last_cmd_chb || pwm_value != last_speed_chb)
-    {
-        status = Motor_SendCommand(MOTOR_CMD_CW, MOTOR_CHB, pwm_value);
-        if (status != HAL_OK) return status;
-        last_cmd_chb   = MOTOR_CMD_CW;
-        last_speed_chb = pwm_value;
-    }
+    // Send CW (clockwise/forward) command to Motor B
+    status = Motor_SendCommand(MOTOR_CMD_CW, MOTOR_CHB, pwm_value);
+    if (status != HAL_OK) return status;
 
     current_speed = speed;
     return HAL_OK;
@@ -180,28 +145,19 @@ HAL_StatusTypeDef Motor_Backward(uint8_t speed)
 {
     HAL_StatusTypeDef status;
 
+    // Limit speed to 100%
     if (speed > 100) speed = 100;
 
-    // Converter percentagem para PWM aplicando limites MIN e MAX
-    uint8_t pwm_value = map_speed_to_pwm(speed);
+    // Convert percentage to 0-255
+    uint8_t pwm_value = (uint8_t)((speed * 255) / 100);
 
-    // Send CCW (counter-clockwise/backward) command to Motor A (only if changed)
-    if (MOTOR_CMD_CCW != last_cmd_cha || pwm_value != last_speed_cha)
-    {
-        status = Motor_SendCommand(MOTOR_CMD_CCW, MOTOR_CHA, pwm_value);
-        if (status != HAL_OK) return status;
-        last_cmd_cha   = MOTOR_CMD_CCW;
-        last_speed_cha = pwm_value;
-    }
+    // Send CCW (counter-clockwise/backward) command to Motor A
+    status = Motor_SendCommand(MOTOR_CMD_CCW, MOTOR_CHA, pwm_value);
+    if (status != HAL_OK) return status;
 
-    // Send CCW (counter-clockwise/backward) command to Motor B (only if changed)
-    if (MOTOR_CMD_CCW != last_cmd_chb || pwm_value != last_speed_chb)
-    {
-        status = Motor_SendCommand(MOTOR_CMD_CCW, MOTOR_CHB, pwm_value);
-        if (status != HAL_OK) return status;
-        last_cmd_chb   = MOTOR_CMD_CCW;
-        last_speed_chb = pwm_value;
-    }
+    // Send CCW (counter-clockwise/backward) command to Motor B
+    status = Motor_SendCommand(MOTOR_CMD_CCW, MOTOR_CHB, pwm_value);
+    if (status != HAL_OK) return status;
 
     current_speed = speed;
     return HAL_OK;
@@ -212,10 +168,13 @@ HAL_StatusTypeDef Motor_Backward(uint8_t speed)
   * @param  speed: motor speed (0-100%)
   * @retval HAL status
   * @note   This function is deprecated for Grove I2C Motor Driver.
-  * Use Motor_Forward() or Motor_Backward() instead.
+  *         Use Motor_Forward() or Motor_Backward() instead.
   */
 HAL_StatusTypeDef Motor_SetSpeed(uint8_t speed)
 {
+    // Grove protocol requires explicit direction (CW or CCW)
+    // Cannot change speed without knowing direction
+    // For now, just update the current_speed variable
     if (speed > 100) speed = 100;
     current_speed = speed;
     return HAL_OK;
@@ -229,8 +188,10 @@ HAL_StatusTypeDef Motor_SetSpeed(uint8_t speed)
 HAL_StatusTypeDef Motor_SetStandby(uint8_t standby)
 {
     if (standby) {
+        // Enter standby mode
         return Motor_SendSimpleCommand(MOTOR_CMD_STANDBY, 0);
     } else {
+        // Exit standby mode (NOT_STANDBY command)
         return Motor_SendSimpleCommand(MOTOR_CMD_NOT_STANDBY, 0);
     }
 }

@@ -6,8 +6,8 @@ text: The Raspberry Pi 5 and STM32 microcontroller communicate bidirectionally u
 level: '1.8'
 normative: true
 references:
-- type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_8/ASSERTIONS-ASSERT_L0_8.md
+- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_8/ASSERTIONS-ASSERT_L0_8.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

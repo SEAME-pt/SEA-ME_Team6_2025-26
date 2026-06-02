@@ -1,8 +1,0 @@
-# yolo26n_detect_mixed_precision.alls
-# Mixed-precision quantization: INT16 for class score heads, INT8 for rest
-
-normalization1 = normalization([0, 0, 0], [255, 255, 255])
-
-# Parser-compatible mixed-precision command for this SDK build.
-# Reduced to one detect head to keep compile mapping feasible.
-quantization_param([conv94], precision_mode=a16_w16)

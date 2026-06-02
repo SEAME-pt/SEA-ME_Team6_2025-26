@@ -71,11 +71,11 @@ set(Qt6Qml_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Qml")
 set(Qt6Quick_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Quick")
 set(Qt6Network_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Network")
 set(Qt6HostInfo_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6HostInfo")
-set(Qt6Multimedia_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Multimedia")
 
 # Qt6 módulos adicionais
 set(Qt6SerialPort_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6SerialPort")
 set(Qt6Mqtt_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Mqtt")
+set(Qt6Multimedia_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Multimedia")
 set(Qt6WebSockets_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6WebSockets")
 set(Qt6WebChannel_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6WebChannel")
 set(Qt6Sensors_DIR "${AGL_SYSROOT}/usr/lib/cmake/Qt6Sensors")

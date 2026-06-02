@@ -56,15 +56,4 @@ void KS0064_SetAll(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t on);
  */
 void KS0064_SetBrightness(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t level);
 
-/**
- * @brief  Turn the display on or off using a single-byte command.
- *         Requires the RAM to be pre-loaded with the desired pattern (done by
- *         KS0064_Init). Much shorter I2C transaction than KS0064_SetAll.
- * @param  hi2c  Pointer to the I2C handle.
- * @param  addr  7-bit I2C address of the device.
- * @param  on    1 = display on (shows pre-loaded pattern), 0 = display off.
- * @return HAL status – check for HAL_OK to detect I2C bus failures.
- */
-HAL_StatusTypeDef KS0064_SetDisplay(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t on);
-
 #endif /* INC_KS0064_H_ */
