@@ -59,9 +59,6 @@
 
 ---
 
-
-
-
 ## 🗺️ ADAS Module Roadmap (12 weeks — 6 sprints)
 
 > Sprint 9 is the **first of 6 sprints** in the ADAS module. Below is a high-level roadmap to guide our planning across the full module.
@@ -174,4 +171,17 @@
   - EXPECT-L0-28 - "Exterior temperature measurement accuracy"
   - EXPECT-L0-29 - "Driver presence condition"
   - EXPECT-L0-30 - "Car ready to next module 2"
-  - EXPECT-L0-31 - "Unit Tests"
+  - EXPECT-L0-31 - "OTA Update System Implementation (SOTA, COTA, FOTA, RAUC)"
+
+## 📸 Evidence Links
+
+### EXPECT-L0-31 — OTA Update System Implementation
+Evidence for OTA implementation with RAUC A/B partition scheme:
+
+- [OTA GitHub Action Workflow](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Action.png) <!-- EXPECT-L0-31 -->
+- [OTA Release Tags](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Tags.png) <!-- EXPECT-L0-31 -->
+- [OTA Release Page](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-Release.png) <!-- EXPECT-L0-31 -->
+- [OTA Script Running on RPi4](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r4-script.jpeg) <!-- EXPECT-L0-31 -->
+- [OTA Script Running on RPi5](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/docs/demos/OTA-r5-script.jpeg) <!-- EXPECT-L0-31 -->
+- [RAUC Installation Scripts](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota/rauc) <!-- EXPECT-L0-31 -->
+- [OTA Documentation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/docs/guides/OTA) <!-- EXPECT-L0-31 -->

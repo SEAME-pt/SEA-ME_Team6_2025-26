@@ -16,14 +16,14 @@ Item {
     property real maxBattery: 12.6
     property real minBattery: 9.82
     property real currAutonomy: 0
-    property string currBatteryIcon: "qrc:/assets/icons/battery.png"
+    property string currBatteryIcon: "qrc:/assets/icons/battery.svg"
     property bool isBatteryWarning: false
     property bool isBatteryDanger: false
     property string speedUnit: "km/h"
     //? Helpers
     property real mainAngleStart: 245
     property real mainAngleSweep: 230
-    property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep 
+    property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep
     property real secundaryAngleSweep: 80
     property real  activeIndex: (displaySpeed / maxSpeed) * (innerTotalTicks - 1)
     property int bottomActiveIndex:  Math.round(batteryNormalized() * (bottomTotalTicks - 1))
@@ -45,10 +45,11 @@ Item {
 
     Behavior on displaySpeed {
         NumberAnimation {
-            duration: 500
+            duration: 250
             easing.type: Easing.InOutQuad
         }
     }
+
     Behavior on displayBattery {
         NumberAnimation {
             duration: 500

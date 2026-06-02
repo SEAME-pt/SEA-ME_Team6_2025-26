@@ -1,7 +1,8 @@
 ---
 id: EVID-L0-17
 header: AI tools usage documented
-text: The repository contains AI pair programming guidelines and documentation showing AI-assisted development practices.
+text: The repository contains AI pair programming guidelines and documentation showing
+  AI-assisted development practices.
 level: '1.17'
 normative: true
 references:
@@ -11,10 +12,12 @@ references:
   path: docs/guides/genAI-pair-programming-guidelines.md
 - type: file
   path: docs/guides/generative-ai-for-beginners.md
+- type: file
+  path: docs/guides/Generative-AI-and-LLMs-for-Dummies.pdf
 score: 1.0
 reviewers:
-  - name: Joao Jesus Silva
-    email: joao.silva@seame.pt
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

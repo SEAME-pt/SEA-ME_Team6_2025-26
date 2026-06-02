@@ -2,24 +2,78 @@
 
 This guide covers the validator architecture and implementation for the Trustable Software Framework (TSF) in the SEA:ME Team 6 project.
 
-**Last Updated:** February 2026
+**Last Updated:** April 2026
+
+Related guide:
+- `docs/TSF/tsf_implementation/TSF_docs/REFERENCES_GUIDE.md` (reference structure and placeholder policy)
+
+## April 2026 Validator Update
+
+- Added semantic checks in content validation for ASSUMP validator configuration.
+- ASSUMP entries using template/default values (for example `TSF tooling`) are now flagged by `--check`.
+- Placeholder evidence marker is treated as valid only for EVID context and flagged elsewhere.
+- This closes a previous visibility gap where EVID placeholders were detected but equivalent ASSUMP defaults were not.
 
 ---
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Two Types of Validators](#two-types-of-validators)
-3. [Structure Validators (CI)](#structure-validators-ci)
-4. [Content Validators (TruDAG)](#content-validators-trudag)
-5. [Validator Configuration](#validator-configuration)
-6. [Score Calculation](#score-calculation)
-7. [Creating Custom Validators](#creating-custom-validators)
-8. [Troubleshooting](#troubleshooting)
+1. [Script execution commands](#1-script-execution-commands)
+2. [Overview](#2-overview)
+3. [Why validators matter](#3-why-validators-matter)
+4. [Two types of validators](#4-two-types-of-validators)
+5. [Structure validators (CI)](#5-structure-validators-ci)
+6. [Content validators (TruDAG)](#6-content-validators-trudag)
+7. [Validator configuration](#7-validator-configuration)
+8. [Score calculation](#8-score-calculation)
+9. [Creating custom validators](#9-creating-custom-validators)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Best practices](#11-best-practices)
+12. [Post 0/124 fixes (Mar 2026)](#12-post-0124-fixes-mar-2026)
 
 ---
 
-## Overview
+## 1. Script Execution Commands
+
+Use the unified TSF script for validator-related operations.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Validate front-matter, links, and formatting
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Refresh evidence references before scoring
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG scoring/publishing with custom validators
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Execute complete flow
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Validate front-matter, links, and formatting
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Refresh evidence references before scoring
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG scoring/publishing with custom validators
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Execute complete flow
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+---
+
+## 2. Overview
 
 The TSF implementation uses **two types of validators** for different purposes:
 
@@ -32,9 +86,61 @@ This separation ensures:
 - ✅ CI validators catch format errors early (before merge)
 - ✅ TruDAG validators assess quality and completeness (for scoring)
 
+## 3. Why Validators Matter
+
+In TSF, validators and references solve different but complementary problems:
+
+- `references` provide traceability links to artifacts (files/URLs) and parent/child statements.
+- `validators` provide automated confidence scoring when assumptions claim preconditions (hardware/software/environment) are true.
+
+Why we created them in this project:
+
+- to avoid manual-only review of 100+ items,
+- to make score changes reproducible across runs,
+- to surface missing evidence early in `--check`/`--validate`,
+- to keep requirement chains auditable from EXPECT -> ASSERT -> EVID/ASSUMP.
+
+References are documented in:
+- `docs/TSF/tsf_implementation/TSF_docs/REFERENCES_GUIDE.md`
+
+### Plugin Layout (Why You See 3 Paths)
+
+Current runtime paths:
+
+1. `.dotstop_extensions/` - real source of custom validators/references.
+- Runtime reference implementation source: `.dotstop_extensions/references.py`.
+2. `localplugins/` - symlink to `.dotstop_extensions` used by TruDAG import conventions.
+- Runtime import alias used by TruDAG: `localplugins/references.py`.
+- `localplugins` is a symlink to `.dotstop_extensions` (same code, different import path).
+
+3. `docs/TSF/tsf_implementation/.dotstop_extensions` - symlink used when running from `tsf_implementation`.
+- `docs/TSF/tsf_implementation/.dotstop_extensions` is a symlink to the same root folder to support runs from inside `tsf_implementation`.
+- Runtime execution symlink in TSF working dir: `docs/TSF/tsf_implementation/.dotstop_extensions`.
+
+These are not three independent implementations; they point to the same plugin code.
+- So there are three visible paths, but one practical codebase.
+
+Why this exists:
+
+- TruDAG/plugin loading expects `localplugins` import conventions in this workflow.
+- TSF scripts run from `docs/TSF/tsf_implementation`, where a local `.dotstop_extensions` path is expected.
+- Symlinks keep compatibility without duplicating plugin code.
+
+How theory becomes practice:
+
+1. You write `references:` blocks in item frontmatter (`items/expectations`, `items/assertions`, `items/evidences`, `items/assumptions`).
+2. TruDAG loads reference types (`file`, `url`) and resolves them through built-in and plugin classes.
+3. Custom URL handling in `.dotstop_extensions/references.py` applies repository-specific safeguards.
+4. Resolved reference content feeds hashing/scoring and appears in generated trustable artifacts.
+
+Design decision (April 2026):
+
+- Custom `FileReference` was removed to avoid symbol collision with built-in TruDAG `FileReference`.
+- Built-in file behavior remains active, and custom behavior is kept focused on URL reference handling.
+
 ---
 
-## Two Types of Validators
+## 4. Two Types of Validators
 
 ### Structure Validators (CI)
 
@@ -61,7 +167,7 @@ This separation ensures:
 
 ---
 
-## Structure Validators (CI)
+## 5. Structure Validators (CI)
 
 ### File Location
 
@@ -131,7 +237,7 @@ jobs:
 
 ---
 
-## Content Validators (TruDAG)
+## 6. Content Validators (TruDAG)
 
 ### File Location
 
@@ -190,7 +296,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Validator Configuration
+## 7. Validator Configuration
 
 ### In ASSUMP Items
 
@@ -265,7 +371,7 @@ evidence:
 
 ---
 
-## Score Calculation
+## 8. Score Calculation
 
 ### Scoring Formula
 
@@ -301,7 +407,7 @@ Result: `score = 2/3 = 0.67`
 
 ---
 
-## Creating Custom Validators
+## 9. Creating Custom Validators
 
 ### Step 1: Add Function to validators.py
 
@@ -358,7 +464,7 @@ evidence:
 
 ---
 
-## Troubleshooting
+## 10. Troubleshooting
 
 ### "Cannot find a validator function for type X"
 
@@ -416,7 +522,7 @@ evidence:
 
 ---
 
-## Best Practices
+## 11. Best Practices
 
 ### 1. Be Specific
 
@@ -454,3 +560,20 @@ Ensure components/dependencies are mentioned in:
 # Quick validation check
 source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
 ```
+
+---
+
+## 12. Post 0/124 Fixes (Mar 2026)
+
+Recent validator-related fixes applied after scoring dropped to `0/124`:
+
+1. Signature compatibility fix:
+- `validators.py` now imports `yaml` from `trudag.dotstop.core.validator`.
+- This aligns function annotations with TruDAG strict `inspect.signature()` matching.
+
+2. Configuration compatibility fix:
+- `validate_software_dependencies` now accepts `components` as well as `dependencies` and `packages`.
+- This fixed assumptions that were configured with `evidence.configuration.components` and incorrectly scoring `0.0`.
+
+3. Result:
+- the `ASSUMP_L0_23` to `ASSUMP_L0_31` block moved from `0.0` to `1.0` after revalidation.

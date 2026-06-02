@@ -1,7 +1,8 @@
 ---
 id: EVID_L0_5
 header: Qt application demonstrated
-text: The repository contains screenshots and QML guide showing a basic Qt application running on the system.
+text: The repository contains screenshots and QML guide showing a basic Qt application
+  running on the system.
 level: '1.5'
 normative: true
 references:
@@ -9,10 +10,20 @@ references:
   path: docs/guides/QML-guide.md
 - type: file
   path: README.md
+- type: file
+  path: docs/guides/QML-guide.md
+- type: file
+  path: src/cluster/README.md
+- type: file
+  path: docs/guides/MQTT_spike.md
+- type: file
+  path: src/setup/scripts/r5-qt6-build.sh
+- type: file
+  path: src/setup/scripts/qt6-build.sh
 score: 1.0
 reviewers:
-  - name: Joao Jesus Silva
-    email: joao.silva@seame.pt
+- name: Joao Jesus Silva
+  email: joao.silva@seame.pt
 review_status: accepted
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.

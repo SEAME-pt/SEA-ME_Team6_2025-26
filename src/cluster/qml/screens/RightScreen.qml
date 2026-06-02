@@ -14,6 +14,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 75
-        isWarningActive: adas.frontDistance < 200
+        isWarningActive: adas.frontDistance < 0
+        //isWarningActive: false
     }
 }

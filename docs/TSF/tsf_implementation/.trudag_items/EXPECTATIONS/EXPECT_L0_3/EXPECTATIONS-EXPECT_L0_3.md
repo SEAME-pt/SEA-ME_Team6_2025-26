@@ -5,8 +5,8 @@ text: The Raspberry Pi 5 runs a Linux environment capable of executing Qt applic
 level: '1.3'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_3/ASSERTIONS-ASSERT_L0_3.md
-  type: file
+- type: file
+  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_3/ASSERTIONS-ASSERT_L0_3.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

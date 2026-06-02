@@ -1,6 +1,66 @@
 # 🧩 What is TSF (Trustable Software Framework)?
 
-## Overview
+## Index
+
+1. [Script execution commands](#1-script-execution-commands)
+2. [Overview](#2-overview)
+3. [Core concepts](#3-core-concepts)
+4. [TSF scaffolding](#4-tsf-scaffolding)
+5. [TruDAG tool](#5-trudag-tool)
+6. [Scoring system](#6-scoring-system)
+7. [TSF in our project](#7-tsf-in-our-project)
+8. [Benefits of TSF](#8-benefits-of-tsf)
+9. [Current status](#9-current-status)
+10. [References](#10-references)
+11. [Implementation update (Mar 2026)](#11-implementation-update-mar-2026)
+
+## 1. Script Execution Commands
+
+## April 2026 Update
+
+- Resolved repeated TruDAG warning caused by local plugin `FileReference` name collision.
+- Clarified that interrupted runs (`130`/`143`) are signal-based interruptions, not TSF model errors.
+- Content checks now explicitly flag ASSUMP semantic defaults alongside EVID placeholders.
+
+From repository root.
+
+Short form (from repo root, after activating venv):
+
+```bash
+source .venv/bin/activate
+
+# Check TSF items
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence from sprint markers
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Run everything
+python3 docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+Full form (from anywhere, includes cd + venv activation):
+
+```bash
+# Check TSF items
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --check
+
+# Sync evidence from sprint markers
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --sync
+
+# Run TruDAG validate/score/publish
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --validate
+
+# Run everything
+cd /home/seame/Documents/SEA-ME_Team6_2025-26 && source /home/seame/Documents/SEA-ME_Team6_2025-26/.venv/bin/activate && python3 /home/seame/Documents/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/scripts/open_check_sync_update_validate_run_publish_tsfrequirements.py --all
+```
+
+---
+
+## 2. Overview
 
 The **Trustable Software Framework (TSF)** is an open-source methodology and toolset designed to manage requirements, evidence, and verification activities for safety- and mission-critical software — especially in aerospace, defense, automotive, and medical domains.
 
@@ -10,7 +70,7 @@ The **Trustable Software Framework (TSF)** is an open-source methodology and too
 
 ---
 
-## Core Concepts
+## 3. Core Concepts
 
 ### What TSF Does
 
@@ -51,7 +111,7 @@ This graph is stored in `.dotstop.dot` and managed by `trudag`.
 
 ---
 
-## TSF Scaffolding
+## 4. TSF Scaffolding
 
 The minimal project structure required to apply TSF:
 
@@ -106,7 +166,7 @@ The `trudag` CLI manages the TSF lifecycle:
 
 ---
 
-## TruDAG Tool
+## 5. TruDAG Tool
 
 ### What is trudag?
 
@@ -116,11 +176,112 @@ The `trudag` CLI manages the TSF lifecycle:
 - Calculates trust scores
 - Publishes reports
 
+### System Requirements
+
+| Software | Version | Purpose |
+|----------|---------|---------|
+| **Python** | 3.11+ | Runtime (required by trudag) |
+| **pip** | Latest | Package manager |
+| **git** | Latest | Version control |
+
+**Optional:**
+| Software | Purpose |
+|----------|---------|
+| **graphviz** | Graph rendering - only needed for `trudag plot` command |
+
+---
+
 ### Installation
 
+#### 🍎 macOS
+
 ```bash
-pip install trudag
+# Install Homebrew (if not installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Add to PATH (Apple Silicon)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Install Python 3.11
+brew install python@3.11
+
+# Create virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
 ```
+
+#### 🐧 Linux (Ubuntu/Debian)
+
+```bash
+# Install system dependencies
+sudo apt update
+sudo apt install -y software-properties-common git curl
+
+# Add Python PPA and install Python 3.11
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.11 python3.11-venv python3.11-dev
+
+# Create virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
+```
+
+#### 🪟 Windows
+
+```powershell
+# 1. Download and install Python 3.11+ from python.org
+#    ✅ Check "Add Python to PATH" during installation
+
+# 2. Download and install Git from git-scm.com
+
+# 3. Create virtual environment (PowerShell)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 4. Install trudag
+pip install --upgrade pip
+pip install trustable --index-url https://gitlab.eclipse.org/api/v4/projects/12202/packages/pypi/simple
+pip install pyyaml
+```
+
+#### Verify Installation
+
+```bash
+trudag --help
+# Should display trudag usage information
+```
+
+#### 📊 Optional: Install Graphviz
+
+> **Note:** Graphviz is **optional**. It is only needed if you want to use `trudag plot` to generate visual images of the dependency graph (PNG/SVG).
+>
+> For the normal workflow (`--check`, `--sync`, `--validate`), **graphviz is NOT required** because:
+> - The `graph.dot` file is generated as a text file by the Python script  
+> - `trudag` reads and processes the `.dot` file without needing to render it visually
+
+```bash
+# macOS
+brew install graphviz
+
+# Linux
+sudo apt install -y graphviz
+
+# Windows: Download from graphviz.org and add to PATH
+```
+
+---
 
 ### Basic Commands
 
@@ -140,7 +301,7 @@ trudag lint
 
 ---
 
-## Scoring System
+## 6. Scoring System
 
 TSF assigns scores from **0.0 to 1.0** based on:
 - Evidence availability
@@ -164,7 +325,7 @@ Custom validators can automatically verify assumptions:
 
 ---
 
-## TSF in Our Project
+## 7. TSF in Our Project
 
 ### Source of Truth Hierarchy
 
@@ -196,7 +357,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Benefits of TSF
+## 8. Benefits of TSF
 
 ### For Development Teams
 - ✅ **Version-controlled requirements** (alongside code)
@@ -217,7 +378,7 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## Current Status
+## 9. Current Status
 
 - **Framework:** Eclipse TSF with TruDAG
 - **License:** EPL 2.0 and CC BY-SA 4.0
@@ -226,9 +387,21 @@ source .venv/bin/activate && python3 docs/TSF/tsf_implementation/scripts/open_ch
 
 ---
 
-## References
+## 10. References
 
 - [Codethink TSF GitLab](https://gitlab.com/CodethinkLabs/trustable/trustable)
 - [Eclipse TSF Project](https://projects.eclipse.org/projects/technology.tsf)
 - [TruDAG Documentation](https://gitlab.com/CodethinkLabs/trustable/trudag)
 - [Doorstop (Foundation)](https://github.com/doorstop-dev/doorstop)
+
+---
+
+## 11. Implementation Update (Mar 2026)
+
+In our current TSF implementation, a scoring regression to `0/124` was addressed by:
+
+1. fixing symlink and path handling in `setup_trudag_clean.sh`
+2. aligning custom validator signatures with TruDAG discovery requirements
+3. making `validate_software_dependencies` accept `components` as a valid configuration key
+
+Current score state after these corrections: `82/124`.

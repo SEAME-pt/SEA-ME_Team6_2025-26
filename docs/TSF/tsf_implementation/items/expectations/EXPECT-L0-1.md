@@ -3,7 +3,7 @@ id: EXPECT-L0-1
 header: System architecture defined
 text: The demonstrator car system has a documented architecture that describes all
   hardware and software components and their interactions.
-level: 1.1
+level: '1.1'
 normative: true
 references:
 - type: file

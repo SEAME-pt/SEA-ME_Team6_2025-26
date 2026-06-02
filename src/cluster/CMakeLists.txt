@@ -147,5 +147,4 @@ endif()
 message(STATUS "Linking to: Backend")
 message(STATUS "========================================")
 
-
 # cmake -DSANITIZER=address .. && make && ASAN_OPTIONS=detect_leaks=1:halt_on_error=0:print_stacktrace=1:log_path=/tmp/asan.log ./ClusterApp 2>&1 | tee /tmp/cluster_run.log

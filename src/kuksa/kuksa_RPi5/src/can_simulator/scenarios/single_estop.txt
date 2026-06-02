@@ -1,0 +1,9 @@
+# Emergency stop: trigger close obstacle then release
+@init estop_active=0 estop_source=0 estop_mm=4000 estop_reason=0
+
+t=0     estop_active=0 estop_mm=4000
+t=1500  estop_active=0 estop_mm=1200
+t=2500  estop_active=1 estop_mm=450  estop_reason=1
+t=3500  estop_active=1 estop_mm=300  estop_reason=1
+t=5000  estop_active=0 estop_mm=1200 estop_reason=0
+t=6500  estop_active=0 estop_mm=4000 estop_reason=0

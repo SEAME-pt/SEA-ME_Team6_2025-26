@@ -24,10 +24,12 @@ import os
 import re
 import sys
 import subprocess
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum
+from urllib.parse import urlparse, unquote
 
 
 # ============================================================================
@@ -108,11 +110,92 @@ def print_startup_diagnostics():
     return deps_ok
 
 
+def is_vscode_cli_available() -> bool:
+    """Return True when VSCode CLI command `code` is available in PATH."""
+    return shutil.which('code') is not None
+
+
+def open_paths_in_editor(paths: List[Path]) -> bool:
+    """Open one or more paths in a GUI editor, with macOS fallback to VS Code app."""
+    opened_any = False
+
+    if not paths:
+        return False
+
+    if is_vscode_cli_available():
+        for path in paths:
+            subprocess.run(['code', str(path)], check=False)
+            opened_any = True
+        return opened_any
+
+    if sys.platform == 'darwin':
+        for path in paths:
+            subprocess.run(['open', '-a', 'Visual Studio Code', str(path)], check=False)
+            opened_any = True
+        return opened_any
+
+    return False
+
+
+def resolve_trudag_command(config) -> Optional[str]:
+    """Resolve the trudag executable from local venvs first, then PATH."""
+    candidates = [
+        config.repo_root / '.venv' / 'bin' / 'trudag',
+        config.tsf_implementation / '.venv' / 'bin' / 'trudag',
+    ]
+    for candidate in candidates:
+        if candidate.exists() and os.access(candidate, os.X_OK):
+            return str(candidate)
+
+    return shutil.which('trudag')
+
+
 # Import yaml after dependency check setup (will fail gracefully if not installed)
 try:
     import yaml
 except ImportError:
     yaml = None
+
+
+# Explicit marker used to flag non-real evidence placeholders.
+PLACEHOLDER_EVIDENCE_MARKER = "TSF_PLACEHOLDER_EVIDENCE"
+PLACEHOLDER_EVIDENCE_URL = "https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md"
+
+
+def is_placeholder_evidence_reference(ref: Any) -> bool:
+    """Return True when a reference entry is explicitly marked as placeholder evidence."""
+    if not isinstance(ref, dict):
+        return False
+    description = str(ref.get('description', '')).strip()
+    return description.upper() == PLACEHOLDER_EVIDENCE_MARKER
+
+
+def github_url_to_repo_path(url: str) -> Optional[str]:
+    """Convert in-repo GitHub blob/tree URLs to workspace-relative file paths."""
+    if not isinstance(url, str):
+        return None
+
+    parsed = urlparse(url)
+    if parsed.netloc.lower() != 'github.com':
+        return None
+
+    path = parsed.path.strip('/')
+    parts = path.split('/')
+    # Expected: <owner>/<repo>/(blob|tree)/<branch>/<path...>
+    if len(parts) < 6:
+        return None
+
+    owner, repo, mode = parts[0], parts[1], parts[2]
+    if owner != 'SEAME-pt' or repo != 'SEA-ME_Team6_2025-26':
+        return None
+    if mode not in ('blob', 'tree'):
+        return None
+
+    # Skip branch segment and keep the path inside the repository.
+    repo_path = '/'.join(parts[4:]).strip()
+    if not repo_path:
+        return None
+    return unquote(repo_path)
 
 
 # ============================================================================
@@ -199,8 +282,17 @@ class Config:
     
     def _resolve_paths(self):
         """Resolve path variables in configuration."""
-        # Get base paths
-        self.repo_root = Path(self._config['paths']['repo_root'])
+        # Get base paths - support "auto" to detect from script location
+        repo_root_config = self._config['paths']['repo_root']
+        
+        if repo_root_config == "auto" or not repo_root_config:
+            # Auto-detect: script is at repo/docs/TSF/tsf_implementation/scripts/
+            # So repo_root is 4 levels up
+            script_dir = Path(__file__).parent.resolve()
+            self.repo_root = script_dir.parent.parent.parent.parent
+        else:
+            self.repo_root = Path(repo_root_config)
+        
         self.tsf_implementation = self.repo_root / "docs/TSF/tsf_implementation"
         self.items_dir = self.tsf_implementation / "items"
         self.scripts_dir = self.tsf_implementation / "scripts"
@@ -395,6 +487,139 @@ class EvidenceParser:
                 all_evidence[evidence.expect_id].append(evidence)
         
         return all_evidence
+    
+    def scan_evidence_folders(self, table_rows: List['TableRow']) -> Dict[str, List[EvidenceLink]]:
+        """
+        Scan evidence folders for files that might be evidence for requirements:
+        - docs/demos, docs/guides, docs/images, docs/presentations
+        - src/ (source code folder)
+        
+        Uses filename pattern matching to associate files with EXPECT-L0-X.
+        """
+        evidence_folders = [
+            self.config.repo_root / "docs" / "demos",
+            self.config.repo_root / "docs" / "guides",
+            self.config.repo_root / "docs" / "images",
+            self.config.repo_root / "docs" / "presentations",
+            self.config.repo_root / "src",  # Source code folder
+        ]
+        
+        # Build keyword map from requirements
+        # Maps keywords to requirement IDs
+        keyword_map = self._build_keyword_map(table_rows)
+        
+        folder_evidence: Dict[str, List[EvidenceLink]] = {}
+        
+        for folder in evidence_folders:
+            if not folder.exists():
+                continue
+            
+            # Scan all files recursively
+            for file_path in folder.rglob('*'):
+                if file_path.is_dir():
+                    continue
+                
+                # Skip non-evidence files
+                # Include: images, videos, docs, code files
+                valid_extensions = [
+                    # Images and media
+                    '.png', '.jpg', '.jpeg', '.gif', '.webm', '.mp4', '.svg',
+                    # Documents
+                    '.md', '.pdf', '.txt',
+                    # Code files (for src/ folder)
+                    '.py', '.cpp', '.c', '.h', '.hpp', '.qml', '.js', '.ts',
+                    '.sh', '.yaml', '.yml', '.json', '.cmake', '.dockerfile',
+                ]
+                if file_path.suffix.lower() not in valid_extensions:
+                    continue
+                
+                # Try to match file to a requirement
+                filename_lower = file_path.stem.lower().replace('-', ' ').replace('_', ' ')
+                
+                matched_expects = set()
+                
+                # Check for direct EXPECT/L0 reference in filename
+                l0_match = re.search(r'l0[_\-\s]?(\d+)', filename_lower)
+                if l0_match:
+                    expect_id = f"EXPECT-L0-{l0_match.group(1)}"
+                    matched_expects.add(expect_id)
+                
+                expect_match = re.search(r'expect[_\-\s]?l0[_\-\s]?(\d+)', filename_lower)
+                if expect_match:
+                    expect_id = f"EXPECT-L0-{expect_match.group(1)}"
+                    matched_expects.add(expect_id)
+                
+                # Check for keyword matches
+                for keyword, expect_ids in keyword_map.items():
+                    if keyword in filename_lower:
+                        for eid in expect_ids:
+                            matched_expects.add(eid)
+                
+                # Create evidence links for matched expects
+                for expect_id in matched_expects:
+                    if expect_id not in folder_evidence:
+                        folder_evidence[expect_id] = []
+                    
+                    # Use local repository-relative path for stable hashing in TruDAG.
+                    rel_path = str(file_path.relative_to(self.config.repo_root))
+                    
+                    # Determine link type
+                    link_type = "image" if file_path.suffix.lower() in ['.png', '.jpg', '.jpeg', '.gif'] else "link"
+                    
+                    evidence = EvidenceLink(
+                        expect_id=expect_id,
+                        description=file_path.stem.replace('-', ' ').replace('_', ' '),
+                        url=rel_path,
+                        link_type=link_type,
+                        source_file=rel_path
+                    )
+                    
+                    # Avoid duplicates
+                    existing_urls = [e.url for e in folder_evidence[expect_id]]
+                    if rel_path not in existing_urls:
+                        folder_evidence[expect_id].append(evidence)
+        
+        return folder_evidence
+    
+    def _build_keyword_map(self, table_rows: List['TableRow']) -> Dict[str, List[str]]:
+        """
+        Build a map of keywords to EXPECT IDs based on requirement content.
+        """
+        keyword_map: Dict[str, List[str]] = {}
+        
+        # Define keyword associations for common topics
+        topic_keywords = {
+            'ota': ['ota', 'update', 'rauc', 'bundle', 'release'],
+            'can': ['can', 'canbus', 'can-bus', 'can bus'],
+            'threadx': ['threadx', 'rtos', 'stm32', 'stm'],
+            'qt': ['qt', 'qml', 'cluster', 'hmi', 'display', 'mockup'],
+            'agl': ['agl', 'linux', 'boot'],
+            'architecture': ['architecture', 'scheme', 'layout', 'diagram'],
+            'test': ['test', 'coverage', 'lcov'],
+            'ci': ['ci', 'cd', 'action', 'workflow', 'pipeline'],
+            'cross': ['cross', 'compile', 'crosscompil'],
+            'car': ['car', 'assembled', '3d', 'vehicle'],
+            'energy': ['energy', 'power', 'consumption', 'thermal'],
+        }
+        
+        for row in table_rows:
+            expect_id = f"EXPECT-L0-{row.number}"
+            req_lower = row.requirement.lower()
+            
+            # Check which topics this requirement relates to
+            for topic, keywords in topic_keywords.items():
+                for kw in keywords:
+                    if kw in req_lower:
+                        # This requirement is about this topic
+                        # Add all topic keywords to map pointing to this expect
+                        for topic_kw in keywords:
+                            if topic_kw not in keyword_map:
+                                keyword_map[topic_kw] = []
+                            if expect_id not in keyword_map[topic_kw]:
+                                keyword_map[topic_kw].append(expect_id)
+                        break
+        
+        return keyword_map
 
 
 # ============================================================================
@@ -519,16 +744,38 @@ class AIGenerator:
         
         settings = self.config.manual_settings
         updated_files = []
+        canonical_types = ['EXPECT', 'ASSERT', 'EVID', 'ASSUMP']
+        canonical_dirs = {
+            'EXPECT': self.config.expectations_dir,
+            'ASSERT': self.config.assertions_dir,
+            'EVID': self.config.evidences_dir,
+            'ASSUMP': self.config.assumptions_dir,
+        }
         
         print(f"\n{'='*70}")
         print(f"🤖 AI GENERATION REQUIRED: {len(items)} items for {len(items_by_req)} requirement(s)")
         print(f"{'='*70}")
         
-        # Open all files in VSCode
+        # Open files in an editor.
+        # Include canonical 4 files per requirement so AI can generate full set.
         if settings.get('open_in_vscode', True):
-            print(f"\n📂 Opening {len(items)} files in VSCode...")
-            for item_type, item_id, file_path in items:
-                subprocess.run(['code', str(file_path)], check=False)
+            files_to_open = []
+            for req_id in sorted(items_by_req.keys(), key=lambda x: int(x)):
+                for item_type in canonical_types:
+                    files_to_open.append(canonical_dirs[item_type] / f"{item_type}-L0-{req_id}.md")
+
+            # Remove duplicates while preserving order
+            seen = set()
+            unique_files_to_open = []
+            for p in files_to_open:
+                p_str = str(p)
+                if p_str not in seen:
+                    seen.add(p_str)
+                    unique_files_to_open.append(p)
+
+            print(f"\n📂 Opening {len(unique_files_to_open)} canonical item files in the editor...")
+            if not open_paths_in_editor(unique_files_to_open):
+                print("\nℹ️  No supported editor launcher found; files were not opened automatically.")
         
         # Build consolidated prompt
         if settings.get('show_prompt_suggestion', True):
@@ -548,14 +795,20 @@ class AIGenerator:
                     prompt_lines.append(f"**Verification Method:** {row.verification_method}")
                     prompt_lines.append("")
                     
-                    prompt_lines.append("**Items to generate:**")
-                    for item_type, file_path in req_items:
-                        prompt_lines.append(f"  - {item_type}-L0-{req_id}: {file_path}")
+                    # Always show canonical 4 items, even if only subset is pending.
+                    prompt_lines.append("**Items to generate (all 4 mandatory):**")
+                    for item_type in canonical_types:
+                        canonical_path = canonical_dirs[item_type] / f"{item_type}-L0-{req_id}.md"
+                        prompt_lines.append(f"  - {item_type}-L0-{req_id}: {canonical_path}")
                     prompt_lines.append("")
             
             prompt_lines.append("""
 ---
 **INSTRUCTIONS:**
+
+Generate complete file content for all listed items (EXPECT, ASSERT, EVID, ASSUMP).
+If a file does not exist, create it with full YAML frontmatter and markdown body.
+If a file exists, update only the allowed fields/content.
 
 For each item, fill the YAML frontmatter fields:
 - `header`: A concise title (max 50 characters)
@@ -567,7 +820,17 @@ For each item, fill the YAML frontmatter fields:
 - EVID: Reference to actual evidence files/URLs (NOT to EXPECT or ASSERT)
 - ASSUMP: Reference to `../expectations/EXPECT-L0-X.md`
 
+**CRITICAL for EVID files (no real evidence yet):**
+- If reference has `description: TSF_PLACEHOLDER_EVIDENCE`, KEEP it unchanged.
+- This marker signals that evidence is still pending collection.
+- Only replace this marker with real evidence descriptions when actual evidence is ready.
+
 **DO NOT modify:** `id`, `level`, `reviewers`, `review_status`, `evidence` (validators)
+
+**Quality bar:**
+- Keep headers specific and under 50 chars.
+- Write actionable, requirement-specific `text` (avoid placeholders/TODOs).
+- Ensure YAML is valid and parseable.
 """)
             
             print("\n".join(prompt_lines))
@@ -646,10 +909,11 @@ For each item, fill the YAML frontmatter fields:
         print(f"🤖 AI GENERATION REQUIRED: {item_type}-L0-{item_id}")
         print(f"{'='*60}")
         
-        # Open file in VSCode
+        # Open file in an editor
         if settings.get('open_in_vscode', True):
-            print(f"\n📂 Opening file in VSCode: {file_path}")
-            subprocess.run(['code', str(file_path)], check=False)
+            print(f"\n📂 Opening file in the editor: {file_path}")
+            if not open_paths_in_editor([file_path]):
+                print("\nℹ️  No supported editor launcher found; continuing without auto-open.")
         
         # Show suggested prompt
         if settings.get('show_prompt_suggestion', True):
@@ -978,6 +1242,10 @@ class ContentValidator:
                 if 'TODO' in ref_str:
                     issues.append("TODO in references")
                     break
+
+            # EVID-specific placeholder detection using explicit marker.
+            if item_type == 'EVID' and any(is_placeholder_evidence_reference(ref) for ref in references):
+                issues.append("Placeholder evidence marker in references")
         
         # Check item-type-specific required fields
         # EVID items must have score field
@@ -1154,6 +1422,13 @@ reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 review_status: accepted
+evidence:
+    type: validate_hardware_availability
+    configuration:
+        components:
+            - \"STM32\"
+            - \"CAN\"
+            - \"Raspberry Pi\"
 ---
 """,
             'ASSERT': f"""---
@@ -1176,9 +1451,7 @@ evidence:
   type: validate_hardware_availability
   configuration:
     components:
-      - "STM32"
-      - "CAN"
-      - "Raspberry Pi"
+      - "TSF Assertion Requirement"
 ---
 """,
             'EVID': f"""---
@@ -1192,7 +1465,8 @@ level: '1.{level_num}'
 normative: true
 references:
 - type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+    url: {PLACEHOLDER_EVIDENCE_URL}
+    description: {PLACEHOLDER_EVIDENCE_MARKER}
 score: 0.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
@@ -1215,10 +1489,8 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
-      - "Development environment"
-      - "Required tools"
-      - "Test infrastructure"
+        dependencies:
+            - "TSF tooling"
 ---
 """
         }
@@ -1328,17 +1600,34 @@ review_status: accepted
             fixes_applied.append("Added 'review_status: accepted'")
             modified = True
         
-        # Fix 4: ASSERT/ASSUMP files should have 'evidence:' with valid validator
+        # Fix 4: EXPECT/ASSUMP files should have 'evidence:' with valid validator
         valid_validators = ['validate_hardware_availability', 'validate_linux_environment', 'validate_software_dependencies']
-        
-        if item_type_upper in ['ASSERT', 'ASSUMP']:
+        if item_type_upper == 'EXPECT':
             evidence = frontmatter.get('evidence', {})
             if not evidence:
-                # Add default evidence validator
                 frontmatter['evidence'] = {
                     'type': 'validate_hardware_availability',
                     'configuration': {
                         'components': ['STM32', 'CAN', 'Raspberry Pi']
+                    }
+                }
+                fixes_applied.append("Added default evidence validator for EXPECT")
+                modified = True
+            elif isinstance(evidence, dict):
+                ev_type = evidence.get('type', '')
+                if ev_type and ev_type not in valid_validators:
+                    frontmatter['evidence']['type'] = 'validate_hardware_availability'
+                    fixes_applied.append(f"Replaced invalid EXPECT validator '{ev_type}' with 'validate_hardware_availability'")
+                    modified = True
+
+        if item_type_upper == 'ASSUMP':
+            evidence = frontmatter.get('evidence', {})
+            if not evidence:
+                # Add default evidence validator
+                frontmatter['evidence'] = {
+                    'type': 'validate_software_dependencies',
+                    'configuration': {
+                        'dependencies': ['TSF tooling']
                     }
                 }
                 fixes_applied.append("Added default evidence validator")
@@ -1350,6 +1639,17 @@ review_status: accepted
                     frontmatter['evidence']['type'] = 'validate_hardware_availability'
                     fixes_applied.append(f"Replaced invalid validator '{ev_type}' with 'validate_hardware_availability'")
                     modified = True
+
+                # Normalize ASSUMP software validator config key for compatibility.
+                if ev_type == 'validate_software_dependencies':
+                    configuration = evidence.get('configuration')
+                    if isinstance(configuration, dict):
+                        has_dependencies = isinstance(configuration.get('dependencies'), list)
+                        has_components = isinstance(configuration.get('components'), list)
+                        if not has_dependencies and has_components:
+                            configuration['dependencies'] = configuration.pop('components')
+                            fixes_applied.append("Normalized ASSUMP validator config: components -> dependencies")
+                            modified = True
         
         # Fix 5: Remove 'id' fields from references (should only have type and path)
         if 'references' in frontmatter and isinstance(frontmatter['references'], list):
@@ -1365,6 +1665,22 @@ review_status: accepted
         # Fix 6: EVID files should NOT reference EXPECT/ASSERT files
         # Evidence references should point to actual evidence (images, docs, logs)
         if item_type_upper == 'EVID' and 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            normalized_refs = []
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict) and not is_placeholder_evidence_reference(ref):
+                    ref_type = str(ref.get('type', '')).strip().lower()
+                    ref_url = str(ref.get('url', '')).strip()
+                    repo_path = github_url_to_repo_path(ref_url) if ref_type == 'url' else None
+                    if repo_path:
+                        normalized_refs.append({'type': 'file', 'path': repo_path})
+                        modified = True
+                        continue
+                normalized_refs.append(ref)
+
+            if normalized_refs != frontmatter['references']:
+                frontmatter['references'] = normalized_refs
+                fixes_applied.append("Normalized in-repo GitHub URL references to file references")
+
             invalid_refs = []
             valid_refs = []
             for ref in frontmatter['references']:
@@ -1381,6 +1697,23 @@ review_status: accepted
             if invalid_refs:
                 frontmatter['references'] = valid_refs
                 fixes_applied.append(f"Removed {len(invalid_refs)} invalid references to EXPECT/ASSERT files")
+        
+        # Fix 6b: EVID files MUST preserve TSF_PLACEHOLDER_EVIDENCE marker when no real evidence yet
+        # If AI changed the placeholder description to anything else, restore it to indicate pending evidence
+        if item_type_upper == 'EVID' and 'references' in frontmatter and isinstance(frontmatter['references'], list):
+            for ref in frontmatter['references']:
+                if isinstance(ref, dict):
+                    # Check if this looks like our placeholder reference (URL-based)
+                    ref_url = ref.get('url', '')
+                    if 'github.com' not in ref_url and 'http' not in ref_url:
+                        # This might be our placeholder, ensure marker is exact
+                        description = ref.get('description', '')
+                        if description and description != PLACEHOLDER_EVIDENCE_MARKER:
+                            # AI changed the description - restore marker to signal pending evidence
+                            ref['description'] = PLACEHOLDER_EVIDENCE_MARKER
+                            fixes_applied.append(f"Restored TSF_PLACEHOLDER_EVIDENCE marker (was: '{description}')")
+                            modified = True
+                            break
                 modified = True
         
         # Fix 7: EVID files MUST have at least one reference (trudag rejects empty references)
@@ -1390,11 +1723,21 @@ review_status: accepted
                 # Add placeholder reference to README
                 frontmatter['references'] = [{
                     'type': 'url',
-                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md'
+                    'url': PLACEHOLDER_EVIDENCE_URL,
+                    'description': PLACEHOLDER_EVIDENCE_MARKER
                 }]
                 frontmatter['score'] = 0.0  # Mark as incomplete (no real evidence)
                 fixes_applied.append("Added placeholder reference (EVID cannot have empty references)")
                 modified = True
+            elif len(refs) == 1 and isinstance(refs[0], dict):
+                # Keep placeholder explicit when README baseline is the only reference.
+                only_ref = refs[0]
+                only_ref_url = str(only_ref.get('url', '')).strip()
+                if only_ref_url == PLACEHOLDER_EVIDENCE_URL and not is_placeholder_evidence_reference(only_ref):
+                    only_ref['description'] = PLACEHOLDER_EVIDENCE_MARKER
+                    frontmatter['score'] = 0.0
+                    fixes_applied.append("Normalized EVID placeholder description marker")
+                    modified = True
         
         if not modified:
             return False, []
@@ -1588,6 +1931,31 @@ def open_check(config: Config) -> Dict[str, Any]:
     for expect_id, evidences in sprint_evidence.items():
         print(f"   • {expect_id}: {len(evidences)} evidence(s)")
     
+    # 3.3 NEW: Scan evidence folders (docs/demos, docs/guides, etc., and src/)
+    print("\n📂 Scanning evidence folders (demos, guides, images, presentations, src)...")
+    folder_evidence = evidence_parser.scan_evidence_folders(rows)
+    status['folder_evidence'] = folder_evidence
+    
+    if folder_evidence:
+        folder_total = sum(len(v) for v in folder_evidence.values())
+        print(f"   Found {folder_total} potential evidence files across {len(folder_evidence)} EXPECTs")
+        for expect_id, evidences in sorted(folder_evidence.items()):
+            print(f"   • {expect_id}: {len(evidences)} file(s) found")
+    else:
+        print("   ℹ️  No additional evidence files found in folders")
+    
+    # Merge folder evidence with sprint evidence
+    for expect_id, evidences in folder_evidence.items():
+        if expect_id not in sprint_evidence:
+            sprint_evidence[expect_id] = []
+        for ev in evidences:
+            # Avoid duplicates by URL
+            existing_urls = [e.url for e in sprint_evidence[expect_id]]
+            if ev.url not in existing_urls:
+                sprint_evidence[expect_id].append(ev)
+    
+    status['sprint_evidence'] = sprint_evidence  # Update with merged evidence
+    
     # 3.5 NEW: Check for requirements with NO evidence in sprints
     print("\n⚠️  Checking for requirements without sprint evidence...")
     status['no_sprint_evidence'] = []
@@ -1660,18 +2028,46 @@ def open_check(config: Config) -> Dict[str, Any]:
     
     # 6. Identify sync needs (sprint evidence → table → EVID files)
     print("\n🔄 Identifying sync needs...")
+    seen_sync_needs = set()
     for row in rows:
         expect_id = f"EXPECT-L0-{row.number}"
+        evid_item_id = str(row.number)
+
+        # Read EVID file to detect explicit placeholder references.
+        evid_has_placeholder = False
+        evid_path = item_manager.get_item_path('EVID', evid_item_id)
+        if evid_path.exists():
+            try:
+                evid_content = evid_path.read_text(encoding='utf-8')
+                evid_yaml_match = re.match(r'^---\n(.*?)\n---', evid_content, re.DOTALL)
+                if evid_yaml_match:
+                    evid_frontmatter = yaml.safe_load(evid_yaml_match.group(1)) or {}
+                    evid_refs = evid_frontmatter.get('references', [])
+                    if isinstance(evid_refs, list):
+                        evid_has_placeholder = any(is_placeholder_evidence_reference(ref) for ref in evid_refs)
+            except Exception:
+                # Keep check resilient; placeholder detection is advisory for sync.
+                evid_has_placeholder = False
         
         # Check if sprint has evidence that table doesn't
         if expect_id in sprint_evidence:
-            sprint_urls = set(e.url for e in sprint_evidence[expect_id])
             table_evidence = row.evidence.strip()
             
             # Simple check - could be more sophisticated
             if not table_evidence or table_evidence == 'TODO':
-                status['sync_needed'].append((row.id, 'sprint_to_table'))
-                print(f"   • {row.id}: needs sync from sprint to table")
+                key = (row.id, 'sprint_to_table')
+                if key not in seen_sync_needs:
+                    seen_sync_needs.add(key)
+                    status['sync_needed'].append(key)
+                    print(f"   • {row.id}: needs sync from sprint to table")
+
+            # New: if EVID file still uses explicit placeholder marker, sync real sprint evidence into EVID.
+            if evid_has_placeholder and sprint_evidence.get(expect_id):
+                key = (row.id, 'placeholder_to_real_evidence')
+                if key not in seen_sync_needs:
+                    seen_sync_needs.add(key)
+                    status['sync_needed'].append(key)
+                    print(f"   • {row.id}: EVID has placeholder evidence, needs replacement from sprints")
     
     print("\n" + "-"*70)
     print("📋 OPEN & CHECK Summary:")
@@ -1722,7 +2118,7 @@ def sync_evidence_from_sprints(config: Config, check_status: Dict[str, Any]) -> 
         expect_id = f"EXPECT-{req_id}"
         if expect_id in sprint_evidence:
             urls = [e.url for e in sprint_evidence[expect_id]]
-            print(f"   • {req_id}: {len(urls)} evidence URL(s) from sprints")
+            print(f"   • {req_id} [{sync_type}]: {len(urls)} evidence URL(s) from sprints")
     
     print("\n🔧 Options:")
     print("   [y] Sync all evidence (update table + EVID files)")
@@ -1841,6 +2237,22 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
     updated_files = []
     evid_dir = config.items_dir / "evidences"
     
+    def resolve_reference_path(repo_path: str) -> Optional[str]:
+        """Resolve a repository path to a regular file path when possible."""
+        rel_path = str(repo_path).strip().lstrip('./')
+        if not rel_path:
+            return None
+        abs_path = config.repo_root / rel_path
+        if abs_path.is_file():
+            return rel_path
+        if abs_path.is_dir():
+            for candidate in ('README.md', 'readme.md', 'index.md'):
+                candidate_path = abs_path / candidate
+                if candidate_path.is_file():
+                    return str(candidate_path.relative_to(config.repo_root))
+            return None
+        return None
+
     for expect_id, evidence_list in sprint_evidence.items():
         if not evidence_list:
             continue
@@ -1876,29 +2288,91 @@ def _sync_evidence_to_evid_files(config: Config, sprint_evidence: Dict[str, List
         
         # Get current references
         current_refs = frontmatter.get('references', [])
+        if not isinstance(current_refs, list):
+            current_refs = []
+
+        # Normalize existing GitHub in-repo URL references to local file references.
+        normalized_refs = []
+        normalized_existing = False
+        for ref in current_refs:
+            if not isinstance(ref, dict):
+                normalized_refs.append(ref)
+                continue
+            if is_placeholder_evidence_reference(ref):
+                normalized_refs.append(ref)
+                continue
+
+            ref_type = str(ref.get('type', '')).strip().lower()
+            ref_url = str(ref.get('url', '')).strip()
+            repo_path = github_url_to_repo_path(ref_url) if ref_type == 'url' else None
+            resolved_path = resolve_reference_path(repo_path) if repo_path else None
+            if resolved_path:
+                normalized_refs.append({'type': 'file', 'path': resolved_path})
+                normalized_existing = True
+            else:
+                normalized_refs.append(ref)
+        current_refs = normalized_refs
+
+        # Remove explicit placeholder references when real evidence is available.
+        had_placeholder_refs = any(is_placeholder_evidence_reference(ref) for ref in current_refs)
+        kept_refs = [ref for ref in current_refs if not is_placeholder_evidence_reference(ref)]
+        references_changed = len(kept_refs) != len(current_refs)
+        current_refs = kept_refs
         
         # Add new evidence URLs as references
         new_refs_added = False
         for ev in evidence_list:
-            # Check if URL already exists
-            url_exists = any(
-                ref.get('url', '') == ev.url 
-                for ref in current_refs 
-                if isinstance(ref, dict)
-            )
-            
-            if not url_exists:
+            ev_target = str(ev.url).strip()
+            repo_path = github_url_to_repo_path(ev_target)
+            resolved_path = resolve_reference_path(repo_path) if repo_path else None
+            if resolved_path:
+                new_ref = {'type': 'file', 'path': resolved_path}
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'file'
+                    and str(ref.get('path', '')).strip() == resolved_path
+                    for ref in current_refs
+                )
+            elif ev_target.startswith(('http://', 'https://')):
                 new_ref = {
                     'type': 'url',
-                    'url': ev.url,
+                    'url': ev_target,
                     'description': f"Evidence from {ev.source_file}: {ev.description}"
                 }
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'url'
+                    and str(ref.get('url', '')).strip() == ev_target
+                    for ref in current_refs
+                )
+            else:
+                local_path = ev_target.lstrip('./')
+                resolved_local = resolve_reference_path(local_path)
+                if resolved_local:
+                    new_ref = {'type': 'file', 'path': resolved_local}
+                else:
+                    continue
+                ref_exists = any(
+                    isinstance(ref, dict)
+                    and str(ref.get('type', '')).strip().lower() == 'file'
+                    and str(ref.get('path', '')).strip() == new_ref['path']
+                    for ref in current_refs
+                )
+
+            if not ref_exists:
                 current_refs.append(new_ref)
                 new_refs_added = True
-        
-        if new_refs_added:
+
+        if new_refs_added or references_changed or normalized_existing:
             # Update frontmatter
             frontmatter['references'] = current_refs
+
+            # If at least one non-placeholder reference exists, mark as complete.
+            has_real_refs = len(current_refs) > 0
+            if has_real_refs:
+                frontmatter['score'] = 1.0
+            elif had_placeholder_refs:
+                frontmatter['score'] = 0.0
             
             # Rebuild file content
             new_content = f"---\n{yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True, sort_keys=False)}---{body}"
@@ -2220,34 +2694,45 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     if status['trudag_success']:
         print("\n📊 Verifying scores...")
         try:
+            trudag_cmd = resolve_trudag_command(config)
+            if not trudag_cmd:
+                raise FileNotFoundError("trudag executable not found (PATH/.venv)")
+
             result = subprocess.run(
-                ['trudag', 'score', '--validate'],
+                [trudag_cmd, 'score', '--validate'],
                 capture_output=True,
                 text=True,
                 cwd=str(config.tsf_implementation),
                 timeout=300
             )
             
-            # Parse score output
+            # Parse score output - handle TruDAG format: "ASSERTIONS-ASSERT_L0_1 = 1.0; Validator with References"
+            import re
             lines = result.stdout.strip().split('\n')
             total_items = 0
             items_at_1_0 = 0
             items_below_1_0 = []
             
+            # Regex to extract score from TruDAG output format
+            score_line_re = re.compile(r'^(ASSERTIONS|ASSUMPTIONS|EVIDENCES|EXPECTATIONS)-[^=]+\s*=\s*([0-9]+(?:\.[0-9]+)?)')
+            
             for line in lines:
-                if ' = ' in line and any(prefix in line for prefix in ['ASSERTIONS', 'ASSUMPTIONS', 'EVIDENCES', 'EXPECTATIONS']):
+                line_stripped = line.strip()
+                if not line_stripped or ' = ' not in line_stripped:
+                    continue
+                    
+                match = score_line_re.match(line_stripped)
+                if match:
                     total_items += 1
-                    parts = line.strip().split(' = ')
-                    if len(parts) == 2:
-                        item_name = parts[0]
-                        try:
-                            score = float(parts[1])
-                            if score == 1.0:
-                                items_at_1_0 += 1
-                            else:
-                                items_below_1_0.append((item_name, score))
-                        except ValueError:
-                            pass
+                    item_name = line_stripped.split(' = ')[0]
+                    try:
+                        score = float(match.group(2))
+                        if score == 1.0:
+                            items_at_1_0 += 1
+                        else:
+                            items_below_1_0.append((item_name, score))
+                    except (ValueError, IndexError):
+                        pass
             
             status['score_summary'] = {
                 'total': total_items,

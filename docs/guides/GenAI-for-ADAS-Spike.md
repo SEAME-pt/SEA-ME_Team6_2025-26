@@ -1,6 +1,6 @@
 # AI Spike — Generative AI Applied to ADAS
 
-> **SEA:ME Team 6** | January 2026  
+> **SEA:ME Team 6** | March 2026  
 > **Spike Duration:** 2-3 days  
 > **Focus:** Data Augmentation & Synthetic Image Generation for ADAS Datasets
 
@@ -860,4 +860,4 @@ Generative AI offers powerful tools for ADAS dataset augmentation:
 ---
 
 *Document created as part of SEA:ME Team 6 AI Spike investigation.*
-*Last updated: January 2026*
+*Last updated: March 2026*

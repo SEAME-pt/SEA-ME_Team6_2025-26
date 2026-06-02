@@ -10,13 +10,29 @@ Item {
     id: centerScreen
     Layout.fillWidth: true
     Layout.fillHeight: true
+    property int speedLimitDetected: adas.speedLimit
 
     ExtraProvider { id: clock }
+
+    // Behavior on speedLimitDetected {
+    //     NumberAnimation {
+    //         duration: 1000
+    //         easing.type: Easing.InOutQuad
+    //     }
+    // }
+
+    function getSpeedLimitSignal(val) {
+        if (val == 50)
+            return "qrc:/assets/icons/50-speed-limit.svg"
+        else if (val == 80)
+            return "qrc:/assets/icons/80-speed-limit.svg"
+        return ""
+    }
 
     /*
     * currSpeed:        vehicle.speed (Current Speed of the vehicle)
     * currBattery:      powertrain.batteryVoltage (Current Voltage of the Battery)
-    * currBatteryIcon:  powertrain.batterVoltageIcon (Icon for UI)7
+    * currBatteryIcon:  powertrain.batterVoltageIcon (Icon for UI)
     * isBatteryWarning: powertrain.isBatteryLow (Indicator that the battery is low)
     * isBatteryDanger:  powertrain.isBatteryCritical (Indicator that the battery is critical)
     */
@@ -82,6 +98,36 @@ Item {
             activeBlinkerSource: "qrc:/assets/icons/right-arrow-active.png"
             inactiveBlinkerSource: "qrc:/assets/icons/right-arrow.png"
             isActive: chassis.isBlinkerRightActive
+        }
+    }
+
+    Item {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.topMargin: 96
+        anchors.leftMargin: centerScreen.width - timeText.width + 48
+
+        Image {
+            id: speedLimitIcon
+            anchors.centerIn: parent
+            source: getSpeedLimitSignal(centerScreen.speedLimitDetected)
+                width: 48
+                height: 48
+                sourceSize.width: 48
+                sourceSize.height: 48
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                mipmap: true
+
+            onSourceChanged: {
+                fadeIn.restart()
+            }
+
+            SequentialAnimation {
+                id: fadeIn
+                NumberAnimation { target: speedLimitIcon; property: "opacity"; to: 0; duration: 100 }
+                NumberAnimation { target: speedLimitIcon; property: "opacity"; to: 1; duration: 750 }
+            }
         }
     }
 }

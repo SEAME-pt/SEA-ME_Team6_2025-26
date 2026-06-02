@@ -58,9 +58,16 @@ inline constexpr const char* CHASSIS_BRAKE_PEDAL = "Vehicle.Chassis.Brake.PedalP
 
 // --- ADAS ---
 inline constexpr const char* ADAS_OBS_IS_ENABLED      = "Vehicle.ADAS.ObstacleDetection.IsEnabled";
+
 inline constexpr const char* ADAS_FRONT_IS_WARNING    = "Vehicle.ADAS.ObstacleDetection.Front.IsWarning";
 inline constexpr const char* ADAS_FRONT_DISTANCE_MM   = "Vehicle.ADAS.ObstacleDetection.Front.Distance";
+inline constexpr const char* ADAS_FRONT_IS_BRAKING   = "Vehicle.ADAS.ObstacleDetection.Front.IsBraking";
+
 inline constexpr const char* ADAS_ACTIVE_AUTONOMY_LVL = "Vehicle.ADAS.ActiveAutonomyLevel";
+
+inline constexpr const char* ADAS_UP_IS_ENABLED = "Vehicle.ADAS.ObstacleDetection.Up.IsEnabled";
+inline constexpr const char* ADAS_UP_DISTANCE = "Vehicle.ADAS.ObstacleDetection.Up.Distance";
+inline constexpr const char* ADAS_UP_IS_TOP = "Vehicle.ADAS.ObstacleDetection.Up.IsOnTop";
 
 // --- Powertrain ---
 inline constexpr const char* POWERTRAIN_TYPE = "Vehicle.Powertrain.Type";

@@ -7,64 +7,118 @@ set -e
 # 1. Generates graph.dot from source items
 # 2. Initializes trudag DB in tsf_implementation/
 # 3. Creates items from source (trudag creates skeleton, we copy content)
-# 4. Applies links from graph.dot
-# 5. Marks all items as reviewed for SME assessment
-# 6. Runs lint validation
+# 4. Marks items as reviewed before creating links
+# 5. Applies links from graph.dot
+# 6. Marks all links as reviewed for SME assessment
+# 7. Runs lint validation
+# 8. Runs score
+# 9. Runs publish
 
-REPO_ROOT="/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
-BASE_DIR="$REPO_ROOT/docs/TSF"
-TSF_IMPL="$BASE_DIR/tsf_implementation"
+# Auto-detect paths from script location
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TSF_IMPL="$( cd "$SCRIPT_DIR/.." && pwd )"
+BASE_DIR="$( cd "$TSF_IMPL/.." && pwd )"
+# Prefer git top-level for correctness; fallback to TSF_IMPL/../../.. from this script layout.
+REPO_ROOT="$(git -C "$TSF_IMPL" rev-parse --show-toplevel 2>/dev/null || { cd "$TSF_IMPL/../../.." && pwd; })"
 ITEMS_SOURCE="$TSF_IMPL/items"
 GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"
 DB_SYMLINK="$REPO_ROOT/.dotstop.dot"
 
+# Resolve trudag command from local venv first, then PATH.
+if [ -x "$REPO_ROOT/.venv/bin/trudag" ]; then
+    TRUDAG_CMD="$REPO_ROOT/.venv/bin/trudag"
+elif [ -x "$TSF_IMPL/.venv/bin/trudag" ]; then
+    TRUDAG_CMD="$TSF_IMPL/.venv/bin/trudag"
+elif command -v trudag >/dev/null 2>&1; then
+    TRUDAG_CMD="$(command -v trudag)"
+else
+    echo "❌ Error: trudag command not found."
+    echo "   Install/activate it first, e.g.:"
+    echo "   source $REPO_ROOT/.venv/bin/activate"
+    exit 127
+fi
+
+# Filter noisy trudag lines without breaking execution under `set -e`.
+# grep returns exit code 1 when no lines remain, which is expected here.
+filter_trudag_output() {
+    local mode="${1:-default}"
+
+    case "$mode" in
+        lint)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" || true
+            ;;
+        score)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" || true
+            ;;
+        publish)
+            grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:" || true
+            ;;
+        *)
+            cat
+            ;;
+    esac
+}
+
+show_trudag_command() {
+    local step_label="$1"
+    shift
+    local cmd
+    cmd=$(basename "$1")
+    shift
+    echo "      [$step_label] $cmd $*"
+}
+
 echo "=========================================="
 echo "TSF Trudag Setup - Clean Mode"
 echo "=========================================="
+echo "Using trudag: $TRUDAG_CMD"
 echo ""
 
 # Step 0: Clean all generated files (NEVER touch source items/)
 echo "🧹 Step 0: Cleaning all generated files..."
 [ -f "$GRAPH_DIR/graph.dot" ] && rm -f "$GRAPH_DIR/graph.dot" && echo "  ✓ Removed graph.dot"
 [ -f "$DB_FILE" ] && rm -f "$DB_FILE" && echo "  ✓ Removed .dotstop.dot"
-[ -e "$DB_SYMLINK" ] && rm -f "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
+[ -e "$DB_SYMLINK" -o -L "$DB_SYMLINK" ] && rm -f "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
 [ -d "$TSF_IMPL/.trudag_items" ] && rm -rf "$TSF_IMPL/.trudag_items" && echo "  ✓ Removed .trudag_items/ (tsf_impl)"
 [ -d "$REPO_ROOT/.trudag_items" ] && rm -rf "$REPO_ROOT/.trudag_items" && echo "  ✓ Removed .trudag_items/ (repo root)"
+[ -d "$REPO_ROOT/docs/trustable" ] && rm -rf "$REPO_ROOT/docs/trustable"
+echo "  ✓ Removed docs/trustable"
+[ -d "$REPO_ROOT/docs/doorstop" ] && rm -rf "$REPO_ROOT/docs/doorstop" && echo "  ✓ Removed docs/doorstop"
 find "$REPO_ROOT" -name "needs.dot" -type f -delete 2>/dev/null && echo "  ✓ Removed needs.dot files"
 echo "✓ Cleanup complete (source items/ preserved)"
 echo ""
 
 # Step 1: Generate graph.dot
-echo "📊 Step 1: Generating graph.dot from source items..."
+echo "📊 Step 1: Generating graph.dot from source items...(python3 generate_graph_from_heuristics.py)"
 mkdir -p "$GRAPH_DIR"
 python3 "$TSF_IMPL/tools/generate_graph_from_heuristics.py" \
     --items "$ITEMS_SOURCE" \
-    --out "$GRAPH_DIR/graph.dot"
+    --out "$GRAPH_DIR/graph.dot" >/dev/null
 echo "✓ Graph generated: $GRAPH_DIR/graph.dot"
 echo ""
 
 # Step 2: Initialize DB in tsf_implementation and create symlink in root
-echo "🗄️  Step 2: Initializing trudag DB..."
+echo "🗄️  Step 2: Initializing trudag DB...(trudag init)"
 cd "$TSF_IMPL"
-trudag init
+"$TRUDAG_CMD" init
 echo "✓ DB initialized: $DB_FILE"
 
 # Create symlink in repo root so trudag can find it
 cd "$REPO_ROOT"
-[ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
+[ -e ".dotstop.dot" -o -L ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
 ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
 echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
 
 # Create symlink for .dotstop_extensions in tsf_implementation so trudag finds validators
 cd "$TSF_IMPL"
-[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
+[ -e ".dotstop_extensions" -o -L ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
 ln -s "../../../.dotstop_extensions" ".dotstop_extensions"
 echo "✓ Created .dotstop_extensions symlink for validators"
 echo ""
 
 # Step 3: Create items in trudag DB
-echo "📝 Step 3: Creating items in trudag DB..."
+echo "📝 Step 3: Creating items in trudag DB...(trudag manage create-item)"
 cd "$TSF_IMPL"
 
 created=0
@@ -96,12 +150,12 @@ for category_dir in "$ITEMS_SOURCE"/*; do
         # Convert hyphens to underscores for trudag (ASSERT-L0-1 -> ASSERT_L0_1)
         item_id="${filename//-/_}"
         
-        # Prepare target directory for trudag to create item (use absolute path)
+        # Let trudag create the target structure; pre-creating can trigger
+        # misleading "already exists" errors on some versions.
         target_dir="$TSF_IMPL/.trudag_items/$PREFIX/$item_id"
-        mkdir -p "$target_dir"
         
         # Trudag create-item will create PREFIX-ITEM_ID.md in target_dir
-        trudag manage create-item "$PREFIX" "$item_id" "$target_dir" 2>/dev/null || true
+        "$TRUDAG_CMD" manage create-item "$PREFIX" "$item_id" "$target_dir" || true
         
         # Copy our source content to the created file
         target_file="$target_dir/$PREFIX-$item_id.md"
@@ -140,11 +194,12 @@ echo ""
 
 # Fix file reference paths in YAML to point to .trudag_items structure
 echo "🔧 Fixing file reference paths and IDs in .trudag_items..."
-python3 - <<'PYTHON'
+TSF_IMPL="$TSF_IMPL" python3 - <<'PYTHON'
 import re
+import os
 from pathlib import Path
 
-trudag_items = Path("/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/.trudag_items")
+trudag_items = Path(os.environ["TSF_IMPL"]) / ".trudag_items"
 
 fixed_count = 0
 
@@ -233,8 +288,45 @@ PYTHON
 
 echo ""
 
-# Step 4: Apply logical links from graph.dot (reasoning structure)
-echo "🔗 Step 4: Creating logical links from graph.dot..."
+# Step 4: Mark items reviewed before creating links.
+# TruDAG only allows links to be created between reviewed items.
+echo "✅ Step 4: Marking items as reviewed before linking...(trudag manage set-item)"
+reviewed_prelinks=0
+failed_prelinks=0
+
+TRUDAG_ITEMS_GENERATED="$TSF_IMPL/.trudag_items"
+
+for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
+    if [ ! -d "$prefix_dir" ]; then
+        continue
+    fi
+
+    PREFIX=$(basename "$prefix_dir")
+    echo "  Marking $PREFIX items..."
+
+    for item_dir in "$prefix_dir"/*; do
+        if [ ! -d "$item_dir" ]; then
+            continue
+        fi
+
+        item_id=$(basename "$item_dir")
+        full_id="$PREFIX-$item_id"
+
+        if "$TRUDAG_CMD" manage set-item "$full_id" >/dev/null 2>&1; then
+            echo "    ✓ $full_id"
+            reviewed_prelinks=$((reviewed_prelinks + 1))
+        else
+            echo "    ✗ $full_id (failed)"
+            failed_prelinks=$((failed_prelinks + 1))
+        fi
+    done
+done
+
+echo "✓ Pre-link review completed: $reviewed_prelinks reviewed, $failed_prelinks failed"
+echo ""
+
+# Step 5: Apply logical links from graph.dot (reasoning structure)
+echo "🔗 Step 5: Creating logical links from graph.dot...(trudag manage create-link)"
 cd "$REPO_ROOT"
 
 link_count=0
@@ -283,7 +375,7 @@ while IFS= read -r line; do
         echo "  Linking: $from -> $to"
         
         # Try to create link, ignore URL validation errors
-        output=$(trudag manage create-link "$from" "$to" 2>&1)
+        output=$("$TRUDAG_CMD" manage create-link "$from" "$to" 2>&1)
         exit_code=$?
         
         # Check if error is just about URL validation (can be ignored)
@@ -303,53 +395,84 @@ while IFS= read -r line; do
 done < "$GRAPH_DIR/graph.dot"
 
 echo "✓ Links created: $link_count, Failed: $failed_links"
+
+# Fail fast: score propagation depends on these reasoning links.
+if [ "$link_count" -eq 0 ]; then
+    echo "✗ No links were created from graph.dot. Aborting to prevent invalid scoring."
+    exit 1
+fi
+
+if [ "$failed_links" -gt 0 ]; then
+    echo "✗ Some links failed to be created. Aborting to avoid partial graph propagation."
+    exit 1
+fi
+
 echo ""
 
-# Step 5: Mark all items as reviewed (for SME assessment)
-echo "✅ Step 5: Marking items as reviewed..."
-reviewed=0
-failed_review=0
+# Step 6: Mark all links as reviewed (for SME assessment)
+echo "✅ Step 6: Marking links as reviewed...(trudag manage set-link)"
+reviewed_links=0
+failed_links_review=0
 
-# Use .trudag_items created by trudag in tsf_implementation
-TRUDAG_ITEMS_GENERATED="$TSF_IMPL/.trudag_items"
-
-for prefix_dir in "$TRUDAG_ITEMS_GENERATED"/*; do
-    if [ ! -d "$prefix_dir" ]; then
-        continue
-    fi
-    
-    PREFIX=$(basename "$prefix_dir")
-    echo "  Marking $PREFIX items..."
-    
-    for item_dir in "$prefix_dir"/*; do
-        if [ ! -d "$item_dir" ]; then
-            continue
-        fi
-        
-        item_id=$(basename "$item_dir")
-        full_id="$PREFIX-$item_id"
-        
-        # Suppress trudag noise, mark item and its links as reviewed
-        if trudag manage set-item "$full_id" --links 2>/dev/null; then
-            echo "    ✓ $full_id"
-            reviewed=$((reviewed + 1))
-        else
-            echo "    ✗ $full_id (failed)"
-            failed_review=$((failed_review + 1))
-        fi
-    done
-done
-
-echo "✓ Marked $reviewed items as reviewed, $failed_review failed"
-echo ""
-
-# Step 6: Run lint
-echo "🔍 Step 6: Running trudag lint..."
 cd "$REPO_ROOT"
+
+# Extract and mark links from graph.dot
+while IFS= read -r line; do
+    if [[ $line =~ \"([^\"]+)\"[[:space:]]*-\>[[:space:]]*\"([^\"]+)\" ]]; then
+        from_short="${BASH_REMATCH[1]}"  # EXPECT-L0-1
+        to_short="${BASH_REMATCH[2]}"    # ASSERT-L0-1
+        
+        # Function to convert short ID to DB format
+        convert_id() {
+            local short_id="$1"  # EXPECT-L0-1
+            
+            # Extract prefix (EXPECT, ASSERT, etc)
+            if [[ $short_id =~ ^([A-Z]+)-(.*)$ ]]; then
+                local prefix="${BASH_REMATCH[1]}"
+                local rest="${BASH_REMATCH[2]}"  # L0-1
+                
+                # Map to full prefix
+                case "$prefix" in
+                    EXPECT) full_prefix="EXPECTATIONS" ;;
+                    ASSERT) full_prefix="ASSERTIONS" ;;
+                    ASSUMP) full_prefix="ASSUMPTIONS" ;;
+                    EVID) full_prefix="EVIDENCES" ;;
+                    *) full_prefix="$prefix" ;;
+                esac
+                
+                # Convert all hyphens to underscores in full ID
+                local full_id="${prefix}_${rest}"
+                full_id="${full_id//-/_}"
+                
+                # Return: EXPECTATIONS-EXPECT_L0_1
+                echo "${full_prefix}-${full_id}"
+            fi
+        }
+        
+        from=$(convert_id "$from_short")
+        to=$(convert_id "$to_short")
+        
+        if "$TRUDAG_CMD" manage set-link "$from" "$to" 2>/dev/null; then
+            echo "    ✓ $from -> $to"
+            reviewed_links=$((reviewed_links + 1))
+        else
+            echo "    ✗ $from -> $to (failed)"
+            failed_links_review=$((failed_links_review + 1))
+        fi
+    fi
+done < "$GRAPH_DIR/graph.dot"
+
+echo "✓ Marked $reviewed_links links as reviewed, $failed_links_review failed"
+echo ""
+
+# Step 7: Run lint
+echo "🔍 Step 7: Running trudag lint...(trudag manage lint)"
+cd "$REPO_ROOT"
+show_trudag_command "Step 7" "$TRUDAG_CMD" manage lint
 # Run lint and capture output, filter warnings but show important ones
-lint_output=$(trudag manage lint 2>&1)
+lint_output=$("$TRUDAG_CMD" manage lint 2>&1)
 lint_exit=$?
-echo "$lint_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object"
+echo "$lint_output" | filter_trudag_output lint
 if [ $lint_exit -eq 0 ]; then
     echo "✓ Lint passed!"
 else
@@ -364,13 +487,14 @@ echo "✅ Setup complete!"
 echo "=========================================="
 echo ""
 
-# Step 7: Run trudag score
-echo "📊 Step 7: Running trudag score..."
-score_output=$(trudag score 2>&1)
+# Step 8: Run trudag score
+echo "📊 Step 8: Running trudag score...(trudag score)"
+show_trudag_command "Step 8" "$TRUDAG_CMD" score
+score_output=$("$TRUDAG_CMD" score 2>&1)
 score_exit=$?
 
 # Show scores (filter noise but keep score lines)
-echo "$score_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format"
+echo "$score_output" | filter_trudag_output score
 
 if [ $score_exit -eq 0 ]; then
     # Calculate and show summary
@@ -392,19 +516,31 @@ else
 fi
 echo ""
 
-# Step 8: Run trudag publish
-echo "🚀 Step 8: Running trudag publish..."
-publish_output=$(trudag publish 2>&1)
+# Step 9: Run trudag publish
+echo "🚀 Step 9: Running trudag publish...(trudag publish)"
+show_trudag_command "Step 9" "$TRUDAG_CMD" publish
+publish_output=$("$TRUDAG_CMD" publish 2>&1)
 publish_exit=$?
 
 # Filter noise from publish output
-echo "$publish_output" | grep -v "shadows an existing Reference" | grep -v "^Reference object" | grep -v "^WARNING.*Unsupported reference format" | grep -v "^INFO: Executing validator" | grep -v "^INFO: Validator:"
+echo "$publish_output" | filter_trudag_output publish
 
 if [ $publish_exit -eq 0 ]; then
+    report_dir=""
+    if [ -d "$REPO_ROOT/docs/trustable" ]; then
+        report_dir="$REPO_ROOT/docs/trustable"
+    elif [ -d "$REPO_ROOT/docs/doorstop" ]; then
+        report_dir="$REPO_ROOT/docs/doorstop"
+    fi
+
     echo ""
     echo "📁 Published reports to:"
-    echo "   • $REPO_ROOT/docs/doorstop/"
-    ls -la "$REPO_ROOT/docs/doorstop/" 2>/dev/null | grep "\.md" | awk '{print "   • " $NF}'
+    if [ -n "$report_dir" ]; then
+        echo "   • $report_dir/"
+        ls -la "$report_dir/" 2>/dev/null | grep "\.md" | awk '{print "   • " $NF}'
+    else
+        echo "   • (no publish directory detected under docs/trustable or docs/doorstop)"
+    fi
     echo "✓ Publish successful!"
 else
     echo "✗ Publish failed - please review errors above"

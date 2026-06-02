@@ -14,5 +14,5 @@ void handleEmergencyStop(const can_frame& frame, IKuksaClient& kuksa)
     (void)reason;
 
     kuksa.publishFloat(sig::ADAS_FRONT_DISTANCE_MM, static_cast<float>(dist_mm));
-    kuksa.publishBool(sig::ADAS_FRONT_IS_WARNING, active);
+    // kuksa.publishBool(sig::ADAS_FRONT_IS_WARNING, active);
 }

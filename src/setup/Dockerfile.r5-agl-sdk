@@ -1,6 +1,6 @@
 # Dockerfile.agl-sdk
 # Use:
-#   DOCKER_BUILDKIT=1 docker build -f Dockerfile.agl-sdk -t team6-agl-sdk:latest .
+#   DOCKER_BUILDKIT=1 docker build -f Dockerfile.r5-agl-sdk -t team6-r5-agl-sdk:latest .
 #
 # Requirement: The SDK file must to be on the same directory:
 #   poky-agl-glibc-x86_64-agl-image-minimal-crosssdk-aarch64-raspberrypi5-toolchain-20.0.2.sh
@@ -49,6 +49,11 @@ ENV AGL_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
 ENV QT_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
 
 WORKDIR /workspace
+
+RUN mkdir -p /etc/kuksa/tls /etc/kuksa/jwt
+
+COPY ca.crt /etc/kuksa/tls
+COPY reader.jwt /etc/kuksa/jwt
 
 ENTRYPOINT ["/usr/local/bin/agl-env"]
 CMD ["bash"]

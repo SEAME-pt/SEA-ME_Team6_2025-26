@@ -4,8 +4,8 @@ header: 'Assumption: Introduce AI in the project'
 level: '1.17'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-17.md
-  type: file
+- type: file
+  path: ../expectations/EXPECT-L0-17.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

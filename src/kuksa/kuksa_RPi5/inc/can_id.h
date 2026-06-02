@@ -16,6 +16,7 @@
 /* CAN IDs*/
 
 #define CAN_ID_EMERGENCY_STOP	0x001
+#define CAN_ID_AEB_STOP         0x002
 
 /* Commands (AGL -> STM32) */
 #define CAN_ID_MOTOR_CMD        0x200
@@ -36,6 +37,7 @@
 #define CAN_ID_ENVIRONMENT      0x420
 #define CAN_ID_BATTERY          0x421
 #define CAN_ID_TOF_DISTANCE     0x422
+#define CAN_ID_SRF08_DISTANCE   0x423
 
 /* Joystick (temporary)*/
 #define CAN_ID_JOYSTICK			0x500
@@ -210,7 +212,10 @@ typedef struct __attribute__((packed)) {
     uint8_t  crc;
 } Heartbeat_t;
 
-
+typedef struct __attribute__((packed)) {
+    uint8_t warn;               /* Soft braking before actuall brake */
+    uint8_t brake;              /* Indicator that it is braking */
+} AEB_t;
 
 
 
