@@ -22,7 +22,6 @@ import sys
 import os
 import glob
 import io
-from urllib.parse import unquote
 
 class EvidenceItem:
     """Represents an evidence item extracted from sprint files."""
@@ -184,14 +183,9 @@ class EvidenceSync:
             
             # Handle references section
             if stripped == 'references:':
-                if item_type != "EVID":
-                    # Keep references as-is for non-evidence items.
-                    new_frontmatter_lines.append(line)
-                    continue
-
                 in_references = True
                 new_frontmatter_lines.append(line)
-                # For evidence items, references are rebuilt from parsed links.
+                # Generate correct references based on item type
                 correct_refs = self.generate_correct_references(item_type, item_id)
                 for ref in correct_refs:
                     if 'id' in ref:
@@ -230,13 +224,55 @@ class EvidenceSync:
         return True
 
     def generate_correct_references(self, item_type, item_id):
-        """Generate correct references for a TSF item.
-
-        Statement-to-statement links are handled by graph links, not frontmatter
-        references. Evidence references are handled separately from sprint/table
-        evidence extraction.
-        """
-        return []
+        """Generate correct references for a TSF item."""
+        # Extract number from item_id (e.g., EXPECT-L0-19 -> 19)
+        match = re.search(r'L0-(\d+)', item_id)
+        if not match:
+            return []
+        
+        num = match.group(1)
+        references = []
+        
+        if item_type == "EXPECT":
+            # EXPECT references ASSERT (and ASSUMP if ASSERT doesn't exist)
+            assert_file = os.path.join(self.assertions_dir, "ASSERT-L0-{}.md".format(num))
+            if os.path.exists(assert_file):
+                references.append({
+                    'id': 'ASSERT-L0-{}'.format(num),
+                    'path': '../assertions/ASSERT-L0-{}.md'.format(num)
+                })
+            else:
+                # Fallback to ASSUMP if ASSERT doesn't exist
+                assump_file = os.path.join(self.assumptions_dir, "ASSUMP-L0-{}.md".format(num))
+                if os.path.exists(assump_file):
+                    references.append({
+                        'id': 'ASSUMP-L0-{}'.format(num),
+                        'path': '../assumptions/ASSUMP-L0-{}.md'.format(num)
+                    })
+        
+        elif item_type == "ASSERT":
+            # ASSERT references EXPECT and EVID
+            references.append({
+                'id': 'EXPECT-L0-{}'.format(num),
+                'path': '../expectations/EXPECT-L0-{}.md'.format(num)
+            })
+            evid_file = os.path.join(self.evidences_dir, "EVID-L0-{}.md".format(num))
+            if os.path.exists(evid_file):
+                references.append({
+                    'id': 'EVID-L0-{}'.format(num),
+                    'path': '../evidences/EVID-L0-{}.md'.format(num)
+                })
+        
+        elif item_type == "ASSUMP":
+            # ASSUMP references EXPECT
+            references.append({
+                'id': 'EXPECT-L0-{}'.format(num),
+                'path': '../expectations/EXPECT-L0-{}.md'.format(num)
+            })
+        
+        # For EVID, references are handled separately (evidence links)
+        
+        return references
 
     def check_requirements_sync(self):
         """Check synchronization between sprints, requirements table, and items."""
@@ -349,6 +385,9 @@ class EvidenceSync:
         # Convert EXPECT-L0-X to EVID-L0-X
         evid_id = expect_id.replace("EXPECT", "EVID")
         
+        # First fix references and level using the generic method
+        self.fix_tsf_item_references("EVID", evid_id, dry_run)
+        
         evid_file = os.path.join(self.evidences_dir, "{}.md".format(evid_id))
 
         if not os.path.exists(evid_file):
@@ -397,10 +436,6 @@ class EvidenceSync:
                 # Path for current reference
                 path_value = stripped.split(':', 1)[1].strip()
                 current_ref['path'] = path_value
-            elif in_references and stripped.startswith('url:') and current_ref:
-                # URL for current reference
-                url_value = stripped.split(':', 1)[1].strip()
-                current_ref['url'] = url_value
             elif in_references and stripped.startswith('path:') and not current_ref:
                 # Malformed reference - path without type
                 path_value = stripped.split(':', 1)[1].strip()
@@ -410,10 +445,6 @@ class EvidenceSync:
                 else:
                     ref_type = 'file'
                 references.append({'type': ref_type, 'path': path_value})
-            elif in_references and stripped.startswith('url:') and not current_ref:
-                # Malformed reference - url without type
-                url_value = stripped.split(':', 1)[1].strip()
-                references.append({'type': 'url', 'url': url_value})
             elif in_references and stripped and stripped.endswith(':') and not stripped.startswith(' ') and stripped not in ['references:', '---']:
                 # This looks like a new top-level field (like 'id:', 'header:', etc.)
                 # End of references section
@@ -426,73 +457,56 @@ class EvidenceSync:
         # Filter out invalid references (only keep type: file or type: url with path, and not TSF items)
         valid_references = []
         for ref in references:
-            if 'type' in ref and ref['type'] in ['file', 'url'] and ('path' in ref or 'url' in ref):
-                ref_value = ref.get('path', ref.get('url', ''))
+            if 'type' in ref and 'path' in ref and ref['type'] in ['file', 'url']:
                 # Skip references to other TSF items (expectations, assertions, assumptions)
-                path_lower = ref_value.lower()
+                path_lower = ref['path'].lower()
                 if ('expect' in path_lower and 'expect-l0' in path_lower) or \
                    ('assert' in path_lower and 'assert-l0' in path_lower) or \
                    ('assump' in path_lower and 'assump-l0' in path_lower):
                     continue
-                normalized = {'type': ref['type']}
-                if ref['type'] == 'url':
-                    normalized['url'] = ref_value
-                else:
-                    normalized['path'] = ref_value
-                valid_references.append(normalized)
-            elif ('path' in ref or 'url' in ref) and not 'type' in ref:
+                valid_references.append(ref)
+            elif 'path' in ref and not 'type' in ref:
                 # Malformed reference without type, but we already handled this above
                 pass
 
         # Remove duplicates from valid_references
-        seen_refs = set()
+        seen_paths = set()
         deduplicated_references = []
         for ref in valid_references:
-            ref_key = ref.get('path', ref.get('url'))
-            if ref_key not in seen_refs:
-                seen_refs.add(ref_key)
+            if ref['path'] not in seen_paths:
+                seen_paths.add(ref['path'])
                 deduplicated_references.append(ref)
 
         # Normalize all reference types based on path
         for ref in deduplicated_references:
-            ref_value = ref.get('path', ref.get('url'))
-            if ref_value:
-                if ref_value.startswith('http'):
+            if 'path' in ref:
+                if ref['path'].startswith('http'):
                     # Check if it's a GitHub URL that can be converted to local path
-                    if 'github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/' in ref_value:
-                        local_path = ref_value.split('github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/')[1]
+                    if 'github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/' in ref['path']:
+                        local_path = ref['path'].split('github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/')[1]
                         local_path = local_path.split('?')[0]  # Remove query parameters
-                        local_path = unquote(local_path)
                         full_local_path = os.path.join(self.repo_root, local_path)
                         if os.path.exists(full_local_path):
                             ref['type'] = 'file'
                             ref['path'] = local_path
-                            ref.pop('url', None)
                         else:
                             ref['type'] = 'url'
-                            ref['url'] = ref_value
-                            ref.pop('path', None)
                     else:
                         ref['type'] = 'url'
-                        ref['url'] = ref_value
-                        ref.pop('path', None)
                 else:
                     ref['type'] = 'file'
-                    ref['path'] = ref_value
-                    ref.pop('url', None)
 
         # Add new links if not already present
-        existing_refs = set(ref.get('path', ref.get('url')) for ref in deduplicated_references)
+        existing_paths = set(ref['path'] for ref in deduplicated_references if 'path' in ref)
         new_links_added = 0
         for link in links:
-            if link not in existing_refs:
+            if link not in existing_paths:
                 # Determine type and convert GitHub URLs to local paths if possible
                 if link.startswith('http'):
                     # Check if it's a GitHub URL that can be converted to local path
                     if 'github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/' in link:
                         local_path = link.split('github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/')[1]
                         local_path = local_path.split('?')[0]  # Remove query parameters
-                        local_path = unquote(local_path)
                         full_local_path = os.path.join(self.repo_root, local_path)
                         if os.path.exists(full_local_path):
                             ref_type = 'file'
@@ -512,23 +526,11 @@ class EvidenceSync:
                         print("⚠️  Referenced file not found: {}".format(full_path))
                         continue
                 
-                new_ref = {'type': ref_type}
-                if ref_type == 'url':
-                    new_ref['url'] = final_path
-                else:
-                    new_ref['path'] = final_path
-                deduplicated_references.append(new_ref)
+                deduplicated_references.append({'type': ref_type, 'path': final_path})
                 new_links_added += 1
 
-        # Keep references non-empty to satisfy TruDAG frontmatter schema for evidence items.
-        if len(deduplicated_references) == 0:
-            deduplicated_references.append({
-                'type': 'url',
-                'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md',
-            })
-
-        # Always rebuild frontmatter to fix formatting, even if no new links.
-        if len(deduplicated_references) > 0:
+        # Always rebuild frontmatter to fix formatting, even if no new links
+        if len(valid_references) > 0:  # Always update if there are references to format
             # Rebuild frontmatter
             new_frontmatter_lines = []
             skip_references_section = False
@@ -539,11 +541,9 @@ class EvidenceSync:
                     skip_references_section = True
                     new_frontmatter_lines.append(line)
                     # Add all references
-                    for ref in deduplicated_references:
-                        new_frontmatter_lines.append('  - type: {}'.format(ref['type']))
-                        if ref['type'] == 'url' and 'url' in ref:
-                            new_frontmatter_lines.append('    url: {}'.format(ref['url']))
-                        elif 'path' in ref:
+                    for ref in valid_references:
+                        if 'path' in ref:
+                            new_frontmatter_lines.append('  - type: {}'.format(ref['type']))
                             new_frontmatter_lines.append('    path: {}'.format(ref['path']))
                     continue
                 elif skip_references_section and (stripped.startswith('- type:') or stripped.startswith('path:') or (stripped.startswith(' ') and ('type:' in stripped or 'path:' in stripped))):
@@ -570,19 +570,10 @@ class EvidenceSync:
             # Check if there's already an evidence section
             evidence_section_pattern = re.compile(r'## Evidence\s*\n', re.IGNORECASE)
             evidence_match = evidence_section_pattern.search(body_content)
-
-            # Keep a single Sprint Evidence section by removing previously generated blocks.
-            body_without_sprint = re.sub(
-                r'\n*### Sprint Evidence\s*\n(?:\n*- \[Evidence (?:Link|File)\]\([^\n]+\)\s*)+',
-                '\n',
-                body_content,
-                flags=re.IGNORECASE,
-            )
             
             if evidence_match:
                 # Add links after existing evidence section
-                evidence_match_clean = evidence_section_pattern.search(body_without_sprint)
-                insert_pos = evidence_match_clean.end() if evidence_match_clean else len(body_without_sprint)
+                insert_pos = evidence_match.end()
                 evidence_links = '\n### Sprint Evidence\n\n'
                 for link in links:
                     if link.startswith('http'):
@@ -591,7 +582,7 @@ class EvidenceSync:
                         evidence_links += '- [Evidence File]({})\n'.format(link)
                 evidence_links += '\n'
                 
-                new_body = body_without_sprint[:insert_pos] + evidence_links + body_without_sprint[insert_pos:]
+                new_body = body_content[:insert_pos] + evidence_links + body_content[insert_pos:]
             else:
                 # Add new evidence section at the end
                 evidence_links = '\n## Evidence\n\n### Sprint Evidence\n\n'
@@ -602,7 +593,7 @@ class EvidenceSync:
                         evidence_links += '- [Evidence File]({})\n'.format(link)
                 evidence_links += '\n'
                 
-                new_body = body_without_sprint + evidence_links
+                new_body = body_content + evidence_links
             
             # Rebuild full content
             new_content = '---\n' + new_frontmatter + '\n---' + new_body
@@ -613,7 +604,7 @@ class EvidenceSync:
             print("✅ Added {} evidence links to body of {}".format(len(links), evid_file))
         else:
             # No evidence links to add, but still write back if frontmatter changed
-            if len(deduplicated_references) > 0:
+            if len(valid_references) > 0:
                 new_content = '---\n' + new_frontmatter + '\n---' + content[content.find('\n---', content.find('---')+3)+4:]
                 with io.open(evid_file, 'w', encoding='utf-8') as f:
                     f.write(new_content)

@@ -6,8 +6,8 @@ text: The STM32 microcontroller runs the ThreadX real-time operating system for 
 level: '1.9'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-9.md
+- path: ../assertions/ASSERT-L0-9.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

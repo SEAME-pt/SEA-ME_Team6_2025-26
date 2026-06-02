@@ -6,8 +6,8 @@ text: The project repository includes automated CI/CD pipelines for building and
 level: '1.16'
 normative: true
 references:
-- type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_16/ASSERTIONS-ASSERT_L0_16.md
+- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_16/ASSERTIONS-ASSERT_L0_16.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -53,10 +53,5 @@ ENV QT_TOOLCHAIN_FILE=/opt/agl-toolchain.cmake
 
 WORKDIR /workspace
 
-RUN mkdir -p /etc/kuksa/tls /etc/kuksa/jwt
-
-COPY ca.crt /etc/kuksa/tls
-COPY reader.jwt /etc/kuksa/jwt
-
 ENTRYPOINT ["/usr/local/bin/agl-env"]
 CMD ["bash"]

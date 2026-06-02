@@ -6,8 +6,8 @@ text: The Qt graphical user interface displays static visual elements that form 
 level: '1.6'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-6.md
+- path: ../assertions/ASSERT-L0-6.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

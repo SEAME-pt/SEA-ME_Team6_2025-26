@@ -29,11 +29,8 @@ static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value, Syste
     data[0] = reg;
     data[1] = (value >> 8) & 0xFF;  /* MSB first */
     data[2] = value & 0xFF;         /* LSB */
-    /* Use HAL_I2C_Mem_Write for consistency: register in data[0], value in data[1:2] */
     tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
-    HAL_StatusTypeDef result = HAL_I2C_Mem_Write(ina226_i2c, ina226_addr,
-                                                  data[0], I2C_MEMADD_SIZE_8BIT,
-                                                  &data[1], 2, 100);
+    HAL_StatusTypeDef result = HAL_I2C_Master_Transmit(ina226_i2c, ina226_addr, data, 3, HAL_MAX_DELAY);
     tx_mutex_put(&ctx->i2c1_mutex);
     return result;
 }
@@ -46,23 +43,28 @@ static HAL_StatusTypeDef INA226_WriteRegister(uint8_t reg, uint16_t value, Syste
   */
 static HAL_StatusTypeDef INA226_ReadRegister(uint8_t reg, uint16_t *value, SystemCtx* ctx)
 {
+    HAL_StatusTypeDef status;
     uint8_t data[2];
 
-    /* Single atomic HAL_I2C_Mem_Read: uses repeated-START (Sr) between the
-     * register-address write and the data read, keeping the entire transaction
-     * within one mutex hold.  The previous split Transmit+Receive pattern
-     * released the mutex between the two phases, allowing other I2C1 tasks
-     * to interleave and generate extra START/STOP conditions that corrupt the
-     * SRF08 FW v11 I2C state machine. */
+    /* Write register address */
     tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(ina226_i2c, ina226_addr,
-                                                 reg, I2C_MEMADD_SIZE_8BIT,
-                                                 data, 2, 100);
+    status = HAL_I2C_Master_Transmit(ina226_i2c, ina226_addr, &reg, 1, HAL_MAX_DELAY);
     tx_mutex_put(&ctx->i2c1_mutex);
+    if (status != HAL_OK) {
+        return status;
+    }
 
-    if (status != HAL_OK) return status;
+    /* Read 2 bytes */
+    tx_mutex_get(&ctx->i2c1_mutex, TX_WAIT_FOREVER);
+    status = HAL_I2C_Master_Receive(ina226_i2c, ina226_addr, data, 2, HAL_MAX_DELAY);
+    tx_mutex_put(&ctx->i2c1_mutex);
+    if (status != HAL_OK) {
+        return status;
+    }
 
+    /* Combine MSB and LSB */
     *value = ((uint16_t)data[0] << 8) | data[1];
+
     return HAL_OK;
 }
 

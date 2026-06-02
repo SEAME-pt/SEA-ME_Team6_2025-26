@@ -6,8 +6,8 @@ text: The development process incorporates AI-assisted tools for code developmen
 level: '1.17'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-17.md
+- path: ../assertions/ASSERT-L0-17.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

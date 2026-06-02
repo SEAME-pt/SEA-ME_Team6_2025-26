@@ -1,9 +1,0 @@
-# yolov8s_detect_mixed_precision.alls
-# Mixed-precision quantization: INT16 for class score heads, INT8 for rest
-# Target nodes: cv42, cv53, cv63 (class logits at 3 scales)
-
-normalization1 = normalization([0, 0, 0], [255, 255, 255])
-
-# Parser-compatible mixed-precision command for this SDK build.
-# Reduced to one detect head to keep compile mapping feasible.
-quantization_param([conv42], precision_mode=a16_w16)

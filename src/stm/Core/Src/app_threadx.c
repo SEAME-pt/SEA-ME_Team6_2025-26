@@ -24,7 +24,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "./tasks/task_indicator.h"
-#include "./tasks/task_cruise_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,7 +58,6 @@ TX_THREAD battery_thread;
 TX_THREAD thread_relay;
 TX_THREAD indicator_thread;
 TX_THREAD aeb_thread;
-TX_THREAD cc_thread;
 TX_QUEUE  can_rx_queue;
 /* Thread stacks */
 UCHAR           thread_relay_stack[1024];
@@ -72,10 +70,9 @@ static uint8_t speed_thread_stack[SPEED_THREAD_STACK_SIZE];
 static uint8_t imu_thread_stack[IMU_THREAD_STACK_SIZE];
 static uint8_t tof_thread_stack[TOF_THREAD_STACK_SIZE];
 static uint8_t srf08_thread_stack[SRF08_THREAD_STACK_SIZE];
-static uint8_t battery_thread_stack[BATTERY_THREAD_STACK_SIZE];
+static uint8_t battery_thread_stack[1024];
 static uint8_t indicator_thread_stack[INDICATOR_THREAD_STACK_SIZE];
-static uint8_t aeb_thread_stack[AEB_THREAD_STACK_SIZE];
-static uint8_t cc_thread_stack[CC_THREAD_STACK_SIZE];
+static uint8_t aeb_thread_stack[1024];
 
 /* Mutex for printf protection */
 //TX_MUTEX printf_mutex;
@@ -133,7 +130,6 @@ static void SRF08_Thread_Entry(ULONG thread_input);
 static void Battery_Thread_Entry(ULONG thread_input);
 static void Indicator_Thread_Entry(ULONG thread_input);
 static void AEB_Thread_Entry(ULONG thread_input);
-static void CC_Thread_Entry(ULONG thread_input);
 
 /* USER CODE END PFP */
 
@@ -285,24 +281,9 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
                        Battery_Thread_Entry,
                        0,
                        battery_thread_stack,
-                       BATTERY_THREAD_STACK_SIZE,
+                       1024,
                        15, /* Priority 15 (low priority - slow sensor) */
                        15,
-                       TX_NO_TIME_SLICE,
-                       TX_AUTO_START) != TX_SUCCESS)
-  {
-    ret = TX_THREAD_ERROR;
-  }
-
-  /* Create Cruise Control thread */
-  if (tx_thread_create(&cc_thread,
-                       "CC Thread",
-                       CC_Thread_Entry,
-                       0,
-                       cc_thread_stack,
-                       CC_THREAD_STACK_SIZE,
-                       CC_THREAD_PRIORITY,
-                       CC_THREAD_PRIORITY,
                        TX_NO_TIME_SLICE,
                        TX_AUTO_START) != TX_SUCCESS)
   {
@@ -340,7 +321,7 @@ void MX_ThreadX_Init(void)
 
   /* USER CODE END Before_Kernel_Start */
 
-  tx_kernel_enter(); // Serve para iniciar o kernel do ThreadX e começar a execução das threads criadas. O controle é transferido para o ThreadX a partir deste ponto.
+  tx_kernel_enter();
 
   /* USER CODE BEGIN Kernel_Start_Error */
 
@@ -568,23 +549,6 @@ void thread_relay_entry(ULONG thread_input)
                 // Opcional: printf("Relay OFF\n");
             }
         }
-    }
-}
-
-/**
-  * @brief  Cruise Control thread entry — PI loop at 20 Hz
-  */
-static void CC_Thread_Entry(ULONG thread_input)
-{
-    (void)thread_input;
-
-    SystemCtx *ctx = system_ctx();
-    task_cc_init(ctx);
-
-    while (1)
-    {
-        task_cc_step(ctx);
-        tx_thread_sleep(CC_TASK_PERIOD_MS);
     }
 }
 

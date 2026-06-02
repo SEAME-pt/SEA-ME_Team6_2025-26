@@ -9,7 +9,5 @@
 
 #include "main.h" 
 
-extern volatile uint8_t vlx_ready;
-
 void task_tof_init(SystemCtx* ctx);
 void task_tof_step(SystemCtx* ctx);

@@ -26,9 +26,5 @@ Rectangle {
             Layout.fillHeight: true
             source: "qrc:/qml/screens/MediaScreen.qml"
         }
-
-        Bottombar {
-            id: bottombar
-        }
     }
 }

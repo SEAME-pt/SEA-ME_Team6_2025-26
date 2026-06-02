@@ -6,8 +6,8 @@ text: The demonstrator car hardware is fully assembled with all components corre
 level: '1.2'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-2.md
+- path: ../assertions/ASSERT-L0-2.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

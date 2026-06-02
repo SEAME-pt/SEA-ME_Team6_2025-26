@@ -206,6 +206,11 @@ def generate_expectation(req_id: str, requirement: str, acceptance: str, categor
     # Quote text if it contains special chars
     text = f"'{text}'"
     
+    # References
+    references = [
+        {'type': 'file', 'path': f'../assertions/ASSERT-{req_id}.md', 'id': f'ASSERT-{req_id}'}
+    ]
+    
     # Create front-matter
     frontmatter_data = {
         'id': item_id,
@@ -213,6 +218,7 @@ def generate_expectation(req_id: str, requirement: str, acceptance: str, categor
         'text': text,
         'level': level,
         'normative': True,
+        'references': references,
         'reviewers': [DEFAULT_REVIEWER]
     }
     
@@ -265,6 +271,12 @@ def generate_assertion(req_id: str, requirement: str, verification: str, categor
     else:
         text = "The requirement is met and verified through appropriate verification methods as documented."
     
+    # References
+    references = [
+        {'type': 'file', 'path': f'../expectations/EXPECT-{req_id}.md'},
+        {'type': 'file', 'path': f'../evidences/EVID-{req_id}.md'}
+    ]
+    
     # Create front-matter
     frontmatter_data = {
         'id': item_id,
@@ -272,6 +284,7 @@ def generate_assertion(req_id: str, requirement: str, verification: str, categor
         'text': text,
         'level': level,
         'normative': True,
+        'references': references,
         'reviewers': [DEFAULT_REVIEWER]
     }
     
@@ -412,6 +425,11 @@ def generate_assumption(req_id: str, requirement: str, category: str) -> str:
     # Full text
     text = f"'Assumption: {assumption_text}'"
     
+    # References
+    references = [
+        {'type': 'file', 'path': f'../expectations/EXPECT-{req_id}.md', 'id': f'EXPECT-{req_id}'}
+    ]
+    
     # Evidence configuration
     evidence_config = {
         'type': validator_type,
@@ -427,6 +445,7 @@ def generate_assumption(req_id: str, requirement: str, category: str) -> str:
         'text': text,
         'level': level,
         'normative': True,
+        'references': references,
         'reviewers': [DEFAULT_REVIEWER],
         'evidence': evidence_config
     }

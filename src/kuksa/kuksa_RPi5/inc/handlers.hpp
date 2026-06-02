@@ -20,6 +20,3 @@ void handleToFDistance(const can_frame& frame, IKuksaClient& kuksa);
 void handleBattery(const can_frame& frame, IKuksaClient& kuksa);
 void handleEmergencyStop(const can_frame& frame, IKuksaClient& kuksa);
 void handleJoystick(const can_frame& frame, IKuksaClient& kuksa);
-
-void handleAEB(const can_frame& frame, IKuksaClient& kuksa);
-void handleSrf08(const can_frame& frame, IKuksaClient& kuksa);

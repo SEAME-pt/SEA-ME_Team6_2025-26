@@ -12,19 +12,13 @@
 #include <string.h>
 
 // Pulse counting variables
-volatile uint32_t last_capture   = 0;  // TIM4 CCR1 value at last edge
-volatile uint32_t capture_delta  = 0;  // ticks between last two edges
-volatile uint32_t last_pulse_ms  = 0;  // HAL_GetTick() at last edge
-volatile uint8_t  capture_valid  = 0;  // have we seen at least 2 edges?
-
-// TIM4 runs at 1MHz with prescaler=159 → 1 tick = 1us
-#define TIM4_TICK_HZ   1000000UL
+static volatile uint32_t pulse_count = 0;
+GPIO_PinState estado_anterior = GPIO_PIN_RESET;
 
 // Speed data
 static float current_speed_kmh = 0.0f;
 static float current_rpm = 0.0f;
 static uint32_t last_calculation_tick = 0;
-static uint32_t last_ms = 0;
 
 uint32_t last_calculation_time = 0;
 
@@ -34,6 +28,7 @@ uint32_t last_calculation_time = 0;
   */
 void Speedometer_Init(SystemCtx* ctx)
 {
+    pulse_count = 0;
     current_speed_kmh = 0.0f;
     current_rpm = 0.0f;
     last_calculation_tick = HAL_GetTick();
@@ -50,45 +45,60 @@ void Speedometer_Init(SystemCtx* ctx)
  */
 void Speedometer_PulseISR(void)
 {
-	//uint32_t now = HAL_GetTick();
-	//if (now - last_ms < 3) return;
-	//last_ms = now;
+    pulse_count++;
 }
 
-void Speedometer_CalculateSpeed(SystemCtx* ctx)
+/**
+  * @brief  Count pulses from encoder (call this frequently!)
+  * @retval None
+  */
+void Speedometer_CountPulse(void)
 {
-    // Timeout check — wheel has stopped
-    if ((HAL_GetTick() - last_pulse_ms) > SPEED_TIMEOUT_MS)
+    GPIO_PinState estado_atual = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
+
+    // Rising Edge (0 -> 1)
+    if (estado_atual == GPIO_PIN_SET && estado_anterior == GPIO_PIN_RESET)
     {
-        current_speed_kmh = 0.0f;
-        current_rpm       = 0.0f;
-        capture_valid     = 0;
-        return;
+        pulse_count++;
     }
 
-    if (!capture_valid)
+    estado_anterior = estado_atual;
+}
+
+
+/**
+ * @brief  Calculate speed — call periodically (e.g., every 500ms–1s)
+ */
+void Speedometer_CalculateSpeed(void)
+{
+    uint32_t now = HAL_GetTick();
+    uint32_t elapsed_ms = now - last_calculation_tick;
+
+    // Avoid division by zero or too-short intervals
+    if (elapsed_ms < 100)
         return;
 
-    // Atomically read and clear the delta
+    // Atomic read and reset of pulse count
     __disable_irq();
-    uint32_t delta = capture_delta;
-    capture_delta = 0;
+    uint32_t pulses = pulse_count;
+    pulse_count = 0;
     __enable_irq();
 
-    if (delta == 0) return;
+    float elapsed_s = (float)elapsed_ms / 1000.0f;
+    float wheel_circ = PI * WHEEL_DIAMETER;  // ~0.2136m
 
-    // Time between pulses in seconds
-    // delta is in TIM4 ticks; TIM4 runs at (SystemCoreClock / (Prescaler+1))
-    float tick_period_s = 1.0f / (float)TIM4_TICK_HZ;
-    float pulse_period_s = (float)delta * tick_period_s;
+    // pulses / 18 = rotações neste intervalo
+    float rotations = (float)pulses / (float)ENCODER_HOLES;
 
-    // One pulse = 1/ENCODER_HOLES of a rotation
-    float rps         = 1.0f / (pulse_period_s * (float)ENCODER_HOLES);
-    current_rpm       = rps * 60.0f;
-    current_speed_kmh = rps * WHEEL_CIRC * 3.6f;
+    // RPM
+    float rps = rotations / elapsed_s;
+    current_rpm = rps * 60.0f;
 
-    sys_log(ctx, "[Speedometer] delta=%lu ticks | RPM=%.1f | Speed=%.2f km/h",
-            delta, current_rpm, current_speed_kmh);
+    // Velocidade
+    float speed_ms = rps * wheel_circ;       // m/s
+    current_speed_kmh = speed_ms * 3.6f;     // km/h
+
+    last_calculation_tick = now;
 }
 
 float Speedometer_GetSpeed(void)

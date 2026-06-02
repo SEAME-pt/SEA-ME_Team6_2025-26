@@ -32,7 +32,6 @@ endif()
 find_package(Qt6 6.7 REQUIRED COMPONENTS 
     Core 
     DBus
-    Multimedia
 )
 
 # ============================================================================
@@ -55,17 +54,6 @@ else()
 endif()
 
 # ============================================================================
-# GSTREAMER CONFIGURATION
-# ============================================================================
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GST REQUIRED
-    gstreamer-1.0
-    gstreamer-app-1.0
-    gstreamer-video-1.0
-)
-message(STATUS "[Backend] GStreamer includes: ${GST_INCLUDE_DIRS}")
-
-# ============================================================================
 # SHARED BACKEND LIBRARY
 # ============================================================================
 add_library(Backend STATIC
@@ -82,7 +70,6 @@ add_library(Backend STATIC
     providers/currentlocationprovider.cpp
     providers/chassisprovider.cpp
     providers/extraprovider.cpp
-    providers/cameraprovider.cpp
     
     # Kuksa generated protobuf/gRPC stubs
     kuksa/val.pb.cc
@@ -98,7 +85,6 @@ target_include_directories(Backend PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/core
     ${CMAKE_CURRENT_SOURCE_DIR}/providers
-    ${GST_INCLUDE_DIRS}
 )
 
 # ============================================================================
@@ -107,7 +93,6 @@ target_include_directories(Backend PUBLIC
 target_link_libraries(Backend PUBLIC
     Qt6::Core
     Qt6::DBus
-    Qt6::Multimedia
 )
 
 # ============================================================================
@@ -115,9 +100,6 @@ target_link_libraries(Backend PUBLIC
 # ============================================================================
 if(IS_CROSS_COMPILE)
     target_link_libraries(Backend PUBLIC
-        gstreamer-1.0
-        gstapp-1.0
-        gstvideo-1.0
         grpc++
         grpc
         gpr
@@ -217,7 +199,6 @@ else()
     target_link_libraries(Backend PUBLIC
         gRPC::grpc++
         protobuf::libprotobuf
-        ${GST_LIBRARIES} 
     )
 endif()
 
