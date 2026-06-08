@@ -2,7 +2,7 @@ CXX ?= g++
 
 BIN_DIR := bin
 
-CXXFLAGS := -std=c++17 -O2 -Wall -Wextra
+CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -I.
 
 ifdef SDKTARGETSYSROOT
   CXXFLAGS += --sysroot=$(SDKTARGETSYSROOT)
