@@ -19,8 +19,8 @@
 // ── Sockets / Config ──────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
-static const char* CONFIG_PATH   = "/data/ADAS-Manager-OA/lka_config.conf";
-static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-OA/kuksa_bridge.py";
+static const char* CONFIG_PATH   = "/data/ADAS-Manager-GITHUB/lka_config.conf";
+static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-GITHUB/kuksa_bridge.py";
 
 static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
 
@@ -594,7 +594,7 @@ static DriveOutput autonomous_driving(
     }
     bool  single_line  = (lane.lane_status == 1 || lane.lane_status == 2);
     float line_factor  = single_line ? cfg.single_line_factor : 1.0f;
-    float speed_factor = curve_ema * line_factor;
+    float speed_factor = std::min(curve_ema, line_factor);  // min not multiply — avoid stacking both on curves
 
     if (do_send) {
         if (cfg.oa_enabled) {
