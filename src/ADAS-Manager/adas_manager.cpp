@@ -4,6 +4,7 @@
 #include "lka_controller.hpp"
 #include "joystick_receiver.hpp"
 #include "oa_controller.hpp"
+#include "can_receiver.hpp"
 #include "can_id.h"
 #include "can_protocol.h"
 #include <atomic>
@@ -18,8 +19,8 @@
 // ── Sockets / Config ──────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
-static const char* CONFIG_PATH   = "/data/ADAS-Manager-OA/lka_config.conf";
-static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-OA/kuksa_bridge.py";
+static const char* CONFIG_PATH   = "/data/ADAS-Manager-GITHUB/lka_config.conf";
+static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-GITHUB/kuksa_bridge.py";
 
 static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
 
@@ -175,7 +176,10 @@ struct StateSnapshot {
     bool        joy_valid        = false;
     bool        joy_toggle       = false;
     bool        joy_force_manual = false;
-    bool        joy_force_auto   = false;
+    bool        joy_force_auto    = false;
+    uint16_t    current_speed_cms = 0;
+    uint16_t    gap_cm            = 0xFFFF;
+    bool        status_valid      = false;
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
@@ -193,7 +197,10 @@ struct SharedState {
     bool        joy_valid        = false;
     bool        joy_toggle       = false;
     bool        joy_force_manual = false;
-    bool        joy_force_auto   = false;
+    bool        joy_force_auto    = false;
+    uint16_t    current_speed_cms = 0;
+    uint16_t    gap_cm            = 0xFFFF;
+    bool        status_valid      = false;
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
@@ -212,17 +219,40 @@ struct SharedState {
         s.joy_throttle = joy_throttle;
         s.joy_valid    = joy_valid;
         s.joy_toggle       = joy_toggle;
-        s.joy_force_manual = joy_force_manual;
-        s.joy_force_auto   = joy_force_auto;
-        s.last_joy_ts      = last_joy_ts;
-        joy_toggle         = false;
-        joy_force_manual   = false;
-        joy_force_auto     = false;
+        s.joy_force_manual  = joy_force_manual;
+        s.joy_force_auto    = joy_force_auto;
+        s.last_joy_ts       = last_joy_ts;
+        s.current_speed_cms = current_speed_cms;
+        s.gap_cm            = gap_cm;
+        s.status_valid      = status_valid;
+        joy_toggle          = false;
+        joy_force_manual    = false;
+        joy_force_auto      = false;
         return s;
     }
 };
 
 // ── Receiver threads ──────────────────────────────────────────────────────────
+void status_thread(SharedState& state) {
+    CanReceiver rx;
+    if (rx.init() < 0) {
+        fprintf(stderr, "[STATUS] Failed to init CAN receiver — speed feedback disabled\n");
+        return;
+    }
+    printf("[STATUS] Listening on CAN (0x213)\n");
+
+    while (running) {
+        CtrlStatus_t st{};
+        if (rx.read_ctrl_status(st)) {
+            std::lock_guard<std::mutex> lk(state.mtx);
+            state.current_speed_cms = st.current_speed_cms;
+            state.gap_cm            = st.gap_cm;
+            state.status_valid      = true;
+        }
+    }
+    rx.close_fd();
+}
+
 void lane_thread(SharedState& state) {
     SocketReceiver rx(LANE_SOCKET);
     if (rx.init() < 0) { fprintf(stderr, "[LANE] Failed to init socket\n"); return; }
@@ -318,6 +348,7 @@ static void adas_state_machine(
     int& degraded_frames,
     int& recovery_frames,
     std::chrono::steady_clock::time_point& degraded_since,
+    std::chrono::steady_clock::time_point& emergency_since,
     bool& estop_sent,
     LKAController& lka,
     CanSender& can)
@@ -330,10 +361,53 @@ static void adas_state_machine(
                 degraded_frames = 0;
                 recovery_frames = 0;
                 lka.reset();
+                if (estop_sent) {
+                    can.send_estop(0);
+                    estop_sent = false;
+                }
                 printf("[ADAS] → ACTIVE (recovered)\n");
             }
         } else {
             recovery_frames = 0;
+        }
+
+        /* Timeout-based recovery — deadlock breaker.
+         *
+         * Cenários reais que isto resolve:
+         *   1) Carro pára via STM32 AEB (SRF08) numa posição onde a câmara
+         *      já não vê lane suficiente. lane_ok fica falso indefinidamente,
+         *      recovery normal nunca dispara.
+         *   2) Câmara é tapada momentaneamente → EMERGENCY_STOP. Ao destapar,
+         *      o detector de lane pode demorar a estabilizar; entretanto o
+         *      Manager continua a enviar aeb_request=true em cada tick,
+         *      bloqueando o STM32.
+         *
+         * Solução: ao fim de emergency_timeout_ms em EMERGENCY_STOP, força
+         * regresso a DEGRADED (não ACTIVE, por segurança). Em DEGRADED:
+         *   - autonomous_driving NÃO envia aeb_request → STM32 fica livre
+         *   - se lane voltar a aparecer → transita normal para ACTIVE
+         *   - se lane continuar perdida → re-entra em EMERGENCY_STOP após
+         *     emergency_threshold_ms (timer recomeça com degraded_since=now)
+         *
+         * IMPORTANTE: só aplicar se ainda estamos em EMERGENCY_STOP — se
+         * o bloco anterior já fez recovery via lane_ok, não sobrescrever.
+         */
+        if (adas_state == AdasState::EMERGENCY_STOP) {
+            auto emergency_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - emergency_since).count();
+            if (emergency_ms >= cfg.emergency_timeout_ms) {
+                adas_state      = AdasState::DEGRADED;
+                degraded_since  = now;
+                recovery_frames = 0;
+                if (estop_sent) {
+                    can.send_estop(0);
+                    estop_sent = false;
+                }
+                printf("[ADAS] EMERGENCY_STOP timeout %lds → DEGRADED"
+                       " (lane=%s — recovery via timeout)\n",
+                       (long)(cfg.emergency_timeout_ms / 1000),
+                       lane_ok ? "OK" : "lost");
+            }
         }
     } else {
         if (lane_ok) {
@@ -353,6 +427,7 @@ static void adas_state_machine(
                     now - degraded_since).count();
                 if (ms >= cfg.emergency_threshold_ms) {
                     adas_state      = AdasState::EMERGENCY_STOP;
+                    emergency_since = now;
                     recovery_frames = 0;
                     printf("[ADAS] → EMERGENCY_STOP\n");
                     if (!estop_sent) {
@@ -392,9 +467,11 @@ static void change_drive_mode(
 
 // ── Drive output ──────────────────────────────────────────────────────────────
 struct DriveOutput {
-    int steering       = 0;
-    int throttle       = 0;
-    int throttle_limit = 0;
+    int      steering         = 0;
+    int      throttle         = 0;
+    int      throttle_limit   = 0;
+    uint16_t target_speed_cms = 0;
+    bool     acc_active       = false;
 };
 
 // ── Manual driving ────────────────────────────────────────────────────────────
@@ -435,7 +512,8 @@ static DriveOutput autonomous_driving(
     LKAController& lka,
     OAController& oa,
     bool& estop_sent,
-    CanSender& can)
+    CanSender& can,
+    uint16_t status_gap_cm = 0xFFFF)
 {
     DriveOutput out;
 
@@ -450,6 +528,15 @@ static DriveOutput autonomous_driving(
                 nearest_theta  = obj.objects[i].theta_cam;
                 cam_valid_oa   = true;
             }
+        }
+    }
+    // SRF08 gap from CtrlStatus supplements camera — dead-ahead, no theta
+    if (status_gap_cm != 0xFFFF) {
+        float gap_m = status_gap_cm / 100.0f;
+        if (gap_m < nearest_dist_m) {
+            nearest_dist_m = gap_m;
+            nearest_theta  = 0.0f;
+            cam_valid_oa   = true;
         }
     }
 
@@ -496,21 +583,55 @@ static DriveOutput autonomous_driving(
             break;
     }
 
+    // ── Curve slowdown — computed after LKA steering is known ────────────────
+    static float curve_ema = 1.0f;
+    if (do_send && adas_state == AdasState::ACTIVE && !oa_active) {
+        float steer_norm = std::fabs(static_cast<float>(out.steering)) / 100.0f;
+        float raw = std::max(cfg.curve_min_factor, 1.0f - cfg.curve_gain * steer_norm);
+        curve_ema = cfg.curve_ema_alpha * raw + (1.0f - cfg.curve_ema_alpha) * curve_ema;
+    } else if (adas_state == AdasState::INIT || adas_state == AdasState::EMERGENCY_STOP) {
+        curve_ema = 1.0f;
+    }
+    bool  single_line  = (lane.lane_status == 1 || lane.lane_status == 2);
+    float line_factor  = single_line ? cfg.single_line_factor : 1.0f;
+    float speed_factor = std::min(curve_ema, line_factor);  // min not multiply — avoid stacking both on curves
+
     if (do_send) {
         if (cfg.oa_enabled) {
             if (oa_active) {
+                // OA overrides — fixed throttle for maneuver timing, no curve slowdown
                 out.steering = oa_res.steering;
                 out.throttle = oa_res.throttle;
+                can.send_ctrl_cmd(CTRL_MODE_LKA,
+                                  static_cast<int8_t>(out.steering),
+                                  static_cast<int8_t>(out.throttle));
+                do_send = false;
             } else if (oa_res.state == OAState::BLOCKED) {
                 can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
                                   0, HEADWAY_MEDIUM, /*aeb_request=*/true);
                 do_send = false;
             }
         }
-        if (do_send)
-            can.send_ctrl_cmd(CTRL_MODE_LKA,
-                              static_cast<int8_t>(out.steering),
-                              static_cast<int8_t>(out.throttle));
+        if (do_send) {
+            float limit_factor = static_cast<float>(out.throttle_limit) / 100.0f;
+            if (cfg.acc_enabled && adas_state == AdasState::ACTIVE) {
+                out.target_speed_cms = static_cast<uint16_t>(
+                    cfg.acc_target_kmh * (100.0f / 3.6f) * speed_factor * limit_factor);
+                out.acc_active = true;
+                can.send_ctrl_cmd(CTRL_MODE_ACC,
+                                  static_cast<int8_t>(out.steering),
+                                  0,
+                                  out.target_speed_cms,
+                                  static_cast<uint8_t>(cfg.acc_headway));
+            } else {
+                out.throttle = static_cast<int>(
+                    std::round(out.throttle * speed_factor));
+                out.throttle = std::max(0, std::min(out.throttle, out.throttle_limit));
+                can.send_ctrl_cmd(CTRL_MODE_LKA,
+                                  static_cast<int8_t>(out.steering),
+                                  static_cast<int8_t>(out.throttle));
+            }
+        }
     }
 
     return out;
@@ -528,7 +649,11 @@ static void log_tick(
     int steering,
     int throttle,
     int throttle_limit,
-    int default_throttle)
+    int default_throttle,
+    bool acc_active,
+    uint16_t target_speed_cms,
+    uint16_t current_speed_cms,
+    bool status_valid)
 {
     const char* lane_str = (lane.lane_status < 4)
                            ? LANE_STATUS_STR[lane.lane_status] : "?";
@@ -543,6 +668,11 @@ static void log_tick(
     else
         printf("lane=---              steer=%+4d  throttle=%3d",
                steering, throttle);
+
+    if (acc_active)
+        printf("  ACC→%.1fkmh", target_speed_cms * 3.6f / 100.0f);
+    if (status_valid)
+        printf("  spd=%.1fkmh", current_speed_cms * 3.6f / 100.0f);
 
     if (obj_valid && obj.count > 0) {
         printf("  | obj=%u", obj.count);
@@ -575,9 +705,10 @@ int main() {
 
     // ── Receiver threads ──────────────────────────────────────────────────────
     SharedState state;
-    std::thread t_lane(lane_thread,     std::ref(state));
-    std::thread t_obj (object_thread,   std::ref(state));
-    std::thread t_joy (joystick_thread, std::ref(state));
+    std::thread t_lane  (lane_thread,     std::ref(state));
+    std::thread t_obj   (object_thread,   std::ref(state));
+    std::thread t_joy   (joystick_thread, std::ref(state));
+    std::thread t_status(status_thread,   std::ref(state));
 
     // ── CAN ───────────────────────────────────────────────────────────────────
     CanSender can;
@@ -596,6 +727,7 @@ int main() {
     int       degraded_frames = 0;
     int       recovery_frames = 0;
     auto      degraded_since  = std::chrono::steady_clock::now();
+    auto      emergency_since = std::chrono::steady_clock::now();
     auto      last_tick       = std::chrono::steady_clock::now();
     bool      lane_was_stale  = true;
     bool      joy_was_stale   = true;
@@ -618,9 +750,12 @@ int main() {
         const auto&        lane_ts      = snap.last_lane_ts;
         const auto&        obj_ts       = snap.last_obj_ts;
         const auto&        joy_ts       = snap.last_joy_ts;
-        const bool         joy_toggle   = snap.joy_toggle;
-        const int8_t       joy_steering = snap.joy_steering;
-        const int8_t       joy_throttle = snap.joy_throttle;
+        const bool         joy_toggle         = snap.joy_toggle;
+        const int8_t       joy_steering       = snap.joy_steering;
+        const int8_t       joy_throttle       = snap.joy_throttle;
+        const uint16_t     status_gap_cm      = snap.gap_cm;
+        const uint16_t     current_speed_cms  = snap.current_speed_cms;
+        const bool         status_valid       = snap.status_valid;
 
         // ── Watchdog: override valid flags if timestamps are stale ────────────
         auto lane_age_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - lane_ts).count();
@@ -675,14 +810,14 @@ int main() {
         if (drive_mode == DriveMode::AUTONOMOUS)
             adas_state_machine(lane_ok || oa_maneuver_active, now, cfg, adas_state,
                                degraded_frames, recovery_frames, degraded_since,
-                               estop_sent, lka, can);
+                               emergency_since, estop_sent, lka, can);
 
         // ── Drive ─────────────────────────────────────────────────────────────
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
             ? manual_driving(joy_valid, joy_steering, joy_throttle,
                              cfg.throttle, estop_sent, can)
             : autonomous_driving(adas_state, lane, obj, obj_valid, dt,
-                                 cfg, lka, oa, estop_sent, can);
+                                 cfg, lka, oa, estop_sent, can, status_gap_cm);
 
         const int steering       = drive_out.steering;
         const int throttle       = drive_out.throttle;
@@ -696,7 +831,9 @@ int main() {
 
         // ── Log ───────────────────────────────────────────────────────────────
         log_tick(adas_state, drive_mode, oa, lane_valid, lane,
-                 obj_valid, obj, steering, throttle, throttle_limit, cfg.throttle);
+                 obj_valid, obj, steering, throttle, throttle_limit, cfg.throttle,
+                 drive_out.acc_active, drive_out.target_speed_cms,
+                 current_speed_cms, status_valid);
     }
 
     // ── Shutdown ──────────────────────────────────────────────────────────────
@@ -707,6 +844,7 @@ int main() {
     t_lane.join();
     t_obj.join();
     t_joy.join();
+    t_status.join();
     printf("[ADAS] Shutdown.\n");
     return 0;
 }
