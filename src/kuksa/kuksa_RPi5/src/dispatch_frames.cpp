@@ -19,10 +19,6 @@ static const Entry kHandlers[] = {
     { CAN_ID_EMERGENCY_STOP,    &handleEmergencyStop },
 
     { CAN_ID_JOYSTICK,         &handleJoystick },
-
-    { CAN_ID_AEB_STOP,         &handleAEB },
-
-    { CAN_ID_SRF08_DISTANCE,   &handleSrf08 },
 };
 
 static const std::size_t kHandlersCount = sizeof(kHandlers) / sizeof(kHandlers[0]);

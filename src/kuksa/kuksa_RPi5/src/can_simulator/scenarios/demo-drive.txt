@@ -1,8 +1,0 @@
-@init rpm=0 tof_mm=4000 batt_soc=90 env_temp_c=22.0
-
-t=500 rpm=200
-t=1500 rpm=400
-t=2500 tof_mm=900
-t=3000 tof_mm=350 estop_active=1 estop_source=0 estop_mm=350 estop_reason=1
-t=3500 rpm=0
-t=4500 estop_active=0

@@ -1,66 +1,25 @@
 ---
 id: EVID-L0-23
-header: Raspberry Pi 5 AGL Boot Time Evidence
-text: 'Evidence demonstrating that the Raspberry Pi 5–based system running Automotive
-  Grade Linux (AGL) completes operating system initialization and reaches middleware
-  operational state within ≤ 10 s after power-on.
+header: "Raspberry Pi 5 AGL Boot Time Evidence"
+text: |
+  Evidence demonstrating that the Raspberry Pi 5–based system running Automotive Grade Linux (AGL) completes operating system initialization and reaches middleware operational state within ≤ 10 s after power-on.
 
-
-  **Verification Method:** Timestamp logging from bootloader, kernel, systemd, and
-  KUKSA service startup. AGL boot logs analysis. External time measurement (video
-  recording from power-on to service availability).
-
+  **Verification Method:** Timestamp logging from bootloader, kernel, systemd, and KUKSA service startup. AGL boot logs analysis. External time measurement (video recording from power-on to service availability).
 
   **Expected Artifacts:**
-
   - AGL boot logs with timestamps
-
   - Systemd service startup timing analysis
-
   - KUKSA service availability timestamps
-
   - Video recording from power-on to middleware availability
-
-  '
 level: '1.23'
 normative: true
 references:
-- type: file
-  path: docs/demos/Validation-of-energy-layout-sprint0.jpeg
-- type: file
-  path: docs/demos/rpi5-thermal-stress-test-.png
-- type: file
-  path: docs/demos/Validation-of-energy-layout-sprint3.jpeg
-- type: file
-  path: docs/demos/Validation-of-energy-layout-sprint2.jpeg
-- type: file
-  path: docs/demos/Validation-of-energy-layout-sprint1.jpeg
-- type: file
-  path: docs/guides/AGL_and_ThreadX_benefits_Guide.md
-- type: file
-  path: docs/guides/AGL_Installation_Guide.md
-- type: file
-  path: docs/guides/AGL_ Joystick_installation_and_test.md
-- type: file
-  path: docs/guides/AGL_Configuration_Guide.md
-- type: file
-  path: docs/guides/Power Consumption Analysis.md
-- type: file
-  path: src/setup/toolchains/agl-toolchain.cmake
-- type: file
-  path: src/setup/toolchains/r5-agl-toolchain.cmake
-- type: file
-  path: src/ota/rauc/bootloader-custom-backend.sh
-- type: file
-  path: src/ota/rauc/post-reboot-verify.sh
-- type: file
-  path: src/shared/backend/providers/powertrainprovider.hpp
-- type: file
-  path: src/shared/backend/providers/powertrainprovider.cpp
-score: 1.0
+- type: url
+  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+score: 0.0
 reviewers:
-- name: Joao Jesus Silva
-  email: joao.silva@seame.pt
+  - name: Joao Jesus Silva
+    email: joao.silva@seame.pt
 review_status: pending
 ---
 This evidence item collects boot logs, timing measurements, and video recordings that demonstrate the Raspberry Pi 5 AGL boot time requirement is met.

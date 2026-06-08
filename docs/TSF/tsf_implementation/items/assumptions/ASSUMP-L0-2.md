@@ -4,8 +4,8 @@ header: 'Assumption: Hardware Assembly'
 level: '1.2'
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-2.md
+- path: ../expectations/EXPECT-L0-2.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

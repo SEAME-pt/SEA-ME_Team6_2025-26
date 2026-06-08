@@ -6,8 +6,8 @@ text: The cluster display content streams wirelessly from the computation device
 level: '1.12'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-12.md
+- path: ../assertions/ASSERT-L0-12.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -83,6 +83,8 @@ void Error_Handler(void);
 #define USB_UCPD_CC1_GPIO_Port GPIOA
 #define OCTOSPI_F_NCS_Pin GPIO_PIN_5
 #define OCTOSPI_F_NCS_GPIO_Port GPIOI
+#define ENCODER_INPUT_Pin GPIO_PIN_6
+#define ENCODER_INPUT_GPIO_Port GPIOB
 #define OCTOSPI_R_IO5_Pin GPIO_PIN_0
 #define OCTOSPI_R_IO5_GPIO_Port GPIOI
 #define OCTOSPI_F_IO7_Pin GPIO_PIN_12

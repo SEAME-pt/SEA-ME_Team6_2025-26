@@ -6,8 +6,8 @@ text: The system operates using a dual Raspberry Pi architecture with Raspberry 
 level: '1.10'
 normative: true
 references:
-- type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_10/ASSERTIONS-ASSERT_L0_10.md
+- path: docs/TSF/tsf_implementation/.trudag_items/ASSERTIONS/ASSERT_L0_10/ASSERTIONS-ASSERT_L0_10.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

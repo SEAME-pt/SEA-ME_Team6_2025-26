@@ -181,15 +181,15 @@ jobs:
               qt6-build.sh /workspace/cluster/
               
               echo "=== Verifying binary architecture ==="
-              file /workspace/cluster/build-arm/HelloQt6Qml
-              file /workspace/cluster/build-arm/HelloQt6Qml | grep -q "32-bit\|ARM" && echo "✅ Binary is 32-bit ARM" || echo "⚠️ Check binary architecture"
+              file /workspace/cluster/build-arm/ClusterApp
+              file /workspace/cluster/build-arm/ClusterApp | grep -q "32-bit\|ARM" && echo "✅ Binary is 32-bit ARM" || echo "⚠️ Check binary architecture"
             '
 
       - name: Upload Cluster artifact (RPi4)
         uses: actions/upload-artifact@v4
         with:
           name: cluster-rpi4
-          path: src/cluster/build-arm/HelloQt6Qml
+          path: src/cluster/build-arm/ClusterApp
 
   # ============================================================
   # Release - Create separate packages for each platform
@@ -303,7 +303,7 @@ jobs:
             
             | Binary | Device | Target Path |
             |--------|--------|-------------|
-            | `HelloQt6Qml` | RPi4 | `/opt/cluster/` |
+            | `ClusterApp` | RPi4 | `/opt/cluster/` |
             | `can_to_kuksa_publisher` | RPi5 | `/home/kuksa_RPi5/bin/` |
             | `vss_min.json` | RPi5 | `/home/kuksa_RPi5/` |
             

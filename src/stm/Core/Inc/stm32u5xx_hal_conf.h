@@ -54,7 +54,7 @@ extern "C" {
 #define HAL_I2C_MODULE_ENABLED
 #define HAL_ICACHE_MODULE_ENABLED
 /*#define HAL_IRDA_MODULE_ENABLED */
-#define HAL_IWDG_MODULE_ENABLED    /* enabled: auto-reset if STM32 freezes */
+/*#define HAL_IWDG_MODULE_ENABLED */
 /*#define HAL_JPEG_MODULE_ENABLED */
 /*#define HAL_LPTIM_MODULE_ENABLED */
 /*#define HAL_LTDC_MODULE_ENABLED */
