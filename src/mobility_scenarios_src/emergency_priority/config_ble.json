@@ -1,0 +1,31 @@
+{
+  "traffic_light": {
+    "transmitter_host": "192.168.1.XX",
+    "transmitter_port": 5555,
+    "timeout_sec": 5.0
+  },
+  "wireless": {
+    "protocol": "udp",
+    "listen_port": 5555,
+    "heartbeat_interval_sec": 1.0
+  },
+  "ble": {
+    "device_name": "Trafficlight",
+    "service_uuid": "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+    "rx_characteristic_uuid": "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+    "tx_characteristic_uuid": "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+    "timeout_sec": 5.0,
+    "scan_timeout_sec": 10.0
+  },
+  "adas_bridge": {
+    "enabled": true,
+    "object_socket": "/tmp/adas_objects.sock",
+    "yellow_stop_after_s": 2.0
+  },
+  "kuksa": {
+    "enabled": false,
+    "databroker_host": "localhost",
+    "databroker_port": 55555,
+    "signal_path": "Vehicle.Infra.TrafficLight.Status"
+  }
+}
