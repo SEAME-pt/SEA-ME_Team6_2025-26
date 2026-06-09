@@ -16,7 +16,7 @@ Possible scenarios include:
 
 * Robotaxi
 * Smart Traffic Lights
-* Vehicle-to-Infrastructure Communication
+*-to-Infrastructure Communication Vehicle
 * Electric Charge Stations Queue Management
 * Road Surface Communication
 * Smart Insurance

@@ -1,0 +1,33 @@
+# Local Demo Evidence - 2026-06-03
+
+## Command
+python3 src/mobility_scenarios/emergency_priority/unified_demo.py --config src/mobility_scenarios/emergency_priority/config.json
+
+## Output
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'red', 'timestamp': '2026-06-03T22:14:39Z'}
+[BarrierSimulator] Close requested: {'action': 'close'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'closed', 'timestamp': '2026-06-03T22:14:39Z'}
+
+=== STEP 1 - Normal Mode ===
+priority_active: False
+traffic_light_state: red
+barrier_state: closed
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'emergency_green', 'timestamp': '2026-06-03T22:14:39Z'}
+[BarrierSimulator] Open requested: {'action': 'open'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'open', 'timestamp': '2026-06-03T22:14:39Z'}
+
+=== STEP 2 - Emergency Mode ===
+priority_active: True
+traffic_light_state: emergency_green
+barrier_state: open
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'red', 'timestamp': '2026-06-03T22:14:39Z'}
+[BarrierSimulator] Close requested: {'action': 'close'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'closed', 'timestamp': '2026-06-03T22:14:39Z'}
+
+=== STEP 3 - Back To Normal ===
+priority_active: False
+traffic_light_state: red
+barrier_state: closed
+
+=== DEMO RESULT ===
+PASS

@@ -1,0 +1,22 @@
+{
+  "barrier": {
+    "id": "kitronik_demo_1",
+    "backend": "simulation",
+    "open_duration_s": 5.0
+  },
+  "v2i": {
+    "timeout_ms": 2000,
+    "retry_count": 3
+  },
+  "vehicle": {
+    "simulation_mode": true,
+    "initial_distance_m": 25.0,
+    "trigger_distance_m": 5.0,
+    "approach_step_m": 1.0,
+    "loop_interval_s": 0.5
+  },
+  "kuksa": {
+    "enabled": false,
+    "path_template": "Vehicle.Infra.Barrier.{id}.Status"
+  }
+}
