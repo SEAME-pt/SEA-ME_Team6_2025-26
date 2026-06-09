@@ -1,103 +1,109 @@
-# Planning V2I (Living Plan)
+# Module 3: V2I Integration & Emergency Priority — Master Planning Guide
 
-## Why this file exists
+**Single source of truth** for Vehicle-to-Infrastructure communication, emergency traffic light control, and unified coordination.
 
-This file is the single source of truth for implementation progress of Module 3 mobility scenarios.
-It must be updated as implementation evolves.
+**Status:** Phase 3 Implementation Complete - Ready for Monday Hardware Demo  
+**Owner:** Joao  
+**Branch:** `feature/mobility_scenarios/V2I_and_emergencypriority`  
+**Last Updated:** June 9, 2026
 
-## Owner and Scope
+## Quick Navigation
 
-- Owner: Joao
-- Branch: `feature/mobility_scenarios/V2I_and_emergencypriority`
-- Scope:
-  - Phase 1: V2I barriers (MVP)
-  - Phase 2: Emergency Priority (traffic lights)
-  - Phase 3: Unified V2I + Emergency Priority
-
-## Where this file should live
-
-- This file lives in `docs/guides` because it is planning and process documentation.
-- `src/` should contain runnable code, configs, and tests.
+- **For Monday Demo:** Jump to [Deployment Guide: USB-Direct for Monday (Option A)](#deployment-guide-usb-direct-for-monday-option-a)
+- **Why BLE Won't Work:** See [Hardware Reality Check](#why-ble-wont-work-hardware-reality-check)
+- **Implementation Status:** See [Current Status](#current-status)
+- **Testing & Validation:** See [Testing & Validation](#testing--validation)
+- **Troubleshooting:** See [Troubleshooting Guide](#troubleshooting-guide)
 
 ## Current Status
 
-- [x] Branch prepared and synced
-- [x] Base folders created in `docs/guides/mobility_scenarios`
-- [x] Base folders created in `src/mobility_scenarios_src`
-- [x] High-level implementation plan drafted
-- [x] Phase 1 code scaffold created
-- [x] Phase 1 MVP running end-to-end
-- [x] Phase 1 evidence collected
-- [x] Hardware adapter scaffold created for future Kitronik integration
-- [x] Backend selection tests added
-- [x] Phase 2 code scaffold created
-- [x] Phase 2 MVP running end-to-end
-- [x] Phase 2 evidence collected
-- [x] Phase 3 unified flow implemented
-- [x] Phase 3 evidence and demo script completed
+- [x] Phase 1: V2I barriers MVP complete with tests
+- [x] Phase 2: Emergency traffic lights MVP complete with tests
+- [x] Phase 3: Unified coordinator complete with integration tests
+- [x] USB-direct bridge architecture validated and deployed
+- [x] AGL folder (`/data/ADAS-Manager-tuning-trafficlight`) ready
+- [x] ADAS socket infrastructure verified
+- [x] All documentation consolidated and translated to English
+- [x] Evidence logs collected: `docs/guides/mobility_scenarios/shared/evidence/`
 
-## Implementation Plan
+## Implementation Phase Overview
 
-### Phase 1 - V2I Barriers MVP (fast first)
+### Phase 1: V2I Barriers MVP ✅ COMPLETE
 
-Goal: Vehicle requests barrier opening and receives status confirmation.
+**Goal:** Vehicle requests barrier opening and receives status feedback.
 
-Tasks:
-- [x] Define barrier interaction contract for local MVP
-- [x] Create `barrier_simulator.py` (simulated infrastructure side)
-- [x] Create `v2i_client.py` (vehicle side)
-- [x] Create `config.json` with local simulation and timeout settings
-- [x] Publish barrier status into KUKSA/VSS (stubbed writer with optional toggle)
-- [x] Implement timeout fail-safe (default: barrier remains closed)
-- [x] Add unit tests (state and timeout)
-- [x] Add integration test (direct local request/response)
-- [x] Capture first MVP demo evidence
+**Key Files:**
+- `src/mobility_scenarios_src/v2i/barrier_simulator.py`
+- `src/mobility_scenarios_src/v2i/barrier_rules.py`
+- `src/mobility_scenarios_src/v2i/barrier_backend.py`
+- `src/mobility_scenarios_src/v2i/kitronik_barrier.py` (future hardware)
 
-Exit criteria:
-- [x] Car/client sends request and receives open/closed status
-- [x] Timeout path works and is logged
-- [x] Status visible in KUKSA/VSS
+**Acceptance Criteria:**
+- ✅ Barrier closes on timeout (safe fail default)
+- ✅ Vehicle receives state confirmation
+- ✅ Status visible in KUKSA/VSS
+- ✅ Unit & integration tests passing
 
-### Phase 2 - Emergency Priority (traffic lights)
+---
 
-Goal: Emergency trigger forces green traffic light with confirmation.
+### Phase 2: Emergency Priority (Traffic Lights) ✅ COMPLETE
 
-Tasks:
-- [x] Define emergency interaction contract for local MVP
-- [x] Create `trafficlight_simulator.py`
-- [x] Create `emergency_client.py`
-- [x] Implement emergency override policy
-- [x] Publish traffic light and emergency states to KUKSA/VSS (stubbed writer)
-- [x] Add tests for normal/emergency conflict
-- [x] Capture phase demo evidence
+**Goal:** Emergency vehicle forces green traffic light with safety override.
 
-Exit criteria:
-- [x] Emergency trigger changes traffic light state to green
-- [x] State propagation confirmed locally and in KUKSA/VSS
+**Key Files:**
+- `src/mobility_scenarios_src/emergency_priority/trafficlight_simulator.py`
+- `src/mobility_scenarios_src/emergency_priority/traffic_light_rules.py`
+- `src/mobility_scenarios_src/emergency_priority/emergency_client.py`
+- **`src/mobility_scenarios_src/emergency_priority/trafficlight_vehicle_bridge.py`** ← Main Bridge
+- `src/mobility_scenarios_src/emergency_priority/microbit_trafficlight_firmware.py` (MicroPython code)
 
-### Phase 3 - Unified V2I + Emergency Priority
+**Bridge Modes (3 Options):**
 
-Goal: One coordinator orchestrates barriers and traffic lights with emergency override.
+```
+LOCAL MODE (Monday Ready) ✅
+  Micro:bit → USB /dev/ttyACMx → Single machine bridge → ADAS socket
+  Deployment: USB cable from micro:bit to AGL
 
-Tasks:
-- [x] Create `coordinator.py`
-- [x] Merge barrier and traffic light workflows
-- [x] Implement priority policy and fallback behavior
-- [x] Add end-to-end integration tests
-- [x] Prepare final demo script
+TRANSMITTER MODE (Future - PC Side)
+  Micro:bit → USB /dev/ttyACM0 → PC bridge → UDP:5555 → Network
 
-Exit criteria:
-- [x] Unified scenario works with and without emergency mode
-- [x] Test evidence ready for sprint review
+RECEIVER MODE (Future - AGL Side)
+  Network UDP:5555 → AGL bridge → /tmp/adas_objects.sock → ADAS Manager
+```
 
-## Decisions Log
+**Safety Features:**
+- Yellow timeout escalation (2.0s default) → auto-RED
+- Heartbeat monitoring (5.0s timeout) → safe RED
+- Non-blocking socket writes
+- Fallback on any error → RED (safe stop)
 
-- 2026-06-03: MVP-first strategy approved (simulate first, hardware later).
-- 2026-06-03: Stack selected: Python + KUKSA/VSS with local simulation first; MQTT kept optional.
-- 2026-06-03: Documentation split enforced:
-  - `docs/guides` = design/planning/architecture
-  - `src` = implementation/run/tests
-- 2026-06-03: Barrier and traffic-light are independent use cases with separate vehicle motion rules.
+**Acceptance Criteria:**
+- ✅ Emergency trigger → green
+- ✅ Normal timeout → RED
+- ✅ Yellow escalates → RED after 2s
+- ✅ State propagation to ADAS Manager confirmed
+- ⏳ Real vehicle throttle change (Monday with hardware)
+
+---
+
+### Phase 3: Unified V2I + Emergency Priority ✅ COMPLETE
+
+**Goal:** Single coordinator orchestrates barriers, lights, emergency override.
+
+**Key Files:**
+- `src/mobility_scenarios_src/emergency_priority/coordinator.py`
+- `src/mobility_scenarios_src/emergency_priority/unified_demo.py`
+
+**Priority Logic:**
+1. Emergency Mode: Forces barrier OPEN + light GREEN (override)
+2. Normal Mode: Barriers by request, lights by state
+3. Fallback: Barrier CLOSED + light RED on timeout
+
+**Validation:**
+```bash
+python3 src/mobility_scenarios_src/emergency_priority/unified_demo.py --config config.json
+# Expected: Step 1 (normal) → Step 2 (emergency) → Step 3 (return) → PASS
+```
 
 ## Update Rules
 
