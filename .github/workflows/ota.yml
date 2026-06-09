@@ -276,6 +276,8 @@ jobs:
           cp ota-rpi5/adas-manager/socket_sender.py     rauc-staging/
           cp -r ota-rpi5/inference                      rauc-staging/
 
+          chmod +x rauc-staging/adas_manager
+
           tar -czf rauc-staging/apps.tar.gz -C rauc-staging \
               adas_manager kuksa_bridge.py socket_sender.py inference/
 
