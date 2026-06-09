@@ -527,6 +527,48 @@ Safety fallback requirements:
   - vehicle command -> stop
 ```
 
+## Path B Implementation Progress (June 9, 2026 - In Progress)
+
+### What's Been Implemented
+
+**AGL Side (BLE Central Receiver):**
+- `ble_trafficlight_receiver.py` — Python service using BlueZ (`bleak` library)
+  - Scans for micro:bit "Trafficlight" peripheral
+  - Connects and subscribes to Nordic UART notifications
+  - Parses R/Y/G state bytes
+  - Injects into `/tmp/adas_objects.sock` for ADAS Manager
+  - Auto-reconnects on disconnect
+  - Safety: forces RED on timeout (>5s)
+
+**Micro:bit Side (BLE Peripheral):**
+- `MAKECODE_BLE_FIRMWARE_GUIDE.md` — Two ready-to-use templates
+  - **Template A** (fast prototype): RED state + button to cycle R→Y→G
+  - **Template B** (production): full state machine with yellow auto-escalation to RED
+  - Both use Nordic UART Service (6e400001, standard BLE)
+  - Flash via MakeCode online editor
+
+**Configuration & Testing:**
+- `config_ble.json` — BLE service UUIDs, timeouts, ADAS socket path
+- `test_ble_receiver.py` — Unit tests (no hardware required)
+  - State parsing, timeout logic, config validation, ADAS object format
+- `PATH_B_GETTING_STARTED.md` — Quick start guide
+
+### How to Test Now (Tuesday)
+
+1. **On AGL:** Install `pip install bleak`
+2. **On micro:bit:** Flash MakeCode Template A from MAKECODE_BLE_FIRMWARE_GUIDE.md
+3. **On AGL:** Run `python3 ble_trafficlight_receiver.py --config config_ble.json --verbose`
+4. **Watch:** Traffic-light state received and injected into `/tmp/adas_objects.sock`
+
+### Timeline to Friday
+
+- **Today (Tue):** Validate Template A + BLE connection
+- **Wed:** Upgrade to Template B + full state machine test
+- **Thu:** ADAS Manager integration + vehicle throttle override
+- **Fri:** Demo ready (BLE OR fallback to USB-direct)
+
+---
+
 ## Session Consolidation Notes (June 9, 2026)
 
 This section captures the key operational notes that were previously recorded in a separate session summary file.
