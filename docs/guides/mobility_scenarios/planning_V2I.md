@@ -12,6 +12,7 @@
 - [Current Status](#current-status)
 - [Implementation Phase Overview](#implementation-phase-overview)
 - [MicroPython Context](#micropython-context)
+- [micro:bit Hardware Reference (V2.2X)](#microbit-hardware-reference-v22x)
 - [Wireless Architecture (Phase 2/3 Remote Deployment)](#wireless-architecture-phase-23-remote-deployment)
 - [Presentation Architecture Summary](#presentation-architecture-summary)
 - [Hardware Hand-Off](#hardware-hand-off)
@@ -19,6 +20,7 @@
 - [Wireless Decision (BLE vs micro:bit radio)](#wireless-decision-ble-vs-microbit-radio)
 - [BLE vs micro:bit radio in this scenario](#ble-vs-microbit-radio-in-this-scenario)
 - [Path B Implementation Checklist (BLE Direct)](#path-b-implementation-checklist-ble-direct)
+- [Path B Implementation (Detailed Status)](#path-b-implementation-ble-direct--in-progress)
 
 ## MicroPython Context
 
@@ -39,6 +41,120 @@ MicroPython was **not created by this team**.
 
 - MicroPython = the Python runtime/system running on the micro:bit.
 - Our script = the application code running on that runtime.
+
+## micro:bit Hardware Reference (V2.2X)
+
+This section consolidates hardware information used in this project for BLE Path B decisions.
+
+Primary sources:
+
+- [micro:bit main site](https://microbit.org/)
+- [micro:bit developer community](https://tech.microbit.org/)
+- [micro:bit hardware overview](https://tech.microbit.org/hardware/)
+
+### Hardware revisions context
+
+- V2.2X (latest family used as reference)
+- V2.00
+- V1.5 / V1.3X
+
+### Overview map
+
+- About the BBC micro:bit
+- Hardware block diagram
+- Hardware description:
+  - nRF52 application processor
+  - Bluetooth wireless communication
+  - low-level radio communications
+  - buttons
+  - display
+  - motion sensor
+  - temperature sensing
+  - speaker
+  - microphone
+  - GPIO pins
+  - power supply
+  - interface and USB communications
+  - debugging and mechanical information
+
+### About the BBC micro:bit
+
+The BBC micro:bit is a programmable single-board computer where user applications run on the nRF52 application processor. An interface processor handles USB communication and drag-and-drop flashing. Two core references for hardware internals are:
+
+- [Schematics](https://tech.microbit.org/hardware/schematic)
+- [Reference design](https://tech.microbit.org/hardware/reference-design)
+
+Hardware visuals:
+
+- Board overview image: `https://tech.microbit.org/docs/hardware/assets/microbit-overview-2-2.png`
+- Block diagram image: `https://tech.microbit.org/docs/hardware/assets/v2-2-block.svg`
+
+### nRF52 application processor
+
+The user application, runtime, and Bluetooth stack run from on-chip flash on the nRF52. GPIO is provided by this processor.
+
+| Field | Value |
+|---|---|
+| Model | Nordic nRF52833 |
+| Core | Arm Cortex-M4 32-bit with FPU |
+| Flash | 512 KB |
+| RAM | 128 KB |
+| CPU clock | 64 MHz |
+| Debug | SWD |
+
+### Bluetooth wireless communication
+
+The on-board antenna supports BLE via Nordic S113 SoftDevice.
+
+| Field | Value |
+|---|---|
+| Stack | Bluetooth 5.1 (BLE) |
+| Band | 2.4 GHz ISM |
+| Channels | 40 BLE channels (3 advertising: 37, 38, 39) |
+| Sensitivity | -93 dBm (BLE mode) |
+| TX power | -40 dBm to +4 dBm |
+| Roles | GAP Peripheral and GAP Central |
+| Congestion avoidance | Adaptive Frequency Hopping |
+| Profile | BBC micro:bit profile |
+
+### Low-level radio communications (micro:bit radio)
+
+The same 2.4 GHz transceiver also supports non-BLE micro:bit radio protocol for simple broadcast packets.
+
+| Field | Value |
+|---|---|
+| Protocol | micro:bit Radio |
+| Frequency band | 2.4 GHz |
+| Channel rate | 1 Mbps or 2 Mbps |
+| Encryption | None |
+| Channels | 80 |
+| Group codes | 255 |
+| TX power | 0 (-30 dBm) to 7 (+4 dBm) |
+| Payload | 32 bytes (standard), up to 255 if reconfigured |
+
+### Buttons
+
+- Front A/B: user-programmable, software debounced.
+- Rear button: system reset path (interface processor + nRF52).
+- A/B use inverted logic with pull-up resistors.
+
+### Display
+
+- 5x5 red LED matrix.
+- Software-driven refresh to avoid visible flicker.
+- Also used for ambient light estimation via timing-based sensing.
+
+### Motion and temperature
+
+- Motion sensing: accelerometer + magnetometer (runtime supports multiple sensor variants).
+- Gestures: hardware + runtime software algorithms.
+- Temperature: exposed from nRF52 on-chip temperature sensor as ambient estimate.
+
+### Relevance to this project
+
+- BLE UART capability on V2.x hardware supports Path B (`micro:bit -> BLE -> AGL`).
+- micro:bit radio capability exists, but is not natively consumable by AGL without gateway logic.
+- Hardware capacity (nRF52833, 128 KB RAM, BLE 5.1) is adequate for the traffic light state broadcaster firmware used here.
 
 ## Current Status
 
@@ -836,7 +952,10 @@ python3 -m py_compile /data/ADAS-Manager-tuning-trafficlight/ble_trafficlight_re
 1. Keep the micro:bit V2 connected to the Lenovo via USB-C for power + flashing
 2. Open https://makecode.microbit.org in browser
 3. Create new project
-4. Click **Extensions** → search for "Bluetooth" → add BLE extension
+4. In MakeCode, use the official Bluetooth API:
+  - `Advanced` → `Bluetooth` (preferred), or
+  - `Extensions` → search `Bluetooth` and pick the official micro:bit Bluetooth package
+  - Do **not** use `bsiever/microbit-pxt-blehid` (HID extension for keyboard/mouse/gamepad)
 5. Delete default code blocks
 6. Copy Template A code from [MakeCode Template A section above](#makecode-template-a-quick-prototype-5-minute-ble-validation)
 7. Click **Download** → save `.hex` file
