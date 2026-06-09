@@ -66,7 +66,7 @@ try:
     _cpp_postprocess  = _pp_cpp.postprocess
     _cpp_decode_lanes = _pp_cpp.decode_lanes
     print("[PostProcess] C++ extension carregada (OpenBLAS, sem GIL)")
-except ImportError:
+except (ImportError, AttributeError):
     _cpp_postprocess  = None
     _cpp_decode_lanes = None
     print("[PostProcess] AVISO: C++ não disponível — a usar Python (overlap ineficaz)")

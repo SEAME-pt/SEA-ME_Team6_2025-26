@@ -26,7 +26,7 @@ systemctl stop adas-manager.service 2>/dev/null || true
 
 # ── Install ADAS Manager ──────────────────────────────────────────────────────
 echo "Installing ADAS Manager..."
-install -m 755 adas-manager/adas_manager      "$ADAS_DIR/adas_manager"
+install -m 755 adas-manager/bin/adas_manager  "$ADAS_DIR/adas_manager"
 install -m 644 adas-manager/kuksa_bridge.py   "$ADAS_DIR/kuksa_bridge.py"
 install -m 644 adas-manager/socket_sender.py  "$ADAS_DIR/socket_sender.py"
 # Only copy config if it doesn't already exist (preserve tuned values)

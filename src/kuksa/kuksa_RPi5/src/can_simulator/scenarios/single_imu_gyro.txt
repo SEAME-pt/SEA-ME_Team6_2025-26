@@ -1,0 +1,21 @@
+# IMU Gyro: simulate turning left then right correction
+@init gyro_dpsx=0 gyro_dpsy=0 gyro_dpsz=0 imu_status=0
+
+# idle
+t=0    gyro_dpsz=0
+
+# start left turn (positive yaw)
+t=800  gyro_dpsz=15
+t=1200 gyro_dpsz=40
+t=1600 gyro_dpsz=75
+t=2000 gyro_dpsz=60
+t=2400 gyro_dpsz=30
+
+# sharp right correction (negative yaw)
+t=3000 gyro_dpsz=-40
+t=3400 gyro_dpsz=-70
+t=3800 gyro_dpsz=-30
+
+# stabilize
+t=4500 gyro_dpsz=0
+t=5500 gyro_dpsz=0
