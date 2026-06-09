@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /opt/seame/adas/inference/videostream.py /opt/seame/adas/inference/INFERENCE_DUAL.py 86400
-WorkingDirectory=/opt/seame/adas/inference
+ExecStart=/usr/bin/python3 /data/current/inference/videostream.py /data/current/inference/INFERENCE_DUAL.py 86400
+WorkingDirectory=/data/current/inference
 Restart=always
 RestartSec=3
 StandardOutput=journal

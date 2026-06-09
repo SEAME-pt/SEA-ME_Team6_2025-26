@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/data/ADAS-Manager-GITHUB/adas_manager
-WorkingDirectory=/data/ADAS-Manager-GITHUB
+ExecStart=/data/current/adas_manager
+WorkingDirectory=/data/current
 Restart=on-failure
 RestartSec=3
 StandardOutput=journal
