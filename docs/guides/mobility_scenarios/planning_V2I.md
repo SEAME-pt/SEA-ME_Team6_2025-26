@@ -9,11 +9,36 @@
 
 ## Quick Navigation
 
-- **For Hardware Validation:** Jump to [Deployment Guide: USB-Direct for Monday (Option A)](#deployment-guide-usb-direct-for-monday-option-a)
-- **Why BLE Won't Work:** See [Hardware Reality Check](#why-ble-wont-work-hardware-reality-check)
-- **Implementation Status:** See [Current Status](#current-status)
-- **Testing & Validation:** See [Testing & Validation](#testing--validation)
-- **Troubleshooting:** See [Troubleshooting Guide](#troubleshooting-guide)
+- [Current Status](#current-status)
+- [Implementation Phase Overview](#implementation-phase-overview)
+- [MicroPython Context](#micropython-context)
+- [Wireless Architecture (Phase 2/3 Remote Deployment)](#wireless-architecture-phase-23-remote-deployment)
+- [Presentation Architecture Summary](#presentation-architecture-summary)
+- [Hardware Hand-Off](#hardware-hand-off)
+- [Session Consolidation Notes (June 9, 2026)](#session-consolidation-notes-june-9-2026)
+- [Wireless Decision (BLE vs micro:bit radio)](#wireless-decision-ble-vs-microbit-radio)
+- [BLE vs micro:bit radio in this scenario](#ble-vs-microbit-radio-in-this-scenario)
+- [Path B Implementation Checklist (BLE Direct)](#path-b-implementation-checklist-ble-direct)
+
+## MicroPython Context
+
+### What is MicroPython?
+
+MicroPython was **not created by this team**.
+
+- MicroPython is a lightweight implementation of Python 3 for microcontrollers.
+- The original creator is **Damien P. George**.
+- It is an open-source project maintained by the wider community.
+
+### How it is used in this project
+
+- On the micro:bit, the MicroPython firmware runs inside the board and executes `.py` scripts.
+- In this project, `src/mobility_scenarios_src/emergency_priority/microbit_trafficlight_firmware.py` is **project application code** running on top of the community MicroPython runtime.
+
+### Simple summary
+
+- MicroPython = the Python runtime/system running on the micro:bit.
+- Our script = the application code running on that runtime.
 
 ## Current Status
 
@@ -246,6 +271,181 @@ Example `config.json` for the bridge:
 - **Yellow timeout**: escalates to `red` after 2 seconds to prevent indefinite "slow down" state
 - **Heartbeat**: bridge receiver triggers safe stop if no update for 5 seconds
 - **No single point of failure**: if bridge dies, ADAS Manager continues with old state; manual override always available
+
+## Presentation Architecture Summary
+
+This diagram is intended for Friday presentation use. It explains the implementation at a system level and highlights both the current validated path and the planned wireless path.
+
+```text
+                            MODULE 3 IMPLEMENTATION OVERVIEW
+
+  INFRASTRUCTURE SIDE                                      VEHICLE SIDE
+
+  ┌──────────────────────────┐                             ┌──────────────────────────┐
+  │ micro:bit V2.21          │                             │ AGL / Raspberry Pi 5     │
+  │                          │                             │                          │
+  │ Current validated path:  │                             │ receiver / bridge logic  │
+  │ - MicroPython firmware   │                             │ - parses light state     │
+  │ - traffic light control  │                             │ - safety timeout logic   │
+  │ - red / yellow / green   │                             │ - fallback to RED        │
+  └─────────────┬────────────┘                             └─────────────┬────────────┘
+                │                                                          │
+                │ Path A: USB serial                                       │
+                ├──────────────────────────────────────────────────────────► │
+                │                                                          │
+                │ Path B: BLE direct (planned)                             │
+                ├──────────────────────────────────────────────────────────► │
+                │                                                          │
+                ▼                                                          ▼
+        ┌───────────────────┐                                     ┌──────────────────────┐
+        │ traffic light     │                                     │ /tmp/adas_objects.sock│
+        │ event generated   │                                     │ object injection path │
+        └───────────────────┘                                     └──────────┬───────────┘
+                                                                                │
+                                                                                ▼
+                                                                     ┌──────────────────────┐
+                                                                     │ adas_manager (C++)   │
+                                                                     │ - receives sign class│
+                                                                     │ - sets throttle      │
+                                                                     │ - publishes to CAN   │
+                                                                     └──────────┬───────────┘
+                                                                                │
+                                                                                ▼
+                                                                     ┌──────────────────────┐
+                                                                     │ STM32 / ThreadX      │
+                                                                     │ - motor actuation    │
+                                                                     │ - steering/throttle  │
+                                                                     └──────────┬───────────┘
+                                                                                │
+                                                                                ▼
+                                                                     ┌──────────────────────┐
+                                                                     │ Vehicle motion       │
+                                                                     │ stop / slow / go     │
+                                                                     └──────────────────────┘
+
+  Optional parallel path:
+  AGL bridge -> KUKSA/VSS -> Qt Cluster display
+```
+
+## Path B Implementation Checklist (BLE Direct)
+
+This section defines the direct BLE path without an intermediate network transmitter process.
+
+### 1. Firmware on micro:bit
+
+Choose one of the following:
+
+- **MakeCode BLE path**: preferred for fastest BLE prototype.
+- **C++ custom firmware path**: preferred only if tighter BLE control is required.
+
+Required firmware behavior:
+
+- Advertise as a **BLE peripheral**.
+- Expose a characteristic carrying traffic-light state.
+- Send one of: `RED`, `YELLOW`, `GREEN`.
+- Default startup state must be `RED`.
+
+### 2. BLE service and characteristic design
+
+Recommended options:
+
+- **Option 1: Nordic UART Service (NUS)**
+  - Good for fast prototyping.
+  - AGL subscribes to notifications.
+- **Option 2: Custom GATT service**
+  - Better long-term clarity for product architecture.
+  - Characteristic payload could be a single byte or short text state.
+
+Recommended payloads:
+
+- `R` = red
+- `Y` = yellow
+- `G` = green
+
+Optional fields:
+
+- sequence number
+- timestamp
+- heartbeat flag
+
+### 3. Receiver on AGL
+
+The AGL/Pi5 acts as **BLE central**.
+
+Receiver responsibilities:
+
+- scan for the target peripheral
+- connect automatically
+- subscribe to notifications
+- parse incoming state
+- translate state to ADAS object class
+- write to `/tmp/adas_objects.sock`
+- optionally publish to KUKSA/VSS
+
+Recommended runtime path:
+
+- `BLE central receiver -> /tmp/adas_objects.sock -> adas_manager -> CAN -> vehicle`
+
+### 4. Timeout, reconnect, and safety RED behavior
+
+Required safety rules:
+
+- If the BLE receiver loses connection, force `RED`.
+- If no BLE message arrives within configured timeout, force `RED`.
+- On startup, before first valid message, assume `RED`.
+- Reconnect automatically after disconnect.
+- Log all disconnect, reconnect, and timeout events.
+
+Suggested values:
+
+- heartbeat interval: `1.0s`
+- timeout to safe RED: `5.0s`
+- yellow escalation timeout: `2.0s`
+
+### 5. End-to-end test commands
+
+Example staged validation plan:
+
+#### On micro:bit
+
+- flash BLE-capable firmware (MakeCode or C++)
+- confirm peripheral is advertising
+
+#### On AGL
+
+```bash
+# Verify Bluetooth adapter is up
+bluetoothctl show
+
+# Run BLE receiver service
+python3 ble_trafficlight_receiver.py --config config.json
+```
+
+Expected behavior:
+
+- connect to micro:bit peripheral
+- receive state notifications
+- inject traffic-light object into `/tmp/adas_objects.sock`
+
+#### ADAS validation
+
+```bash
+# In parallel on AGL
+/data/ADAS-Manager-tuning-trafficlight/adas_manager
+```
+
+#### Functional test sequence
+
+1. Send `RED` -> vehicle must stop.
+2. Send `YELLOW` -> vehicle must slow, then stop after timeout if still yellow.
+3. Send `GREEN` -> vehicle may continue.
+4. Turn off peripheral or break BLE link -> receiver must force `RED`.
+
+### 6. Delivery recommendation
+
+- **For Friday presentation**: present BLE direct as the preferred wireless target architecture.
+- **For deterministic demo execution**: keep USB-direct as the currently validated path.
+- **For next implementation step**: prototype BLE first with MakeCode before deciding on custom C++ firmware.
 
 ## Hardware Hand-Off
 
