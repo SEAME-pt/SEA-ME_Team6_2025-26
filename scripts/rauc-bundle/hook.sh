@@ -11,16 +11,12 @@ get_version() {
 case "$1" in
   slot-install|install)
     VERSION=$(get_version)
+    PREV=$(readlink /data/current)
     NEW_DIR="/data/apps/$VERSION"
+
     mkdir -p "$NEW_DIR"
     tar -xzf "$RAUC_BUNDLE_MOUNT_POINT/apps.tar.gz" -C "$NEW_DIR"
     echo "[RAUC] Extracted $VERSION to $NEW_DIR"
-    ;;
-
-  slot-post-install|post-install)
-    VERSION=$(get_version)
-    PREV=$(readlink /data/current)
-    NEW_DIR="/data/apps/$VERSION"
 
     ln -sfn "$NEW_DIR" /data/current
 
