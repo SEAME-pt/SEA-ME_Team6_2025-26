@@ -326,3 +326,36 @@ Safety fallback requirements:
   - traffic light -> red
   - vehicle command -> stop
 ```
+
+## Session Consolidation Notes (June 9, 2026)
+
+This section captures the key operational notes that were previously recorded in a separate session summary file.
+
+### Q1: Is a real test possible without connecting the traffic light to AGL?
+
+Short answer: no for full end-to-end validation.
+
+- What is validated without hardware:
+  - Bridge logic and rules behavior.
+  - ADAS socket path and config loading.
+  - Local simulation flows and unit tests.
+- What requires physical micro:bit to AGL USB:
+  - Real serial communication on `/dev/ttyACM1`.
+  - Live throttle override propagation to ADAS/CAN.
+  - Timeout and heartbeat behavior under real signal loss.
+
+### Q2: Documentation language policy
+
+All planning and integration documentation for this module must be in English.
+
+### Consolidation result
+
+- Single master document retained: `docs/guides/mobility_scenarios/planning_V2I.md`.
+- Legacy duplicate docs were removed during consolidation.
+- Evidence logs remain in: `docs/guides/mobility_scenarios/shared/evidence/`.
+
+### Current readiness snapshot
+
+- Branch has implementation and documentation pushed.
+- USB-direct deployment path is the approved low-risk path for Monday.
+- BLE remains a future enhancement because micro:bit MicroPython BLE UART is not available for this flow.
