@@ -543,12 +543,14 @@ Answer: **It's a deployment/tooling distinction.**
 # On your PC (LENOVO)
 cd ~/Documents/SEA-ME_Team6_2025-26
 scp src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
-    seame@agl-pi5:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
-
-# OR copy via USB/shared folder if SSH not available
+  root@10.21.220.191:/data/ADAS-Manager-tuning-trafficlight/
+scp src/mobility_scenarios_src/emergency_priority/config_ble.json \
+  root@10.21.220.191:/data/ADAS-Manager-tuning-trafficlight/
 ```
 
-Once on AGL, the receiver runs continuously as a daemon listening for BLE peripheral.
+This deployment has already been completed and validated on the car AGL.
+
+Once on AGL, the receiver runs from `/data/ADAS-Manager-tuning-trafficlight/` and listens for the BLE peripheral.
 
 ---
 
@@ -577,7 +579,7 @@ This is a **staged validation approach** to reduce risk:
 
 **On AGL (Raspberry Pi 5):**
 - `src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py` — Python central receiver
-  - Deploy to: `/home/seame/Documents/SEA-ME_Team6_2025-26/` or `/data/ADAS-Manager-tuning-trafficlight/`
+  - Runtime location selected for the car: `/data/ADAS-Manager-tuning-trafficlight/`
   - Requires: `pip install bleak`
   - Logic: scan → connect → subscribe → inject `/tmp/adas_objects.sock`
   - Safety: timeout auto-RED, reconnect on disconnect
@@ -704,9 +706,26 @@ input.onButtonPressed(Button.AB, function () {
 
 ### Testing Procedure (Tuesday/Wednesday)
 
+### Powering the micro:bit during BLE testing
+
+If the goal is **power only** and all data must stay **wireless**, the best practical setup is:
+
+- **Keep the micro:bit connected to the Lenovo by USB** while flashing/testing firmware.
+- Let the **AGL communicate only over BLE**.
+- Do **not** use the USB serial path during these Path B tests.
+
+Why this is the better choice right now:
+
+- The Lenovo is already the machine you use to flash MakeCode firmware.
+- It keeps the power supply stable while you iterate quickly.
+- It avoids introducing an unnecessary cable change while debugging BLE.
+- USB being plugged into the Lenovo does **not** prevent BLE operation; it only powers the board unless you intentionally use serial.
+
+Connecting the micro:bit to the AGL only for power is also valid, but it gives no testing advantage at this stage. It only makes sense later if you want the final demo wiring to look cleaner.
+
 **Step 1: Setup AGL (now)**
 ```bash
-cd ~/Documents/SEA-ME_Team6_2025-26
+cd /data/ADAS-Manager-tuning-trafficlight
 
 # Install dependency
 pip install bleak
@@ -723,8 +742,10 @@ bluetoothctl show
 
 **Step 3: Run BLE receiver on AGL (now)**
 ```bash
-python3 src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
-  --config src/mobility_scenarios_src/emergency_priority/config_ble.json \
+cd /data/ADAS-Manager-tuning-trafficlight
+
+python3 ble_trafficlight_receiver.py \
+  --config config_ble.json \
   --device-name "Trafficlight" \
   --verbose
 ```
@@ -762,12 +783,18 @@ socat - UNIX-CONNECT:/tmp/adas_objects.sock
 - Unit tests created (test_ble_receiver.py)
 - Documentation consolidated into planning_V2I.md
 - File deployment plan documented
+- BLE receiver deployed to AGL runtime folder: `/data/ADAS-Manager-tuning-trafficlight/`
+- AGL runtime validated:
+  - hostname confirmed: `seame-agl`
+  - Bluetooth adapter available and powered
+  - ADAS socket exists at `/tmp/adas_objects.sock`
+  - Python dependency `bleak` installed on AGL
+  - remote syntax validation passed (`python3 -m py_compile ble_trafficlight_receiver.py`)
 
 **⏳ In Progress (Immediate Actions):**
-1. **Deploy receiver to AGL** (copy from PC via SCP or USB)
-2. **Flash Template A firmware** to micro:bit V2 via MakeCode
-3. **Test BLE connection** (scan → connect → receive state)
-4. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
+1. **Flash Template A firmware** to micro:bit V2 via MakeCode
+2. **Test BLE connection** (scan → connect → receive state)
+3. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
 
 **❌ Pending (After BLE Validated):**
 - Upgrade to Template B (full state machine)
@@ -781,30 +808,24 @@ socat - UNIX-CONNECT:/tmp/adas_objects.sock
 
 ### Action 1: Deploy BLE Receiver to AGL (Today — 15 min)
 
-**On your PC (LENOVO):**
+This action is already completed.
+
+**Completed deployment details:**
 ```bash
-# Navigate to project
-cd ~/Documents/SEA-ME_Team6_2025-26
+# Files deployed to AGL runtime folder
+/data/ADAS-Manager-tuning-trafficlight/ble_trafficlight_receiver.py
+/data/ADAS-Manager-tuning-trafficlight/config_ble.json
 
-# Copy receiver to AGL (replace with your Pi5 IP/hostname)
-scp src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
-    seame@<agl-pi5-ip>:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
-
-scp src/mobility_scenarios_src/emergency_priority/config_ble.json \
-    seame@<agl-pi5-ip>:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
+# Dependency installed on AGL
+python3 -m pip install bleak
 ```
 
-**OR via USB/shared folder if no SSH:**
-- Copy files manually to AGL filesystem
-
-**On AGL (verify files arrived):**
+**Verified on AGL:**
 ```bash
-ls -la ~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py
-```
-
-**Install dependencies on AGL:**
-```bash
-pip install bleak
+hostname                      # seame-agl
+ls -la /data/ADAS-Manager-tuning-trafficlight/
+ls -l /tmp/adas_objects.sock
+python3 -m py_compile /data/ADAS-Manager-tuning-trafficlight/ble_trafficlight_receiver.py
 ```
 
 ---
@@ -812,7 +833,7 @@ pip install bleak
 ### Action 2: Flash Template A Firmware to Micro:bit (Today — 10 min)
 
 **On your PC:**
-1. Connect micro:bit V2 to PC via USB-C cable
+1. Keep the micro:bit V2 connected to the Lenovo via USB-C for power + flashing
 2. Open https://makecode.microbit.org in browser
 3. Create new project
 4. Click **Extensions** → search for "Bluetooth" → add BLE extension
@@ -832,10 +853,10 @@ pip install bleak
 
 **Terminal 1 on AGL (start receiver):**
 ```bash
-cd ~/Documents/SEA-ME_Team6_2025-26
+cd /data/ADAS-Manager-tuning-trafficlight
 
-python3 src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
-  --config src/mobility_scenarios_src/emergency_priority/config_ble.json \
+python3 ble_trafficlight_receiver.py \
+  --config config_ble.json \
   --device-name "Trafficlight" \
   --verbose
 ```
@@ -949,6 +970,13 @@ Once Actions 1-6 all pass:
   - Consolidated into `planning_V2I.md`
   - Deployment plan documented
   - Staged testing roadmap created
+  - BLE receiver deployed to AGL at `/data/ADAS-Manager-tuning-trafficlight/`
+  - AGL Bluetooth adapter verified and `bleak` installed
+  - Remote receiver syntax validated successfully on AGL
+  - Runtime path decision documented: `/data/ADAS-Manager-tuning-trafficlight/` chosen over `/home/seame/...`
+  - Hostname confirmed as `seame-agl`
+  - `/tmp/adas_objects.sock` confirmed on the car AGL
+  - Powering recommendation documented: keep micro:bit on Lenovo USB for power/flashing while using BLE only for data
 
 ---
 
