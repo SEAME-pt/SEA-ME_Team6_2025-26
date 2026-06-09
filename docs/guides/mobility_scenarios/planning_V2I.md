@@ -527,45 +527,223 @@ Safety fallback requirements:
   - vehicle command -> stop
 ```
 
-## Path B Implementation Progress (June 9, 2026 - In Progress)
+## Path B Implementation (BLE Direct) — In Progress
 
-### What's Been Implemented
+### Architecture Review
 
-**AGL Side (BLE Central Receiver):**
-- `ble_trafficlight_receiver.py` — Python service using BlueZ (`bleak` library)
-  - Scans for micro:bit "Trafficlight" peripheral
-  - Connects and subscribes to Nordic UART notifications
-  - Parses R/Y/G state bytes
-  - Injects into `/tmp/adas_objects.sock` for ADAS Manager
-  - Auto-reconnects on disconnect
-  - Safety: forces RED on timeout (>5s)
+**Why Two Templates?**
 
-**Micro:bit Side (BLE Peripheral):**
-- `MAKECODE_BLE_FIRMWARE_GUIDE.md` — Two ready-to-use templates
-  - **Template A** (fast prototype): RED state + button to cycle R→Y→G
-  - **Template B** (production): full state machine with yellow auto-escalation to RED
-  - Both use Nordic UART Service (6e400001, standard BLE)
-  - Flash via MakeCode online editor
+- **Template A** (Minimal Prototype): RED state only, button cycle R→Y→G
+  - Goal: Validate BLE connection works in **5 minutes**
+  - Use case: Quick proof-of-concept without full logic
+  - Rationale: Rapid validation; if BLE fails at connection level, no need to implement full complexity
 
-**Configuration & Testing:**
-- `config_ble.json` — BLE service UUIDs, timeouts, ADAS socket path
-- `test_ble_receiver.py` — Unit tests (no hardware required)
-  - State parsing, timeout logic, config validation, ADAS object format
-- `PATH_B_GETTING_STARTED.md` — Quick start guide
+- **Template B** (Production-Ready): Full state machine with yellow auto-escalation
+  - Goal: Complete safety rules ready for Friday demo
+  - Use case: Actual vehicle integration with ADAS Manager
+  - Includes: yellow timeout (2s), disconnection → RED, LED feedback
 
-### How to Test Now (Tuesday)
+**Both use Nordic UART Service** (standard, well-supported BLE).
 
-1. **On AGL:** Install `pip install bleak`
-2. **On micro:bit:** Flash MakeCode Template A from MAKECODE_BLE_FIRMWARE_GUIDE.md
-3. **On AGL:** Run `python3 ble_trafficlight_receiver.py --config config_ble.json --verbose`
-4. **Watch:** Traffic-light state received and injected into `/tmp/adas_objects.sock`
+### Implementation Files
 
-### Timeline to Friday
+**On AGL (Raspberry Pi 5):**
+- `src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py` — Python central receiver
+  - Deploy to: `/home/seame/Documents/SEA-ME_Team6_2025-26/` or `/data/ADAS-Manager-tuning-trafficlight/`
+  - Requires: `pip install bleak`
+  - Logic: scan → connect → subscribe → inject `/tmp/adas_objects.sock`
+  - Safety: timeout auto-RED, reconnect on disconnect
 
-- **Today (Tue):** Validate Template A + BLE connection
-- **Wed:** Upgrade to Template B + full state machine test
-- **Thu:** ADAS Manager integration + vehicle throttle override
-- **Fri:** Demo ready (BLE OR fallback to USB-direct)
+**On Micro:bit (V2.21):**
+- MakeCode BLE peripheral (templates embedded below)
+- Flash via: https://makecode.microbit.org (USB-C cable)
+- Service: Nordic UART (6e400001-b5a3-f393-e0a9-e50e24dcca9e)
+
+**Configuration:**
+- `src/mobility_scenarios_src/emergency_priority/config_ble.json`
+  - BLE service UUIDs, ADAS socket path, timeouts
+
+**Tests:**
+- `src/mobility_scenarios_src/emergency_priority/test_ble_receiver.py` (Python logic validation, no hardware)
+
+### MakeCode Template A: Quick Prototype (5-minute BLE validation)
+
+**Steps to flash:**
+1. Go to https://makecode.microbit.org
+2. Create new project
+3. Add BLE extension
+4. Copy this code:
+
+```blocks
+bluetooth.setAdvertisedName("Trafficlight")
+bluetooth.startUartService()
+
+let light_state = "R"
+
+basic.forever(function () {
+    bluetooth.uartWriteText(light_state)
+    basic.pause(1000)
+})
+
+input.onButtonPressed(Button.A, function () {
+    if (light_state == "R") {
+        light_state = "Y"
+    } else if (light_state == "Y") {
+        light_state = "G"
+    } else {
+        light_state = "R"
+    }
+})
+```
+
+**What it does:**
+- Advertises as "Trafficlight"
+- Sends state (R/Y/G) every 1 second
+- Button A cycles: R → Y → G → R
+- Default startup: RED
+
+### MakeCode Template B: Production State Machine (full safety rules)
+
+**Steps to flash:**
+1. Go to https://makecode.microbit.org
+2. Create new project
+3. Add BLE extension
+4. Copy this code:
+
+```blocks
+bluetooth.setAdvertisedName("Trafficlight")
+bluetooth.startUartService()
+
+let current_state = "R"
+let yellow_start_time = 0
+const YELLOW_TIMEOUT_MS = 2000
+
+input.onStart(function () {
+    current_state = "R"
+    led.plotBarGraph(1000, 1023)  // Red LEDs
+})
+
+bluetooth.onBluetoothConnected(function () {
+    basic.showIcon(IconNames.Happy)
+})
+
+bluetooth.onBluetoothDisconnected(function () {
+    current_state = "R"
+    led.clear()
+})
+
+basic.forever(function () {
+    // Send state every 500ms
+    bluetooth.uartWriteText(current_state)
+    basic.pause(500)
+
+    // Yellow timeout escalation
+    if (current_state == "Y") {
+        if (input.runningTime() - yellow_start_time > YELLOW_TIMEOUT_MS) {
+            current_state = "R"
+            led.plotBarGraph(1000, 1023)
+        }
+    }
+})
+
+// Button A: RED
+input.onButtonPressed(Button.A, function () {
+    current_state = "R"
+    led.plotBarGraph(1000, 1023)
+})
+
+// Button B: YELLOW
+input.onButtonPressed(Button.B, function () {
+    current_state = "Y"
+    yellow_start_time = input.runningTime()
+    led.plotBarGraph(700, 1023)
+})
+
+// Buttons A+B: GREEN
+input.onButtonPressed(Button.AB, function () {
+    current_state = "G"
+    led.plotBarGraph(100, 1023)
+})
+```
+
+**What it does:**
+- Full state machine (RED, YELLOW, GREEN)
+- Yellow auto-escalates to RED after 2 seconds
+- Sends state every 500ms
+- Button A: RED, Button B: YELLOW, Button A+B: GREEN
+- Disconnection forces RED (safe default)
+- LED visual feedback
+
+### Testing Procedure (Tuesday/Wednesday)
+
+**Step 1: Setup AGL (now)**
+```bash
+cd ~/Documents/SEA-ME_Team6_2025-26
+
+# Install dependency
+pip install bleak
+
+# Verify Bluetooth adapter
+bluetoothctl show
+```
+
+**Step 2: Flash Template A to micro:bit (now)**
+- Open https://makecode.microbit.org
+- Copy Template A code above
+- Download `.hex` file
+- Flash via USB-C to micro:bit V2
+
+**Step 3: Run BLE receiver on AGL (now)**
+```bash
+python3 src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
+  --config src/mobility_scenarios_src/emergency_priority/config_ble.json \
+  --device-name "Trafficlight" \
+  --verbose
+```
+
+Expected output:
+```
+Scanning for device: Trafficlight...
+Found device: Trafficlight (XX:XX:XX:XX:XX:XX)
+Connecting to XX:XX:XX:XX:XX:XX...
+Connected to BLE device
+Subscribed to 6e400003-b5a3-f393-e0a9-e50e24dcca9e
+BLE notification: raw=52, state=RED
+Injected ADAS object: SIGN_TL_RED
+```
+
+**Step 4: Verify socket injection (now)**
+```bash
+# Terminal 2 on AGL
+socat - UNIX-CONNECT:/tmp/adas_objects.sock
+
+# Expected output (every 1-2 seconds):
+# {"class": "SIGN_TL_RED", "confidence": 1.0, "state": "RED", ...}
+```
+
+**Step 5: Test state changes (now)**
+- On micro:bit, press button A repeatedly to cycle R → Y → G → R
+- On AGL terminal 2, watch socket receive each state change
+
+### Status & Next Steps
+
+**✅ Completed:**
+- Python BLE receiver written
+- MakeCode templates designed (Template A + B)
+- Configuration template ready
+- Unit tests created
+
+**⏳ In Progress:**
+- Copy `ble_trafficlight_receiver.py` to AGL filesystem (not just GitHub)
+- Flash Template A firmware to micro:bit
+- Validate BLE connection and notification flow
+- Test state changes via socket
+
+**❌ Pending (for Thu/Fri):**
+- Upgrade to Template B (full state machine) once Template A works
+- ADAS Manager integration (`/data/ADAS-Manager-tuning-trafficlight/`)
+- Vehicle throttle override validation
+- Fallback to USB-direct if BLE not ready by Friday
 
 ---
 
