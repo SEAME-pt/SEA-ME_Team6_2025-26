@@ -12,6 +12,7 @@
 - [Current Status](#current-status)
 - [Implementation Phase Overview](#implementation-phase-overview)
 - [MicroPython Context](#micropython-context)
+- [micro:bit Editor Choice (Python vs JavaScript)](#microbit-editor-choice-python-vs-javascript)
 - [micro:bit Hardware Reference (V2.2X)](#microbit-hardware-reference-v22x)
 - [Wireless Architecture (Phase 2/3 Remote Deployment)](#wireless-architecture-phase-23-remote-deployment)
 - [Presentation Architecture Summary](#presentation-architecture-summary)
@@ -41,6 +42,34 @@ MicroPython was **not created by this team**.
 
 - MicroPython = the Python runtime/system running on the micro:bit.
 - Our script = the application code running on that runtime.
+
+## micro:bit Editor Choice (Python vs JavaScript)
+
+This project currently uses two editor contexts for different goals:
+
+- Python editor: https://python.microbit.org/v/3
+- MakeCode editor: https://makecode.microbit.org/#editor
+
+### Code format clarification
+
+The snippet used for Path B is **JavaScript in MakeCode** (practically simplified TypeScript), not Python.
+
+- The marker `blocks` means "code equivalent to blocks" in the MakeCode editor.
+- It should be pasted in the MakeCode code editor, not in the Python editor page.
+
+### Why we switched from python.microbit.org to makecode.microbit.org
+
+- Before: MicroPython flow for simpler USB/serial scenarios.
+- Now: Path B BLE (`UART over Bluetooth`) to communicate wirelessly with AGL.
+- For this BLE UART prototype, MakeCode offers more direct integration:
+  - `bluetooth.startUartService()`
+  - `bluetooth.uartWriteText(...)`
+  - quick block/JS workflow for rapid test iteration.
+
+Practical summary:
+
+- `python.microbit.org` is excellent for MicroPython scripts, but less direct for this BLE UART prototype path.
+- `makecode.microbit.org` is better to get BLE UART running quickly on micro:bit V2.
 
 ## micro:bit Hardware Reference (V2.2X)
 
@@ -977,6 +1006,12 @@ python3 -m py_compile /data/ADAS-Manager-tuning-trafficlight/ble_trafficlight_re
 **Verify on micro:bit:**
 - All LEDs should flash initially
 - Pressing button A should cause LED feedback
+
+**Flash completion checklist (copy/paste):**
+1. Connect micro:bit to Lenovo via USB (power + flashing only).
+2. Copy `.hex` to `MICROBIT` drive (drag and drop).
+3. Wait until rear LED stops blinking (flash completed).
+4. Keep micro:bit connected by USB for power; data path remains BLE.
 
 ---
 
