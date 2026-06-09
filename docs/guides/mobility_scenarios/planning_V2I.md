@@ -276,6 +276,11 @@ When finishing a task:
 - 2026-06-08: Integrated bridge output with ADAS Manager via `/tmp/adas_objects.sock` so autonomous driving receives traffic-light classes directly.
 - 2026-06-08: Added yellow persistence safety behavior (`yellow_stop_after_s`) to escalate from slow down to stop.
 - 2026-06-09: Wireless integration plan finalized: semaforo sends state by network to AGL, bridge publishes to KUKSA/VSS and ADAS Manager.
+- 2026-06-09: Template A firmware flashed on micro:bit using `microbit-mobility_traffic_lights.hex` (USB on Lenovo for power + flashing, BLE reserved for data path).
+- 2026-06-09: AGL BLE scan executed; peripheral name `Trafficlight` and Nordic UART service UUID were not detected yet (`FOUND_TRAFFICLIGHT=False`, `FOUND_NUS=False`).
+“hex flash feito”
+
+
 
 ## Wireless Architecture (Phase 2/3 Remote Deployment)
 
@@ -856,6 +861,12 @@ bluetoothctl show
 - Download `.hex` file
 - Flash via USB-C to micro:bit V2
 
+Flash completion checklist (executed):
+- micro:bit connected to Lenovo via USB
+- `.hex` copied to `MICROBIT` drive
+- rear LED stopped blinking (flash complete)
+- micro:bit kept powered via USB (data path remains BLE)
+
 **Step 3: Run BLE receiver on AGL (now)**
 ```bash
 cd /data/ADAS-Manager-tuning-trafficlight
@@ -908,9 +919,10 @@ socat - UNIX-CONNECT:/tmp/adas_objects.sock
   - remote syntax validation passed (`python3 -m py_compile ble_trafficlight_receiver.py`)
 
 **⏳ In Progress (Immediate Actions):**
-1. **Flash Template A firmware** to micro:bit V2 via MakeCode
-2. **Test BLE connection** (scan → connect → receive state)
-3. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
+1. **Verify firmware advertising settings** (name + UART service enabled)
+2. **Re-run BLE scan** (detect by name and/or service UUID)
+3. **Test BLE connection** (scan → connect → receive state)
+4. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
 
 **❌ Pending (After BLE Validated):**
 - Upgrade to Template B (full state machine)
@@ -1096,6 +1108,8 @@ Once Actions 1-6 all pass:
   - Hostname confirmed as `seame-agl`
   - `/tmp/adas_objects.sock` confirmed on the car AGL
   - Powering recommendation documented: keep micro:bit on Lenovo USB for power/flashing while using BLE only for data
+  - Template A flash execution checklist documented (USB power on Lenovo, `.hex` copied, board running)
+  - AGL scan attempt logged: peripheral not yet detected by advertised name or NUS UUID
 
 ---
 
