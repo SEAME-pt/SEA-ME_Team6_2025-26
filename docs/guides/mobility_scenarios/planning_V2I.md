@@ -367,3 +367,39 @@ All planning and integration documentation for this module must be in English.
 - **Recommended immediate wireless test:** keep current `transmitter`/`receiver` bridge design (serial from micro:bit to host, then UDP to AGL) to validate wireless behavior without firmware rewrite.
 
 Decision: proceed with USB-direct for deterministic end-to-end validation first; run bridge-based wireless test next if needed.
+
+### BLE vs micro:bit radio in this scenario
+
+#### BLE
+
+Advantages:
+
+- Compatible directly with AGL/Pi5 (BlueZ).
+- Standardized architecture (GATT), more industrial-grade.
+- Supports security/pairing/encryption.
+- No extra hardware is required beyond micro:bit + Pi5.
+
+Disadvantages:
+
+- More complex implementation.
+- For this practical use case on micro:bit, you typically need to move away from standard MicroPython runtime (MakeCode or C++ firmware path).
+- Initial debugging can take time (pairing, reconnection, MTU, etc.).
+
+#### micro:bit radio
+
+Advantages:
+
+- Very simple between micro:bit devices.
+- Low latency and quick setup in educational environments.
+
+Disadvantages:
+
+- Not standard BLE protocol.
+- Pi5/AGL does not natively consume micro:bit-radio frames.
+- In practice, you need an additional gateway (another micro:bit or a dedicated firmware/bridge layer).
+
+#### Which is better for this project?
+
+For wireless communication in the path `micro:bit -> AGL -> vehicle`, BLE is the better long-term option.
+
+micro:bit radio only makes sense if adding a gateway is acceptable.
