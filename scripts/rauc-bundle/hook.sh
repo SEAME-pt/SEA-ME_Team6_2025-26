@@ -1,15 +1,24 @@
 #!/bin/bash
+
+get_version() {
+    local v="${RAUC_MF_VERSION}"
+    if [ -z "$v" ] && [ -f "$RAUC_BUNDLE_MOUNT_POINT/manifest.raucm" ]; then
+        v=$(grep "^version=" "$RAUC_BUNDLE_MOUNT_POINT/manifest.raucm" | cut -d= -f2)
+    fi
+    echo "${v:-unknown}"
+}
+
 case "$1" in
-  slot-install)
-    VERSION="${RAUC_MF_VERSION:-unknown}"
+  slot-install|install)
+    VERSION=$(get_version)
     NEW_DIR="/data/apps/$VERSION"
     mkdir -p "$NEW_DIR"
     tar -xzf "$RAUC_BUNDLE_MOUNT_POINT/apps.tar.gz" -C "$NEW_DIR"
     echo "[RAUC] Extracted $VERSION to $NEW_DIR"
     ;;
 
-  slot-post-install)
-    VERSION="${RAUC_MF_VERSION:-unknown}"
+  slot-post-install|post-install)
+    VERSION=$(get_version)
     PREV=$(readlink /data/current)
     NEW_DIR="/data/apps/$VERSION"
 
@@ -29,7 +38,6 @@ case "$1" in
     systemctl start inference
     echo "[RAUC] Update OK — running $VERSION"
 
-    # Keep only last 2 versions
     ls -dt /data/apps/v* 2>/dev/null | tail -n +3 | xargs rm -rf 2>/dev/null || true
     ;;
 esac
