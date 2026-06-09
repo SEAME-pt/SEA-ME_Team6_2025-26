@@ -1,7 +1,6 @@
 #!/bin/bash
 case "$1" in
-  install)
-    # Called instead of default slot install — extract tar into versioned dir
+  slot-install)
     VERSION="${RAUC_MF_VERSION:-unknown}"
     NEW_DIR="/data/apps/$VERSION"
     mkdir -p "$NEW_DIR"
@@ -9,7 +8,7 @@ case "$1" in
     echo "[RAUC] Extracted $VERSION to $NEW_DIR"
     ;;
 
-  post-install)
+  slot-post-install)
     VERSION="${RAUC_MF_VERSION:-unknown}"
     PREV=$(readlink /data/current)
     NEW_DIR="/data/apps/$VERSION"

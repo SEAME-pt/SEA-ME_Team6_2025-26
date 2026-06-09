@@ -7,4 +7,4 @@ filename=hook.sh
 
 [image.appfs]
 filename=apps.tar.gz
-hooks=install;post-install
+hooks=slot-install;slot-post-install
