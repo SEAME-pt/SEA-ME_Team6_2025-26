@@ -529,21 +529,49 @@ Safety fallback requirements:
 
 ## Path B Implementation (BLE Direct) — In Progress
 
-### Architecture Review
+### Important Notes on File Deployment & Architecture
 
-**Why Two Templates?**
+**Question 2: Why is ble_trafficlight_receiver.py on PC + GitHub but not on AGL?**
 
-- **Template A** (Minimal Prototype): RED state only, button cycle R→Y→G
-  - Goal: Validate BLE connection works in **5 minutes**
-  - Use case: Quick proof-of-concept without full logic
-  - Rationale: Rapid validation; if BLE fails at connection level, no need to implement full complexity
+Answer: **It's a deployment/tooling distinction.**
+- **PC/GitHub:** These are the source files for version control and documentation
+- **AGL:** These are runtime deployment locations
+- **Solution:** The file must be COPIED from PC to AGL before testing (not cloned from GitHub directly)
 
-- **Template B** (Production-Ready): Full state machine with yellow auto-escalation
-  - Goal: Complete safety rules ready for Friday demo
-  - Use case: Actual vehicle integration with ADAS Manager
-  - Includes: yellow timeout (2s), disconnection → RED, LED feedback
+**Recommended workflow:**
+```bash
+# On your PC (LENOVO)
+cd ~/Documents/SEA-ME_Team6_2025-26
+scp src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
+    seame@agl-pi5:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
 
-**Both use Nordic UART Service** (standard, well-supported BLE).
+# OR copy via USB/shared folder if SSH not available
+```
+
+Once on AGL, the receiver runs continuously as a daemon listening for BLE peripheral.
+
+---
+
+**Question 3: Why Two MakeCode Templates (A vs B)?**
+
+This is a **staged validation approach** to reduce risk:
+
+| Aspect | Template A | Template B |
+|--------|-----------|-----------|
+| **Goal** | Minimal BLE connection proof | Production-ready state machine |
+| **Setup time** | 5 minutes | 10 minutes |
+| **Complexity** | Single state (RED only) | Full state machine + timeouts |
+| **Use case** | "Does BLE even work?" | "Is this ready for vehicle?" |
+| **Why separate?** | Isolate connection issues from logic issues | |
+| **Practical path** | Flash A today → test connection → then upgrade to B | |
+
+**Rationale:**
+- If Template A fails, you know the problem is BLE layer (Bluetooth adapter, permissions, range, etc.)
+- If Template A works but B doesn't, you know the problem is MicroPython syntax/logic
+- If you try to debug both together, you can't isolate root causes
+- For Friday demo: if BLE is working, use B; if BLE fails, fallback to USB-direct (Path A)
+
+---
 
 ### Implementation Files
 
@@ -728,22 +756,201 @@ socat - UNIX-CONNECT:/tmp/adas_objects.sock
 ### Status & Next Steps
 
 **✅ Completed:**
-- Python BLE receiver written
-- MakeCode templates designed (Template A + B)
-- Configuration template ready
-- Unit tests created
+- Python BLE receiver written (ble_trafficlight_receiver.py)
+- MakeCode templates designed (Template A minimal + Template B production)
+- Configuration template ready (config_ble.json)
+- Unit tests created (test_ble_receiver.py)
+- Documentation consolidated into planning_V2I.md
+- File deployment plan documented
 
-**⏳ In Progress:**
-- Copy `ble_trafficlight_receiver.py` to AGL filesystem (not just GitHub)
-- Flash Template A firmware to micro:bit
-- Validate BLE connection and notification flow
-- Test state changes via socket
+**⏳ In Progress (Immediate Actions):**
+1. **Deploy receiver to AGL** (copy from PC via SCP or USB)
+2. **Flash Template A firmware** to micro:bit V2 via MakeCode
+3. **Test BLE connection** (scan → connect → receive state)
+4. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
 
-**❌ Pending (for Thu/Fri):**
-- Upgrade to Template B (full state machine) once Template A works
-- ADAS Manager integration (`/data/ADAS-Manager-tuning-trafficlight/`)
-- Vehicle throttle override validation
-- Fallback to USB-direct if BLE not ready by Friday
+**❌ Pending (After BLE Validated):**
+- Upgrade to Template B (full state machine)
+- ADAS Manager integration and throttle override
+- Vehicle motion validation (stop/slow/go)
+- Friday presentation readiness (BLE OR fallback to USB-direct)
+
+---
+
+## Next Actions — Detailed Implementation Roadmap
+
+### Action 1: Deploy BLE Receiver to AGL (Today — 15 min)
+
+**On your PC (LENOVO):**
+```bash
+# Navigate to project
+cd ~/Documents/SEA-ME_Team6_2025-26
+
+# Copy receiver to AGL (replace with your Pi5 IP/hostname)
+scp src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
+    seame@<agl-pi5-ip>:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
+
+scp src/mobility_scenarios_src/emergency_priority/config_ble.json \
+    seame@<agl-pi5-ip>:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/
+```
+
+**OR via USB/shared folder if no SSH:**
+- Copy files manually to AGL filesystem
+
+**On AGL (verify files arrived):**
+```bash
+ls -la ~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py
+```
+
+**Install dependencies on AGL:**
+```bash
+pip install bleak
+```
+
+---
+
+### Action 2: Flash Template A Firmware to Micro:bit (Today — 10 min)
+
+**On your PC:**
+1. Connect micro:bit V2 to PC via USB-C cable
+2. Open https://makecode.microbit.org in browser
+3. Create new project
+4. Click **Extensions** → search for "Bluetooth" → add BLE extension
+5. Delete default code blocks
+6. Copy Template A code from [MakeCode Template A section above](#makecode-template-a-quick-prototype-5-minute-ble-validation)
+7. Click **Download** → save `.hex` file
+8. Drag `.hex` onto MICROBIT drive (appears as USB device)
+9. Wait for board to blink/reset
+
+**Verify on micro:bit:**
+- All LEDs should flash initially
+- Pressing button A should cause LED feedback
+
+---
+
+### Action 3: Test BLE Connection (Today — 10 min)
+
+**Terminal 1 on AGL (start receiver):**
+```bash
+cd ~/Documents/SEA-ME_Team6_2025-26
+
+python3 src/mobility_scenarios_src/emergency_priority/ble_trafficlight_receiver.py \
+  --config src/mobility_scenarios_src/emergency_priority/config_ble.json \
+  --device-name "Trafficlight" \
+  --verbose
+```
+
+**Expected output (within 10-15 seconds):**
+```
+[INFO] BLE Receiver initialized (device: Trafficlight, timeout: 5.0s)
+[INFO] ADAS socket: /tmp/adas_objects.sock
+[INFO] Scanning for device: Trafficlight...
+[INFO] Found device: Trafficlight (XX:XX:XX:XX:XX:XX)
+[INFO] Connecting to XX:XX:XX:XX:XX:XX...
+[INFO] Connected to BLE device
+[INFO] Subscribed to 6e400003-b5a3-f393-e0a9-e50e24dcca9e
+[DEBUG] BLE notification: raw=52, state=RED
+[DEBUG] Injected ADAS object: SIGN_TL_RED
+```
+
+**If no connection after 30s:**
+- Check micro:bit is powered on (plug USB-C in again)
+- Verify "Trafficlight" appears in `bluetoothctl scan on` on AGL
+- Check Bluetooth adapter: `bluetoothctl show` (should show adapter name/MAC)
+- Try restarting micro:bit (press RESET button on back)
+
+---
+
+### Action 4: Verify Socket Injection (Today — 5 min)
+
+**Terminal 2 on AGL (same machine as Action 3):**
+```bash
+# Watch traffic-light objects arrive on socket
+socat - UNIX-CONNECT:/tmp/adas_objects.sock
+```
+
+**Expected output (every 1 second from Terminal 1):**
+```json
+{"class": "SIGN_TL_RED", "confidence": 1.0, "state": "RED", "timestamp": 1717939234.567}
+```
+
+**If nothing arrives:**
+- Check receiver is running in Terminal 1 (should show "Subscribed" message)
+- Verify receiver is not logging errors
+- Check socket exists: `ls -la /tmp/adas_objects.sock`
+
+---
+
+### Action 5: Test State Changes (Today — 10 min)
+
+**On micro:bit (physically):**
+- Press button A repeatedly to cycle: R → Y → G → R
+
+**On Terminal 2 (socat output):**
+- Watch state change in socket output every time you press button A
+- State should go: RED → YELLOW → GREEN → RED
+
+**Expected sequence in socat:**
+```json
+{"class": "SIGN_TL_RED", ...}     # Initial state
+{"class": "SIGN_TL_YELLOW", ...}  # After button A once
+{"class": "SIGN_TL_GREEN", ...}   # After button A twice
+{"class": "SIGN_TL_RED", ...}     # After button A thrice (cycling back)
+```
+
+---
+
+### Action 6: Validate Timeout Safety (Today — 10 min)
+
+**On Terminal 2 (socat):**
+1. Watch state updates (should see RED every 1 second)
+2. Turn off micro:bit (remove USB power) while receiver is running
+3. Wait 5+ seconds
+4. Check socat output
+
+**Expected behavior:**
+- After ~5 seconds with no signal, receiver should force state to RED
+- Socat should show: `{"class": "SIGN_TL_RED", "state": "RED", ...}`
+- When you reconnect micro:bit, receiver should re-establish connection and resume normal updates
+
+**This validates:** receiver doesn't hang on lost connection; it safely defaults to RED
+
+---
+
+### Action 7: Ready for Template B Upgrade (Wednesday)
+
+Once Actions 1-6 all pass:
+1. Update MakeCode project: delete Template A code
+2. Copy Template B code (from [MakeCode Template B section](#makecode-template-b-production-state-machine-full-safety-rules))
+3. Add yellow timeout test: hold button B for 2+ seconds and watch it auto-escalate to RED
+4. Test disconnection safety (turn off micro:bit → should force RED on AGL)
+
+---
+
+### Timeline Summary
+
+| Stage | Target Date | Goal |
+|-------|-------------|------|
+| **Actions 1-3** | Today (Tue) | BLE connection working |
+| **Actions 4-6** | Today (Tue) | Socket injection working + safety validated |
+| **Action 7** | Tomorrow (Wed) | Template B upgraded + full state machine tested |
+| **ADAS integration** | Wed/Thu | Vehicle throttle override + motion validation |
+| **Friday demo** | Friday | Both BLE + USB-direct paths ready; present preferred (BLE) |
+
+---
+
+## Documentation Update Log
+
+- **Monday, June 8:** USB-direct baseline validated (serial connection working)
+- **Tuesday, June 9 (now):** 
+  - Path B BLE architecture designed
+  - MakeCode templates created (A + B)
+  - Python receiver implemented
+  - Consolidated into `planning_V2I.md`
+  - Deployment plan documented
+  - Staged testing roadmap created
+
+---
 
 ---
 
