@@ -255,6 +255,44 @@ jobs:
           tar -czf update-rpi5.tar.gz -C ota-rpi5 .
           sha256sum update-rpi5.tar.gz > hash-rpi5.txt
 
+      # --- RAUC Bundle (RPi5 app-only) ---
+      - name: Install RAUC (for bundle creation)
+        if: needs.build-adas-rpi5.result == 'success'
+        run: sudo apt-get install -y rauc
+
+      - name: Create RAUC bundle (RPi5)
+        if: needs.build-adas-rpi5.result == 'success'
+        env:
+          RAUC_KEY: ${{ secrets.RAUC_SIGNING_KEY }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          echo "$RAUC_KEY" > ca.key.pem
+          cp src/ota/rauc/ca.cert.pem .
+
+          mkdir -p rauc-staging
+
+          cp ota-rpi5/adas-manager/bin/adas_manager     rauc-staging/
+          cp ota-rpi5/adas-manager/kuksa_bridge.py      rauc-staging/
+          cp ota-rpi5/adas-manager/socket_sender.py     rauc-staging/
+          cp -r ota-rpi5/inference                      rauc-staging/
+
+          tar -czf rauc-staging/apps.tar.gz -C rauc-staging \
+              adas_manager kuksa_bridge.py socket_sender.py inference/
+
+          sed "s/@@VERSION@@/$VERSION/" scripts/rauc-bundle/manifest.raucm \
+              > rauc-staging/manifest.raucm
+          cp scripts/rauc-bundle/hook.sh rauc-staging/
+          chmod +x rauc-staging/hook.sh
+
+          rauc bundle \
+              --cert=ca.cert.pem \
+              --key=ca.key.pem \
+              rauc-staging/ apps-${VERSION}.raucb
+
+          sha256sum apps-${VERSION}.raucb > hash-rauc-rpi5-${VERSION}.txt
+
+          rm -f ca.key.pem
+
       # --- RPi4 Package ---
       - name: Download Cluster artifact (RPi4)
         if: needs.build-cluster-rpi4.result == 'success'
@@ -335,3 +373,5 @@ jobs:
             hash-rpi4.txt
             update-rpi5.tar.gz
             hash-rpi5.txt
+            apps-*.raucb
+            hash-rauc-rpi5-*.txt
