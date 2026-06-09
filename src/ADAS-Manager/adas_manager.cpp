@@ -19,8 +19,8 @@
 // ── Sockets / Config ──────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
-static const char* CONFIG_PATH   = "/data/ADAS-Manager-GITHUB/lka_config.conf";
-static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-GITHUB/kuksa_bridge.py";
+static const char* CONFIG_PATH   = "/data/current/lka_config.conf";
+static const char* BRIDGE_CMD    = "python3 /data/current/kuksa_bridge.py";
 
 static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
 

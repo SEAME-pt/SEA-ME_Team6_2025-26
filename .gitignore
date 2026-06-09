@@ -67,3 +67,4 @@ build/
 *.bin
 *.hex
 *.map
+ca.key.pem

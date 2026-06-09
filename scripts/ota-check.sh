@@ -5,8 +5,9 @@
 set -e
 
 REPO="SEAME-pt/SEA-ME_Team6_2025-26"
-ASSET="update-rpi5.tar.gz"
-HASH_ASSET="hash-rpi5.txt"
+BUNDLE_ASSET_PREFIX="apps-"
+BUNDLE_EXT=".raucb"
+HASH_ASSET_PREFIX="hash-rauc-rpi5-"
 WORK_DIR="/tmp/ota-update"
 VERSION_FILE="/opt/seame/version"
 API_URL="https://api.github.com/repos/${REPO}/releases/latest"
@@ -35,36 +36,39 @@ if [ "$LATEST" = "$CURRENT" ]; then
     exit 0
 fi
 
-# ── Download package ──────────────────────────────────────────────────────────
+# ── Download RAUC bundle ──────────────────────────────────────────────────────
 log "New version found: $CURRENT → $LATEST"
-log "Downloading $ASSET..."
 
-DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${LATEST}/${ASSET}"
-HASH_URL="https://github.com/${REPO}/releases/download/${LATEST}/${HASH_ASSET}"
+BUNDLE_FILE="${BUNDLE_ASSET_PREFIX}${LATEST}${BUNDLE_EXT}"
+HASH_FILE="${HASH_ASSET_PREFIX}${LATEST}.txt"
+BUNDLE_URL="https://github.com/${REPO}/releases/download/${LATEST}/${BUNDLE_FILE}"
+HASH_URL="https://github.com/${REPO}/releases/download/${LATEST}/${HASH_FILE}"
+
+log "Downloading $BUNDLE_FILE..."
 
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 
-curl -fsSL "$DOWNLOAD_URL" -o "$WORK_DIR/$ASSET"
-curl -fsSL "$HASH_URL"     -o "$WORK_DIR/$HASH_ASSET"
+curl -fsSL "$BUNDLE_URL" -o "$WORK_DIR/apps.raucb"
+curl -fsSL "$HASH_URL"   -o "$WORK_DIR/hash.txt"
 
 # ── Verify checksum ───────────────────────────────────────────────────────────
 log "Verifying checksum..."
 cd "$WORK_DIR"
-sha256sum -c "$HASH_ASSET"
+sha256sum -c hash.txt
 log "Checksum OK"
 
-# ── Extract and install ───────────────────────────────────────────────────────
-log "Extracting..."
-tar -xzf "$ASSET"
-
-log "Running install.sh..."
-bash install.sh
+# ── Install via RAUC ──────────────────────────────────────────────────────────
+log "Installing RAUC bundle..."
+rauc install "$WORK_DIR/apps.raucb"
 
 # ── Save installed version ────────────────────────────────────────────────────
 mkdir -p "$(dirname "$VERSION_FILE")"
 echo "$LATEST" > "$VERSION_FILE"
 log "Updated version file: $LATEST"
+
+# ── Cleanup old versions (keep last 2) ───────────────────────────────────────
+ls -dt /data/apps/v* 2>/dev/null | tail -n +3 | xargs rm -rf 2>/dev/null || true
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 rm -rf "$WORK_DIR"
