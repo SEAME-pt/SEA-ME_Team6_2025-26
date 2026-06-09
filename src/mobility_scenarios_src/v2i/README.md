@@ -3,7 +3,7 @@
 ## Quick Start (Local MVP)
 
 ```bash
-cd /path/to/src/mobility_scenarios/v2i
+cd /path/to/src/mobility_scenarios_src/v2i
 pip install -r requirements.txt
 
 # Terminal 1: start barrier simulator (local mode)
@@ -21,7 +21,7 @@ python v2i_client.py --config config.json
 ## Project Layout
 
 ```text
-src/mobility_scenarios/v2i/
+src/mobility_scenarios_src/v2i/
 ├── README.md
 ├── config.json
 ├── requirements.txt
@@ -60,4 +60,4 @@ To adapt for real Kitronik barrier:
 
 ---
 
-**Design & Rationale**: [See Design Doc](../../../docs/guides/mobility_scenarios/v2i/)
+**Design & Rationale**: `docs/guides/mobility_scenarios/planning_V2I.md`

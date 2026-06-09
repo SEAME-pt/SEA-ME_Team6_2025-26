@@ -2,6 +2,11 @@
 
 This folder contains the implementation and validation guides for Module 3 mobility scenarios.
 
+## Primary Document
+
+Use this as the master planning and execution guide:
+- `docs/guides/mobility_scenarios/planning_V2I.md`
+
 ## Scope
 
 - `v2i/`: Vehicle-to-Infrastructure communication with barriers.
@@ -25,3 +30,9 @@ This folder contains the implementation and validation guides for Module 3 mobil
 
 - Vehicle-to-Infrastructure: communication with barriers.
 - Emergency Vehicle Priority: communication with barriers and traffic lights.
+
+## Current Execution Focus (Tuesday, June 9, 2026)
+
+- Keep USB-direct deployment path as the low-risk hardware path.
+- Validate end-to-end behavior with physical micro:bit + AGL.
+- Keep wireless bridge as optional extension after hardware validation.

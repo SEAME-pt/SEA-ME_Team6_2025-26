@@ -43,4 +43,4 @@ This use case is independent from the traffic-light use case.
 
 ---
 
-**Implementation**: [See Technical Setup](../../src/mobility_scenarios/v2i/)
+**Implementation**: `src/mobility_scenarios_src/v2i/README.md`

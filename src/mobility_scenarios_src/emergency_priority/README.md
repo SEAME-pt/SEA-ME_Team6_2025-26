@@ -48,15 +48,15 @@ This allows:
 
 1. **On PC** (with micro:bit over serial):
    ```bash
-   python trafficlight_vehicle_bridge.py --mode transmitter \
-     --host <AGL-IP> \
-     --port 5555 \
+   python trafficlight_vehicle_bridge.py --bridge-mode transmitter \
+     --agl-host <AGL-IP> \
+     --agl-port 5555 \
      --config config.json
    ```
 
 2. **On AGL** (receives and bridges to KUKSA + ADAS Manager):
    ```bash
-   python trafficlight_vehicle_bridge.py --mode receiver \
+  python trafficlight_vehicle_bridge.py --bridge-mode receiver \
      --config config.json
    ```
 
@@ -86,8 +86,8 @@ This allows:
 }
 ```
 
-**Read more**: For complete wireless architecture, component layout, data flow diagrams, troubleshooting, and deployment checklists, see 
-[Wireless Traffic Light Integration Guide](../../shared/WIRELESS_TRAFFICLIGHT_INTEGRATION.md)
+**Read more**: Full architecture, deployment steps, and troubleshooting are consolidated in:
+`docs/guides/mobility_scenarios/planning_V2I.md`
 
 ## Real Hardware Note
 
@@ -113,6 +113,7 @@ src/mobility_scenarios_src/emergency_priority/
 ├── microbit_trafficlight_firmware.py (Flashed to micro:bit)
 ├── trafficlight_vehicle_bridge.py (Real traffic light -> vehicle command)
 ├── serial_step_by_step.py       (Manual hardware color validation)
+├── serial_smoke_test.py         (Serial protocol smoke test)
 └── tests/
     ├── test_trafficlight_simulator.py
     ├── test_emergency_client.py
@@ -161,4 +162,4 @@ class TrafficLightHardware:
 
 ---
 
-**Design & Rationale**: [See Design Doc](../../../docs/guides/mobility_scenarios/emergency_priority/)
+**Design & Rationale**: `docs/guides/mobility_scenarios/planning_V2I.md`

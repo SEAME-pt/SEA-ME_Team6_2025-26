@@ -2,14 +2,14 @@
 
 **Single source of truth** for Vehicle-to-Infrastructure communication, emergency traffic light control, and unified coordination.
 
-**Status:** Phase 3 Implementation Complete - Ready for Monday Hardware Demo  
+**Status:** Phase 3 Implementation Complete - Hardware validation in progress (Tuesday)  
 **Owner:** Joao  
 **Branch:** `feature/mobility_scenarios/V2I_and_emergencypriority`  
-**Last Updated:** June 9, 2026
+**Last Updated:** Tuesday, June 9, 2026
 
 ## Quick Navigation
 
-- **For Monday Demo:** Jump to [Deployment Guide: USB-Direct for Monday (Option A)](#deployment-guide-usb-direct-for-monday-option-a)
+- **For Hardware Validation:** Jump to [Deployment Guide: USB-Direct for Monday (Option A)](#deployment-guide-usb-direct-for-monday-option-a)
 - **Why BLE Won't Work:** See [Hardware Reality Check](#why-ble-wont-work-hardware-reality-check)
 - **Implementation Status:** See [Current Status](#current-status)
 - **Testing & Validation:** See [Testing & Validation](#testing--validation)
@@ -60,7 +60,7 @@
 **Bridge Modes (3 Options):**
 
 ```
-LOCAL MODE (Monday Ready) ✅
+LOCAL MODE (Validated Path) ✅
   Micro:bit → USB /dev/ttyACMx → Single machine bridge → ADAS socket
   Deployment: USB cable from micro:bit to AGL
 
@@ -82,7 +82,7 @@ RECEIVER MODE (Future - AGL Side)
 - ✅ Normal timeout → RED
 - ✅ Yellow escalates → RED after 2s
 - ✅ State propagation to ADAS Manager confirmed
-- ⏳ Real vehicle throttle change (Monday with hardware)
+- ⏳ Real vehicle throttle change (with physical hardware)
 
 ---
 
@@ -247,7 +247,7 @@ Example `config.json` for the bridge:
 - **Heartbeat**: bridge receiver triggers safe stop if no update for 5 seconds
 - **No single point of failure**: if bridge dies, ADAS Manager continues with old state; manual override always available
 
-## Monday Hand-Off
+## Hardware Hand-Off
 
 ### Current Checkpoint (End of Wednesday)
 
@@ -261,7 +261,7 @@ Example `config.json` for the bridge:
 - One-command local preflight is available and validated:
   - `bash src/mobility_scenarios_src/run_preflight.sh`
 
-### What Is Still Pending for Monday (Hardware Day)
+### What Is Still Pending for Hardware Day
 
 1. Implement real Kitronik barrier control in:
   - `src/mobility_scenarios_src/v2i/kitronik_barrier.py`
@@ -283,7 +283,7 @@ Example `config.json` for the bridge:
    - short hardware video
    - deviations/fallback notes
 
-### Copy/Paste Message for Monday Chat Resume
+### Copy/Paste Message for Hardware Chat Resume
 
 ```text
 Resume Module 3 implementation from this checkpoint.
@@ -357,5 +357,13 @@ All planning and integration documentation for this module must be in English.
 ### Current readiness snapshot
 
 - Branch has implementation and documentation pushed.
-- USB-direct deployment path is the approved low-risk path for Monday.
+- USB-direct deployment path is the approved low-risk path for immediate hardware tests.
 - BLE remains a future enhancement because micro:bit MicroPython BLE UART is not available for this flow.
+
+### Wireless Decision (BLE vs micro:bit radio)
+
+- **BLE with MicroPython on micro:bit V2.21:** not suitable for this project path because custom BLE UART service is not available in standard MicroPython runtime.
+- **micro:bit `radio` module:** feasible between micro:bits, but not directly consumable by AGL without an additional gateway node; this adds architecture complexity now.
+- **Recommended immediate wireless test:** keep current `transmitter`/`receiver` bridge design (serial from micro:bit to host, then UDP to AGL) to validate wireless behavior without firmware rewrite.
+
+Decision: proceed with USB-direct for deterministic end-to-end validation first; run bridge-based wireless test next if needed.
