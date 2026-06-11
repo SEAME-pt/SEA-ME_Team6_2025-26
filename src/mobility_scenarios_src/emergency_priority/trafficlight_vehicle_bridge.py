@@ -68,6 +68,10 @@ class MicrobitSerialClient:
         self._ser.flush()
         return self._read_lines(window_s)
 
+    def read_stream(self, window_s: float = 0.25) -> list[str]:
+        """Read lines without sending any command (radio gateway mode)."""
+        return self._read_lines(window_s)
+
     def _read_lines(self, window_s: float) -> list[str]:
         out: list[str] = []
         deadline = time.time() + window_s
@@ -205,9 +209,19 @@ def main_local(bridge_cfg: BridgeConfig) -> int:
         mode_resp = client.send(f"MODE {bridge_cfg.mode}")
         print(f"[Bridge] MODE {bridge_cfg.mode} -> {mode_resp}")
 
+        # Radio gateway firmware streams direct state lines (R/Y/G) and does not
+        # implement STATUS/ACK command protocol. Detect and switch to low-latency mode.
+        radio_stream_mode = any((line or "").strip().upper() in {"R", "Y", "G", "RED", "YELLOW", "GREEN"}
+                                for line in (boot + mode_resp))
+        if radio_stream_mode:
+            print("[Bridge] Detected radio gateway stream mode (direct R/Y/G serial)")
+
         print("[Bridge] LOCAL mode running. Ctrl+C to stop.")
         while True:
-            status_lines = client.send("STATUS", window_s=0.8)
+            if radio_stream_mode:
+                status_lines = client.read_stream(window_s=0.20)
+            else:
+                status_lines = client.send("STATUS", window_s=0.8)
             light_state = parse_state(status_lines)
             motion = decide_motion_from_traffic_light_state(light_state)
 
@@ -229,7 +243,10 @@ def main_local(bridge_cfg: BridgeConfig) -> int:
                     print(f"[Bridge] ADAS socket send error: {e}")
 
             print(f"[Bridge] light_state={light_state} -> vehicle_motion={motion} -> adas_sign_class={sign_class}")
-            time.sleep(bridge_cfg.poll_interval_s)
+            if radio_stream_mode:
+                time.sleep(0.05)
+            else:
+                time.sleep(bridge_cfg.poll_interval_s)
     except KeyboardInterrupt:
         print("[Bridge] Stopped by user")
         return 0

@@ -314,6 +314,8 @@ When finishing a task:
 - 2026-06-11: Radio gateway serial validated on AGL at `/dev/ttyACM1`, receiving live `R/Y/G` state lines from the transmitter micro:bit.
 - 2026-06-11: Bridge local mode initially returned `unknown` because radio gateway emits direct `R/Y/G` lines (not `STATUS/ACK` format); parser updated to accept direct payloads.
 - 2026-06-11: ADAS socket check clarified: `/tmp/adas_objects.sock` is UNIX DGRAM; stream-mode `socat` reports protocol mismatch.
+- 2026-06-11: Radio micro:bit E2E validated (`R/Y/G` mapped to `adas_sign_class=9/10/8`) using bridge local mode on `/dev/ttyACM1`.
+- 2026-06-11: Latency optimization applied: local bridge now auto-detects radio gateway stream mode and reads direct serial state without `STATUS` polling.
 “hex flash feito”
 
 
