@@ -316,6 +316,7 @@ When finishing a task:
 - 2026-06-11: ADAS socket check clarified: `/tmp/adas_objects.sock` is UNIX DGRAM; stream-mode `socat` reports protocol mismatch.
 - 2026-06-11: Radio micro:bit E2E validated (`R/Y/G` mapped to `adas_sign_class=9/10/8`) using bridge local mode on `/dev/ttyACM1`.
 - 2026-06-11: Latency optimization applied: local bridge now auto-detects radio gateway stream mode and reads direct serial state without `STATUS` polling.
+- 2026-06-11: Additional latency tuning applied: stream mode now processes one serial line at a time with short serial timeout for faster button-to-log response.
 “hex flash feito”
 
 

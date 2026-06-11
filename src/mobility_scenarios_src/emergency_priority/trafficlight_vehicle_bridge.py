@@ -52,6 +52,9 @@ class MicrobitSerialClient:
         self._ser = serial.Serial(port, baud, timeout=timeout_s)
         time.sleep(2.0)
 
+    def set_timeout(self, timeout_s: float) -> None:
+        self._ser.timeout = timeout_s
+
     def close(self) -> None:
         self._ser.close()
 
@@ -71,6 +74,12 @@ class MicrobitSerialClient:
     def read_stream(self, window_s: float = 0.25) -> list[str]:
         """Read lines without sending any command (radio gateway mode)."""
         return self._read_lines(window_s)
+
+    def read_line(self) -> str:
+        raw = self._ser.readline()
+        if not raw:
+            return ""
+        return raw.decode("utf-8", errors="ignore").strip()
 
     def _read_lines(self, window_s: float) -> list[str]:
         out: list[str] = []
@@ -215,11 +224,16 @@ def main_local(bridge_cfg: BridgeConfig) -> int:
                                 for line in (boot + mode_resp))
         if radio_stream_mode:
             print("[Bridge] Detected radio gateway stream mode (direct R/Y/G serial)")
+            client.set_timeout(0.05)
 
         print("[Bridge] LOCAL mode running. Ctrl+C to stop.")
         while True:
             if radio_stream_mode:
-                status_lines = client.read_stream(window_s=0.20)
+                line = client.read_line()
+                if not line:
+                    time.sleep(0.01)
+                    continue
+                status_lines = [line]
             else:
                 status_lines = client.send("STATUS", window_s=0.8)
             light_state = parse_state(status_lines)
