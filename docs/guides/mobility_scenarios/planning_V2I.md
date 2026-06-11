@@ -2,10 +2,10 @@
 
 **Single source of truth** for Vehicle-to-Infrastructure communication, emergency traffic light control, and unified coordination.
 
-**Status:** Phase 3 Implementation Complete - Hardware validation in progress (Tuesday)  
+**Status:** Phase 3 complete; wireless execution split active (micro:bit radio now, BLE investigation after)  
 **Owner:** Joao  
 **Branch:** `feature/mobility_scenarios/V2I_and_emergencypriority`  
-**Last Updated:** Tuesday, June 9, 2026
+**Last Updated:** Thursday, June 11, 2026
 
 ## Quick Navigation
 
@@ -22,6 +22,9 @@
 - [BLE vs micro:bit radio in this scenario](#ble-vs-microbit-radio-in-this-scenario)
 - [Path B Implementation Checklist (BLE Direct)](#path-b-implementation-checklist-ble-direct)
 - [Path B Implementation (Detailed Status)](#path-b-implementation-ble-direct--in-progress)
+- [Execution Split Plan (June 11, 2026)](#execution-split-plan-june-11-2026)
+- [micro:bit Radio Communication (Now)](#microbit-radio-communication-now)
+- [BLE Communication (Resume After Radio)](#ble-communication-resume-after-radio)
 
 ## MicroPython Context
 
@@ -63,7 +66,7 @@ The snippet used for Path B is **JavaScript in MakeCode** (practically simplifie
 - Now: Path B BLE (`UART over Bluetooth`) to communicate wirelessly with AGL.
 - For this BLE UART prototype, MakeCode offers more direct integration:
   - `bluetooth.startUartService()`
-  - `bluetooth.uartWriteText(...)`
+  - `bluetooth.uartWriteString(...)`
   - quick block/JS workflow for rapid test iteration.
 
 Practical summary:
@@ -677,6 +680,76 @@ Safety fallback requirements:
   - vehicle command -> stop
 ```
 
+## Execution Split Plan (June 11, 2026)
+
+To avoid blocking delivery, execution is split into two tracks:
+
+1. `micro:bit radio communication` (implement now):
+  - traffic-light micro:bit sends `R/Y/G` through micro:bit radio
+  - gateway micro:bit receives radio and forwards to AGL via USB serial (`/dev/ttyACM*`)
+  - AGL bridge injects ADAS objects to `/tmp/adas_objects.sock`
+
+2. `BLE communication` (resume after radio MVP is stable):
+  - continue BLE as investigation only
+  - keep BLE out of the critical demo path until hardware validation succeeds
+
+## micro:bit Radio Communication (Now)
+
+### Goal
+
+Implement in sprint mode:
+
+`micro:bit A (traffic light TX) -> micro:bit B (gateway RX) -> USB serial -> AGL -> ADAS socket`
+
+### Step-by-step runbook
+
+1. Flash micro:bit A with radio TX firmware:
+  - fixed radio group (example: `23`)
+  - send one state symbol: `R`, `Y`, or `G`
+
+2. Flash micro:bit B with radio RX gateway firmware:
+  - same radio group
+  - forward received state over serial with `serial.writeLine(...)`
+
+3. Connect micro:bit B to AGL via USB.
+
+4. Verify serial on AGL:
+```bash
+ls -l /dev/ttyACM*
+python3 -m serial.tools.list_ports
+```
+
+5. Validate incoming serial state on AGL:
+```bash
+python3 src/mobility_scenarios_src/emergency_priority/serial_smoke_test.py --port /dev/ttyACM1 --baud 115200
+```
+
+6. Feed bridge/ADAS socket path:
+  - map `R/Y/G` to `SIGN_TL_RED/YELLOW/GREEN`
+  - verify frames on `/tmp/adas_objects.sock`
+
+### Acceptance criteria
+
+- Radio state changes on micro:bit A are seen on AGL serial via micro:bit B.
+- AGL injects expected traffic-light classes into ADAS socket.
+- Vehicle behavior follows stop/slow/go mapping.
+
+## BLE Communication (Resume After Radio)
+
+### Current BLE status (as of June 11)
+
+- AGL BLE adapter is up and receiver deployment is complete.
+- micro:bit is detected on USB (`BBC micro:bit CMSIS-DAP`, `ttyACM1`).
+- Repeated AGL scans (UUID/name) and nRF Connect scans did not detect usable BLE advertising for target services.
+- BLE remains `investigation` and is not the current critical path.
+
+### BLE resume gate
+
+Resume BLE only after radio path is stable and one of the following is true:
+
+- external scanner confirms target BLE service advertisement, or
+- firmware approach is changed and advertising is confirmed.
+
 ## Path B Implementation (BLE Direct) — In Progress
 
 ### Important Notes on File Deployment & Architecture
@@ -755,13 +828,13 @@ This is a **staged validation approach** to reduce risk:
 4. Copy this code:
 
 ```blocks
-bluetooth.setAdvertisedName("Trafficlight")
+// Optional: configure the advertised name in MakeCode project settings if needed
 bluetooth.startUartService()
 
 let light_state = "R"
 
 basic.forever(function () {
-    bluetooth.uartWriteText(light_state)
+  bluetooth.uartWriteString(light_state)
     basic.pause(1000)
 })
 
@@ -791,7 +864,7 @@ input.onButtonPressed(Button.A, function () {
 4. Copy this code:
 
 ```blocks
-bluetooth.setAdvertisedName("Trafficlight")
+// Optional: configure the advertised name in MakeCode project settings if needed
 bluetooth.startUartService()
 
 let current_state = "R"
@@ -814,7 +887,7 @@ bluetooth.onBluetoothDisconnected(function () {
 
 basic.forever(function () {
     // Send state every 500ms
-    bluetooth.uartWriteText(current_state)
+  bluetooth.uartWriteString(current_state)
     basic.pause(500)
 
     // Yellow timeout escalation
@@ -948,10 +1021,9 @@ socat - UNIX-CONNECT:/tmp/adas_objects.sock
   - remote syntax validation passed (`python3 -m py_compile ble_trafficlight_receiver.py`)
 
 **⏳ In Progress (Immediate Actions):**
-1. **Verify firmware advertising settings** (name + UART service enabled)
-2. **Re-run BLE scan** (detect by name and/or service UUID)
-3. **Test BLE connection** (scan → connect → receive state)
-4. **Validate socket injection** (monitor `/tmp/adas_objects.sock`)
+1. **Implement micro:bit radio communication MVP** (`A -> B -> AGL serial`).
+2. **Validate end-to-end state propagation** (`R/Y/G` to ADAS socket).
+3. **Keep BLE as a secondary investigation** (resume after radio baseline is stable).
 
 **❌ Pending (After BLE Validated):**
 - Upgrade to Template B (full state machine)
@@ -1145,6 +1217,8 @@ Once Actions 1-6 all pass:
   - Powering recommendation documented: keep micro:bit on Lenovo USB for power/flashing while using BLE only for data
   - Template A flash execution checklist documented (USB power on Lenovo, `.hex` copied, board running)
   - AGL scan attempt logged: peripheral not yet detected by advertised name or NUS UUID
+  - Repeated scans on AGL and nRF Connect did not detect usable micro:bit BLE advertising in the current setup
+  - Execution strategy split approved: implement `micro:bit radio communication` now; resume BLE investigation after radio MVP
 
 ---
 
