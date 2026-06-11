@@ -83,8 +83,20 @@ class MicrobitSerialClient:
 
 def parse_state(lines: list[str]) -> str:
     """Extract traffic light state from serial response lines."""
+    direct_map = {
+        "R": "red",
+        "Y": "yellow",
+        "G": "green",
+        "RED": "red",
+        "YELLOW": "yellow",
+        "GREEN": "green",
+    }
+
     for line in reversed(lines):
         upper = line.upper()
+        # Radio gateway path: one-state-per-line payload (R/Y/G or full names).
+        if upper in direct_map:
+            return direct_map[upper]
         if "ACK STATE " in upper:
             payload = upper.split("ACK STATE ", 1)[1].strip()
             return payload.split()[0].lower()

@@ -312,6 +312,8 @@ When finishing a task:
 - 2026-06-09: AGL BLE scan executed; peripheral name `Trafficlight` and Nordic UART service UUID were not detected yet (`FOUND_TRAFFICLIGHT=False`, `FOUND_NUS=False`).
 - 2026-06-11: Two-micro:bit radio path initialized (`TX semaforo` + `RX gateway`), with gateway connected to AGL USB.
 - 2026-06-11: Radio gateway serial validated on AGL at `/dev/ttyACM1`, receiving live `R/Y/G` state lines from the transmitter micro:bit.
+- 2026-06-11: Bridge local mode initially returned `unknown` because radio gateway emits direct `R/Y/G` lines (not `STATUS/ACK` format); parser updated to accept direct payloads.
+- 2026-06-11: ADAS socket check clarified: `/tmp/adas_objects.sock` is UNIX DGRAM; stream-mode `socat` reports protocol mismatch.
 “hex flash feito”
 
 
