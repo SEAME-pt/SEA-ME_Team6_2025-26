@@ -310,6 +310,8 @@ When finishing a task:
 - 2026-06-09: Wireless integration plan finalized: semaforo sends state by network to AGL, bridge publishes to KUKSA/VSS and ADAS Manager.
 - 2026-06-09: Template A firmware flashed on micro:bit using `microbit-mobility_traffic_lights.hex` (USB on Lenovo for power + flashing, BLE reserved for data path).
 - 2026-06-09: AGL BLE scan executed; peripheral name `Trafficlight` and Nordic UART service UUID were not detected yet (`FOUND_TRAFFICLIGHT=False`, `FOUND_NUS=False`).
+- 2026-06-11: Two-micro:bit radio path initialized (`TX semaforo` + `RX gateway`), with gateway connected to AGL USB.
+- 2026-06-11: Radio gateway serial validated on AGL at `/dev/ttyACM1`, receiving live `R/Y/G` state lines from the transmitter micro:bit.
 “hex flash feito”
 
 
