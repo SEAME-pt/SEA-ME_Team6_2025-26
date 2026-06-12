@@ -260,7 +260,7 @@ jobs:
         if: needs.build-adas-rpi5.result == 'success'
         run: sudo apt-get install -y rauc
 
-      - name: Create RAUC bundle (RPi5)
+      - name: Create RAUC bundle (RPi5 + Cluster)
         if: needs.build-adas-rpi5.result == 'success'
         env:
           RAUC_KEY: ${{ secrets.RAUC_SIGNING_KEY }}
@@ -278,8 +278,19 @@ jobs:
 
           chmod +x rauc-staging/adas_manager
 
+          # Include ClusterApp if RPi4 build succeeded
+          if [ -f ota-rpi4/cluster/ClusterApp ]; then
+            mkdir -p rauc-staging/cluster
+            cp ota-rpi4/cluster/ClusterApp rauc-staging/cluster/
+            chmod +x rauc-staging/cluster/ClusterApp
+            echo "ClusterApp included in bundle"
+          else
+            echo "No ClusterApp found — bundle will be RPi5-only"
+          fi
+
           tar -czf rauc-staging/apps.tar.gz -C rauc-staging \
-              adas_manager kuksa_bridge.py socket_sender.py inference/
+              adas_manager kuksa_bridge.py socket_sender.py inference/ \
+              $([ -d rauc-staging/cluster ] && echo "cluster/")
 
           sed "s/@@VERSION@@/$VERSION/" scripts/rauc-bundle/manifest.raucm \
               > rauc-staging/manifest.raucm
