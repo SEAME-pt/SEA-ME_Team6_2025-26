@@ -3,6 +3,7 @@ Description=OTA Update Check Timer - Runs every 5 minutes
 Documentation=https://github.com/SEAME-pt/SEA-ME_Team6_2025-26
 
 [Timer]
+OnBootSec=2min
 OnUnitActiveSec=5min
 RandomizedDelaySec=30
 Persistent=true

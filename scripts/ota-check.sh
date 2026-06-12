@@ -91,10 +91,6 @@ rm -f "$PENDING_FILE"
 
 notify --installed "$LATEST"
 
-# ── Update cluster (hub-and-spoke) ────────────────────────────────────────────
-log "Triggering cluster update..."
-bash "$(dirname "$0")/ota-cluster.sh" "$LATEST" || log "Cluster update failed — continuing"
-
 ls -dt /data/apps/v* 2>/dev/null | tail -n +3 | xargs rm -rf 2>/dev/null || true
 rm -rf "$WORK_DIR"
 log "Done — running $LATEST"
