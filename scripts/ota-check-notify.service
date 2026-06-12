@@ -1,11 +1,11 @@
 [Unit]
-Description=SEAME OTA Update Check
-After=network-online.target wifi-startup.service
+Description=SEAME OTA Update Notify Check
+After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/seame/ota/ota-check.sh --install
+ExecStart=/opt/seame/ota/ota-check.sh --notify
 StandardOutput=journal
 StandardError=journal
 
