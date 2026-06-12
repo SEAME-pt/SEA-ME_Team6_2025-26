@@ -4,7 +4,6 @@ version=@@VERSION@@
 
 [hooks]
 filename=hook.sh
-hooks=post-install
 
 [image.appfs]
 filename=apps.tar.gz
