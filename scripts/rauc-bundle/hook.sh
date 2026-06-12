@@ -44,10 +44,10 @@ case "$1" in
     if [ -f "$CLUSTER_BIN" ]; then
         echo "[RAUC] Deploying ClusterApp to RPi4 ($CLUSTER_IP)..."
 
-        # Backup previous ClusterApp on RPi4 before overwriting
+        # Stop service + backup before overwriting
         ssh -i "$CLUSTER_SSH_KEY" -o StrictHostKeyChecking=no \
             "root@${CLUSTER_IP}" \
-            "[ -f ${CLUSTER_APP_PATH} ] && cp ${CLUSTER_APP_PATH} ${CLUSTER_APP_PATH}.bak || true"
+            "systemctl stop ${CLUSTER_SERVICE}; [ -f ${CLUSTER_APP_PATH} ] && cp ${CLUSTER_APP_PATH} ${CLUSTER_APP_PATH}.bak || true"
 
         if scp -i "$CLUSTER_SSH_KEY" -o StrictHostKeyChecking=no \
                "$CLUSTER_BIN" "root@${CLUSTER_IP}:${CLUSTER_APP_PATH}"; then
