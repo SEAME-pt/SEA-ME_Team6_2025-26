@@ -7,18 +7,18 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Vehicle-to-Infrastructure: communication with barriers. (21)
-  - [ ] Emergency Vehicle Priority: communication with barriers and traffic lights (13)
-  - [ ] Implement OTA pipeline to deploy GitHub releases directly to the car. (13)
-  - [ ] ADAS Manager Tuning (13)
+  - [x] Vehicle-to-Infrastructure: communication with barriers. (21)
+  - [x] Emergency Vehicle Priority: communication with barriers and traffic lights (13)
+  - [x] Implement OTA pipeline to deploy GitHub releases directly to the car. (13)
+  - [x] ADAS Manager Tuning (13)
   ---
   
 - #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [ ] Car hardware remodeling: physical restructuring of the vehicle. (13)
+  - [x] Car hardware remodeling: physical restructuring of the vehicle. (13)
   ---
 
 - #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  - [ ] Retrain YOLO model - cars and obstacles. (8)
+  - [x] Retrain YOLO model - cars and obstacles. (8)
   ---
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
@@ -26,7 +26,7 @@
  
 - ### Tasks from the previous sprint:
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
-  - [ ] Full Integration of ADAS into Cluster (8)
+  - [x] Full Integration of ADAS into Cluster (8)
 ---
 ## **Total Sprint Points: 105 (89 + 16)**
 
@@ -34,11 +34,11 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Vehicle-to-Infrastructure (21) + Emergency Vehicle Priority (13) | 34 | |
-| **David** | ADAS Manager Tuning (13) + Deploy GitHub releases directly to the car (13) | 26 | |
-| **Vasco** | Emergency Vehicle Priority (13) + Retrain YOLO model (8) | 21 | |
-| **Diogo** | Integration of Traffic Sign Recognition into ADAS Manager (8) + Full Integration of ADAS into Cluster (8) + Deploy GitHub releases directly to the car (13) | 29 | |
-| **Ruben** | Car hardware remodeling (13) | 13 | |
+| **João**  | Vehicle-to-Infrastructure (21) + Emergency Vehicle Priority (13) | 34 | 34 |
+| **David** | ADAS Manager Tuning (13) + Deploy GitHub releases directly to the car (13) | 26 | 26 |
+| **Vasco** | Emergency Vehicle Priority (13) + Retrain YOLO model (8) | 21 | 21 |
+| **Diogo** | Integration of Traffic Sign Recognition into ADAS Manager (8) + Full Integration of ADAS into Cluster (8) + Deploy GitHub releases directly to the car (13) | 29 | 21 |
+| **Ruben** | Car hardware remodeling (13) + Deploy GitHub releases directly to the car (13) | 26 | 26 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -57,26 +57,38 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 15 points: ** / 105**
+- ### Sprint 15 points: **89 / 105**
  
 ## ❌ Undone:
+  - Integration of Traffic Sign Recognition into ADAS Manager
+  - Status point: update the documentation to reflect current implementation.
 ------
   
 ## ✅ Outcomes:
+  - Achieved Radio communication between 2 microbits ✅
+  - OTA pipeline working ✅
+  - Car remodeling ✅
 ------
 
-  
 - **Demos**:
+- <img width="1536" height="2048" alt="car-remodeling" src="https://github.com/user-attachments/assets/37f6cb10-24dd-4a02-94b8-795212afc16e" />
+- <img width="1536" height="2048" alt="car-remodeling-2" src="https://github.com/user-attachments/assets/0f8f1ff2-d06b-4232-bc63-afc07dd1926f" />
+- <img width="2048" height="1536" alt="car-remodeling-3" src="https://github.com/user-attachments/assets/8b535f9b-6764-4fb2-a786-28a9dd504c50" />
+- <img width="1536" height="1024" alt="ota_diagram" src="https://github.com/user-attachments/assets/8f22cfc0-0d77-452f-970c-6e208837e89f" />
+
 
 - **Docs updated**:
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/OTA/RAUC_OTA_GUIDE.md
 
 # 🔎 Retrospective
 - ## **Went well**:
+- Goal reached: Familiarization with Vehicle-to-Infrastructure Scenario 🎯
+- OTA pipeline for software (ADAS-Manager, Inference, Cluster) 🎯
 
 - ## **To improve**:
+- Everything went well this sprint 🫡
 
 ## 🔗 Useful Links
-
 
 ## TSF Useful:
   - EXPECT-L0-1 - "System architecture is defined and documented";
