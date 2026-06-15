@@ -1,33 +1,37 @@
 # 🏁 Sprint 16 — (15/06/2026 → 26/06/2026)
 
-> ## **Sprint Goal**: `[a definir]`
+> ## **Sprint Goal**: `Continuation of V2I scenarios and OTA implementation`
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Continuation of previous sprint tasks: Vehicle-to-Infrastructure + Emergency Vehicle Priority
-  - [ ] Continuation of the OTA task carried over from the previous sprint
-  ---
+  - [ ] Continuation of Vehicle-to-Infrastructures implementation (13)
+  - [ ] Emergency Vehicle Priority pratical implementation (13)
+  - [ ] Continuation of the OTA implementation (13)
+  - [ ] Implementation of FOTA (13)
+  - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Status point: update the documentation to reflect current implementation. (8)
+  - [ ] Practical team spread knowledge about Yocto (5)
 
-- ### Tasks from the previous sprint:
+- #### Tasks from the previous sprint:
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
+
 ---
 
-## **Total Sprint Points: `[a definir]`**
+## **Total Sprint Points: `94`**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Continuation: Vehicle-to-Infrastructure + Emergency Vehicle Priority | - | |
-| **David** | Continuation of OTA (with Diogo) | - | |
-| **Vasco** | `[a definir]` | - | |
-| **Diogo** | Continuation of OTA (with David) | - | |
-| **Ruben** | `[a definir]` | - | |
+| **João**  | Continuation of Vehicle-to-Infrastructures implementation + Emergency Vehicle Priority pratical implementation | 26 | - |
+| **David** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | |
+| **Vasco** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | |
+| **Diogo** | Continuation of the OTA implementation + Implementation of FOTA + HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) | 47 | |
+| **Ruben** | Continuation of the OTA implementation + Implementation of FOTA  + Practical team spread knowledge about Yocto | 31 | |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -46,7 +50,7 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`[preencher no fim do sprint]`**
+- ### Sprint 16 points: **`0/94`**
 
 ## ❌ Undone:
   - `[preencher no fim do sprint]`
