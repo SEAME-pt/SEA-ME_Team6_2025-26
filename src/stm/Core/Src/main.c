@@ -34,8 +34,6 @@
 /* USER CODE BEGIN Includes */
 #include "lps22hh.h"
 #include <stdio.h>
-#include "stm32_can_benchmark.h"
-
 #include "motor_control.h"
 #include "srf08.h"
 /* USER CODE END Includes */
@@ -90,7 +88,7 @@ static void SystemPower_Config(void);
 
 #define MATRIX_ADDR_1  0x71
 #define MATRIX_ADDR_2  0x74
-
+/*
 void matrix_init(I2C_HandleTypeDef *hi2c, uint8_t addr) {
     uint8_t cmd;
 
@@ -135,7 +133,7 @@ void matrix_write_column(I2C_HandleTypeDef *hi2c, uint8_t addr, uint8_t col) {
     HAL_I2C_Master_Transmit(hi2c, addr << 1, packet, 17, 100);
 }
 
-
+*/
 
 
 
@@ -199,8 +197,11 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   MX_SPI1_Init();
   MX_TIM1_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
+  __HAL_TIM_CLEAR_FLAG(&htim4, TIM_FLAG_CC1);
+  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
   HAL_Delay(100);  // pequena pausa a seguir ao boot
 
   // I2C1 Scanner
@@ -208,6 +209,11 @@ int main(void)
   uint8_t found_count = 0;
 
   printf("=== I2C1 Scanner ===\r\n");
+
+
+
+
+
   printf("Scanning addresses 0x01 to 0x7F...\r\n\r\n");
 
   for (uint8_t addr = 1; addr < 128; addr++)
@@ -242,11 +248,7 @@ int main(void)
 
   HAL_Delay(100);  // pequena pausa a seguir ao boot
 
-  matrix_init(&hi2c1, MATRIX_ADDR_1);
-  matrix_init(&hi2c1, MATRIX_ADDR_2);
-
-  matrix_all_on(&hi2c1, MATRIX_ADDR_1);
-  matrix_all_on(&hi2c1, MATRIX_ADDR_2);
+  /* KS0064 matrices moved to I2C2 — initialised by task_indicator_init() */
 
 
   // Inicia o PWM no TIM1_CH1 (PA8)
@@ -260,7 +262,6 @@ int main(void)
   HAL_Delay(500);
 
   /* USER CODE END 2 */
-  printf("RACALLAJJSADSADSADPSAPDSA\r\n asdsadsad \r\n \r\n\r\n");
 
   MX_ThreadX_Init();
 
@@ -271,22 +272,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  // Matriz 1: varre esquerda -> direita
-	      // Matriz 2: varre direita -> esquerda
-	      for (int i = 0; i < 8; i++)
-	      {
-	          matrix_write_column(&hi2c1, MATRIX_ADDR_1, i);
-	          matrix_write_column(&hi2c1, MATRIX_ADDR_2, 7 - i);
-	          HAL_Delay(80);
-	      }
 
-	      // Volta: Matriz 1 direita -> esquerda, Matriz 2 esquerda -> direita
-	      for (int i = 7; i >= 0; i--)
-	      {
-	          matrix_write_column(&hi2c1, MATRIX_ADDR_1, i);
-	          matrix_write_column(&hi2c1, MATRIX_ADDR_2, 7 - i);
-	          HAL_Delay(80);
-	      }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
