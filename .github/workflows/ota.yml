@@ -61,7 +61,8 @@ jobs:
       - name: Build firmware
         run: |
           cd src/stm/Debug
-          make -j$(nproc)
+          make clean || true
+          make -j$(nproc) 2>&1
           arm-none-eabi-objcopy -O binary team6_original.elf team6_original.bin
 
       - name: Upload firmware artifact
