@@ -5,7 +5,60 @@
 **Status:** Phase 3 complete; wireless execution split active (micro:bit radio now, BLE investigation after)  
 **Owner:** Joao  
 **Branch:** `feature/mobility_scenarios/V2I_and_emergencypriority`  
-**Last Updated:** Thursday, June 11, 2026
+**Last Updated:** Friday, June 12, 2026
+
+## Integration Handoff (June 16, 2026)
+
+This section documents the current state and the minimum-risk path to merge V2I into the official ADAS runtime maintained by David.
+
+### Why parallel tests were required
+
+- The production binary currently used in AGL (`/data/current/adas_manager`) does not expose native V2I socket support.
+- Confirmed with:
+  - `strings /data/current/adas_manager | grep -F '/tmp/adas_v2i.sock'`
+- Because of this, validation was done in an isolated runtime copy (`/data/ADAS-Manager-tuning-trafficlight`) to avoid regressions in the active vehicle workflow.
+
+### What was validated in parallel
+
+- `V2IFrame` ingestion over UNIX DGRAM socket.
+- Socket path: `/tmp/adas_v2i.sock` (and isolated `/tmp/adas_v2i_test.sock` during shadow tests).
+- Throttle arbitration behavior with safety preserved:
+  - `final_limit = min(object_limit, v2i_limit)`
+  - Red/closed barrier -> stop limit
+  - Yellow/moving barrier -> slowdown limit
+  - Green/open -> no V2I limit
+  - `priority_active=1` bypasses only traffic-light/barrier V2I limits, not object/collision safety.
+
+### Files to port to official ADAS manager
+
+- `src/ADAS-Manager/socket_receiver.hpp`
+  - Add `V2ITrafficLightState`
+  - Add `V2IBarrierState`
+  - Add `V2IFrame`
+- `src/ADAS-Manager/adas_manager.cpp`
+  - Add `V2I_SOCKET = "/tmp/adas_v2i.sock"`
+  - Add shared state fields for latest `V2IFrame`
+  - Add `v2i_thread(...)`
+  - Add `v2i_throttle_limit(...)`
+  - Apply arbitration: `throttle_limit = min(obj_limit, v2i_limit)`
+
+### Step-by-step for David (official integration)
+
+1. Create isolated integration folder from his current stable runtime (do not patch in-place first).
+2. Copy the two updated source files above into that folder.
+3. Compile and run there first.
+4. Verify expected startup sockets include `/tmp/adas_v2i.sock`.
+5. With lane + inference active, send V2I test frames and verify:
+   - RED -> throttle 0
+   - YELLOW -> reduced throttle
+   - GREEN -> default ADAS throttle
+6. Verify object safety still overrides V2I when collision condition triggers.
+7. Only after validation, replace the production binary deployment flow with this new build.
+
+### Runtime note for team
+
+- `adas_manager.shadow` is test-only tooling created for safe parallel validation.
+- It is not part of the official runtime and should not be treated as production deployment.
 
 ## Quick Navigation
 
@@ -317,6 +370,9 @@ When finishing a task:
 - 2026-06-11: Radio micro:bit E2E validated (`R/Y/G` mapped to `adas_sign_class=9/10/8`) using bridge local mode on `/dev/ttyACM1`.
 - 2026-06-11: Latency optimization applied: local bridge now auto-detects radio gateway stream mode and reads direct serial state without `STATUS` polling.
 - 2026-06-11: Additional latency tuning applied: stream mode now processes one serial line at a time with short serial timeout for faster button-to-log response.
+- 2026-06-12: Reflashed known-good micro:bit pair (`microbit-ble_probe_clean(2).hex` semaforo TX, `microbit-ble_probe_clean(3).hex` gateway RX) and restored serial stream on AGL `/dev/ttyACM1`.
+- 2026-06-12: Confirmed local bridge receives and maps live states end-to-end (`red/yellow/green` -> `adas_sign_class=9/10/8`) in `--bridge-mode local`.
+- 2026-06-12: Reduced bridge log spam while preserving ADAS socket updates by logging on state/sign changes (plus periodic heartbeat).
 “hex flash feito”
 
 

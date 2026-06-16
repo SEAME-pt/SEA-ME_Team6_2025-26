@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from coordinator import Coordinator, EmergencyPriorityPolicy
+from coordinator import (
+    Coordinator,
+    EmergencyPriorityPolicy,
+    RoadScenarioInput,
+    VehicleMode,
+)
 from trafficlight_simulator import TrafficLightSimulator
 from barrier_simulator import BarrierSimulator
 
@@ -86,3 +91,52 @@ def test_coordinator_non_emergency_closes_barrier_and_red_light():
     assert result.priority_active is False
     assert result.traffic_light_state == "red"
     assert result.barrier_state == "closed"
+
+
+def test_road_scenario_normal_red_or_closed_means_stop():
+    coord = Coordinator(traffic_light_service=None, barrier_service=None)
+    result = coord.resolve_road_scenario(
+        RoadScenarioInput(
+            vehicle_mode=VehicleMode.NORMAL,
+            approaching=True,
+            same_lane=True,
+            traffic_light_state="red",
+            barrier_state="open",
+        )
+    )
+    assert result.priority_active is False
+    assert result.vehicle_motion == "stop"
+
+
+def test_road_scenario_normal_yellow_and_open_means_slow_down():
+    coord = Coordinator(traffic_light_service=None, barrier_service=None)
+    result = coord.resolve_road_scenario(
+        RoadScenarioInput(
+            vehicle_mode=VehicleMode.NORMAL,
+            approaching=True,
+            same_lane=True,
+            traffic_light_state="yellow",
+            barrier_state="open",
+        )
+    )
+    assert result.priority_active is False
+    assert result.vehicle_motion == "slow_down"
+
+
+def test_road_scenario_emergency_approach_triggers_priority_actions():
+    coord = Coordinator(traffic_light_service=None, barrier_service=None)
+    result = coord.resolve_road_scenario(
+        RoadScenarioInput(
+            vehicle_mode=VehicleMode.EMERGENCY,
+            approaching=True,
+            same_lane=True,
+            traffic_light_state="red",
+            barrier_state="closed",
+        )
+    )
+    assert result.priority_active is True
+    assert result.nearest_traffic_light_action == "blink_all"
+    assert result.other_traffic_lights_action == "red"
+    assert result.barrier_action == "open"
+    assert result.street_lights_action == "blink"
+    assert result.ambulance_siren_action == "on"

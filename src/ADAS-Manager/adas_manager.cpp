@@ -18,6 +18,7 @@
 // ── Sockets / Config ──────────────────────────────────────────────────────────
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
+static const char* V2I_SOCKET    = "/tmp/adas_v2i.sock";
 static const char* CONFIG_PATH   = "/data/ADAS-Manager-OA/lka_config.conf";
 static const char* BRIDGE_CMD    = "python3 /data/ADAS-Manager-OA/kuksa_bridge.py";
 
@@ -170,6 +171,8 @@ struct StateSnapshot {
     bool        lane_valid   = false;
     ObjectFrame object{};
     bool        object_valid = false;
+    V2IFrame    v2i{};
+    bool        v2i_valid = false;
     int8_t      joy_steering = 0;
     int8_t      joy_throttle = 0;
     bool        joy_valid        = false;
@@ -179,6 +182,7 @@ struct StateSnapshot {
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_v2i_ts{};
     std::chrono::steady_clock::time_point last_joy_ts{};
 };
 
@@ -188,6 +192,8 @@ struct SharedState {
     bool        lane_valid       = false;
     ObjectFrame object{};
     bool        object_valid     = false;
+    V2IFrame    v2i{};
+    bool        v2i_valid        = false;
     int8_t      joy_steering     = 0;
     int8_t      joy_throttle     = 0;
     bool        joy_valid        = false;
@@ -197,6 +203,7 @@ struct SharedState {
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_v2i_ts{};
     std::chrono::steady_clock::time_point last_joy_ts{};
 
     StateSnapshot snapshot() {
@@ -208,6 +215,9 @@ struct SharedState {
         s.object       = object;
         s.object_valid = object_valid;
         s.last_obj_ts  = last_obj_ts;
+        s.v2i          = v2i;
+        s.v2i_valid    = v2i_valid;
+        s.last_v2i_ts  = last_v2i_ts;
         s.joy_steering = joy_steering;
         s.joy_throttle = joy_throttle;
         s.joy_valid    = joy_valid;
@@ -236,6 +246,24 @@ void lane_thread(SharedState& state) {
         if (ok) {
             state.lane        = frame;
             state.last_lane_ts = std::chrono::steady_clock::now();
+        }
+    }
+    rx.close_fd();
+}
+
+void v2i_thread(SharedState& state) {
+    SocketReceiver rx(V2I_SOCKET);
+    if (rx.init() < 0) { fprintf(stderr, "[V2I] Failed to init socket\n"); return; }
+    printf("[V2I] Listening on %s\n", V2I_SOCKET);
+
+    V2IFrame frame{};
+    while (running) {
+        bool ok = rx.receiveLatest(frame);
+        std::lock_guard<std::mutex> lk(state.mtx);
+        state.v2i_valid = ok;
+        if (ok) {
+            state.v2i       = frame;
+            state.last_v2i_ts = std::chrono::steady_clock::now();
         }
     }
     rx.close_fd();
@@ -307,6 +335,25 @@ static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
         if (o.class_id == SIGN_YIELD  || o.class_id == SIGN_TL_YELLOW) return 50;
     }
     return 100;
+}
+
+static int v2i_throttle_limit(const V2IFrame& v2i, bool v2i_valid) {
+    if (!v2i_valid) return 100;
+
+    // Emergency priority bypasses V2I restrictions (TL/barrier),
+    // but object/collision safety still applies separately.
+    if (v2i.priority_active) return 100;
+
+    if (v2i.barrier_state == V2I_BARRIER_CLOSED ||
+        v2i.barrier_state == V2I_BARRIER_MOVING)
+        return 0;
+
+    switch (v2i.traffic_light_state) {
+        case V2I_TL_RED:    return 0;
+        case V2I_TL_YELLOW: return 50;
+        case V2I_TL_GREEN:  return 100;
+        default:            return 100;
+    }
 }
 
 // ── ADAS state machine (AUTONOMOUS only) ─────────────────────────────────────
@@ -430,6 +477,8 @@ static DriveOutput autonomous_driving(
     const LaneFrame& lane,
     const ObjectFrame& obj,
     bool obj_valid,
+    const V2IFrame& v2i,
+    bool v2i_valid,
     float dt,
     const AdasConfig& cfg,
     LKAController& lka,
@@ -453,8 +502,10 @@ static DriveOutput autonomous_driving(
         }
     }
 
-    out.throttle_limit = obj_throttle_limit(obj, obj_valid,
-                                            cfg.obj_conf_thresh, cfg.collision_dist_m);
+    const int obj_limit = obj_throttle_limit(obj, obj_valid,
+                                             cfg.obj_conf_thresh, cfg.collision_dist_m);
+    const int v2i_limit = v2i_throttle_limit(v2i, v2i_valid);
+    out.throttle_limit  = std::min(obj_limit, v2i_limit);
     out.throttle = std::min(cfg.throttle, out.throttle_limit);
 
     // Run OA first — freeze LKA integrator during maneuver
@@ -525,6 +576,8 @@ static void log_tick(
     const LaneFrame& lane,
     bool obj_valid,
     const ObjectFrame& obj,
+    bool v2i_valid,
+    const V2IFrame& v2i,
     int steering,
     int throttle,
     int throttle_limit,
@@ -558,6 +611,13 @@ static void log_tick(
     } else {
         printf("  | obj=---\n");
     }
+
+    if (v2i_valid) {
+        printf("[ADAS][V2I] tl=%u barrier=%u priority=%u\n",
+               static_cast<unsigned>(v2i.traffic_light_state),
+               static_cast<unsigned>(v2i.barrier_state),
+               static_cast<unsigned>(v2i.priority_active));
+    }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -577,6 +637,7 @@ int main() {
     SharedState state;
     std::thread t_lane(lane_thread,     std::ref(state));
     std::thread t_obj (object_thread,   std::ref(state));
+    std::thread t_v2i (v2i_thread,      std::ref(state));
     std::thread t_joy (joystick_thread, std::ref(state));
 
     // ── CAN ───────────────────────────────────────────────────────────────────
@@ -612,11 +673,14 @@ int main() {
         StateSnapshot      snap         = state.snapshot();
         const LaneFrame&   lane         = snap.lane;
         const ObjectFrame& obj          = snap.object;
+        const V2IFrame&    v2i          = snap.v2i;
         bool               lane_valid   = snap.lane_valid;
         bool               obj_valid    = snap.object_valid;
+        bool               v2i_valid    = snap.v2i_valid;
         bool               joy_valid    = snap.joy_valid;
         const auto&        lane_ts      = snap.last_lane_ts;
         const auto&        obj_ts       = snap.last_obj_ts;
+        const auto&        v2i_ts       = snap.last_v2i_ts;
         const auto&        joy_ts       = snap.last_joy_ts;
         const bool         joy_toggle   = snap.joy_toggle;
         const int8_t       joy_steering = snap.joy_steering;
@@ -625,6 +689,7 @@ int main() {
         // ── Watchdog: override valid flags if timestamps are stale ────────────
         auto lane_age_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - lane_ts).count();
         auto obj_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - obj_ts).count();
+        auto v2i_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - v2i_ts).count();
         auto joy_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - joy_ts).count();
 
         bool lane_stale = lane_valid && (lane_age_ms > cfg.lane_timeout_ms);
@@ -638,6 +703,8 @@ int main() {
         }
         if (obj_age_ms > cfg.obj_timeout_ms)
             obj_valid = false;
+        if (v2i_age_ms > cfg.obj_timeout_ms)
+            v2i_valid = false;
         if (joy_stale && drive_mode == DriveMode::MANUAL) {
             joy_valid = false;
             if (!joy_was_stale)
@@ -681,7 +748,7 @@ int main() {
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
             ? manual_driving(joy_valid, joy_steering, joy_throttle,
                              cfg.throttle, estop_sent, can)
-            : autonomous_driving(adas_state, lane, obj, obj_valid, dt,
+            : autonomous_driving(adas_state, lane, obj, obj_valid, v2i, v2i_valid, dt,
                                  cfg, lka, oa, estop_sent, can);
 
         const int steering       = drive_out.steering;
@@ -696,7 +763,8 @@ int main() {
 
         // ── Log ───────────────────────────────────────────────────────────────
         log_tick(adas_state, drive_mode, oa, lane_valid, lane,
-                 obj_valid, obj, steering, throttle, throttle_limit, cfg.throttle);
+                 obj_valid, obj, v2i_valid, v2i,
+                 steering, throttle, throttle_limit, cfg.throttle);
     }
 
     // ── Shutdown ──────────────────────────────────────────────────────────────
@@ -706,6 +774,7 @@ int main() {
     bridge.stop();
     t_lane.join();
     t_obj.join();
+    t_v2i.join();
     t_joy.join();
     printf("[ADAS] Shutdown.\n");
     return 0;

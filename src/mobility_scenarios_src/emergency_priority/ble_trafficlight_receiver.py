@@ -33,9 +33,14 @@ logging.basicConfig(
 logger = logging.getLogger("BLE-TL-Receiver")
 
 # BLE configuration
+# micro:bit MakeCode UART profile (default for this project path)
+MICROBIT_UART_SERVICE_UUID = "e95d93af-251d-470a-a062-fa1922dfa9a8"
+MICROBIT_UART_NOTIFY_UUID = "e95d9250-251d-470a-a062-fa1922dfa9a8"  # micro:bit -> central
+MICROBIT_UART_WRITE_UUID = "e95d93b1-251d-470a-a062-fa1922dfa9a8"   # central -> micro:bit
+
+# Nordic UART Service (kept as compatibility fallback)
 NORDIC_UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
-NORDIC_UART_RX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"  # read/notify
-NORDIC_UART_TX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"  # write
+NORDIC_UART_NOTIFY_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"  # peripheral -> central
 
 # State mapping
 STATE_MAP = {
@@ -93,6 +98,11 @@ class BLETrafficLightReceiver:
         self.yellow_stop_after_s = self.config.get("adas_bridge", {}).get("yellow_stop_after_s", 2.0)
         self.heartbeat_interval = self.config.get("wireless", {}).get("heartbeat_interval_sec", 1.0)
 
+        ble_cfg = self.config.get("ble", {})
+        self.service_uuid = ble_cfg.get("service_uuid", MICROBIT_UART_SERVICE_UUID)
+        self.notify_uuid = ble_cfg.get("rx_characteristic_uuid", MICROBIT_UART_NOTIFY_UUID)
+        self.write_uuid = ble_cfg.get("tx_characteristic_uuid", MICROBIT_UART_WRITE_UUID)
+
         self.client: Optional[BleakClient] = None
         self.device_address: Optional[str] = None
         self.current_state = 'RED'
@@ -103,15 +113,29 @@ class BLETrafficLightReceiver:
         logger.info(f"ADAS socket: {self.adas_socket}")
 
     async def find_device(self) -> Optional[str]:
-        """Scan for BLE device by name."""
+        """Scan for BLE device by name, with UUID fallback."""
         logger.info(f"Scanning for device: {self.device_name}...")
 
         try:
             devices = await BleakScanner.discover(timeout=10.0)
-            for device in devices:
-                if self.device_name.lower() in (device.name or "").lower():
-                    logger.info(f"Found device: {device.name} ({device.address})")
-                    return device.address
+            if self.device_name:
+                for device in devices:
+                    if self.device_name.lower() in (device.name or "").lower():
+                        logger.info(f"Found device by name: {device.name} ({device.address})")
+                        return device.address
+
+            # Fallback for MakeCode/micro:bit cases where local name is not advertised.
+            target_service = self.service_uuid.lower()
+
+            def _by_service(_device, adv_data):
+                uuids = [u.lower() for u in (adv_data.service_uuids or [])]
+                return target_service in uuids
+
+            logger.info(f"Name match failed, scanning by service UUID: {self.service_uuid}")
+            device = await BleakScanner.find_device_by_filter(_by_service, timeout=10.0)
+            if device:
+                logger.info(f"Found device by service UUID: {device.name} ({device.address})")
+                return device.address
         except BleakError as e:
             logger.error(f"Scan error: {e}")
             return None
@@ -215,13 +239,25 @@ class BLETrafficLightReceiver:
                     self.current_state = 'RED'  # Safe default on connection
                     self.last_update_time = time.time()
 
-                    # Subscribe to notifications
-                    try:
-                        await self.client.start_notify(NORDIC_UART_RX_UUID, self.notification_handler)
-                        logger.info(f"Subscribed to {NORDIC_UART_RX_UUID}")
-                    except Exception as e:
-                        logger.warning(f"Could not subscribe to Nordic UART RX: {e}")
-                        logger.info("Trying generic notification approach...")
+                    # Subscribe to notifications (configured UUID first, then protocol fallbacks)
+                    notify_candidates = [
+                        self.notify_uuid,
+                        MICROBIT_UART_NOTIFY_UUID,
+                        NORDIC_UART_NOTIFY_UUID,
+                    ]
+
+                    subscribed = False
+                    for notify_uuid in dict.fromkeys(notify_candidates):
+                        try:
+                            await self.client.start_notify(notify_uuid, self.notification_handler)
+                            logger.info(f"Subscribed to {notify_uuid}")
+                            subscribed = True
+                            break
+                        except Exception as e:
+                            logger.debug(f"Notify subscribe failed for {notify_uuid}: {e}")
+
+                    if not subscribed:
+                        logger.warning("Could not subscribe to any known UART notify characteristic")
 
                     # Keep connection alive with watchdog
                     while self.running:

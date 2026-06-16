@@ -11,9 +11,9 @@
   },
   "ble": {
     "device_name": "Trafficlight",
-    "service_uuid": "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-    "rx_characteristic_uuid": "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
-    "tx_characteristic_uuid": "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+    "service_uuid": "e95d93af-251d-470a-a062-fa1922dfa9a8",
+    "rx_characteristic_uuid": "e95d9250-251d-470a-a062-fa1922dfa9a8",
+    "tx_characteristic_uuid": "e95d93b1-251d-470a-a062-fa1922dfa9a8",
     "timeout_sec": 5.0,
     "scan_timeout_sec": 10.0
   },

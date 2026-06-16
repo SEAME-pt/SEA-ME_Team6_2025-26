@@ -49,14 +49,29 @@ MAX_OBJECTS = 4
 
 class MicrobitSerialClient:
     def __init__(self, port: str, baud: int, timeout_s: float = 0.25):
-        self._ser = serial.Serial(port, baud, timeout=timeout_s)
+        self._port = port
+        self._baud = baud
+        self._timeout_s = timeout_s
+        self._ser = serial.Serial(self._port, self._baud, timeout=self._timeout_s)
         time.sleep(2.0)
 
     def set_timeout(self, timeout_s: float) -> None:
+        self._timeout_s = timeout_s
         self._ser.timeout = timeout_s
 
     def close(self) -> None:
-        self._ser.close()
+        try:
+            if self._ser.is_open:
+                self._ser.close()
+        except Exception:
+            pass
+
+    def reconnect(self, delay_s: float = 0.5) -> None:
+        """Re-open serial after transient USB disconnect or busy-port events."""
+        self.close()
+        time.sleep(delay_s)
+        self._ser = serial.Serial(self._port, self._baud, timeout=self._timeout_s)
+        time.sleep(0.2)
 
     def soft_reset(self) -> list[str]:
         self._ser.write(b"\x03\x03")
@@ -80,6 +95,26 @@ class MicrobitSerialClient:
         if not raw:
             return ""
         return raw.decode("utf-8", errors="ignore").strip()
+
+    def read_latest_line(self, max_drain: int = 4096, settle_ms: float = 0.005) -> str:
+        """Read and return only the most recent complete line.
+
+        This prevents multi-second lag when firmware floods serial with old
+        states; we intentionally drop stale buffered lines.
+        """
+        latest = self.read_line()
+        drained = 0
+        deadline = time.time() + settle_ms
+        while drained < max_drain and time.time() < deadline:
+            if self._ser.in_waiting <= 0:
+                # Tiny settle window lets late bytes of the same burst arrive.
+                time.sleep(0.001)
+                continue
+            nxt = self.read_line()
+            if nxt:
+                latest = nxt
+            drained += 1
+        return latest
 
     def _read_lines(self, window_s: float) -> list[str]:
         out: list[str] = []
@@ -154,7 +189,7 @@ class AdasObjectSender:
     def close(self) -> None:
         self.sock.close()
 
-    def send_sign(self, class_id: int, confidence: float = 1.0, distance_m: float = 0.2, theta_deg: float = 0.0) -> None:
+    def send_sign(self, class_id: int, confidence: float = 1.0, distance_m: float = 2.0, theta_deg: float = 0.0) -> None:
         """Send ObjectFrame with traffic light sign class to ADAS socket."""
         payload = struct.pack("<B", 1)
         payload += struct.pack("<Bfff", int(class_id), float(confidence), float(distance_m), float(theta_deg))
@@ -210,32 +245,72 @@ def main_local(bridge_cfg: BridgeConfig) -> int:
     client = MicrobitSerialClient(port=bridge_cfg.port, baud=bridge_cfg.baud)
     adas_sender = AdasObjectSender(bridge_cfg.adas_socket) if bridge_cfg.adas_enabled else None
     yellow_since: Optional[float] = None
+    empty_status_streak = 0
+    last_logged_state: Optional[str] = None
+    last_logged_sign_class: Optional[int] = None
+    last_log_ts = 0.0
+    log_heartbeat_s = 2.0
     
     try:
-        boot = client.soft_reset()
-        print("[Bridge] Boot lines:", boot)
+        try:
+            boot = client.soft_reset()
+            print("[Bridge] Boot lines:", boot)
 
-        mode_resp = client.send(f"MODE {bridge_cfg.mode}")
-        print(f"[Bridge] MODE {bridge_cfg.mode} -> {mode_resp}")
+            mode_resp = client.send(f"MODE {bridge_cfg.mode}")
+            print(f"[Bridge] MODE {bridge_cfg.mode} -> {mode_resp}")
+        except serial.SerialException as e:
+            print(f"[Bridge] Serial startup error ({e}) -> reconnect and fallback to stream mode")
+            client.reconnect()
+            boot = []
+            mode_resp = []
 
         # Radio gateway firmware streams direct state lines (R/Y/G) and does not
         # implement STATUS/ACK command protocol. Detect and switch to low-latency mode.
-        radio_stream_mode = any((line or "").strip().upper() in {"R", "Y", "G", "RED", "YELLOW", "GREEN"}
-                                for line in (boot + mode_resp))
+        # If the device did not respond to either REPL command (MakeCode firmware),
+        # default to stream mode unconditionally.
+        radio_stream_mode = (
+            not (boot or mode_resp)  # No REPL response -> MakeCode firmware
+            or any((line or "").strip().upper() in {"R", "Y", "G", "RED", "YELLOW", "GREEN"}
+                   for line in (boot + mode_resp))
+        )
         if radio_stream_mode:
             print("[Bridge] Detected radio gateway stream mode (direct R/Y/G serial)")
-            client.set_timeout(0.05)
+            client.set_timeout(0.01)
 
         print("[Bridge] LOCAL mode running. Ctrl+C to stop.")
         while True:
-            if radio_stream_mode:
-                line = client.read_line()
-                if not line:
-                    time.sleep(0.01)
-                    continue
-                status_lines = [line]
-            else:
-                status_lines = client.send("STATUS", window_s=0.8)
+            try:
+                if radio_stream_mode:
+                    line = client.read_latest_line()
+                    if not line:
+                        time.sleep(0.002)
+                        continue
+                    status_lines = [line]
+                else:
+                    status_lines = client.send("STATUS", window_s=0.8)
+
+                    # If STATUS path is silent for a few cycles, assume a MakeCode
+                    # radio gateway firmware and switch to direct stream mode.
+                    if not status_lines:
+                        empty_status_streak += 1
+                        if empty_status_streak >= 3:
+                            radio_stream_mode = True
+                            client.set_timeout(0.01)
+                            print("[Bridge] STATUS silent -> switching to stream mode")
+                        time.sleep(0.05)
+                        continue
+                    empty_status_streak = 0
+            except serial.SerialException as e:
+                print(f"[Bridge] Serial read error ({e}) -> reconnecting")
+                try:
+                    client.reconnect()
+                    if radio_stream_mode:
+                        client.set_timeout(0.01)
+                except serial.SerialException as reconnect_err:
+                    print(f"[Bridge] Serial reconnect failed: {reconnect_err}")
+                time.sleep(0.2)
+                continue
+
             light_state = parse_state(status_lines)
             motion = decide_motion_from_traffic_light_state(light_state)
 
@@ -256,9 +331,20 @@ def main_local(bridge_cfg: BridgeConfig) -> int:
                 except Exception as e:
                     print(f"[Bridge] ADAS socket send error: {e}")
 
-            print(f"[Bridge] light_state={light_state} -> vehicle_motion={motion} -> adas_sign_class={sign_class}")
+            now_log = time.time()
+            should_log = (
+                light_state != last_logged_state
+                or sign_class != last_logged_sign_class
+                or (now_log - last_log_ts) >= log_heartbeat_s
+            )
+            if should_log:
+                print(f"[Bridge] light_state={light_state} -> vehicle_motion={motion} -> adas_sign_class={sign_class}")
+                last_logged_state = light_state
+                last_logged_sign_class = sign_class
+                last_log_ts = now_log
+
             if radio_stream_mode:
-                time.sleep(0.05)
+                time.sleep(0.002)
             else:
                 time.sleep(bridge_cfg.poll_interval_s)
     except KeyboardInterrupt:
