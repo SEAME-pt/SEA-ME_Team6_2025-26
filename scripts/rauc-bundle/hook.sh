@@ -76,6 +76,50 @@ case "$1" in
         echo "[RAUC] No ClusterApp in bundle — skipping cluster update"
     fi
 
+    # ── Flash STM32 firmware if included in bundle ────────────────────────────
+    STM32_BIN="$NEW_DIR/team6_original.bin"
+    STM32_BACKUP="/data/stm32/firmware.bak.bin"
+    STM32_IF="/usr/share/openocd/scripts/interface/stlink.cfg"
+    STM32_TGT="/usr/share/openocd/scripts/target/stm32u5x.cfg"
+
+    stm32_flash() {
+        openocd -f "$STM32_IF" -f "$STM32_TGT" \
+            -c "program $1 0x08000000 verify reset exit"
+    }
+
+    stm32_alive() {
+        openocd -f "$STM32_IF" -f "$STM32_TGT" \
+            -c "init; reset run; sleep 2000; halt; exit" 2>&1 \
+            | grep -q "halted due to debug-request"
+    }
+
+    if [ -f "$STM32_BIN" ]; then
+        echo "[RAUC] Flashing STM32 firmware..."
+        mkdir -p /data/stm32
+
+        if stm32_flash "$STM32_BIN"; then
+            echo "[RAUC] STM32 flash OK — verifying..."
+            sleep 3
+            if stm32_alive; then
+                echo "[RAUC] STM32 alive — update OK"
+                cp "$STM32_BIN" "$STM32_BACKUP"
+            else
+                echo "[RAUC] STM32 not responding — rolling back"
+                if [ -f "$STM32_BACKUP" ]; then
+                    stm32_flash "$STM32_BACKUP" \
+                        && echo "[RAUC] STM32 rollback OK" \
+                        || echo "[RAUC] STM32 rollback failed"
+                else
+                    echo "[RAUC] No STM32 backup available"
+                fi
+            fi
+        else
+            echo "[RAUC] STM32 flash failed — keeping previous firmware"
+        fi
+    else
+        echo "[RAUC] No STM32 firmware in bundle — skipping"
+    fi
+
     ls -dt /data/apps/v* 2>/dev/null | tail -n +3 | xargs rm -rf 2>/dev/null || true
     ;;
 esac

@@ -339,6 +339,14 @@ jobs:
           tar -czf update-rpi4.tar.gz -C ota-rpi4 .
           sha256sum update-rpi4.tar.gz > hash-rpi4.txt
 
+      # --- STM32 Firmware ---
+      - name: Download STM32 firmware artifact
+        if: needs.build-stm32.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: stm32-firmware
+          path: stm32-firmware
+
       # --- RAUC Bundle (RPi5 app-only) ---
       - name: Install RAUC (for bundle creation)
         if: needs.build-adas-rpi5.result == 'success'
@@ -372,9 +380,18 @@ jobs:
             echo "No ClusterApp found — bundle will be RPi5-only"
           fi
 
+          # Include STM32 firmware if build succeeded
+          if [ -f stm32-firmware/team6_original.bin ]; then
+            cp stm32-firmware/team6_original.bin rauc-staging/
+            echo "STM32 firmware included in bundle"
+          else
+            echo "No STM32 firmware found — skipping"
+          fi
+
           tar -czf rauc-staging/apps.tar.gz -C rauc-staging \
               adas_manager kuksa_bridge.py socket_sender.py inference/ \
-              $([ -d rauc-staging/cluster ] && echo "cluster/")
+              $([ -d rauc-staging/cluster ] && echo "cluster/") \
+              $([ -f rauc-staging/team6_original.bin ] && echo "team6_original.bin")
 
           sed "s/@@VERSION@@/$VERSION/" scripts/rauc-bundle/manifest.raucm \
               > rauc-staging/manifest.raucm
@@ -390,14 +407,7 @@ jobs:
 
           rm -f ca.key.pem
 
-      # --- STM32 Firmware ---
-      - name: Download STM32 firmware artifact
-        if: needs.build-stm32.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: stm32-firmware
-          path: stm32-firmware
-
+      # --- STM32 Firmware hash ---
       - name: Package STM32 firmware
         if: needs.build-stm32.result == 'success'
         run: |
