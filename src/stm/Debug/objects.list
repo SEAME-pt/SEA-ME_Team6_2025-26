@@ -67,8 +67,6 @@
 "./Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_ucpd.o"
 "./Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_usb.o"
 "./Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_ll_utils.o"
-"./Drivers/VL53L5CX/src/platform.o"
-"./Drivers/VL53L5CX/src/vl53l5cx_api.o"
 "./Middlewares/ST/threadx/common/src/tx_block_allocate.o"
 "./Middlewares/ST/threadx/common/src/tx_block_pool_cleanup.o"
 "./Middlewares/ST/threadx/common/src/tx_block_pool_create.o"
