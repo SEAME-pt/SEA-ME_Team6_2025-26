@@ -37,6 +37,42 @@ env:
 
 jobs:
   # ============================================================
+  # STM32 Build (Cortex-M33)
+  # ============================================================
+  build-stm32:
+    name: Build STM32 Firmware (Cortex-M33)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ARM GNU Toolchain 13.3
+        run: |
+          wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
+          tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
+          echo "$PWD/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+
+      - name: Fix linker script path
+        run: |
+          sed -i 's|-T"[^"]*STM32U585AIIXQ_FLASH\.ld"|-T"../STM32U585AIIXQ_FLASH.ld"|g' \
+              src/stm/Debug/makefile
+
+      - name: Build firmware
+        run: |
+          cd src/stm/Debug
+          make -j$(nproc)
+          arm-none-eabi-objcopy -O binary team6_original.elf team6_original.bin
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stm32-firmware
+          path: |
+            src/stm/Debug/team6_original.elf
+            src/stm/Debug/team6_original.bin
+
+  # ============================================================
   # RPi5 Build (64-bit) - KUKSA Publisher
   # ============================================================
   build-kuksa-rpi5:
@@ -196,8 +232,8 @@ jobs:
   # ============================================================
   release:
     name: Create OTA Releases
-    needs: [build-kuksa-rpi5, build-cluster-rpi4, build-adas-rpi5]
-    if: always() && (needs.build-kuksa-rpi5.result == 'success' || needs.build-cluster-rpi4.result == 'success' || needs.build-adas-rpi5.result == 'success')
+    needs: [build-kuksa-rpi5, build-cluster-rpi4, build-adas-rpi5, build-stm32]
+    if: always() && (needs.build-kuksa-rpi5.result == 'success' || needs.build-cluster-rpi4.result == 'success' || needs.build-adas-rpi5.result == 'success' || needs.build-stm32.result == 'success')
     runs-on: ubuntu-22.04
 
     steps:
@@ -322,6 +358,19 @@ jobs:
 
           rm -f ca.key.pem
 
+      # --- STM32 Firmware ---
+      - name: Download STM32 firmware artifact
+        if: needs.build-stm32.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: stm32-firmware
+          path: stm32-firmware
+
+      - name: Package STM32 firmware
+        if: needs.build-stm32.result == 'success'
+        run: |
+          sha256sum stm32-firmware/team6_original.bin > hash-stm32.txt
+
       # --- Combined Package (legacy support) ---
       - name: Create combined package
         run: |
@@ -388,3 +437,6 @@ jobs:
             hash-rpi5.txt
             apps-*.raucb
             hash-rauc-rpi5-*.txt
+            stm32-firmware/team6_original.bin
+            stm32-firmware/team6_original.elf
+            hash-stm32.txt
