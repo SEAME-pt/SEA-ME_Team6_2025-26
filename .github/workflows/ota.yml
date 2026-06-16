@@ -57,14 +57,10 @@ jobs:
 
       - name: Download missing STM32U5xx HAL headers
         run: |
-          git clone --depth=1 --filter=blob:none --sparse \
+          git clone --depth=1 \
             https://github.com/STMicroelectronics/STM32CubeU5.git /tmp/STM32CubeU5
-          cd /tmp/STM32CubeU5
-          git sparse-checkout set Drivers/STM32U5xx_HAL_Driver/Inc
-          echo "=== Cloned files ==="
-          ls Drivers/STM32U5xx_HAL_Driver/Inc/ | head -10 || echo "Path not found"
-          cp Drivers/STM32U5xx_HAL_Driver/Inc/*.h \
-            $GITHUB_WORKSPACE/src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/
+          cp /tmp/STM32CubeU5/Drivers/STM32U5xx_HAL_Driver/Inc/*.h \
+            src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/
 
       - name: Fix build flags
         run: |
