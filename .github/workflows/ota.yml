@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Install ARM GNU Toolchain 13.3
         run: |
@@ -84,6 +86,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Pull RPi5 SDK (64-bit)
         run: docker pull ${{ env.SDK_IMAGE_RPI5 }}
@@ -140,6 +144,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Pull RPi5 SDK (64-bit)
         run: docker pull ${{ env.SDK_IMAGE_RPI5 }}
@@ -192,6 +198,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Pull RPi4 SDK (32-bit)
         run: docker pull ${{ env.SDK_IMAGE_RPI4 }}
@@ -240,6 +248,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Get version
         id: version
