@@ -58,8 +58,9 @@ jobs:
       - name: Download missing STM32U5xx HAL headers
         run: |
           git clone --depth=1 \
-            https://github.com/STMicroelectronics/STM32CubeU5.git /tmp/STM32CubeU5
-          cp /tmp/STM32CubeU5/Drivers/STM32U5xx_HAL_Driver/Inc/*.h \
+            https://github.com/STMicroelectronics/stm32u5xx_hal_driver.git \
+            /tmp/stm32u5xx_hal_driver
+          cp /tmp/stm32u5xx_hal_driver/Inc/*.h \
             src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/
 
       - name: Fix build flags
