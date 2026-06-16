@@ -57,7 +57,7 @@ jobs:
 
       - name: Fix linker script path
         run: |
-          sed -i 's|-T"[^"]*STM32U585AIIXQ_FLASH\.ld"|-T"../STM32U585AIIXQ_FLASH.ld"|g' \
+          sed -i 's|/home/seame/[^ "]*STM32U585AIIXQ_FLASH\.ld|../STM32U585AIIXQ_FLASH.ld|g' \
               src/stm/Debug/makefile
 
       - name: Build firmware
