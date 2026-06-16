@@ -63,8 +63,15 @@ jobs:
       - name: Build firmware
         run: |
           cd src/stm/Debug
+          echo "=== objects.list content ==="
+          cat objects.list || echo "(empty)"
+          echo "=== makefile linker line ==="
+          grep "STM32U585" makefile
           make clean || true
-          make -j$(nproc) 2>&1
+          echo "=== Starting build ==="
+          make -j1 2>&1 || echo "MAKE EXIT CODE: $?"
+          echo "=== Files after build ==="
+          ls -la *.elf *.bin 2>/dev/null || echo "No output files"
           arm-none-eabi-objcopy -O binary team6_original.elf team6_original.bin
 
       - name: Upload firmware artifact
