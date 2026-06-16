@@ -16,15 +16,18 @@
 /* CAN IDs*/
 
 #define CAN_ID_EMERGENCY_STOP	0x001
+#define CAN_ID_AEB_STOP         0x002
 
 /* Commands (AGL -> STM32) */
 #define CAN_ID_MOTOR_CMD        0x200
 #define CAN_ID_CONFIG_CMD       0x201
+#define CAN_ID_CC_CMD           0x202   /* Cruise control commands */
 
 /* Status (STM32 -> AGL) */
 #define CAN_ID_MOTOR_STATUS     0x210
 #define CAN_ID_SERVO_STATUS     0x211
 #define CAN_ID_SYSTEM_STATE     0x212
+#define CAN_ID_CC_STATUS        0x213   /* Cruise control status */
 
 /* Sensors Fast (STM32 -> AGL) */
 #define CAN_ID_IMU_ACCEL        0x400
@@ -38,9 +41,6 @@
 #define CAN_ID_TOF_DISTANCE     0x422
 #define CAN_ID_SRF08_DISTANCE   0x423
 #define CAN_ID_GESTURE          0x424
-
-/* Joystick (temporary)*/
-#define CAN_ID_JOYSTICK			0x500
 
 /* Heartbeat */
 #define CAN_ID_HEARTBEAT_AGL    0x700
@@ -204,6 +204,34 @@ typedef struct __attribute__((packed)) {
     uint8_t  reserved[2];
     uint8_t  status;            /* Sensor status flags */
 } ToFDistance_t;
+
+/* AEB Status (0x002) - STM32 -> AGL
+ *
+ * Byte layout (8 bytes total):
+ *   [0] warn            : 1 = AEB warning zone active
+ *   [1] brake           : 1 = AEB braking active (BRAKING state)
+ *   [2] state           : AEB state machine: 0=OFF,1=ARMED,2=WARN,3=BRAKING,4=LATCHED
+ *   [3] speed_limit_pct : current kinematic speed limit 0-100 %
+ *   [4-5] d_eff_mm      : effective distance (raw_mm - 100mm offset), little-endian
+ *   [6-7] ttc_ms        : time-to-collision in ms (capped at 65535), little-endian
+ *
+ * Decode on RPi with candump / python-can:
+ *   candump can0
+ *   can0  002  [8]  WW BB SS LL EE EE TT TT
+ *   state = data[2]  → 4 = LATCHED (car blocked)
+ *   limit = data[3]  → 0 = full stop
+ *   d_eff = (data[5]<<8)|data[4]  mm
+ *   ttc   = (data[7]<<8)|data[6]  ms
+ */
+typedef struct __attribute__((packed)) {
+    uint8_t  warn;              /* 1 = AEB warning zone active                  */
+    uint8_t  brake;             /* 1 = AEB BRAKING state (soft-brake via limit)  */
+    uint8_t  state;             /* AEB state: 0=OFF 1=ARMED 2=WARN 3=BRAKING 4=LATCHED */
+    uint8_t  speed_limit_pct;   /* kinematic speed limit 0-100 %                */
+    uint16_t d_eff_mm;          /* effective distance = raw_mm - 100 mm offset  */
+    uint16_t ttc_ms;            /* time-to-collision (ms), 0xFFFF = infinite     */
+} AEB_t;
+
 
 /* SRF08 Ultrasonic Distance (0x423) - STM32 -> AGL */
 typedef struct __attribute__((packed)) {
