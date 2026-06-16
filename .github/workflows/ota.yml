@@ -55,6 +55,13 @@ jobs:
           tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
           echo "$PWD/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
 
+      - name: Download missing STM32U5xx HAL headers
+        run: |
+          git clone --depth=1 \
+            https://github.com/STMicroelectronics/STM32CubeU5.git /tmp/STM32CubeU5
+          cp /tmp/STM32CubeU5/Drivers/STM32U5xx_HAL_Driver/Inc/*.h \
+            src/stm/Drivers/STM32U5xx_HAL_Driver/Inc/
+
       - name: Fix build flags
         run: |
           # Fix absolute linker script path
