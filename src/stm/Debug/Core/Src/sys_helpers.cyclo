@@ -1,0 +1,6 @@
+../Core/Src/sys_helpers.c:14:6:sys_log	2
+../Core/Src/sys_helpers.c:36:6:put_u8	1
+../Core/Src/sys_helpers.c:41:6:put_i16_le	1
+../Core/Src/sys_helpers.c:48:6:put_u16_le	1
+../Core/Src/sys_helpers.c:64:9:calculate_crc8	4
+../Core/Src/sys_helpers.c:87:9:validate_crc8	2

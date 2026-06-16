@@ -1,0 +1,2 @@
+../Core/Src/tasks/task_heartbeat.c:46:6:task_heartbeat_init	2
+../Core/Src/tasks/task_heartbeat.c:81:6:task_heartbeat_step	1

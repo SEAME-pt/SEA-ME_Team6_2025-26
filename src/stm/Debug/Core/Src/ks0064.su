@@ -1,0 +1,4 @@
+../Core/Src/ks0064.c:25:6:KS0064_Init	32	static
+../Core/Src/ks0064.c:47:6:KS0064_SetAll	48	static
+../Core/Src/ks0064.c:67:6:KS0064_SetBrightness	32	static
+../Core/Src/ks0064.c:77:19:KS0064_SetDisplay	32	static

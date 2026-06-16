@@ -1,0 +1,7 @@
+../Drivers/VL53L5CX/src/platform.c:11:9:VL53L5CX_RdByte	48	static
+../Drivers/VL53L5CX/src/platform.c:25:9:VL53L5CX_WrByte	32	static
+../Drivers/VL53L5CX/src/platform.c:41:9:VL53L5CX_WrMulti	48	static
+../Drivers/VL53L5CX/src/platform.c:53:9:VL53L5CX_RdMulti	48	static
+../Drivers/VL53L5CX/src/platform.c:69:9:VL53L5CX_Reset_Sensor	16	static
+../Drivers/VL53L5CX/src/platform.c:76:6:VL53L5CX_SwapBuffer	24	static
+../Drivers/VL53L5CX/src/platform.c:95:9:VL53L5CX_WaitMs	16	static

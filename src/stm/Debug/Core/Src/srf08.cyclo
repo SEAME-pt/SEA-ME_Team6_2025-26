@@ -1,0 +1,10 @@
+../Core/Src/srf08.c:9:19:SRF08_Init	1
+../Core/Src/srf08.c:15:19:SRF08_InitWithConfig	4
+../Core/Src/srf08.c:48:9:SRF08_GetVersion	1
+../Core/Src/srf08.c:57:9:SRF08_GetLight	2
+../Core/Src/srf08.c:67:19:SRF08_StartRanging	1
+../Core/Src/srf08.c:76:9:SRF08_IsReady	2
+../Core/Src/srf08.c:93:19:SRF08_WaitReady	3
+../Core/Src/srf08.c:109:10:SRF08_GetDistanceCm	2
+../Core/Src/srf08.c:124:19:SRF08_SetGain	2
+../Core/Src/srf08.c:136:19:SRF08_SetRange	1

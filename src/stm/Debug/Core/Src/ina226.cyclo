@@ -1,0 +1,11 @@
+../Core/Src/ina226.c:26:26:INA226_WriteRegister	1
+../Core/Src/ina226.c:47:26:INA226_ReadRegister	2
+../Core/Src/ina226.c:74:19:INA226_Init	8
+../Core/Src/ina226.c:132:19:INA226_Reset	1
+../Core/Src/ina226.c:142:19:INA226_ReadVoltage	2
+../Core/Src/ina226.c:163:19:INA226_ReadCurrent	2
+../Core/Src/ina226.c:188:19:INA226_ReadPower	2
+../Core/Src/ina226.c:209:19:INA226_ReadAll	5
+../Core/Src/ina226.c:266:19:INA226_IsConnected	1
+../Core/Src/ina226.c:278:10:INA226_GetManufacturerID	1
+../Core/Src/ina226.c:289:10:INA226_GetDieID	1

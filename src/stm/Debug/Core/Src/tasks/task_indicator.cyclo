@@ -1,0 +1,4 @@
+../Core/Src/tasks/task_indicator.c:45:6:task_indicator_set_state	1
+../Core/Src/tasks/task_indicator.c:52:18:task_indicator_get_state	1
+../Core/Src/tasks/task_indicator.c:64:6:task_indicator_init	5
+../Core/Src/tasks/task_indicator.c:85:6:task_indicator_step	33

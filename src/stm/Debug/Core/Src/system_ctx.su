@@ -1,0 +1,2 @@
+../Core/Src/system_ctx.c:5:12:system_ctx	4	static
+../Core/Src/system_ctx.c:7:6:system_ctx_init	8	static

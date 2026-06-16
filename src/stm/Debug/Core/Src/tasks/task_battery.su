@@ -1,0 +1,4 @@
+../Core/Src/tasks/task_battery.c:23:16:soc_from_voltage_mv	16	static
+../Core/Src/tasks/task_battery.c:32:15:temp_estimate_from_current_ma	24	static
+../Core/Src/tasks/task_battery.c:40:6:task_battery_init	24	static
+../Core/Src/tasks/task_battery.c:62:6:task_battery_step	88	static

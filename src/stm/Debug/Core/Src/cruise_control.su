@@ -1,0 +1,11 @@
+../Core/Src/cruise_control.c:19:14:clampf	24	static
+../Core/Src/cruise_control.c:35:7:CruiseControl_RpmToKmh	24	static
+../Core/Src/cruise_control.c:47:6:CruiseControl_Init	16	static
+../Core/Src/cruise_control.c:58:6:CruiseControl_ProcessCommand	24	static
+../Core/Src/cruise_control.c:145:13:update_active_target	32	static
+../Core/Src/cruise_control.c:164:14:pi_compute	32	static
+../Core/Src/cruise_control.c:224:14:apply_ramp	24	static
+../Core/Src/cruise_control.c:242:6:CruiseControl_Update	24	static
+../Core/Src/cruise_control.c:307:7:CruiseControl_GetThrottle	16	static
+../Core/Src/cruise_control.c:315:6:CruiseControl_IsActive	16	static
+../Core/Src/cruise_control.c:325:6:CruiseControl_ForceOverride	16	static

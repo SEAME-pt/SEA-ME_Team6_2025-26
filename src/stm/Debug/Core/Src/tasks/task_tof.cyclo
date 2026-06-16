@@ -1,0 +1,3 @@
+../Core/Src/tasks/task_tof.c:22:13:tof_hw_reset	1
+../Core/Src/tasks/task_tof.c:33:6:task_tof_init	7
+../Core/Src/tasks/task_tof.c:91:6:task_tof_step	11

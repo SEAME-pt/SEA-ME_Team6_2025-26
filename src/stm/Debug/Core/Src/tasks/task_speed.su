@@ -1,0 +1,2 @@
+../Core/Src/tasks/task_speed.c:7:6:task_speed_init	16	static
+../Core/Src/tasks/task_speed.c:15:6:task_speed_step	40	static

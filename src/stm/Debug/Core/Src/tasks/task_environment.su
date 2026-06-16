@@ -1,0 +1,2 @@
+../Core/Src/tasks/task_environment.c:22:6:task_environment_init	16	static
+../Core/Src/tasks/task_environment.c:50:6:task_environment_step	32	static

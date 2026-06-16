@@ -1,0 +1,3 @@
+../Core/Src/tasks/task_imu.c:22:16:clamp_i16	16	static
+../Core/Src/tasks/task_imu.c:29:6:task_imu_init	16	static
+../Core/Src/tasks/task_imu.c:48:6:task_imu_step	200	static

@@ -1,0 +1,6 @@
+../Core/Src/tasks/task_aeb.c:180:14:clampf	24	static
+../Core/Src/tasks/task_aeb.c:186:13:aeb_reset	16	static
+../Core/Src/tasks/task_aeb.c:196:6:task_aeb_init	16	static
+../Core/Src/tasks/task_aeb.c:207:13:aeb_step_internal	304	static
+../Core/Src/tasks/task_aeb.c:564:6:task_aeb_step	16	static
+../Core/Src/tasks/task_aeb.c:583:6:task_aeb_force_reset	24	static

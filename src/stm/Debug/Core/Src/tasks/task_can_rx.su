@@ -1,0 +1,11 @@
+../Core/Src/tasks/task_can_rx.c:48:13:send_motor_status_if_due	24	static
+../Core/Src/tasks/task_can_rx.c:71:13:clear_mcp_flags_if_due	24	static
+../Core/Src/tasks/task_can_rx.c:148:13:check_emergency_stop_timeout	32	static
+../Core/Src/tasks/task_can_rx.c:185:13:handle_emergency_stop	40	static
+../Core/Src/tasks/task_can_rx.c:239:13:handle_heartbeat_agl	32	static
+../Core/Src/tasks/task_can_rx.c:255:13:handle_indicator_cmd	24	static
+../Core/Src/tasks/task_can_rx.c:283:13:handle_ctrl_cmd	64	static
+../Core/Src/tasks/task_can_rx.c:424:13:handle_relay_cmd	32	static
+../Core/Src/tasks/task_can_rx.c:443:13:process_one_rx	24	static
+../Core/Src/tasks/task_can_rx.c:459:6:task_can_rx_init	48	static
+../Core/Src/tasks/task_can_rx.c:487:6:task_can_rx_step	120	static

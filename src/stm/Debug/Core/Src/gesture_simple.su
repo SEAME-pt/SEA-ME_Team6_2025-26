@@ -1,0 +1,7 @@
+../Core/Src/gesture_simple.c:30:6:Gesture_Init	16	static
+../Core/Src/gesture_simple.c:47:13:find_hand_centroid	64	static
+../Core/Src/gesture_simple.c:92:22:detect_gesture	72	static
+../Core/Src/gesture_simple.c:193:15:Gesture_Process	40	static
+../Core/Src/gesture_simple.c:226:18:Gesture_GetResult	16	static
+../Core/Src/gesture_simple.c:235:17:Gesture_GetHand	16	static
+../Core/Src/gesture_simple.c:244:13:Gesture_TypeToString	16	static
