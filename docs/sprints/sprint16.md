@@ -1,44 +1,37 @@
-# 🏁 Sprint 15 — (01/06/2026 → 12/06/2026)
+# 🏁 Sprint 16 — (15/06/2026 → 26/06/2026)
 
-> ## **Sprint Goal**: Familiarization with Mobility Scenarios: Vehicle-to-Infrastructure (V2I) + Emergency Vehicle Priority
-> ## **Bonus Goal**: Wrap up the loose tasks
+> ## **Sprint Goal**: `Continuation of V2I scenarios and OTA implementation`
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [x] Vehicle-to-Infrastructure: communication with barriers. (21)
-  - [x] Emergency Vehicle Priority: communication with barriers and traffic lights (13)
-  - [x] Implement OTA pipeline to deploy GitHub releases directly to the car. (13)
-  - [x] ADAS Manager Tuning (13)
-  ---
-  
-- #### **Epic** — Car Hardware Architecture - [#53](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315665&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C53)
-  - [x] Car hardware remodeling: physical restructuring of the vehicle. (13)
-  ---
-
-- #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
-  - [x] Retrain YOLO model - cars and obstacles. (8)
-  ---
+  - [ ] Continuation of Vehicle-to-Infrastructures implementation (21)
+  - [ ] Emergency Vehicle Priority pratical implementation (13)
+  - [ ] Continuation of the OTA implementation (13)
+  - [ ] Implementation of FOTA (13)
+  - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Status point: update the documentation to reflect current implementation. (8)
- 
-- ### Tasks from the previous sprint:
+  - [ ] Practical team spread knowledge about Yocto (5)
+
+- #### Tasks from the previous sprint:
   - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
-  - [x] Full Integration of ADAS into Cluster (8)
+
 ---
-## **Total Sprint Points: 105 (89 + 16)**
+
+## **Total Sprint Points: `102`**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Vehicle-to-Infrastructure (21) + Emergency Vehicle Priority (13) | 34 | 34 |
-| **David** | ADAS Manager Tuning (13) + Deploy GitHub releases directly to the car (13) | 26 | 26 |
-| **Vasco** | Emergency Vehicle Priority (13) + Retrain YOLO model (8) | 21 | 21 |
-| **Diogo** | Integration of Traffic Sign Recognition into ADAS Manager (8) + Full Integration of ADAS into Cluster (8) + Deploy GitHub releases directly to the car (13) | 29 | 21 |
-| **Ruben** | Car hardware remodeling (13) + Deploy GitHub releases directly to the car (13) | 26 | 26 |
+| **João**  | Continuation of Vehicle-to-Infrastructures implementation + Emergency Vehicle Priority pratical implementation | 34 | - |
+| **David** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | |
+| **Vasco** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | |
+| **Diogo** | Continuation of the OTA implementation + Implementation of FOTA + HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) | 47 | |
+| **Ruben** | Continuation of the OTA implementation + Implementation of FOTA  + Practical team spread knowledge about Yocto | 31 | |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -57,36 +50,28 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 15 points: **89 / 105**
- 
+- ### Sprint 16 points: **`0/102`**
+
 ## ❌ Undone:
-  - Integration of Traffic Sign Recognition into ADAS Manager
-  - Status point: update the documentation to reflect current implementation.
+  - `[preencher no fim do sprint]`
 ------
-  
+
 ## ✅ Outcomes:
-  - Achieved Radio communication between 2 microbits ✅
-  - OTA pipeline working ✅
-  - Car remodeling ✅
+  - `[preencher no fim do sprint]`
 ------
 
 - **Demos**:
-- <img width="1536" height="2048" alt="car-remodeling" src="https://github.com/user-attachments/assets/37f6cb10-24dd-4a02-94b8-795212afc16e" />
-- <img width="1536" height="2048" alt="car-remodeling-2" src="https://github.com/user-attachments/assets/0f8f1ff2-d06b-4232-bc63-afc07dd1926f" />
-- <img width="2048" height="1536" alt="car-remodeling-3" src="https://github.com/user-attachments/assets/8b535f9b-6764-4fb2-a786-28a9dd504c50" />
-- <img width="1536" height="1024" alt="ota_diagram" src="https://github.com/user-attachments/assets/8f22cfc0-0d77-452f-970c-6e208837e89f" />
-
+- `[preencher no fim do sprint]`
 
 - **Docs updated**:
-- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/OTA/RAUC_OTA_GUIDE.md
+- `[preencher no fim do sprint]`
 
 # 🔎 Retrospective
 - ## **Went well**:
-- Goal reached: Familiarization with Vehicle-to-Infrastructure Scenario 🎯
-- OTA pipeline for software (ADAS-Manager, Inference, Cluster) 🎯
+- `[preencher no fim do sprint]`
 
 - ## **To improve**:
-- Everything went well this sprint 🫡
+- `[preencher no fim do sprint]`
 
 ## 🔗 Useful Links
 
