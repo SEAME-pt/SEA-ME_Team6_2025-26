@@ -54,7 +54,7 @@ docs/TSF/Howtoimplement/trustable/
 
 # STM 32CubeIDE
 # Build outputs
-Debug/
+# Debug/
 Release/
 build/
 
