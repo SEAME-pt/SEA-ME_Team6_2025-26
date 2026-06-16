@@ -2,7 +2,7 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
  ../AZURE_RTOS/App/app_azure_rtos.h ../Core/Inc/app_threadx.h \
  ../Middlewares/ST/threadx/common/inc/tx_api.h \
  ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h \
- ../Core/Inc/tx_user.h \
+ ../Core/Inc/tx_user.h ../Core/Inc/mcp2515.h ../Core/Inc/main.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h \
  ../Core/Inc/stm32u5xx_hal_conf.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h \
@@ -27,6 +27,7 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h \
@@ -42,12 +43,45 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h \
+ ../Core/Inc/stm32u5xx_hal_conf.h ../Core/Inc/system_ctx.h \
+ ../Core/Inc/vehicle_state.h ../Core/Inc/can_id.h \
+ ../Core/Inc/sys_helpers.h ../Core/Inc/lps22hh.h ../Core/Inc/i2c.h \
+ ../Core/Inc/speedometer.h ../Core/Inc/ism330dhcx.h ../Core/Inc/iis2mdc.h \
+ ../Core/Inc/veml6030.h ../Core/Inc/vl53l5cx_driver.h \
+ ../Drivers/VL53L5CX/inc/vl53l5cx_api.h \
+ ../Drivers/VL53L5CX/inc/platform.h ../Core/Inc/hts221.h \
+ ../Core/Inc/thread_config.h ../Core/Inc/lcd1602.h \
+ ../Core/Inc/motor_control.h ../Core/Inc/servo.h ../Core/Inc/tim.h \
+ ../Core/Inc/emergency_stop.h ../Core/Inc/srf08.h ../Core/Inc/ina226.h \
+ ../Core/Inc/gesture_simple.h ../Core/Inc/tasks/task_heartbeat.h \
+ ../Core/Inc/main.h ../Core/Inc/mcp2515.h ../Core/Inc/can_id.h \
+ ../Core/Inc/tasks/task_environment.h ../Core/Inc/lps22hh.h \
+ ../Core/Inc/hts221.h ../Core/Inc/veml6030.h ../Core/Inc/can_tx.h \
+ ../Core/Inc/tasks/task_speed.h ../Core/Inc/speedometer.h \
+ ../Core/Inc/tasks/task_imu.h ../Core/Inc/ism330dhcx.h \
+ ../Core/Inc/iis2mdc.h ../Core/Inc/tasks/task_tof.h \
+ ../Core/Inc/tasks/task_srf08.h ../Core/Inc/i2c.h ../Core/Inc/srf08.h \
+ ../Core/Inc/motor_control.h ../Core/Inc/emergency_stop.h \
+ ../Core/Inc/tasks/task_battery.h ../Core/Inc/ina226.h \
+ ../Core/Inc/tasks/task_can_rx.h ../Core/Inc/tasks/task_aeb.h \
  ../AZURE_RTOS/App/app_azure_rtos_config.h
 ../AZURE_RTOS/App/app_azure_rtos.h:
 ../Core/Inc/app_threadx.h:
 ../Middlewares/ST/threadx/common/inc/tx_api.h:
 ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h:
 ../Core/Inc/tx_user.h:
+../Core/Inc/mcp2515.h:
+../Core/Inc/main.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
 ../Core/Inc/stm32u5xx_hal_conf.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h:
@@ -72,6 +106,7 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h:
@@ -87,4 +122,62 @@ AZURE_RTOS/App/app_azure_rtos.o: ../AZURE_RTOS/App/app_azure_rtos.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_ucpd.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_bus.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_cortex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_rcc.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_system.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_utils.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_pwr.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h:
+../Core/Inc/stm32u5xx_hal_conf.h:
+../Core/Inc/system_ctx.h:
+../Core/Inc/vehicle_state.h:
+../Core/Inc/can_id.h:
+../Core/Inc/sys_helpers.h:
+../Core/Inc/lps22hh.h:
+../Core/Inc/i2c.h:
+../Core/Inc/speedometer.h:
+../Core/Inc/ism330dhcx.h:
+../Core/Inc/iis2mdc.h:
+../Core/Inc/veml6030.h:
+../Core/Inc/vl53l5cx_driver.h:
+../Drivers/VL53L5CX/inc/vl53l5cx_api.h:
+../Drivers/VL53L5CX/inc/platform.h:
+../Core/Inc/hts221.h:
+../Core/Inc/thread_config.h:
+../Core/Inc/lcd1602.h:
+../Core/Inc/motor_control.h:
+../Core/Inc/servo.h:
+../Core/Inc/tim.h:
+../Core/Inc/emergency_stop.h:
+../Core/Inc/srf08.h:
+../Core/Inc/ina226.h:
+../Core/Inc/gesture_simple.h:
+../Core/Inc/tasks/task_heartbeat.h:
+../Core/Inc/main.h:
+../Core/Inc/mcp2515.h:
+../Core/Inc/can_id.h:
+../Core/Inc/tasks/task_environment.h:
+../Core/Inc/lps22hh.h:
+../Core/Inc/hts221.h:
+../Core/Inc/veml6030.h:
+../Core/Inc/can_tx.h:
+../Core/Inc/tasks/task_speed.h:
+../Core/Inc/speedometer.h:
+../Core/Inc/tasks/task_imu.h:
+../Core/Inc/ism330dhcx.h:
+../Core/Inc/iis2mdc.h:
+../Core/Inc/tasks/task_tof.h:
+../Core/Inc/tasks/task_srf08.h:
+../Core/Inc/i2c.h:
+../Core/Inc/srf08.h:
+../Core/Inc/motor_control.h:
+../Core/Inc/emergency_stop.h:
+../Core/Inc/tasks/task_battery.h:
+../Core/Inc/ina226.h:
+../Core/Inc/tasks/task_can_rx.h:
+../Core/Inc/tasks/task_aeb.h:
 ../AZURE_RTOS/App/app_azure_rtos_config.h:
