@@ -55,10 +55,14 @@ jobs:
           tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
           echo "$PWD/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
 
-      - name: Fix linker script path
+      - name: Fix build flags
         run: |
+          # Fix absolute linker script path
           sed -i 's|/home/seame/[^ "]*STM32U585AIIXQ_FLASH\.ld|../STM32U585AIIXQ_FLASH.ld|g' \
               src/stm/Debug/makefile
+          # Remove STM32CubeIDE-specific flag not supported by standard ARM toolchain
+          find src/stm/Debug -name "subdir.mk" \
+              -exec sed -i 's/-fcyclomatic-complexity//g' {} \;
 
       - name: Build firmware
         run: |
