@@ -4,7 +4,10 @@
 
 RAUC delivers signed, atomic app-only updates to the RPi5 (AGL) without touching the OS/rootfs. On boot, the car installs any pending update automatically. Every 5 minutes, the car checks for new releases and notifies the cluster via KUKSA if one is available. The user installs by rebooting.
 
-RPi4 (cluster) is updated as part of the same bundle — RPi5 deploys `ClusterApp` to RPi4 via SSH after its own update succeeds.
+A single bundle updates all three targets:
+- **RPi5** — `adas_manager`, `kuksa_bridge`, `inference`
+- **RPi4** — `ClusterApp` (deployed via SSH)
+- **STM32** — firmware flashed via OpenOCD + ST-Link
 
 ---
 
@@ -20,12 +23,14 @@ git push ──────────────► GitHub Actions
                                │
                                ├─ Build adas_manager (ARM64)
                                ├─ Build ClusterApp (ARM32)
+                               ├─ Build STM32 firmware (Cortex-M33)
                                ├─ Package apps.tar.gz
                                │    adas_manager
                                │    kuksa_bridge.py
                                │    socket_sender.py
                                │    inference/
                                │    cluster/ClusterApp
+                               │    team6_original.bin
                                │
                                ├─ Sign bundle with CA key
                                └─ Upload apps-v1.x.x.raucb ──► GitHub Release
@@ -58,14 +63,22 @@ Boot
                                  │
                                  ├─ adas-manager OK? ──► start inference
                                  │                        │
-                                 │                        └─ ClusterApp in bundle?
+                                 │                        ├─ ClusterApp in bundle?
+                                 │                        │     │
+                                 │                        │  stop helloqt-app (RPi4)
+                                 │                        │  scp ClusterApp → RPi4
+                                 │                        │  restart helloqt-app
+                                 │                        │  sleep 5 (watchdog)
+                                 │                        │  OK? ──► continue ✅
+                                 │                        │  FAIL? ─► restore .bak ↩
+                                 │                        │
+                                 │                        └─ STM32 firmware in bundle?
                                  │                              │
-                                 │                        stop helloqt-app (RPi4)
-                                 │                        scp ClusterApp → RPi4
-                                 │                        restart helloqt-app
-                                 │                        sleep 5 (watchdog)
-                                 │                        OK? ──► done ✅
-                                 │                        FAIL? ─► restore .bak ↩
+                                 │                        openocd flash → verify → reset
+                                 │                        sleep 3 (boot)
+                                 │                        openocd connect → alive?
+                                 │                        OK? ──► save backup ✅
+                                 │                        FAIL? ─► reflash backup ↩
                                  │
                                  └─ adas-manager FAIL? ─► rollback
                                                           ln -sfn PREV /data/current
@@ -102,15 +115,19 @@ ota-check.timer (OnBootSec=2min, OnUnitActiveSec=5min)
 │   │   ├── kuksa_bridge.py
 │   │   ├── socket_sender.py
 │   │   ├── inference/
-│   │   └── cluster/ClusterApp
+│   │   ├── cluster/ClusterApp
+│   │   └── team6_original.bin
 │   └── v1.0.1/                ← active version
 │       ├── adas_manager
 │       ├── kuksa_bridge.py
 │       ├── socket_sender.py
 │       ├── inference/
-│       └── cluster/ClusterApp
+│       ├── cluster/ClusterApp
+│       └── team6_original.bin
 ├── current -> /data/apps/v1.0.1/   ← symlink (services always use this)
-└── rauc-slot.img                   ← dummy slot file (required by RAUC)
+├── rauc-slot.img                   ← dummy slot file (required by RAUC)
+└── stm32/
+    └── firmware.bak.bin            ← last known-good STM32 firmware (rollback)
 
 /opt/seame/
 ├── version                    ← installed version (e.g. v1.0.1)
@@ -151,7 +168,7 @@ Services always reference `/data/current/`. To rollback manually: update the sym
 | File | Location | Purpose |
 |------|----------|---------|
 | `manifest.raucm` | `scripts/rauc-bundle/` | Bundle manifest template (`@@VERSION@@` placeholder) |
-| `hook.sh` | `scripts/rauc-bundle/` | Install hook: extract, symlink, watchdog, rollback, ClusterApp deploy |
+| `hook.sh` | `scripts/rauc-bundle/` | Install hook: extract, symlink, watchdog, rollback, ClusterApp deploy, STM32 flash |
 | `bootloader-noop.sh` | `scripts/rauc-bundle/` | No-op bootloader backend source |
 | `rauc-system.conf` | `docs/guides/OTA/` | system.conf to deploy on car |
 | `ota-check.sh` | `scripts/` | OTA check script source |
@@ -206,7 +223,8 @@ apps-v1.x.x.raucb
     ├── kuksa_bridge.py
     ├── socket_sender.py
     ├── inference/
-    └── cluster/ClusterApp  ← only present when platform=both
+    ├── cluster/ClusterApp      ← only present when platform=both
+    └── team6_original.bin      ← STM32 firmware (only when build-stm32 succeeds)
 ```
 
 ---
@@ -220,6 +238,18 @@ apps-v1.x.x.raucb
 **Automatic — RPi4** (watchdog in hook.sh):
 - Triggered if `helloqt-app.service` fails within 5s after ClusterApp update
 - Restores `ClusterApp.bak` and restarts service
+
+**Automatic — STM32** (watchdog in hook.sh):
+- After flash, waits 3s and connects via OpenOCD to check STM32 is running
+- If not responding → reflashes `/data/stm32/firmware.bak.bin`
+- Flash failure (not verify failure) → STM32 keeps previous firmware untouched
+
+**Manual — STM32**:
+```bash
+openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+        -f /usr/share/openocd/scripts/target/stm32u5x.cfg \
+        -c "program /data/stm32/firmware.bak.bin 0x08000000 verify reset exit"
+```
 
 **Manual — RPi5**:
 ```bash
@@ -326,6 +356,17 @@ readlink /data/current
 # Check ClusterApp on RPi4
 ssh -i /root/.ssh/id_cluster root@10.21.220.192 \
   "ls -la /home/ClusterApp && systemctl status helloqt-app.service"
+
+# Check STM32 flash logs
+journalctl -u rauc --no-pager | grep -i "STM32"
+
+# Check STM32 backup firmware
+ls -lh /data/stm32/firmware.bak.bin
+
+# Flash STM32 manually
+openocd -f /usr/share/openocd/scripts/interface/stlink.cfg \
+        -f /usr/share/openocd/scripts/target/stm32u5x.cfg \
+        -c "program /path/to/team6_original.bin 0x08000000 verify reset exit"
 ```
 
 ---
@@ -337,4 +378,6 @@ ssh -i /root/.ssh/id_cluster root@10.21.220.192 \
 - `RAUC_SIGNING_KEY` must be set in GitHub repository secrets before first release
 - RAUC on car (1.15.1) calls install hooks as `slot-install`; bundle manifest uses `install` (RAUC 1.5 on runner) — hook handles both
 - WiFi takes ~15s to connect on boot; OTA service retries GitHub API 5 times with 10s delay to compensate
-- ClusterApp deployment requires `platform=both` build (tag push triggers this automatically)
+- ClusterApp and STM32 firmware are only included when their respective builds succeed — bundle without them updates RPi5 only
+- STM32 flash requires ST-Link connected to RPi5 via USB and STM32 connected via SWD
+- First STM32 OTA: no backup exists yet — flash failure has no fallback on first run
