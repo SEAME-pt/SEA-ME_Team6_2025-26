@@ -55,6 +55,7 @@
 ## ❌ Undone:
   - Emergency Vehicle Priority pratical implementation
   - Integration of Traffic Sign Recognition and V2I into ADAS Manager.
+  - Status point: update the documentation to reflect current implementation.
   
 Not done due to a Blocker in the car (Hardware + Software).
 ------
