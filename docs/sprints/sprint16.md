@@ -17,7 +17,7 @@
   - [X] Practical team spread knowledge about Yocto (5)
 
 - #### Tasks from the previous sprint:
-  - [x] Integration of Traffic Sign Recognition into ADAS Manager (8)
+  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
 
 ---
 
@@ -28,8 +28,8 @@
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
 | **João**  | Continuation of Vehicle-to-Infrastructures implementation + Emergency Vehicle Priority pratical implementation | 34 | 21 |
-| **David** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 34 |
-| **Vasco** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 34 |
+| **David** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 26 |
+| **Vasco** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 26 |
 | **Diogo** | Continuation of the OTA implementation + Implementation of FOTA + HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) | 47 | 26 |
 | **Ruben** | Continuation of the OTA implementation + Implementation of FOTA  + Practical team spread knowledge about Yocto | 31 | 31 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
@@ -50,10 +50,10 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`73/102`**
+- ### Sprint 16 points: **`52/102`**
 
 ## ❌ Undone:
-  - We've considered TSR "done" and Vehicle Emergency (almost) "done" (as well as V2I) but they require testing that was impossible to do in this sprint due to the eletrical problem.
+  - Some tasks are integrated but they require testing that was impossible to do in this sprint due to the eletrical problem.
   - Status point: update the documentation to reflect current implementation.
   
 Not done due to a Blocker in the car (Hardware + Software).
@@ -73,11 +73,11 @@ Not done due to a Blocker in the car (Hardware + Software).
 
 # 🔎 Retrospective
 - ## **Went well**:
-- Motivation, Communication and Team Spirit. 
+- Motivation, Communication and Team Spirit.
+- Good pratical team knowledge.
 
 - ## **To improve**:
-- Review work that was done in the past. 
-- Our knowledge (entire team) regarding the car and the hardware.
+- Do more pratical team knowledge like the one done in this sprint. 
 
 ## 🔗 Useful Links
 
