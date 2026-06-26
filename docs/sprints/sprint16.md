@@ -77,7 +77,8 @@ Not done due to a Blocker in the car (Hardware + Software).
 - Motivation, Communication and Team Spirit. 
 
 - ## **To improve**:
-- When we consider a job done, it really has to be done, otherwise the problem will be bigger in the future.
+- When we consider a job done, it really has to be done, otherwise the problem will be bigger in the future. 
+- Only approve the wrap up of the loose tasks only when they were tested in convenience.  
 - The fact that we didn't know how to handle the car, which could result in accident damage. We need to improve that knowledge. 
 
 ## 🔗 Useful Links
