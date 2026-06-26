@@ -7,7 +7,7 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [X] Continuation of Vehicle-to-Infrastructures implementation (21)
-  - [X] Emergency Vehicle Priority pratical implementation (13)
+  - [x] Emergency Vehicle Priority pratical implementation (13)
   - [X] Continuation of the OTA implementation (13)
   - [X] Implementation of FOTA (13)
   - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
@@ -17,7 +17,7 @@
   - [X] Practical team spread knowledge about Yocto (5)
 
 - #### Tasks from the previous sprint:
-  - [X] Integration of Traffic Sign Recognition into ADAS Manager (8)
+  - [x] Integration of Traffic Sign Recognition into ADAS Manager (8)
 
 ---
 
@@ -53,10 +53,8 @@
 - ### Sprint 16 points: **`73/102`**
 
 ## ❌ Undone:
-  - Emergency Vehicle Priority pratical implementation
-  - Integration of Traffic Sign Recognition and V2I into ADAS Manager.
+  - We've considered TSR and Vehicle Emergency "done" but they require testing that was impossible to do in this sprint due to the eletrical problem.
   - Status point: update the documentation to reflect current implementation.
-  - HMI/Cluster new features integration
   
 Not done due to a Blocker in the car (Hardware + Software).
 ------
@@ -72,7 +70,6 @@ Not done due to a Blocker in the car (Hardware + Software).
 
 <img width="1052" height="666" alt="image" src="https://github.com/user-attachments/assets/492da72a-bee3-4cc3-bd62-68f83f3fbd4f" />
 
-- **Docs updated**:
 
 # 🔎 Retrospective
 - ## **Went well**:
