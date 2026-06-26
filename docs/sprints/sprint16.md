@@ -6,18 +6,18 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Continuation of Vehicle-to-Infrastructures implementation (21)
+  - [X] Continuation of Vehicle-to-Infrastructures implementation (21)
   - [ ] Emergency Vehicle Priority pratical implementation (13)
-  - [ ] Continuation of the OTA implementation (13)
-  - [ ] Implementation of FOTA (13)
-  - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
+  - [X] Continuation of the OTA implementation (13)
+  - [X] Implementation of FOTA (13)
+  - [X] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
 
 - #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
   - [ ] Status point: update the documentation to reflect current implementation. (8)
-  - [ ] Practical team spread knowledge about Yocto (5)
+  - [X] Practical team spread knowledge about Yocto (5)
 
 - #### Tasks from the previous sprint:
-  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
+  - [X] Integration of Traffic Sign Recognition into ADAS Manager (8)
 
 ---
 
@@ -50,14 +50,19 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`0/102`**
+- ### Sprint 16 points: **`81/102`**
 
 ## ❌ Undone:
-  - `[preencher no fim do sprint]`
+  - Emergency Vehicle Priority pratical implementation
+  - Integration of Traffic Sign Recognition and V2I into ADAS Manager.
+  
+Not done due to a Blocker in the car (Hardware + Software).
 ------
 
 ## ✅ Outcomes:
-  - `[preencher no fim do sprint]`
+  - OTA and FOTA
+  - HMI/Cluster new features integration
+  - V2I and TSR implementation (but not with integration in ADAS manager)
 ------
 
 - **Demos**:
@@ -68,10 +73,11 @@
 
 # 🔎 Retrospective
 - ## **Went well**:
-- `[preencher no fim do sprint]`
+- Motivation, Communication and Team Spirit. 
 
 - ## **To improve**:
-- `[preencher no fim do sprint]`
+- When we consider a job done, it really has to be done, otherwise the problem will be bigger in the future.
+- The fact that we didn't know how to handle the car, which could result in accident damage. We need to improve that knowledge. 
 
 ## 🔗 Useful Links
 
