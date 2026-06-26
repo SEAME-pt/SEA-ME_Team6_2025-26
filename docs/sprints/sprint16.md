@@ -50,7 +50,7 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`81/102`**
+- ### Sprint 16 points: **`94/102`**
 
 ## ❌ Undone:
   - Emergency Vehicle Priority pratical implementation
