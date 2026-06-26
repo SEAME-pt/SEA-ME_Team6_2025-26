@@ -53,7 +53,7 @@
 - ### Sprint 16 points: **`73/102`**
 
 ## ❌ Undone:
-  - We've considered TSR "done" and Vehicle Emergency (almost) "done" but they require testing that was impossible to do in this sprint due to the eletrical problem.
+  - We've considered TSR "done" and Vehicle Emergency (almost) "done" (as well as V2I) but they require testing that was impossible to do in this sprint due to the eletrical problem.
   - Status point: update the documentation to reflect current implementation.
   
 Not done due to a Blocker in the car (Hardware + Software).
