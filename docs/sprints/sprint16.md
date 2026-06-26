@@ -7,7 +7,7 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [X] Continuation of Vehicle-to-Infrastructures implementation (21)
-  - [ ] Emergency Vehicle Priority pratical implementation (13)
+  - [X] Emergency Vehicle Priority pratical implementation (13)
   - [X] Continuation of the OTA implementation (13)
   - [X] Implementation of FOTA (13)
   - [X] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
@@ -63,7 +63,7 @@ Not done due to a Blocker in the car (Hardware + Software).
 ## ✅ Outcomes:
   - OTA and FOTA
   - HMI/Cluster new features integration
-  - V2I and TSR implementation (but not with integration in ADAS manager)
+  - TSR, V2I and Emergency Vehicle Priority logic done (but not with integration in ADAS manager)
 ------
 
 - **Demos**:
