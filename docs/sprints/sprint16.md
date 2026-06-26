@@ -27,7 +27,7 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Continuation of Vehicle-to-Infrastructures implementation + Emergency Vehicle Priority pratical implementation | 34 | 34 |
+| **João**  | Continuation of Vehicle-to-Infrastructures implementation + Emergency Vehicle Priority pratical implementation | 34 | 21 |
 | **David** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 34 |
 | **Vasco** | Continuation of the OTA implementation + Implementation of FOTA + Integration of Traffic Sign Recognition into ADAS Manager | 34 | 34 |
 | **Diogo** | Continuation of the OTA implementation + Implementation of FOTA + HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) | 47 | 26 |
