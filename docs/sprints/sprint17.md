@@ -1,6 +1,6 @@
 # 🏁 Sprint 17 — (29/06/2026 → 10/07/2026)
 
-> ## **Sprint Goal**: `Requisites review and tests. Car fix   `
+> ## **Sprint Goal**: `Requisites review and tests. Car fix. `
 ---
 
 ## 📌 Epics
