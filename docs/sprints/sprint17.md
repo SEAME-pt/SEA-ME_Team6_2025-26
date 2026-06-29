@@ -1,34 +1,39 @@
 # 🏁 Sprint 17 — (29/06/2026 → 10/07/2026)
 
-> ## **Sprint Goal**: `????`
+> ## **Sprint Goal**: `Requisites review and tests. Car fix   `
 ---
 
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  
-
-- #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
-
+  - [ ] ADAS manager restructured (21)
+  - [ ] Tests (TSR / ADAS Manager features) (21)
+  - [ ] Tests (Emergency Vehicle Priority) (8)
+  - [ ] Requirements Review and Creation (5)
+  - [ ] TSF Script adaptation to OS (MAC, Linux, Windows) (8)
 
 - #### Tasks from the previous sprint:
-  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
   - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
-  - [ ] Status point: update the documentation to reflect current implementation. (8)
-  - [ ] Emergency Vehicle Priority pratical implementation (13)
+  - [ ] Status point: update the documentation to reflect current implementation (8)
 
+  - #### Tasks from the previous sprint that we won´t do:
+  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
+  - [ ] Emergency Vehicle Priority pratical implementation (13)
+  - [ ] Integration of Vehicle-to-Infrastructures implementation into ADAS Manager(8)
+  - [ ] Integration of Emergency Vehicle Priority into ADAS Manager (8)
+ 
 ---
 
-## **Total Sprint Points: `50`**
+## **Total Sprint Points: `92`**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Emergency Vehicle Priority pratical implementation | 13 | - |
-| **David** | Integration of Traffic Sign Recognition into ADAS Manager | 8 | - |
-| **Vasco** | Integration of Traffic Sign Recognition into ADAS Manager | 8 | - |
-| **Diogo** | HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) | 21 | - |
+| **João**  | Tests (Emergency Vehicle Priority) + Requirements Review and Creation + TSF Script adaptation to OS (MAC, Linux, Windows) + Status point: update the documentation to reflect current implementation | 29 | - |
+| **David** | ADAS manager restructured + Status point: update the documentation to reflect current implementation | 29 | - |
+| **Vasco** | Tests (TSR / Emergency Vehicle Priority / ADAS Manager features) + Status point: update the documentation to reflect current implementation | 29 | - |
+| **Diogo** | HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) + Status point: update the documentation to reflect current implementation | 29 | - |
 | **Ruben** |  | 0 | - |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
@@ -48,7 +53,7 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`0/50`**
+- ### Sprint 16 points: **`0/92`**
 
 ## ❌ Undone:
   - Fill this section only in the retro
