@@ -1,3 +1,62 @@
+# Sprint Planning / Achievements — Joao Silva (Sprint 15 → 17)
+
+Index:
+
+- [Sprint 15 — 01/06/2026 → 12/06/2026](#sprint-15---01062026-→-12062026)
+- [Sprint 16 — 15/06/2026 → 26/06/2026](#sprint-16---15062026-→-26062026)
+- [Sprint 17 — 29/06/2026 → 10/07/2026](#sprint-17---29062026-→-10072026)
+
+### Sprint 15 — 01/06/2026 → 12/06/2026
+
+Responsibilities (Joao Silva): implement Vehicle-to-Infrastructure (V2I) basics and Emergency Vehicle Priority baseline.
+
+Key outcomes, deliverables and artifacts:
+- Implemented V2I barrier flow: `src/mobility_scenarios_src/v2i/barrier_simulator.py`, `barrier_rules.py`, `barrier_backend.py` and placeholder `kitronik_barrier.py`.
+- Validated radio communication between two micro:bits (TX/RX gateway) and initial USB-serial bridge path.
+- Created early unit tests and smoke demo flows used as sprint evidence.
+- Contributed to OTA pipeline evidence and initial documentation items for V2I.
+
+Relevant progress updates (selected):
+- 2026-06-03: Implemented Phase 1 scaffold in `src/mobility_scenarios_src/v2i` and first unit tests.
+- 2026-06-03: Verified local end-to-end flow with a smoke test (`V2IClient` + `BarrierSimulator`).
+
+### Sprint 16 — 15/06/2026 → 26/06/2026
+
+Responsibilities (Joao Silva): continue V2I work, implement Emergency Priority logic in software, and prepare safe integration artifacts and handoff.
+
+Main deliverables, artifacts and outcomes:
+- Continued V2I development and emergency-priority policy implementation (`src/mobility_scenarios_src/emergency_priority/coordinator.py` and emergency client code).
+- Added Phase 2 scaffold for traffic lights: `trafficlight_simulator.py`, `traffic_light_rules.py`, `emergency_client.py` and `unified_demo.py` for local smoke/integration.
+- Integrated bridge output into an isolated ADAS runtime folder (`/data/ADAS-Manager-tuning-trafficlight`) and verified socket injection to `/tmp/adas_objects.sock`.
+- Prepared preflight and automated checks used for local demo evidence.
+- Prepared files to port to official ADAS manager (for David): `src/ADAS-Manager/socket_receiver.hpp` (V2I enums/`V2IFrame`) and `src/ADAS-Manager/adas_manager.cpp` (V2I socket, `v2i_thread`, `v2i_throttle_limit`, arbitration `throttle_limit = min(obj_limit, v2i_limit)`).
+
+What was validated in parallel (selected):
+- `V2IFrame` ingestion over UNIX DGRAM socket (`/tmp/adas_v2i.sock` and `/tmp/adas_v2i_test.sock`).
+- Throttle arbitration behavior and safety: red/closed -> stop, yellow -> slowdown, green -> no V2I limit; `priority_active` bypasses only traffic-light/barrier limits, not object safety.
+
+Relevant progress updates (selected):
+- 2026-06-08: Integrated bridge output with ADAS Manager via `/tmp/adas_objects.sock`.
+- 2026-06-11: Radio gateway serial validated on AGL at `/dev/ttyACM1` and `R/Y/G` mapping confirmed.
+
+### Sprint 17 — 29/06/2026 → 10/07/2026
+
+Responsibilities (Joao Silva): finalize software-only test evidence, author emergency-priority tests, and prepare handoff notes for production integration.
+
+Main deliverables, artifacts and outcomes:
+- Test suite definitions and test files: `src/mobility_scenarios_src/emergency_priority/tests/` containing `test_coordinator.py`, `test_emergency_client.py`, `test_traffic_light_rules.py`, `test_trafficlight_simulator.py` and `unified_demo.py` for smoke evidence.
+- Defined TEST-EP-01..04 (unit, integration, smoke) and prepared run steps/checklist in `planning_V2I.md` for sprint evidence.
+- Implemented `adas_manager.shadow` and V2I framing in test-only runtime for isolated validation; prepared step-by-step handoff for David to port changes to official runtime.
+- Documented runtime paths, safety rules (yellow escalation, heartbeat to RED) and recommended safe validation workflow (USB-direct / bridge modes).
+
+What to run for Sprint 17 evidence (high-level):
+- Unit tests: run pytest for `src/mobility_scenarios_src/emergency_priority/tests`.
+- Local smoke: run `python3 src/mobility_scenarios_src/emergency_priority/unified_demo.py --config config.json` and collect logs under `docs/guides/mobility_scenarios/shared/evidence/`.
+
+Relevant progress updates (selected):
+- 2026-06-12: Confirmed local bridge receives and maps live states end-to-end (`red/yellow/green` -> `adas_sign_class=9/10/8`) in `--bridge-mode local`.
+- Sprint planning & TEST-EP definitions authored and pushed on feature branch.
+
 # Module 3: V2I Integration & Emergency Priority — Master Planning Guide
 
 **Single source of truth** for Vehicle-to-Infrastructure communication, emergency traffic light control, and unified coordination.
