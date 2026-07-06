@@ -5,8 +5,7 @@
 # PATHS CONFIGURATION
 # ============================================================================
 paths:
-  # Use relative path from script location (auto-detected if empty or "auto")
-  repo_root: "auto"
+  repo_root: "/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
   tsf_implementation: "${paths.repo_root}/docs/TSF/tsf_implementation"
   items_dir: "${paths.tsf_implementation}/items"
   scripts_dir: "${paths.tsf_implementation}/scripts"

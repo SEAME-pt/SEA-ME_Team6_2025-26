@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SEAME — Dual Inference Pipeline v15
+SEAME — Dual Inference Pipeline v16
   • UFLDv2 (cut v2)   — Lane Detection   — Hailo-8 PCIe
   • best_model        — Object Detection — Hailo-8 PCIe
 
@@ -16,6 +16,9 @@ Optimizações acumuladas:
   v15: lane hold com decaimento — quando status="none", mantém o último desvio
        válido por HOLD_FRAMES frames com multiplicador HOLD_DECAY por frame.
        O ADAS Manager não entra em DEGRADED durante o hold.
+  v16: YOLO skip-frame — YOLO_EVERY_N_FRAMES controla de quantos em quantos frames
+       corre o YOLO. Frames skipped reutilizam as últimas deteções válidas.
+       LKA corre sempre a full-rate. CLI: --yolo-every N (default 1 = sem skip).
 """
 
 import numpy as np
@@ -63,16 +66,13 @@ try:
     _cpp_postprocess  = _pp_cpp.postprocess
     _cpp_decode_lanes = _pp_cpp.decode_lanes
     print("[PostProcess] C++ extension carregada (OpenBLAS, sem GIL)")
-except ImportError:
+except (ImportError, AttributeError):
     _cpp_postprocess  = None
     _cpp_decode_lanes = None
     print("[PostProcess] AVISO: C++ não disponível — a usar Python (overlap ineficaz)")
 
 # ── Socket → ADAS Manager ─────────────────────────────────────────────────────
-_script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, _script_dir)                                              # mesmo dir do script
-sys.path.insert(0, os.path.join(_script_dir, 'ADAS-Manager-Motor-Control')) # RPi5 layout
-sys.path.insert(0, os.path.join(_script_dir, '../ADAS-Manager-test'))       # repo layout
+sys.path.insert(0, "/data/ADAS-Manager-GITHUB")
 from socket_sender import (start_socket_thread, send_perception as publish_deviation,
                            send_objects as publish_objects,
                            SIGN_UNKNOWN, SIGN_STOP, SIGN_YIELD,
@@ -85,47 +85,69 @@ from socket_sender import (start_socket_thread, send_perception as publish_devia
 # Configuração YOLO (best_model)
 # ══════════════════════════════════════════════════════════════════════════════
 YOLO_HEF_PATH = "/data/yolov8s.hef"
-OUTPUT_PATH   = "/data/demo_dual_v15.mp4"
+OUTPUT_PATH   = "/data/demo_dual_v16.mp4"
 
 MODEL_W = 640
 MODEL_H = 640
 
 YOLO_INPUT   = "best_model/input_layer1"
-CONF_THRESH  = 0.30
+CONF_THRESH  = 0.55
 IOU_THRESH   = 0.40
 MIN_BOX_SIZE = 0.04
 
 YOLO_CLASS_MAP = {
-    0:  SIGN_SPEED_50,
-    1:  SIGN_SPEED_80,
-    2:  SIGN_PEDESTRIAN,   # Crosswalk
-    3:  SIGN_UNKNOWN,      # Gate
-    4:  SIGN_PEDESTRIAN,   # Pedestrians_crossing
-    5:  SIGN_STOP,         # Stop_sign
-    6:  SIGN_YIELD,        # Traffic_priority
-    7:  SIGN_UNKNOWN,      # both_arrow
-    8:  SIGN_OBSTACLE,     # car
-    9:  SIGN_UNKNOWN,      # cars not allowed
-    10: SIGN_UNKNOWN,      # left_cross
-    11: SIGN_OBSTACLE,     # obstacle
-    12: SIGN_UNKNOWN,      # right_cross
-    13: SIGN_TL_GREEN,     # traffic_lights_green
-    14: SIGN_UNKNOWN,      # traffic_lights_off
-    15: SIGN_TL_RED,       # traffic_lights_red
-    16: SIGN_TL_YELLOW,    # traffic_lights_yellow
+    0:  SIGN_SPEED_50,      # 50_maxspeed
+    1:  SIGN_SPEED_80,      # 80_maxspeed
+    2:  SIGN_PEDESTRIAN,    # Crosswalk
+    3:  SIGN_UNKNOWN,       # Gate
+    4:  SIGN_PEDESTRIAN,    # Pedestrians_crossing
+    5:  SIGN_STOP,          # Stop_sign
+    6:  SIGN_YIELD,         # Traffic_priority
+    7:  SIGN_UNKNOWN,       # both_arrow
+    8:  SIGN_OBSTACLE,      # car
+    9:  SIGN_UNKNOWN,       # cars not allowed
+    10: SIGN_UNKNOWN,       # left_cross
+    11: SIGN_OBSTACLE,      # obstacle
+    12: SIGN_UNKNOWN,       # right_cross
+    13: SIGN_TL_GREEN,      # traffic_lights_green
+    14: SIGN_UNKNOWN,       # traffic_lights_off
+    15: SIGN_TL_RED,        # traffic_lights_red
+    16: SIGN_TL_YELLOW,     # traffic_lights_yellow
 }
 
-_DIST_K          = 420.2   # K = altura_px × distância_m (calibrado por Vasco, erro ~8%)
-_DIST_MIN        = 0.3
-_DIST_MAX        = 8.0
-FOV_H            = 51.3    # FOV horizontal medido (graus)
-CAMERA_OFFSET_PX = -21     # câmara 21px à direita do centro do carro
+_K_SIGN          = 37.8   # calibrado por Vasco com classe 9 (sinais), erro ~8%
+_K_CAR           = 420.2   # TODO: calibrar com classe 8 (car)
+_K_OBSTACLE      = 51.5 
+_K_CROSSWALK     = 420.2   # TODO: calibrar com classe 2 (passadeira — marcação no chão)
+_K_GATE          = 420.2   # TODO: calibrar com classe 3 (gate — estrutura física)
 
+_DIST_K_PER_CLASS = {
+    0:  _K_SIGN,       # 50_maxspeed
+    1:  _K_SIGN,       # 80_maxspeed
+    2:  _K_CROSSWALK,  # Crosswalk (passadeira no chão — tamanho diferente)
+    3:  _K_GATE,       # Gate (estrutura física — tamanho diferente)
+    4:  _K_SIGN,       # Pedestrians_crossing
+    5:  _K_SIGN,       # Stop_sign
+    6:  _K_SIGN,       # Traffic_priority
+    7:  _K_SIGN,       # both_arrow
+    8:  _K_CAR,        # car
+    9:  _K_SIGN,       # cars not allowed
+    10: _K_SIGN,       # left_cross
+    11: _K_OBSTACLE,   # obstacle
+    12: _K_SIGN,       # right_cross
+    13: _K_SIGN,       # traffic_lights_green
+    14: _K_SIGN,       # traffic_lights_off
+    15: _K_SIGN,       # traffic_lights_red
+    16: _K_SIGN,       # traffic_lights_yellow
+}
+_DIST_K   = _K_SIGN  # fallback para classes não mapeadas
+_DIST_MIN = 0.24      # distância mínima válida (m)
+_DIST_MAX = 1.35      # distância máxima válida (m)
+FOV_H            = 50.9    # FOV calibrado empiricamente
+CAMERA_OFFSET_PX = 85      # calibrado empiricamente — câmara deslocada à esquerda do centro do carro
 
-def get_theta_cam(cx_px: float) -> float:
-    """Ângulo horizontal em graus. 0=frente, +=direita, -=esquerda."""
-    image_center_x = FULL_W / 2 + CAMERA_OFFSET_PX
-    return (cx_px - image_center_x) * (FOV_H / FULL_W)
+# Classes YOLO que recebem overlay de distância/theta (expansível)
+OBSTACLE_VIS_CLASSES = {8, 11}  # car, obstacle
 
 YOLO_STREAMS = [
     ("best_model/conv41", "best_model/conv42", 8),
@@ -144,13 +166,59 @@ INTRINSIC_DIR   = Path("/data/seame-configs/camera")
 _resize_h   = int(TRAIN_HEIGHT / CROP_RATIO)
 _top_native = round(FULL_H * ((_resize_h - TRAIN_HEIGHT) / _resize_h))
 
+# ── YOLO skip-frame ───────────────────────────────────────────────────────────
+# Corre YOLO 1 em cada YOLO_EVERY_N_FRAMES frames. LKA corre sempre.
+# 1 = todos os frames (sem skip, comportamento original)
+# 2 = skip alternado (~7.5 Hz YOLO se câmara a 15 fps, LKA a full rate)
+# Frames skipped reutilizam as últimas deteções válidas (não apagam o estado).
+# Controlável via CLI: --yolo-every N
+YOLO_EVERY_N_FRAMES = 1
+
 # ── Lane hold parameters ──────────────────────────────────────────────────────
-HOLD_FRAMES = 10    # frames a manter o último desvio (~0.9s a 11fps)
+# 2 frames @ 22Hz = ~90ms. Suficiente p/ cobrir flicker mas curto o bastante p/ o
+# manager registar perda quando a passadeira ocupa toda a vista (status=none
+# chega rapidamente ao manager → DEGRADED → target=0 → travagem rápida).
+HOLD_FRAMES = 2
 HOLD_DECAY  = 0.85  # multiplicador por frame — ~20% do valor original ao fim
 
-# ── Single-lane deviation boost ───────────────────────────────────────────────
-SINGLE_LANE_BOOST_THRESHOLD = 5.0   # cm — abaixo deste valor não há boost
-SINGLE_LANE_BOOST_FACTOR    = 1.5   # multiplicador acima do threshold
+# ── Tier 1 — robustez em curva / single-line ─────────────────────────────────
+# A: Em single-line mode, exige pontos suficientemente perto do carro.
+MIN_BOTTOM_Y_RATIO = 0.50   # ponto "perto" = y >= 50% da altura da imagem
+MIN_BOTTOM_POINTS  = 2      # nº mínimo de pontos perto do carro (single-mode)
+# B: Filtro de continuidade lateral entre frames (rejeita saltos suspeitos).
+MAX_X_JUMP_CM      = 40.0   # salto máximo aceitável de deviation entre frames
+MAX_REJECT_STREAK  = 5      # após N rejeições seguidas, aceita para não ficar preso
+# C: Cobertura vertical mínima de uma linha.
+MIN_LINE_SPAN_PX   = 60     # y_max - y_min mínimo para considerar a linha válida
+
+# ── Tier 2 — polyfit + outlier rejection ─────────────────────────────────────
+# Uma lane real tem pontos que formam uma curva suave x=f(y). Riscas
+# horizontais de passadeira espalham-se horizontalmente sem formar curva
+# → resíduos altos no polyfit. Rejeita esses outliers e a lane se restarem
+# poucos inliers.
+POLYFIT_DEG            = 2     # grau do polinómio (quadrático cobre curvas)
+POLYFIT_MAX_RESIDUAL   = 25.0  # resíduo |x - poly(y)| em px para inlier
+POLYFIT_MIN_Y_SPAN     = 30    # y-span mínimo p/ fit ser bem-condicionado
+POLYFIT_MIN_INLIERS    = 4     # nº mínimo de inliers para aceitar lane
+
+# ── Look-ahead deviation (Tier 2.5) ──────────────────────────────────────────
+# Em curva, o bottom da lane visível não representa onde a lane vai. Avaliar
+# o polyfit num Y mais alto (mais à frente) dá a posição da lane à frente do
+# carro → LKA steera na direção da curva, não para o lado errado.
+# 0.0 = só bottom (= comportamento antigo)
+# 0.5 = meio da gama dos pontos válidos (~1m à frente)
+# 1.0 = topo (mais antecipação, menos preciso lateralmente)
+LOOKAHEAD_Y_RATIO      = 0.7
+
+# ── Tier 2 (extended) — lane assignment by world-X ───────────────────────────
+# UFLDv2 produz 4 slots fixos; em curva apertada, ego_right pode aparecer no
+# slot 1 (que historicamente é "left"). Não confiar no slot — atribuir por
+# world-X dos pontos perto do carro. Descarta lanes far-left/far-right da via.
+PLAUSIBLE_EGO_X_CM     = 60.0  # |world_x| máx aceitável p/ ser ego lane
+WORLD_X_BOTTOM_N       = 5     # pontos de fundo usados p/ estimar world-X médio
+DEBUG_ASSIGN_EVERY_N   = 30    # print debug de _assign_ego_lanes a cada N chamadas
+                               # (=0 para desactivar)
+_assign_debug_counter  = 0
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -244,27 +312,182 @@ class Calibration:
         return cv2.perspectiveTransform(pts, self.H_img2world).reshape(-1, 2)
 
 
-def calc_lateral_deviation_cm(lanes, calib):
-    def bottom_points(pts, n=5):
-        if len(pts) < 3:
-            return None
+def _clean_lane_polyfit(pts):
+    """
+    Tier 2 — ajusta x = f(y) com polyfit de grau POLYFIT_DEG e devolve
+    apenas os pontos com resíduo < POLYFIT_MAX_RESIDUAL.
+    Devolve [] se:
+      - poucos pontos para o fit
+      - y-span demasiado pequeno (fit mal-condicionado)
+      - polyfit falha (matriz singular)
+      - inliers < POLYFIT_MIN_INLIERS
+    """
+    if len(pts) < POLYFIT_DEG + 2:
+        return []
+    arr = np.asarray(pts, dtype=np.float32)
+    xs, ys = arr[:, 0], arr[:, 1]
+    if float(ys.max() - ys.min()) < POLYFIT_MIN_Y_SPAN:
+        return []
+    try:
+        coeffs = np.polyfit(ys, xs, POLYFIT_DEG)
+    except (np.linalg.LinAlgError, ValueError, TypeError):
+        return []
+    residuals = np.abs(np.polyval(coeffs, ys) - xs)
+    inliers   = residuals < POLYFIT_MAX_RESIDUAL
+    if int(inliers.sum()) < POLYFIT_MIN_INLIERS:
+        return []
+    return [p for p, ok in zip(pts, inliers.tolist()) if ok]
+
+
+def _assign_ego_lanes(all_lanes, calib):
+    """
+    Reatribui as 4 slots do UFLDv2 a (ego_left, ego_right) por world-X dos
+    pontos de fundo. UFLDv2 não garante "slot 1 = left, slot 2 = right" em
+    curva — esta função usa a geometria real no mundo, não o índice do slot.
+
+    Para cada lane:
+      1. Tier 2 polyfit cleanup
+      2. Pega nos WORLD_X_BOTTOM_N pontos mais baixos
+      3. Estima world_x médio via calib.pixels_to_world
+      4. Descarta se |world_x| > PLAUSIBLE_EGO_X_CM (provavelmente far-left/right)
+
+    Depois:
+      ego_left  = lane com world_x mais próximo de 0 entre as negativas
+      ego_right = lane com world_x mais próximo de 0 entre as positivas
+
+    Devolve (left_pts, right_pts) — cada um pode ser None.
+    """
+    global _assign_debug_counter
+    candidates = []
+    raw_world_x = []      # debug: incl. as rejeitadas por PLAUSIBLE_EGO_X_CM
+    for slot_i, lane in enumerate(all_lanes):
+        cleaned = _clean_lane_polyfit(lane)
+        if not cleaned:
+            raw_world_x.append((slot_i, None, "polyfit-reject"))
+            continue
+        bottom_pts = sorted(cleaned, key=lambda p: p[1], reverse=True)[:WORLD_X_BOTTOM_N]
+        world = calib.pixels_to_world(bottom_pts)
+        if world is None or len(world) == 0:
+            raw_world_x.append((slot_i, None, "no-world"))
+            continue
+        world_x = float(np.mean(world[:, 0]))
+        if abs(world_x) > PLAUSIBLE_EGO_X_CM:
+            raw_world_x.append((slot_i, world_x, "out-of-range"))
+            continue
+        candidates.append((world_x, cleaned, slot_i))
+        raw_world_x.append((slot_i, world_x, "kept"))
+
+    left  = right = None
+    if candidates:
+        left_cands  = [c for c in candidates if c[0] < 0]
+        right_cands = [c for c in candidates if c[0] >= 0]
+        # Pega na mais próxima de 0 em cada lado (provável ego, não far-left/far-right)
+        left  = max(left_cands,  key=lambda c: c[0])[1] if left_cands  else None
+        right = min(right_cands, key=lambda c: c[0])[1] if right_cands else None
+
+    if DEBUG_ASSIGN_EVERY_N > 0 and _assign_debug_counter % DEBUG_ASSIGN_EVERY_N == 0:
+        parts = []
+        for slot_i, wx, tag in raw_world_x:
+            wx_s = f"{wx:+6.1f}cm" if wx is not None else "   --   "
+            parts.append(f"s{slot_i}:{wx_s}[{tag}]")
+        l_wx = "None"
+        r_wx = "None"
+        for wx, pts, si in candidates:
+            if left  is not None and id(pts) == id(left):  l_wx = f"s{si} {wx:+.1f}cm"
+            if right is not None and id(pts) == id(right): r_wx = f"s{si} {wx:+.1f}cm"
+        print(f"[assign_dbg] {' | '.join(parts)}  ->  L={l_wx}  R={r_wx}",
+              flush=True)
+    _assign_debug_counter += 1
+    return left, right
+
+
+def calc_lateral_deviation_cm(lanes, calib, img_h):
+    """
+    Tier 2 + Tier 1 robustness pipeline:
+      Tier 2 — polyfit + outlier rejection (rejeita riscas de passadeira).
+      Tier 2 (extended) — lane assignment by world-X (corrige slot swap em curva).
+      Tier 1 C — Cobertura vertical mínima.
+      Tier 1 A — Em single-line, exige pontos perto do carro.
+    """
+    # Tier 2 + assignment by world-X (substitui o uso directo de lanes[1], lanes[2])
+    lane_left, lane_right = _assign_ego_lanes(lanes, calib)
+
+    bottom_threshold = img_h * MIN_BOTTOM_Y_RATIO
+
+    def has_span(pts):
+        if not pts or len(pts) < 3:
+            return False
+        ys = [p[1] for p in pts]
+        return (max(ys) - min(ys)) >= MIN_LINE_SPAN_PX
+
+    def has_bottom_coverage(pts):
+        if not pts:
+            return False
+        return sum(1 for p in pts if p[1] >= bottom_threshold) >= MIN_BOTTOM_POINTS
+
+    def bottom_n(pts, n=5):
         return sorted(pts, key=lambda p: p[1], reverse=True)[:n]
 
-    left_pts  = bottom_points(lanes[1])
-    right_pts = bottom_points(lanes[2])
+    # C: span check (aplicado sobre inliers do polyfit)
+    left_ok  = has_span(lane_left)
+    right_ok = has_span(lane_right)
+
+    # A: em single-mode, exige cobertura na zona perto do carro
+    if left_ok and not right_ok and not has_bottom_coverage(lane_left):
+        return None, "none"
+    if right_ok and not left_ok and not has_bottom_coverage(lane_right):
+        return None, "none"
+    if not left_ok and not right_ok:
+        return None, "none"
+
+    left_pts  = bottom_n(lane_left)  if left_ok  else None
+    right_pts = bottom_n(lane_right) if right_ok else None
     has_left  = left_pts  is not None
     has_right = right_pts is not None
 
-    if not has_left and not has_right:
-        return None, "none"
+    def _lookahead_world_x(lane_pts):
+        """
+        Look-ahead world_x: fit polyfit, avalia a um Y mais alto que o bottom
+        (LOOKAHEAD_Y_RATIO da gama de Ys). Captura "para onde a lane vai", não
+        apenas onde está agora. Em curva, este sinal tem o sinal CORRECTO para
+        o LKA virar na direção da curva.
+        Fallback: mean(bottom 5 pts) se polyfit falhar.
+        """
+        if not lane_pts:
+            return None
+        arr = np.asarray(lane_pts, dtype=np.float32)
+        xs, ys = arr[:, 0], arr[:, 1]
+        # Fallback: insufficient pts/span
+        if len(lane_pts) < POLYFIT_DEG + 2 or (ys.max() - ys.min()) < POLYFIT_MIN_Y_SPAN:
+            bp = sorted(lane_pts, key=lambda p: p[1], reverse=True)[:5]
+            w  = calib.pixels_to_world(bp)
+            return float(np.mean(w[:, 0])) if w is not None and len(w) else None
+        try:
+            coeffs = np.polyfit(ys, xs, POLYFIT_DEG)
+        except (np.linalg.LinAlgError, ValueError, TypeError):
+            bp = sorted(lane_pts, key=lambda p: p[1], reverse=True)[:5]
+            w  = calib.pixels_to_world(bp)
+            return float(np.mean(w[:, 0])) if w is not None and len(w) else None
+        # Look-ahead Y: ratio da gama, do bottom para o topo
+        y_lookahead = float(ys.max() - LOOKAHEAD_Y_RATIO * (ys.max() - ys.min()))
+        x_lookahead = float(np.polyval(coeffs, y_lookahead))
+        w = calib.pixels_to_world([(x_lookahead, y_lookahead)])
+        if w is None or len(w) == 0:
+            return None
+        return float(w[0, 0])
 
     left_x = right_x = None
     if has_left:
-        left_world = calib.pixels_to_world(left_pts)
-        left_x = float(np.mean(left_world[:, 0]))
+        left_x  = _lookahead_world_x(lane_left)
     if has_right:
+        right_x = _lookahead_world_x(lane_right)
+    # Safety: se polyfit falhou em ambas, fallback ao bottom mean (legacy)
+    if has_left and left_x is None:
+        left_world  = calib.pixels_to_world(left_pts)
+        left_x      = float(np.mean(left_world[:, 0]))
+    if has_right and right_x is None:
         right_world = calib.pixels_to_world(right_pts)
-        right_x = float(np.mean(right_world[:, 0]))
+        right_x     = float(np.mean(right_world[:, 0]))
 
     if has_left and has_right:
         return -((left_x + right_x) / 2.0) - CAMERA_OFFSET_CM, "both"
@@ -273,13 +496,38 @@ def calc_lateral_deviation_cm(lanes, calib):
     return -(right_x - 15.0) - CAMERA_OFFSET_CM, "right"
 
 
-def apply_single_lane_boost(deviation, status):
-    """Amplifica desvio quando só uma lane é visível e |deviation| > threshold."""
-    if status not in ("left", "right") or deviation is None:
-        return deviation
-    if abs(deviation) < SINGLE_LANE_BOOST_THRESHOLD:
-        return deviation
-    return deviation * SINGLE_LANE_BOOST_FACTOR
+# ══════════════════════════════════════════════════════════════════════════════
+# Tier 1B — Filtro de continuidade lateral
+# ══════════════════════════════════════════════════════════════════════════════
+class LateralContinuityFilter:
+    """
+    Rejeita leituras com salto lateral suspeito (> MAX_X_JUMP_CM por frame).
+    Se rejeitar MAX_REJECT_STREAK frames seguidos, aceita o próximo para evitar
+    ficar preso num valor antigo se a deviation realmente mudou de regime.
+    Quando rejeita, devolve (None, "none") → o LaneHold a jusante mantém o valor
+    anterior com decaimento.
+    """
+    def __init__(self, max_jump_cm=MAX_X_JUMP_CM, max_streak=MAX_REJECT_STREAK):
+        self._max_jump   = max_jump_cm
+        self._max_streak = max_streak
+        self._last_dev   = None
+        self._streak     = 0
+
+    def filter(self, deviation, status):
+        if status == "none" or deviation is None:
+            return deviation, status
+        if self._last_dev is None:
+            self._last_dev = deviation
+            self._streak   = 0
+            return deviation, status
+        if abs(deviation - self._last_dev) > self._max_jump:
+            self._streak += 1
+            if self._streak < self._max_streak:
+                return None, "none"
+            # streak excedido → assume que houve mudança real de regime
+        self._last_dev = deviation
+        self._streak   = 0
+        return deviation, status
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -453,8 +701,77 @@ def scale_boxes(boxes):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Geometria câmara
+# ══════════════════════════════════════════════════════════════════════════════
+def get_theta_cam(cx_px: float) -> float:
+    """Ângulo horizontal em graus. 0=frente, +=direita, -=esquerda."""
+    image_center_x = FULL_W / 2 + CAMERA_OFFSET_PX
+    return (cx_px - image_center_x) * (FOV_H / FULL_W)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Visualização
 # ══════════════════════════════════════════════════════════════════════════════
+def draw_obstacle_overlay(frame, boxes, scores, classes, obj_data):
+    """
+    Para cada detecção em OBSTACLE_VIS_CLASSES desenha:
+      • linha do centro-baixo do carro até ao fundo do bounding box
+      • label com distância em cm no ponto médio da linha
+      • label com theta (ângulo) sobre o bounding box
+      • arco no carro mostrando o ângulo em relação à frente
+    boxes:    coordenadas normalizadas [0,1]
+    obj_data: lista de (dist_m, theta) pré-calculados no loop principal
+    """
+    h, w = frame.shape[:2]
+    car_cx     = int(w // 2 + CAMERA_OFFSET_PX)
+    car_origin = (car_cx, h - 1)
+    COLOR      = (0, 165, 255)
+
+    for box_norm, score, cls_id, (dist_m, theta) in zip(boxes, scores, classes, obj_data):
+        if int(cls_id) not in OBSTACLE_VIS_CLASSES:
+            continue
+
+        x1 = int(box_norm[0] * w)
+        y1 = int(box_norm[1] * h)
+        x2 = int(box_norm[2] * w)
+        y2 = int(box_norm[3] * h)
+        cx_px   = (x1 + x2) / 2.0
+        dist_cm = dist_m * 100.0
+
+        # Linha car-origin → fundo do bounding box
+        target = (int(cx_px), y2)
+        cv2.line(frame, car_origin, target, COLOR, 2)
+
+        # Label distância no ponto médio
+        mid_x = (car_origin[0] + target[0]) // 2
+        mid_y = (car_origin[1] + target[1]) // 2
+        d_label = f"{dist_cm:.0f} cm"
+        (dw, dh), _ = cv2.getTextSize(d_label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 2)
+        cv2.rectangle(frame, (mid_x + 3, mid_y - dh - 3), (mid_x + 5 + dw, mid_y + 3), (0, 0, 0), -1)
+        cv2.putText(frame, d_label, (mid_x + 4, mid_y - 2),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55, COLOR, 2)
+
+        # Label theta sobre o bounding box
+        t_label = f"ang: {theta:+.1f}deg"
+        ty = max(y1 - 6, 14)
+        (tw, th2), _ = cv2.getTextSize(t_label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 2)
+        cv2.rectangle(frame, (x1, ty - th2 - 2), (x1 + tw + 4, ty + 3), (0, 0, 0), -1)
+        cv2.putText(frame, t_label, (x1 + 2, ty),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 220, 255), 2)
+
+        # Arco no carro mostrando o ângulo em relação à frente (270° = cima no OpenCV)
+        arc_r    = 45
+        arc_base = 270.0
+        arc_end  = arc_base + theta
+        cv2.ellipse(frame, car_origin, (arc_r, arc_r), 0,
+                    min(arc_base, arc_end), max(arc_base, arc_end), COLOR, 2)
+        ep_x = int(car_cx + arc_r * np.sin(np.radians(theta)))
+        ep_y = int(h - 1  - arc_r * np.cos(np.radians(theta)))
+        cv2.line(frame, car_origin, (ep_x, ep_y), COLOR, 1)
+
+    return frame
+
+
 def draw_detections(frame, boxes, scores, classes):
     font = cv2.FONT_HERSHEY_SIMPLEX
     for box, score, cls in zip(boxes, scores, classes):
@@ -503,7 +820,7 @@ def draw_overlay_dual(frame, fps, frame_idx,
         cv2.putText(frame, text, (5, 16 + i * 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.33, color, 1)
 
-    cv2.putText(frame, "SEAME | UFLDv2 + best_model (v15 — lane hold + decay)",
+    cv2.putText(frame, "SEAME | UFLDv2 + best_model (v16 — yolo skip-frame)",
                 (w - 310, h - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (200, 200, 200), 1)
     return frame
 
@@ -511,7 +828,7 @@ def draw_overlay_dual(frame, fps, frame_idx,
 # ══════════════════════════════════════════════════════════════════════════════
 # Pipeline principal
 # ══════════════════════════════════════════════════════════════════════════════
-def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
+def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False, yolo_every_n=None):
     start_socket_thread()
     W1, b1, W2, b2, keep_rows = load_weights(WEIGHTS_PATH)
 
@@ -521,8 +838,9 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
         W2 = np.ascontiguousarray(W2, dtype=np.float32)
         b2 = np.ascontiguousarray(b2, dtype=np.float32)
 
-    calib     = Calibration(is_rear=is_rear)
-    lane_hold = LaneHold()
+    calib          = Calibration(is_rear=is_rear)
+    lane_hold      = LaneHold()
+    lateral_filter = LateralContinuityFilter()
 
     pp_backend = "C++ (OpenBLAS)" if _cpp_postprocess is not None else "Python (numpy)"
     print(f"\nFrame câmara:      {FULL_W}×{FULL_H} (via CameraBroker)")
@@ -559,6 +877,8 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
               f"{'Total':>7} {'Lanes':>6} {'Dets':>5} {'Dev':>9} {'Status'}")
         print("─" * 108)
 
+        every_n = yolo_every_n if yolo_every_n is not None else YOLO_EVERY_N_FRAMES
+
         frame_idx         = 0
         t_start           = time.time()
         times_all         = []
@@ -566,6 +886,12 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
         temporal_smoother = TemporalLaneSmoother()
         prev_status       = None
         single_lane_mode  = False
+
+        # Cache das últimas deteções YOLO — reutilizadas nos frames com skip
+        last_boxes      = np.empty((0, 4))
+        last_scores     = np.empty((0,))
+        last_classes    = np.empty((0,), dtype=int)
+        last_boxes_full = np.empty((0, 4), dtype=int)
 
         try:
             while (time.time() - t_start) < duration_seconds:
@@ -587,8 +913,12 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 t_lane_pre = (time.time() - t0) * 1000
 
                 # ── YPre em paralelo com LHailo ───────────────────────────────
-                t0_ypre  = time.time()
-                fut_ypre = executor.submit(preprocess_yolo, frame)
+                run_yolo = (frame_idx % every_n == 0)
+                if run_yolo:
+                    t0_ypre  = time.time()
+                    fut_ypre = executor.submit(preprocess_yolo, frame)
+                else:
+                    fut_ypre = None
 
                 t0 = time.time()
                 with lane_ng.activate():
@@ -596,8 +926,12 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                         lane_out = pipe.infer({LANE_INPUT: img_lane[np.newaxis]})
                 t_lane_hailo = (time.time() - t0) * 1000
 
-                img_yolo   = fut_ypre.result()
-                t_yolo_pre = (time.time() - t0_ypre) * 1000
+                if fut_ypre is not None:
+                    img_yolo   = fut_ypre.result()
+                    t_yolo_pre = (time.time() - t0_ypre) * 1000
+                else:
+                    img_yolo   = None
+                    t_yolo_pre = 0.0
 
                 # ── LPost em paralelo com YHailo (C++ liberta GIL) ────────────
                 _lane_out    = lane_out
@@ -616,11 +950,15 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
 
                 fut_lpost = executor.submit(_run_lane_post)
 
-                t0 = time.time()
-                with yolo_ng.activate():
-                    with InferVStreams(yolo_ng, yolo_inp, yolo_outp) as pipe:
-                        yolo_out = pipe.infer({YOLO_INPUT: img_yolo[np.newaxis]})
-                t_yolo_hailo = (time.time() - t0) * 1000
+                if run_yolo and img_yolo is not None:
+                    t0 = time.time()
+                    with yolo_ng.activate():
+                        with InferVStreams(yolo_ng, yolo_inp, yolo_outp) as pipe:
+                            yolo_out = pipe.infer({YOLO_INPUT: img_yolo[np.newaxis]})
+                    t_yolo_hailo = (time.time() - t0) * 1000
+                else:
+                    yolo_out     = None
+                    t_yolo_hailo = 0.0
 
                 lanes, t_lane_post = fut_lpost.result()
 
@@ -629,9 +967,12 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 lanes             = temporal_smoother.update(lanes)
                 lanes             = smooth_lanes(lanes)
                 if calib.enabled:
-                    deviation, status = calc_lateral_deviation_cm(lanes, calib)
+                    deviation, status = calc_lateral_deviation_cm(lanes, calib, FULL_H)
                 else:
                     deviation, status = calc_lateral_deviation(lanes)
+
+                # ── Tier 1B: continuidade lateral entre frames ────────────────
+                deviation, status = lateral_filter.filter(deviation, status)
                 t_coords          = (time.time() - t0) * 1000
 
                 # ── Lane hold com decaimento ──────────────────────────────────
@@ -639,11 +980,8 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 deviation, status = lane_hold.update(deviation, status)
                 hold_active       = (raw_status == "none" and status != "none")
 
-                # ── Single-lane boost ────────────────────────────────────────
-                deviation = apply_single_lane_boost(deviation, status)
-
                 # ── Publicar no ADAS Manager via socket ───────────────────────
-                publish_deviation(deviation, status)
+                publish_deviation(deviation if deviation is not None else 0.0, status)
 
                 # ── Re-distort para display ───────────────────────────────────
                 lanes_disp = [calib.undistorted_to_distorted(l) for l in lanes]
@@ -655,21 +993,37 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                 prev_status = status
 
                 # ── Post-processing YOLO ──────────────────────────────────────
-                t0                     = time.time()
-                boxes, scores, classes = decode_yolov8_outputs(yolo_out)
-                boxes_full             = scale_boxes(boxes)
-                t_yolo_post            = (time.time() - t0) * 1000
+                if yolo_out is not None:
+                    t0                     = time.time()
+                    boxes, scores, classes = decode_yolov8_outputs(yolo_out)
+                    boxes_full             = scale_boxes(boxes)
+                    t_yolo_post            = (time.time() - t0) * 1000
+                    # actualizar cache
+                    last_boxes      = boxes
+                    last_scores     = scores
+                    last_classes    = classes
+                    last_boxes_full = boxes_full
+                else:
+                    # frame skipped — reutilizar última deteção válida
+                    boxes       = last_boxes
+                    scores      = last_scores
+                    classes     = last_classes
+                    boxes_full  = last_boxes_full
+                    t_yolo_post = 0.0
 
                 # ── Publicar objectos no ADAS Manager ─────────────────────────
                 obj_list = []
+                obj_data = []   # (dist_m, theta) por detecção — partilhado com overlay
                 for box, score, cls_id in zip(boxes, scores, classes):
                     sign_cls = YOLO_CLASS_MAP.get(int(cls_id), SIGN_UNKNOWN)
                     box_h_px = (box[3] - box[1]) * FULL_H
-                    dist_m   = _DIST_K / box_h_px if box_h_px > 0 else 0.0
-                    if dist_m > _DIST_MAX or dist_m < _DIST_MIN:
+                    K        = _DIST_K_PER_CLASS.get(int(cls_id), _DIST_K)
+                    dist_m   = K / box_h_px if box_h_px > 0 else 0.0
+                    if dist_m < _DIST_MIN or dist_m > _DIST_MAX:
                         dist_m = 9999.0
                     cx_px    = ((box[0] + box[2]) / 2.0) * FULL_W
                     theta    = get_theta_cam(cx_px)
+                    obj_data.append((dist_m, theta))
                     obj_list.append((sign_cls, float(score), dist_m, theta))
                 publish_objects(obj_list)
 
@@ -706,6 +1060,7 @@ def run(frame_queue, duration_seconds=60, save_video=False, is_rear=False):
                     frame_out  = draw_drivable_area(frame.copy(), lanes_disp)
                     frame_out  = draw_lanes(frame_out, lanes_disp)
                     frame_out  = draw_detections(frame_out, boxes_full, scores, classes)
+                    frame_out  = draw_obstacle_overlay(frame_out, boxes, scores, classes, obj_data)
                     frame_out  = draw_overlay_dual(
                         frame_out, fps, frame_idx,
                         t_lane_pre, t_lane_hailo, t_lane_post, t_coords,
@@ -750,26 +1105,42 @@ if __name__ == "__main__":
     sys.path.insert(0, "/opt/seame/adas")
     from camera_broker import CameraBroker
 
-    p = argparse.ArgumentParser(description="SEAME Dual Inference v15 — socket → ADAS Manager")
+    p = argparse.ArgumentParser(description="SEAME Dual Inference v16 — socket → ADAS Manager")
     p.add_argument("duration", type=int, nargs="?", default=60)
-    p.add_argument("--save",   action="store_true")
-    p.add_argument("--camera", type=int, default=1,
+    p.add_argument("--save",      action="store_true")
+    p.add_argument("--camera",    type=int, default=1,
                    help="1=frente (default), 0=trás")
-    p.add_argument("--flip",   type=int, default=None,
+    p.add_argument("--flip",      type=int, default=None,
                    help="0=vertical, 1=horizontal, -1=180°")
+    p.add_argument("--vis-class", type=int, nargs="+", default=None,
+                   help="Classes com overlay distância/theta (default: usa OBSTACLE_VIS_CLASSES). "
+                        "Ex: --vis-class 9  ou  --vis-class 8 9 11")
+    p.add_argument("--yolo-every", type=int, default=None, metavar="N",
+                   help="Corre YOLO 1 em cada N frames (default: usa YOLO_EVERY_N_FRAMES). "
+                        "1=todos, 2=skip alternado, 3=1 em cada 3, etc.")
     args = p.parse_args()
 
-    cam_label = "TRASEIRA (flip=-1)" if args.camera == 0 else "FRONTAL"
-    print(f"SEAME | Dual Inference v15: UFLDv2 (lane) + best_model (objects)")
-    print(f"Câmara: {cam_label} (index={args.camera}) | {FULL_W}×{FULL_H} @ {CAM_FPS}fps")
-    print(f"PostProcess: C++ (OpenBLAS, sem GIL) | Overlap: YPre/LHailo + LPost/YHailo\n")
+    if args.vis_class is not None:
+        OBSTACLE_VIS_CLASSES.clear()
+        OBSTACLE_VIS_CLASSES.update(args.vis_class)
 
-    broker = CameraBroker(width=FULL_W, height=FULL_H, fps=CAM_FPS,
+    yolo_every = args.yolo_every  # None → usa YOLO_EVERY_N_FRAMES do módulo
+
+    cam_label  = "TRASEIRA (flip=-1)" if args.camera == 0 else "FRONTAL"
+    every_disp = yolo_every if yolo_every is not None else YOLO_EVERY_N_FRAMES
+    print(f"SEAME | Dual Inference v16: UFLDv2 (lane) + best_model (objects)")
+    print(f"Câmara: {cam_label} (index={args.camera}) | {FULL_W}×{FULL_H} @ {CAM_FPS}fps")
+    print(f"Overlay distância/theta: classes {sorted(OBSTACLE_VIS_CLASSES)}")
+    print(f"YOLO skip: 1 em cada {every_disp} frames | "
+          f"PostProcess: C++ (OpenBLAS, sem GIL) | Overlap: YPre/LHailo + LPost/YHailo\n")
+
+    broker = CameraBroker(width=FULL_W, height=FULL_H, fps=CAM_FPS, shutter=4000, gain=3.0,
                           camera=args.camera, flip=args.flip)
     q = broker.register("dual")
     broker.start()
 
     run(q, duration_seconds=args.duration, save_video=args.save,
+        yolo_every_n=yolo_every,
         is_rear=(args.camera == 0))
 
     broker.stop()

@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "can_id.h"
+#include "can_protocol.h"   // CtrlStatus_t, CAN_ID_CTRL_STATUS
 
 class CanReceiver {
 public:
@@ -33,9 +34,9 @@ public:
             close(fd_); fd_ = -1; return -1;
         }
 
-        // Accept only SRF08 frames — drops everything else at kernel level
+        // Accept only CtrlStatus (0x213) — contains current_speed_cms + gap_cm (SRF08)
         struct can_filter filter[1];
-        filter[0].can_id   = CAN_ID_SRF08_DISTANCE;
+        filter[0].can_id   = CAN_ID_CTRL_STATUS;
         filter[0].can_mask = CAN_SFF_MASK;
         setsockopt(fd_, SOL_CAN_RAW, CAN_RAW_FILTER, filter, sizeof(filter));
 
@@ -46,20 +47,17 @@ public:
         return fd_;
     }
 
-    // Returns true if a valid SRF08 frame was received, fills distance_mm.
-    // Returns false on timeout or invalid frame — caller should retry.
-    bool read_srf08(uint16_t& distance_mm) {
+    // Returns true if a valid CtrlStatus frame (0x213) was received.
+    // Contains current_speed_cms (Hall encoder) and gap_cm (SRF08).
+    bool read_ctrl_status(CtrlStatus_t& status) {
         if (fd_ < 0) return false;
 
         struct can_frame frame{};
         if (read(fd_, &frame, sizeof(frame)) != sizeof(frame)) return false;
-        if (frame.can_id  != CAN_ID_SRF08_DISTANCE)            return false;
-        if (frame.can_dlc <  sizeof(SRF08Distance_t))           return false;
+        if (frame.can_id  != CAN_ID_CTRL_STATUS)               return false;
+        if (frame.can_dlc <  sizeof(CtrlStatus_t))              return false;
 
-        const auto* srf = reinterpret_cast<const SRF08Distance_t*>(frame.data);
-        if (!(srf->status & 0x01)) return false;  // bit 0: valid reading
-
-        distance_mm = srf->distance_mm;
+        memcpy(&status, frame.data, sizeof(CtrlStatus_t));
         return true;
     }
 

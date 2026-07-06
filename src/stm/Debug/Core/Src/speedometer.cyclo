@@ -1,5 +1,5 @@
-../Core/Src/speedometer.c:30:6:Speedometer_Init	1
-../Core/Src/speedometer.c:46:6:Speedometer_CountPulse	3
-../Core/Src/speedometer.c:63:6:Speedometer_CalculateSpeed	1
-../Core/Src/speedometer.c:83:7:Speedometer_GetSpeed	1
-../Core/Src/speedometer.c:92:7:Speedometer_GetRPM	1
+../Core/Src/speedometer.c:35:6:Speedometer_Init	1
+../Core/Src/speedometer.c:51:6:Speedometer_PulseISR	1
+../Core/Src/speedometer.c:58:6:Speedometer_CalculateSpeed	4
+../Core/Src/speedometer.c:94:7:Speedometer_GetSpeed	1
+../Core/Src/speedometer.c:99:7:Speedometer_GetRPM	1

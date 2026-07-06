@@ -25,6 +25,7 @@ Core/Src/vl53l5cx_driver.o: ../Core/Src/vl53l5cx_driver.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h \
@@ -51,7 +52,7 @@ Core/Src/vl53l5cx_driver.o: ../Core/Src/vl53l5cx_driver.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h \
- ../Core/Inc/i2c.h
+ ../Core/Inc/i2c.h ../Core/Inc/gpio.h ../Core/Inc/i2c.h
 ../Core/Inc/vl53l5cx_driver.h:
 ../Drivers/VL53L5CX/inc/vl53l5cx_api.h:
 ../Drivers/VL53L5CX/inc/platform.h:
@@ -79,6 +80,7 @@ Core/Src/vl53l5cx_driver.o: ../Core/Src/vl53l5cx_driver.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h:
@@ -106,4 +108,6 @@ Core/Src/vl53l5cx_driver.o: ../Core/Src/vl53l5cx_driver.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h:
+../Core/Inc/i2c.h:
+../Core/Inc/gpio.h:
 ../Core/Inc/i2c.h:

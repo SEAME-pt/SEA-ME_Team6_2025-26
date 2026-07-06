@@ -1,6 +1,4 @@
 to_delete
-Team5_Senna_Tech/
-docs/guides/Hailo/5 vs 6.md
 
 # VSCode Settings
 .vscode/
@@ -69,11 +67,4 @@ build/
 *.bin
 *.hex
 *.map
-# Virtual environment
-.venv/
-venv/
-*.pyc
-__pycache__/
-
-# TruDAG generated items (auto-generated, not source)
-docs/TSF/tsf_implementation/.trudag_items/
+ca.key.pem

@@ -6,6 +6,6 @@
 ../Core/Src/lcd1602.c:133:6:LCD1602_SetCursor	2
 ../Core/Src/lcd1602.c:144:6:LCD1602_Print	2
 ../Core/Src/lcd1602.c:158:6:LCD1602_SetRGB	1
-../Core/Src/lcd1602.c:175:6:LCD1602_UpdateLine1	1
-../Core/Src/lcd1602.c:190:6:LCD1602_UpdateLine2	2
-../Core/Src/lcd1602.c:214:6:LCD1602_UpdateDisplay	1
+../Core/Src/lcd1602.c:176:6:LCD1602_UpdateLine1	1
+../Core/Src/lcd1602.c:193:6:LCD1602_UpdateLine2	2
+../Core/Src/lcd1602.c:218:6:LCD1602_UpdateDisplay	1

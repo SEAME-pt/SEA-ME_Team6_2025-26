@@ -13,7 +13,6 @@ Item {
     property real currMotorSpeed: 0
     property real maxMotorSpeed: 120
     property int  currTotalKm: 0
-    property string  streetSignal: ""
     //? Helpers
     property real mainAngleStart: 230
     property real mainAngleSweep: 260
@@ -31,18 +30,9 @@ Item {
     onCurrMotorSpeedChanged: displayMotorSpeed = currMotorSpeed
     Behavior on displayMotorSpeed {
         NumberAnimation {
-            duration: 250
+            duration: 500
             easing.type: Easing.InOutQuad
         }
-    }
-
-    function getImageCenter(val) {
-        if (val === "stop")
-             return "qrc:/assets/icons/stop-signal.svg"
-        // else if (val === 50)
-        //     return "qrc:/assets/icons/stop-signal.svg"
-        // return "qrc:/assets/icons/80-speed-limit.svg"
-        return "qrc:/assets/images/seame-logo.png"
     }
 
     //? OUTER RING
@@ -186,7 +176,7 @@ Item {
 
     Image {
         anchors.centerIn: parent
-        source: getImageCenter(root.streetSignal)
+        source: "qrc:/assets/images/seame-logo.png"
         width: 80
         height: 80
         sourceSize.width: 80

@@ -23,6 +23,7 @@ Core/Src/stm32u5xx_it.o: ../Core/Src/stm32u5xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h \
@@ -48,10 +49,36 @@ Core/Src/stm32u5xx_it.o: ../Core/Src/stm32u5xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_gpio.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h \
- ../Core/Inc/stm32u5xx_it.h ../Core/Inc/app_threadx.h \
+ ../Core/Inc/stm32u5xx_it.h ../Core/Src/../Inc/speedometer.h \
+ ../Core/Src/../Inc/main.h ../Core/Src/../Inc/system_ctx.h \
  ../Middlewares/ST/threadx/common/inc/tx_api.h \
  ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h \
- ../Core/Inc/tx_user.h
+ ../Core/Inc/tx_user.h ../Core/Src/../Inc/vehicle_state.h \
+ ../Core/Src/../Inc/can_id.h ../Core/Src/../Inc/sys_helpers.h \
+ ../Core/Src/../Inc/app_threadx.h ../Core/Src/../Inc/mcp2515.h \
+ ../Core/Src/../Inc/stm32u5xx_hal_conf.h ../Core/Src/../Inc/lps22hh.h \
+ ../Core/Src/../Inc/i2c.h ../Core/Src/../Inc/speedometer.h \
+ ../Core/Src/../Inc/ism330dhcx.h ../Core/Src/../Inc/iis2mdc.h \
+ ../Core/Src/../Inc/veml6030.h ../Core/Src/../Inc/vl53l5cx_driver.h \
+ ../Drivers/VL53L5CX/inc/vl53l5cx_api.h \
+ ../Drivers/VL53L5CX/inc/platform.h ../Core/Src/../Inc/hts221.h \
+ ../Core/Src/../Inc/thread_config.h ../Core/Src/../Inc/lcd1602.h \
+ ../Core/Src/../Inc/motor_control.h ../Core/Src/../Inc/servo.h \
+ ../Core/Src/../Inc/tim.h ../Core/Src/../Inc/emergency_stop.h \
+ ../Core/Src/../Inc/srf08.h ../Core/Src/../Inc/ina226.h \
+ ../Core/Src/../Inc/gesture_simple.h \
+ ../Core/Src/../Inc/tasks/task_heartbeat.h ../Core/Inc/mcp2515.h \
+ ../Core/Inc/can_id.h ../Core/Src/../Inc/tasks/task_environment.h \
+ ../Core/Inc/lps22hh.h ../Core/Inc/hts221.h ../Core/Inc/veml6030.h \
+ ../Core/Inc/can_tx.h ../Core/Inc/mcp2515.h ../Core/Inc/main.h \
+ ../Core/Src/../Inc/tasks/task_speed.h ../Core/Inc/speedometer.h \
+ ../Core/Src/../Inc/tasks/task_imu.h ../Core/Inc/ism330dhcx.h \
+ ../Core/Inc/iis2mdc.h ../Core/Src/../Inc/tasks/task_tof.h \
+ ../Core/Src/../Inc/tasks/task_srf08.h ../Core/Inc/i2c.h \
+ ../Core/Inc/srf08.h ../Core/Inc/motor_control.h \
+ ../Core/Inc/emergency_stop.h ../Core/Src/../Inc/tasks/task_battery.h \
+ ../Core/Inc/ina226.h ../Core/Src/../Inc/tasks/task_can_rx.h \
+ ../Core/Src/../Inc/tasks/task_aeb.h
 ../Core/Inc/main.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
 ../Core/Inc/stm32u5xx_hal_conf.h:
@@ -77,6 +104,7 @@ Core/Src/stm32u5xx_it.o: ../Core/Src/stm32u5xx_it.c ../Core/Inc/main.h \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h:
@@ -103,7 +131,59 @@ Core/Src/stm32u5xx_it.o: ../Core/Src/stm32u5xx_it.c ../Core/Inc/main.h \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_dma.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_ll_exti.h:
 ../Core/Inc/stm32u5xx_it.h:
-../Core/Inc/app_threadx.h:
+../Core/Src/../Inc/speedometer.h:
+../Core/Src/../Inc/main.h:
+../Core/Src/../Inc/system_ctx.h:
 ../Middlewares/ST/threadx/common/inc/tx_api.h:
 ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h:
 ../Core/Inc/tx_user.h:
+../Core/Src/../Inc/vehicle_state.h:
+../Core/Src/../Inc/can_id.h:
+../Core/Src/../Inc/sys_helpers.h:
+../Core/Src/../Inc/app_threadx.h:
+../Core/Src/../Inc/mcp2515.h:
+../Core/Src/../Inc/stm32u5xx_hal_conf.h:
+../Core/Src/../Inc/lps22hh.h:
+../Core/Src/../Inc/i2c.h:
+../Core/Src/../Inc/speedometer.h:
+../Core/Src/../Inc/ism330dhcx.h:
+../Core/Src/../Inc/iis2mdc.h:
+../Core/Src/../Inc/veml6030.h:
+../Core/Src/../Inc/vl53l5cx_driver.h:
+../Drivers/VL53L5CX/inc/vl53l5cx_api.h:
+../Drivers/VL53L5CX/inc/platform.h:
+../Core/Src/../Inc/hts221.h:
+../Core/Src/../Inc/thread_config.h:
+../Core/Src/../Inc/lcd1602.h:
+../Core/Src/../Inc/motor_control.h:
+../Core/Src/../Inc/servo.h:
+../Core/Src/../Inc/tim.h:
+../Core/Src/../Inc/emergency_stop.h:
+../Core/Src/../Inc/srf08.h:
+../Core/Src/../Inc/ina226.h:
+../Core/Src/../Inc/gesture_simple.h:
+../Core/Src/../Inc/tasks/task_heartbeat.h:
+../Core/Inc/mcp2515.h:
+../Core/Inc/can_id.h:
+../Core/Src/../Inc/tasks/task_environment.h:
+../Core/Inc/lps22hh.h:
+../Core/Inc/hts221.h:
+../Core/Inc/veml6030.h:
+../Core/Inc/can_tx.h:
+../Core/Inc/mcp2515.h:
+../Core/Inc/main.h:
+../Core/Src/../Inc/tasks/task_speed.h:
+../Core/Inc/speedometer.h:
+../Core/Src/../Inc/tasks/task_imu.h:
+../Core/Inc/ism330dhcx.h:
+../Core/Inc/iis2mdc.h:
+../Core/Src/../Inc/tasks/task_tof.h:
+../Core/Src/../Inc/tasks/task_srf08.h:
+../Core/Inc/i2c.h:
+../Core/Inc/srf08.h:
+../Core/Inc/motor_control.h:
+../Core/Inc/emergency_stop.h:
+../Core/Src/../Inc/tasks/task_battery.h:
+../Core/Inc/ina226.h:
+../Core/Src/../Inc/tasks/task_can_rx.h:
+../Core/Src/../Inc/tasks/task_aeb.h:

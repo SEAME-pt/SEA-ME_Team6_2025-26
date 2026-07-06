@@ -14,6 +14,7 @@ struct AdasConfig {
     int   degraded_threshold_frames = 10;
     int   emergency_threshold_ms    = 500;
     int   recovery_threshold_frames = 15;
+    int   emergency_timeout_ms      = 10000;  /* force-recover EMERGENCY_STOP → DEGRADED after this long */
     float obj_conf_thresh           = 0.60f;
     float collision_dist_m          = 0.30f;
     int   lane_timeout_ms           = 500;
@@ -69,6 +70,7 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.degraded_threshold_frames = static_cast<int>(get("degraded_threshold_frames",  10.0f));
     cfg.emergency_threshold_ms    = static_cast<int>(get("emergency_threshold_ms",    500.0f));
     cfg.recovery_threshold_frames = static_cast<int>(get("recovery_threshold_frames",  15.0f));
+    cfg.emergency_timeout_ms      = static_cast<int>(get("emergency_timeout_ms",   10000.0f));
     cfg.obj_conf_thresh           = get("obj_conf_thresh",   0.60f);
     cfg.collision_dist_m          = get("collision_dist_m",  0.30f);
     cfg.lane_timeout_ms           = static_cast<int>(get("lane_timeout_ms",  500.0f));

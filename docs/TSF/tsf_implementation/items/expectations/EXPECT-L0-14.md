@@ -6,8 +6,8 @@ text: The project implements the Trustable Safety Framework for requirements def
 level: '1.14'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-14.md
+- path: ../assertions/ASSERT-L0-14.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

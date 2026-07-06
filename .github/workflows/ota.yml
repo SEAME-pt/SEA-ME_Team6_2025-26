@@ -93,6 +93,58 @@ jobs:
             src/kuksa/kuksa_RPi5/vss_min.json
 
   # ============================================================
+  # RPi5 Build (64-bit) - ADAS Manager
+  # ============================================================
+  build-adas-rpi5:
+    name: Build ADAS Manager (RPi5 - 64-bit)
+    runs-on: ubuntu-22.04
+    if: ${{ github.event.inputs.platform != 'rpi4' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull RPi5 SDK (64-bit)
+        run: docker pull ${{ env.SDK_IMAGE_RPI5 }}
+
+      - name: Build ADAS Manager (aarch64)
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            ${{ env.SDK_IMAGE_RPI5 }} \
+            bash -c '
+              set -e
+
+              echo "=== Building ADAS Manager for RPi5 (aarch64) ==="
+
+              if [ -f /opt/agl-sdk/environment-setup-aarch64-agl-linux ]; then
+                source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+              elif [ -f /opt/agl-sdk/environment-setup-* ]; then
+                source /opt/agl-sdk/environment-setup-*
+              fi
+
+              echo "CXX=$CXX"
+
+              cd /workspace/src/ADAS-Manager
+              make clean || true
+              make
+
+              echo "=== Verifying binary ==="
+              file bin/adas_manager
+              file bin/adas_manager | grep -q "64-bit\|aarch64" && echo "✅ Binary is 64-bit" || echo "⚠️ Check binary architecture"
+            '
+
+      - name: Upload ADAS Manager artifact (RPi5)
+        uses: actions/upload-artifact@v4
+        with:
+          name: adas-manager-rpi5
+          path: |
+            src/ADAS-Manager/bin/adas_manager
+            src/ADAS-Manager/lka_config.conf
+            src/ADAS-Manager/kuksa_bridge.py
+            src/ADAS-Manager/socket_sender.py
+
+  # ============================================================
   # RPi4 Build (32-bit) - Qt Cluster
   # ============================================================
   build-cluster-rpi4:
@@ -129,26 +181,29 @@ jobs:
               qt6-build.sh /workspace/cluster/
               
               echo "=== Verifying binary architecture ==="
-              file /workspace/cluster/build-arm/HelloQt6Qml
-              file /workspace/cluster/build-arm/HelloQt6Qml | grep -q "32-bit\|ARM" && echo "✅ Binary is 32-bit ARM" || echo "⚠️ Check binary architecture"
+              file /workspace/cluster/build-arm/ClusterApp
+              file /workspace/cluster/build-arm/ClusterApp | grep -q "32-bit\|ARM" && echo "✅ Binary is 32-bit ARM" || echo "⚠️ Check binary architecture"
             '
 
       - name: Upload Cluster artifact (RPi4)
         uses: actions/upload-artifact@v4
         with:
           name: cluster-rpi4
-          path: src/cluster/build-arm/HelloQt6Qml
+          path: src/cluster/build-arm/ClusterApp
 
   # ============================================================
   # Release - Create separate packages for each platform
   # ============================================================
   release:
     name: Create OTA Releases
-    needs: [build-kuksa-rpi5, build-cluster-rpi4]
-    if: always() && (needs.build-kuksa-rpi5.result == 'success' || needs.build-cluster-rpi4.result == 'success')
+    needs: [build-kuksa-rpi5, build-cluster-rpi4, build-adas-rpi5]
+    if: always() && (needs.build-kuksa-rpi5.result == 'success' || needs.build-cluster-rpi4.result == 'success' || needs.build-adas-rpi5.result == 'success')
     runs-on: ubuntu-22.04
-    
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Get version
         id: version
         run: |
@@ -166,9 +221,35 @@ jobs:
           name: kuksa-rpi5
           path: ota-rpi5/kuksa
 
+      - name: Download ADAS Manager artifact (RPi5)
+        if: needs.build-adas-rpi5.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: adas-manager-rpi5
+          path: ota-rpi5/adas-manager
+
       - name: Package OTA for RPi5
-        if: needs.build-kuksa-rpi5.result == 'success'
+        if: needs.build-kuksa-rpi5.result == 'success' || needs.build-adas-rpi5.result == 'success'
         run: |
+          # Add inference scripts
+          mkdir -p ota-rpi5/inference
+          cp -r src/lane-detection/inference/. ota-rpi5/inference/
+
+          # Add systemd service files
+          mkdir -p ota-rpi5/services
+          cp src/ADAS-Manager/adas-manager.service          ota-rpi5/services/
+          cp src/lane-detection/inference/inference.service ota-rpi5/services/
+          cp scripts/ota-check.service                      ota-rpi5/services/
+
+          # Add OTA check script
+          mkdir -p ota-rpi5/ota
+          cp scripts/ota-check.sh ota-rpi5/ota/
+          chmod +x ota-rpi5/ota/ota-check.sh
+
+          # Add install script
+          cp scripts/ota-install-rpi5.sh ota-rpi5/install.sh
+          chmod +x ota-rpi5/install.sh
+
           echo "=== RPi5 OTA Package Contents ==="
           find ota-rpi5 -type f
           tar -czf update-rpi5.tar.gz -C ota-rpi5 .
@@ -189,6 +270,57 @@ jobs:
           find ota-rpi4 -type f
           tar -czf update-rpi4.tar.gz -C ota-rpi4 .
           sha256sum update-rpi4.tar.gz > hash-rpi4.txt
+
+      # --- RAUC Bundle (RPi5 app-only) ---
+      - name: Install RAUC (for bundle creation)
+        if: needs.build-adas-rpi5.result == 'success'
+        run: sudo apt-get install -y rauc
+
+      - name: Create RAUC bundle (RPi5 + Cluster)
+        if: needs.build-adas-rpi5.result == 'success'
+        env:
+          RAUC_KEY: ${{ secrets.RAUC_SIGNING_KEY }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          echo "$RAUC_KEY" > ca.key.pem
+          cp src/ota/rauc/ca.cert.pem .
+
+          mkdir -p rauc-staging
+
+          cp ota-rpi5/adas-manager/bin/adas_manager     rauc-staging/
+          cp ota-rpi5/adas-manager/kuksa_bridge.py      rauc-staging/
+          cp ota-rpi5/adas-manager/socket_sender.py     rauc-staging/
+          cp -r ota-rpi5/inference                      rauc-staging/
+
+          chmod +x rauc-staging/adas_manager
+
+          # Include ClusterApp if RPi4 build succeeded
+          if [ -f ota-rpi4/cluster/ClusterApp ]; then
+            mkdir -p rauc-staging/cluster
+            cp ota-rpi4/cluster/ClusterApp rauc-staging/cluster/
+            chmod +x rauc-staging/cluster/ClusterApp
+            echo "ClusterApp included in bundle"
+          else
+            echo "No ClusterApp found — bundle will be RPi5-only"
+          fi
+
+          tar -czf rauc-staging/apps.tar.gz -C rauc-staging \
+              adas_manager kuksa_bridge.py socket_sender.py inference/ \
+              $([ -d rauc-staging/cluster ] && echo "cluster/")
+
+          sed "s/@@VERSION@@/$VERSION/" scripts/rauc-bundle/manifest.raucm \
+              > rauc-staging/manifest.raucm
+          cp scripts/rauc-bundle/hook.sh rauc-staging/
+          chmod +x rauc-staging/hook.sh
+
+          rauc bundle \
+              --cert=ca.cert.pem \
+              --key=ca.key.pem \
+              rauc-staging/ apps-${VERSION}.raucb
+
+          sha256sum apps-${VERSION}.raucb > hash-rauc-rpi5-${VERSION}.txt
+
+          rm -f ca.key.pem
 
       # --- Combined Package (legacy support) ---
       - name: Create combined package
@@ -222,7 +354,7 @@ jobs:
             
             | Binary | Device | Target Path |
             |--------|--------|-------------|
-            | `HelloQt6Qml` | RPi4 | `/opt/cluster/` |
+            | `ClusterApp` | RPi4 | `/opt/cluster/` |
             | `can_to_kuksa_publisher` | RPi5 | `/home/kuksa_RPi5/bin/` |
             | `vss_min.json` | RPi5 | `/home/kuksa_RPi5/` |
             
@@ -254,3 +386,5 @@ jobs:
             hash-rpi4.txt
             update-rpi5.tar.gz
             hash-rpi5.txt
+            apps-*.raucb
+            hash-rauc-rpi5-*.txt
