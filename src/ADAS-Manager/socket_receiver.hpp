@@ -34,6 +34,8 @@ struct __attribute__((packed)) LaneFrame {
     LaneObject lane_right;
 };
 
+static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
+
 // ── Object detection ──────────────────────────────────────────────────────────
 
 enum SignClass : uint8_t {
