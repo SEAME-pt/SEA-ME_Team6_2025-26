@@ -2,190 +2,28 @@
 #include "socket_receiver.hpp"
 #include "can_sender.hpp"
 #include "lka_controller.hpp"
-#include "joystick_receiver.hpp"
 #include "oa_controller.hpp"
-#include "can_receiver.hpp"
 #include "can_id.h"
 #include "can_protocol.h"
 #include "drive_mode.hpp"
 #include "kuksa_bridge.hpp"
 #include "adas_state.hpp"
 #include "telemetry_log.hpp"
+#include "shared_state.hpp"
+#include "receiver_threads.hpp"
 #include <atomic>
 #include <chrono>
 #include <csignal>
 #include <cstdio>
-#include <mutex>
 #include <thread>
 
 // ── Sockets / Config ──────────────────────────────────────────────────────────
-static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
-static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
 static const char* CONFIG_PATH   = "/data/current/lka_config.conf";
 static const char* BRIDGE_CMD    = "python3 /data/current/kuksa_bridge.py";
 
 // ── Signal ────────────────────────────────────────────────────────────────────
-static std::atomic<bool> running{true};
+std::atomic<bool> running{true};
 static void on_signal(int) { running = false; }
-
-// ── Shared state ──────────────────────────────────────────────────────────────
-struct StateSnapshot {
-    LaneFrame   lane{};
-    bool        lane_valid   = false;
-    ObjectFrame object{};
-    bool        object_valid = false;
-    int8_t      joy_steering = 0;
-    int8_t      joy_throttle = 0;
-    bool        joy_valid        = false;
-    bool        joy_toggle       = false;
-    bool        joy_force_manual = false;
-    bool        joy_force_auto    = false;
-    uint16_t    current_speed_cms = 0;
-    uint16_t    gap_cm            = 0xFFFF;
-    bool        status_valid      = false;
-
-    std::chrono::steady_clock::time_point last_lane_ts{};
-    std::chrono::steady_clock::time_point last_obj_ts{};
-    std::chrono::steady_clock::time_point last_joy_ts{};
-};
-
-struct SharedState {
-    std::mutex  mtx;
-    LaneFrame   lane{};
-    bool        lane_valid       = false;
-    ObjectFrame object{};
-    bool        object_valid     = false;
-    int8_t      joy_steering     = 0;
-    int8_t      joy_throttle     = 0;
-    bool        joy_valid        = false;
-    bool        joy_toggle       = false;
-    bool        joy_force_manual = false;
-    bool        joy_force_auto    = false;
-    uint16_t    current_speed_cms = 0;
-    uint16_t    gap_cm            = 0xFFFF;
-    bool        status_valid      = false;
-
-    std::chrono::steady_clock::time_point last_lane_ts{};
-    std::chrono::steady_clock::time_point last_obj_ts{};
-    std::chrono::steady_clock::time_point last_joy_ts{};
-
-    StateSnapshot snapshot() {
-        std::lock_guard<std::mutex> lk(mtx);
-        StateSnapshot s;
-        s.lane         = lane;
-        s.lane_valid   = lane_valid;
-        s.last_lane_ts = last_lane_ts;
-        s.object       = object;
-        s.object_valid = object_valid;
-        s.last_obj_ts  = last_obj_ts;
-        s.joy_steering = joy_steering;
-        s.joy_throttle = joy_throttle;
-        s.joy_valid    = joy_valid;
-        s.joy_toggle       = joy_toggle;
-        s.joy_force_manual  = joy_force_manual;
-        s.joy_force_auto    = joy_force_auto;
-        s.last_joy_ts       = last_joy_ts;
-        s.current_speed_cms = current_speed_cms;
-        s.gap_cm            = gap_cm;
-        s.status_valid      = status_valid;
-        joy_toggle          = false;
-        joy_force_manual    = false;
-        joy_force_auto      = false;
-        return s;
-    }
-};
-
-// ── Receiver threads ──────────────────────────────────────────────────────────
-void status_thread(SharedState& state) {
-    CanReceiver rx;
-    if (rx.init() < 0) {
-        fprintf(stderr, "[STATUS] Failed to init CAN receiver — speed feedback disabled\n");
-        return;
-    }
-    printf("[STATUS] Listening on CAN (0x213)\n");
-
-    while (running) {
-        CtrlStatus_t st{};
-        if (rx.read_ctrl_status(st)) {
-            std::lock_guard<std::mutex> lk(state.mtx);
-            state.current_speed_cms = st.current_speed_cms;
-            state.gap_cm            = st.gap_cm;
-            state.status_valid      = true;
-        }
-    }
-    rx.close_fd();
-}
-
-void lane_thread(SharedState& state) {
-    SocketReceiver rx(LANE_SOCKET);
-    if (rx.init() < 0) { fprintf(stderr, "[LANE] Failed to init socket\n"); return; }
-    printf("[LANE] Listening on %s\n", LANE_SOCKET);
-
-    LaneFrame frame{};
-    while (running) {
-        bool ok = rx.receiveLatest(frame);
-        std::lock_guard<std::mutex> lk(state.mtx);
-        state.lane_valid = ok;
-        if (ok) {
-            state.lane        = frame;
-            state.last_lane_ts = std::chrono::steady_clock::now();
-        }
-    }
-    rx.close_fd();
-}
-
-void object_thread(SharedState& state) {
-    SocketReceiver rx(OBJECT_SOCKET);
-    if (rx.init() < 0) { fprintf(stderr, "[OBJ] Failed to init socket\n"); return; }
-    printf("[OBJ] Listening on %s\n", OBJECT_SOCKET);
-
-    ObjectFrame frame{};
-    while (running) {
-        bool ok = rx.receiveLatest(frame);
-        std::lock_guard<std::mutex> lk(state.mtx);
-        state.object_valid = ok;
-        if (ok) {
-            state.object      = frame;
-            state.last_obj_ts  = std::chrono::steady_clock::now();
-        }
-    }
-    rx.close_fd();
-}
-
-void joystick_thread(SharedState& state) {
-    static constexpr int RETRY_INTERVAL_MS = 1000;
-
-    JoystickReceiver rx;
-
-    // Retry loop — recovers from transient init failures without killing the thread
-    while (running) {
-        if (rx.init() >= 0) break;
-        fprintf(stderr, "[JOY] Failed to init %s — retry in %dms\n",
-                JOYSTICK_SOCKET, RETRY_INTERVAL_MS);
-        std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_INTERVAL_MS));
-    }
-
-    if (!running) return;
-    printf("[JOY] Listening on %s\n", JOYSTICK_SOCKET);
-
-    while (running) {
-        JoystickMsg msg = rx.receive();
-        std::lock_guard<std::mutex> lk(state.mtx);
-        if (msg.type == JoystickMsg::Type::J) {
-            state.joy_steering = msg.steering;
-            state.joy_throttle = msg.throttle;
-            state.joy_valid    = true;
-            state.last_joy_ts  = std::chrono::steady_clock::now();
-        } else if (msg.type == JoystickMsg::Type::T) {
-            state.joy_toggle = true;
-        } else if (msg.type == JoystickMsg::Type::FORCE_MANUAL) {
-            state.joy_force_manual = true;
-        } else if (msg.type == JoystickMsg::Type::FORCE_AUTO) {
-            state.joy_force_auto = true;
-        }
-    }
-    rx.close_fd();
-}
 
 // ── Object throttle override ──────────────────────────────────────────────────
 static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
