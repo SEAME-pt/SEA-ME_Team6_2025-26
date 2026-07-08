@@ -23,6 +23,7 @@
   - [TEST-EP-02: Integration Test — Traffic-Light Simulator & Motion Rules](#test-ep-02-integration-test--traffic-light-simulator--motion-rules)
   - [TEST-EP-03: Unit/Smoke Test — Emergency Client Request Flow](#test-ep-03-unitsmoke-test--emergency-client-request-flow)
   - [TEST-EP-04: Smoke Test — Unified Emergency Demo](#test-ep-04-smoke-test--unified-emergency-demo)
+- [Raw Tests Output](#raw-tests-output)
 - [Execution Instructions for Retrospective](#execution-instructions-for-retrospective)
 - [Summary Test Results Table](#summary-test-results-table)
 - [Key Takeaways](#key-takeaways)
@@ -938,6 +939,76 @@ What to read from the demo output:
 
 - The automated test suite (17 tests) and the smoke demo both passed locally using the simulators. This confirms the logic, state-machine transitions and coordinator interactions in simulation.
 - Next step: run hardware-in-the-loop tests and integrate with the real ADAS runtime to validate on physical devices.
+
+
+## Raw Tests Output
+
+OUTPUT: 
+seame@seame6:~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority$  bash -lc 'cd /home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src && PYTHONPATH=/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/v2i:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority python3 -m pytest emergency_priority/tests/ -v --tb=short'
+========================= test session starts =========================
+platform linux -- Python 3.10.12, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src
+plugins: anyio-4.13.0
+collected 17 items                                                    
+
+emergency_priority/tests/test_coordinator.py::test_policy_emergency_overrides_normal_flow PASSED [  5%]
+emergency_priority/tests/test_coordinator.py::test_coordinator_emergency_sets_green PASSED [ 11%]
+emergency_priority/tests/test_coordinator.py::test_coordinator_emergency_opens_barrier_when_connected PASSED [ 17%]
+emergency_priority/tests/test_coordinator.py::test_coordinator_non_emergency_closes_barrier_and_red_light PASSED [ 23%]
+emergency_priority/tests/test_coordinator.py::test_road_scenario_normal_red_or_closed_means_stop PASSED [ 29%]
+emergency_priority/tests/test_coordinator.py::test_road_scenario_normal_yellow_and_open_means_slow_down PASSED [ 35%]
+emergency_priority/tests/test_coordinator.py::test_road_scenario_emergency_approach_triggers_priority_actions PASSED [ 41%]
+emergency_priority/tests/test_emergency_client.py::test_emergency_request_activates_priority PASSED [ 47%]
+emergency_priority/tests/test_emergency_client.py::test_timeout_sets_timeout_status_when_no_service PASSED [ 52%]
+emergency_priority/tests/test_traffic_light_rules.py::test_green_means_advance PASSED [ 58%]
+emergency_priority/tests/test_traffic_light_rules.py::test_emergency_green_means_advance PASSED [ 64%]
+emergency_priority/tests/test_traffic_light_rules.py::test_yellow_means_slow_down PASSED [ 70%]
+emergency_priority/tests/test_traffic_light_rules.py::test_red_means_stop PASSED [ 76%]
+emergency_priority/tests/test_traffic_light_rules.py::test_unknown_means_stop_for_safety PASSED [ 82%]
+emergency_priority/tests/test_trafficlight_simulator.py::test_emergency_on_sets_emergency_green PASSED [ 88%]
+emergency_priority/tests/test_trafficlight_simulator.py::test_yellow_action_sets_yellow PASSED [ 94%]
+emergency_priority/tests/test_trafficlight_simulator.py::test_green_action_sets_green PASSED [100%]
+
+========================= 17 passed in 0.02s ==========================
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl1', 'state': 'red', 'timestamp': '2026-07-08T12:23:10Z'}
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl1', 'state': 'red', 'timestamp': '2026-07-08T12:23:10Z'}
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl1', 'state': 'red', 'timestamp': '2026-07-08T12:23:10Z'}
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl1', 'state': 'red', 'timestamp': '2026-07-08T12:23:10Z'}
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl1', 'state': 'red', 'timestamp': '2026-07-08T12:23:10Z'}
+[BarrierSimulator] Status: {'barrier_id': 'b1', 'state': 'closed', 'timestamp': '2026-07-08T12:23:10Z'}
+[BarrierSimulator] Status: {'barrier_id': 'b1', 'state': 'closed', 'timestamp': '2026-07-08T12:23:10Z'}
+seame@seame6:~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority$  bash -lc 'cd /home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src && PYTHONPATH=/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/v2i:/home/seame/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority python3 emergency_priority/unified_demo.py --config emergency_priority/config.json 2>&1 | tail -80'
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'red', 'timestamp': '2026-07-08T12:23:55Z'}
+[BarrierSimulator] Close requested: {'action': 'close'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'closed', 'timestamp': '2026-07-08T12:23:55Z'}
+
+=== STEP 1 - Normal Mode ===
+priority_active: False
+traffic_light_state: red
+barrier_state: closed
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'emergency_green', 'timestamp': '2026-07-08T12:23:55Z'}
+[BarrierSimulator] Open requested: {'action': 'open'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'open', 'timestamp': '2026-07-08T12:23:55Z'}
+
+=== STEP 2 - Emergency Mode ===
+priority_active: True
+traffic_light_state: emergency_green
+barrier_state: open
+[TrafficLightSimulator] Status: {'traffic_light_id': 'tl_demo_1', 'state': 'red', 'timestamp': '2026-07-08T12:23:55Z'}
+[BarrierSimulator] Close requested: {'action': 'close'}
+[BarrierSimulator] Status: {'barrier_id': 'demo_barrier_1', 'state': 'closed', 'timestamp': '2026-07-08T12:23:55Z'}
+
+=== STEP 3 - Back To Normal ===
+priority_active: False
+traffic_light_state: red
+barrier_state: closed
+
+=== DEMO RESULT ===
+PASS
+seame@seame6:~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority$ ^C
+seame@seame6:~/Documents/SEA-ME_Team6_2025-26/src/mobility_scenarios_src/emergency_priority$ 
+
 ## Execution Instructions for Retrospective
 To reproduce these tests in the retrospective:
 
