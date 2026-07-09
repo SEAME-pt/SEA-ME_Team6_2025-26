@@ -61,7 +61,7 @@ from visualization import draw_lanes, draw_drivable_area, draw_overlay as draw_o
 # ── Extensão C++ (postprocess + decode_lanes sem GIL) ────────────────────────
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    "postprocess_cpp"))
+                                    "lane-detection", "postprocess_cpp"))
     import postprocess_cpp as _pp_cpp
     _cpp_postprocess  = _pp_cpp.postprocess
     _cpp_decode_lanes = _pp_cpp.decode_lanes
@@ -490,10 +490,10 @@ def calc_lateral_deviation_cm(lanes, calib, img_h):
         right_x     = float(np.mean(right_world[:, 0]))
 
     if has_left and has_right:
-        return -((left_x + right_x) / 2.0) - CAMERA_OFFSET_CM, "both"
+        return -((left_x + right_x) / 2.0), "both"
     if has_left:
-        return -(left_x + 15.0) - CAMERA_OFFSET_CM, "left"
-    return -(right_x - 15.0) - CAMERA_OFFSET_CM, "right"
+        return -(left_x + 15.0), "left"
+    return -(right_x - 15.0), "right"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
