@@ -6,7 +6,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-static constexpr int RECV_TIMEOUT_MS = 60;
+// Perceção dual (UFLDv2+YOLOv8) corre a ~10.5 fps (~95ms/frame): o timeout
+// tem de acomodar um período inteiro para evitar wakeups vazios constantes.
+static constexpr int RECV_TIMEOUT_MS = 120;
 
 // ── Lane ──────────────────────────────────────────────────────────────────────
 

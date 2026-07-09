@@ -11,6 +11,8 @@ struct AdasConfig {
     OAConfig  oa;
 
     int   throttle                  = 25;
+    int   steering_trim             = 0;   // offset fixo p/ rodas tortas (+ = direita)
+    int   curve_throttle_min        = 21;  // piso: throttle>0 nunca abaixo disto (anti-empanque)
     int   degraded_threshold_frames = 10;
     int   emergency_threshold_ms    = 500;
     int   recovery_threshold_frames = 15;
@@ -67,6 +69,8 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.lka.max_rate  = static_cast<int>(get("max_rate", 20.0f));
 
     cfg.throttle                  = static_cast<int>(get("throttle",                   25.0f));
+    cfg.steering_trim             = static_cast<int>(get("steering_trim",               0.0f));
+    cfg.curve_throttle_min        = static_cast<int>(get("curve_throttle_min",          21.0f));
     cfg.degraded_threshold_frames = static_cast<int>(get("degraded_threshold_frames",  10.0f));
     cfg.emergency_threshold_ms    = static_cast<int>(get("emergency_threshold_ms",    500.0f));
     cfg.recovery_threshold_frames = static_cast<int>(get("recovery_threshold_frames",  15.0f));

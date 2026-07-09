@@ -131,6 +131,10 @@ static DriveOutput autonomous_driving(
             break;
 
         case AdasState::INIT:
+            // Sem comando ≠ comando de paragem: se se entrou em AUTONOMOUS
+            // com o carro em movimento, o STM32 mantém o último throttle até
+            // alguém dizer o contrário. INIT manda DISABLED explicitamente.
+            can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0);
             break;
     }
 
@@ -150,6 +154,16 @@ static DriveOutput autonomous_driving(
     if (do_send) {
         if (cfg.oa_enabled) {
             if (oa_active) {
+                // A manobra corre por temporizador, mas não às cegas: se a
+                // câmara vê motivo de paragem total (colisão iminente, STOP,
+                // semáforo vermelho → throttle_limit==0), aborta a evasão.
+                if (out.throttle_limit == 0) {
+                    oa.reset();
+                    out.steering = 0;
+                    out.throttle = 0;
+                    can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0);
+                    do_send = false;
+                } else {
                 // OA overrides — fixed throttle for maneuver timing, no curve slowdown
                 out.steering = oa_res.steering;
                 out.throttle = oa_res.throttle;
@@ -157,6 +171,7 @@ static DriveOutput autonomous_driving(
                                   static_cast<int8_t>(out.steering),
                                   static_cast<int8_t>(out.throttle));
                 do_send = false;
+                }
             } else if (oa_res.state == OAState::BLOCKED) {
                 can.send_ctrl_cmd(CTRL_MODE_DISABLED, 0, 0,
                                   0, HEADWAY_MEDIUM, /*aeb_request=*/true);
@@ -178,6 +193,12 @@ static DriveOutput autonomous_driving(
                 out.throttle = static_cast<int>(
                     std::round(out.throttle * speed_factor));
                 out.throttle = std::max(0, std::min(out.throttle, out.throttle_limit));
+                // Piso anti-empanque: se estamos a andar (throttle>0), nunca abaixo
+                // do mínimo que faz o motor girar. Deixa o abrandamento de curva ir
+                // ao máximo sem o carro parar a meio. (throttle==0 = paragem real,
+                // fica intacto.)
+                if (out.throttle > 0 && out.throttle < cfg.curve_throttle_min)
+                    out.throttle = cfg.curve_throttle_min;
                 can.send_ctrl_cmd(CTRL_MODE_LKA,
                                   static_cast<int8_t>(out.steering),
                                   static_cast<int8_t>(out.throttle));

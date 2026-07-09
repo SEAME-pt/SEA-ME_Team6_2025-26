@@ -18,10 +18,27 @@
 #include <csignal>
 #include <cstdio>
 #include <thread>
+#include <fcntl.h>
+#include <sys/file.h>
 
 // ── Sockets / Config ──────────────────────────────────────────────────────────
-static const char* CONFIG_PATH   = "/data/current/lka_config.conf";
-static const char* BRIDGE_CMD    = "python3 /data/current/kuksa_bridge.py";
+// Paths relativos ao diretório de trabalho: correr da pasta da versão usa o
+// config/bridge DESSA versão (o service define WorkingDirectory). Elimina o
+// skew binário-de-uma-versão + config-de-outra.
+static const char* CONFIG_PATH   = "lka_config.conf";
+static const char* BRIDGE_CMD    = "python3 kuksa_bridge.py";
+static const char* LOCK_PATH     = "/tmp/adas_manager.lock";
+
+// ── Instância única ───────────────────────────────────────────────────────────
+// Duas instâncias em simultâneo lutam no 0x202 (uma rouba o socket do
+// joystick, a outra passa a mandar DISABLED a 50 Hz = travão). O flock
+// liberta-se sozinho em qualquer morte do processo, incluindo kill -9.
+static bool acquire_single_instance_lock() {
+    int fd = open(LOCK_PATH, O_CREAT | O_RDWR, 0644);
+    if (fd < 0) return false;
+    if (flock(fd, LOCK_EX | LOCK_NB) < 0) { close(fd); return false; }
+    return true;   // fd fica aberto de propósito — o lock vive com o processo
+}
 
 // ── Signal ────────────────────────────────────────────────────────────────────
 std::atomic<bool> running{true};
@@ -33,8 +50,27 @@ int main() {
     signal(SIGTERM, on_signal);
     signal(SIGPIPE, SIG_IGN);   // kuksa bridge subprocess can die; ignore broken pipe
 
+    // ── Instância única ───────────────────────────────────────────────────────
+    if (!acquire_single_instance_lock()) {
+        fprintf(stderr,
+            "[ADAS] Já existe um adas_manager a correr — aborta.\n"
+            "       (systemctl stop adas-manager, ou mata o processo antigo)\n");
+        return 1;
+    }
+
     // ── Config ────────────────────────────────────────────────────────────────
     AdasConfig cfg = load_adas_config(CONFIG_PATH);
+
+    // ── CAN — sem barramento não há veículo: sair e deixar o systemd reiniciar ─
+    CanSender can;
+    if (can.init() < 0) {
+        fprintf(stderr, "[CAN] Failed to init %s — a sair (Restart=on-failure trata)\n",
+                CAN_CHANNEL);
+        return 1;
+    }
+    printf("[CAN] %s OK\n", CAN_CHANNEL);
+    can.set_steering_trim(cfg.steering_trim);
+    printf("[CFG] steering_trim = %+d\n", cfg.steering_trim);
 
     // ── KUKSA bridge (thread separada — não bloqueia o loop de controlo) ──────
     KuksaBridge bridge;
@@ -47,13 +83,6 @@ int main() {
     std::thread t_v2i   (v2i_thread,      std::ref(state));
     std::thread t_joy   (joystick_thread, std::ref(state));
     std::thread t_status(status_thread,   std::ref(state));
-
-    // ── CAN ───────────────────────────────────────────────────────────────────
-    CanSender can;
-    if (can.init() < 0)
-        fprintf(stderr, "[CAN] Failed to init — running without CAN output\n");
-    else
-        printf("[CAN] %s OK\n", CAN_CHANNEL);
 
     LKAController lka(cfg.lka);
     OAController  oa(cfg.oa);
@@ -166,6 +195,13 @@ int main() {
         const int steering       = drive_out.steering;
         const int throttle       = drive_out.throttle;
         const int throttle_limit = drive_out.throttle_limit;
+
+        // ── Heartbeat 0x700 a 10 Hz — alimenta o failsafe da STM ──────────────
+        static int hb_div = 0;
+        if (++hb_div >= 5) {   // loop a 50 Hz → 10 Hz
+            hb_div = 0;
+            can.send_heartbeat(drive_mode == DriveMode::MANUAL);
+        }
 
         // ── KUKSA publish (não bloqueia — enfileira na bridge thread) ─────────
         if (lane_valid)

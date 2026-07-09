@@ -1,0 +1,490 @@
+<title>ADAS Manager — Estrutura Modular</title>
+<style>
+  :root{
+    --bg: #eef1ef;
+    --surface: #fbfcfb;
+    --ink: #182420;
+    --ink-muted: #52625d;
+    --rule: #c9d2cd;
+    --accent: #1f5f5b;
+    --accent-soft: #dceae7;
+    --ok: #3f7a5c;
+    --warn: #b8791a;
+    --crit: #b23a2e;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 1.55;
+    margin: 0;
+    padding: 3.5rem 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--accent); }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .page{
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3.25rem;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  header{
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2rem;
+  }
+  .eyebrow{
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1{
+    font-family: var(--mono);
+    font-size: clamp(1.6rem, 3.4vw, 2.35rem);
+    font-weight: 500;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .lede{
+    font-size: 1.05rem;
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .lede code{ font-family: var(--mono); font-size: 0.92em; color: var(--ink); }
+
+  /* ── Stat row ───────────────────────────────────────────────────────── */
+  .stats{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .stat{
+    background: var(--surface);
+    padding: 1.3rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .stat .figure{
+    font-family: var(--mono);
+    font-size: 1.7rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .stat .figure small{ font-size: 0.55em; color: var(--ink-muted); font-family: var(--sans); }
+  .stat .label{
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  /* ── Section scaffolding ────────────────────────────────────────────── */
+  section{ display: flex; flex-direction: column; gap: 1.4rem; }
+  .section-head{ display: flex; flex-direction: column; gap: 0.3rem; }
+  h2{
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--ink);
+  }
+  .section-note{ font-size: 0.95rem; color: var(--ink-muted); max-width: 68ch; }
+
+  /* ── Pipeline (layer bands) ─────────────────────────────────────────── */
+  .pipeline{ display: flex; flex-direction: column; }
+
+  .layer{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .layer:last-of-type{ border-bottom: 1px solid var(--rule); }
+
+  .layer-tag{
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .layer-num{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+  .layer-name{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  .layer-desc{
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  .chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-content: flex-start;
+  }
+  .chip{
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 0.55rem 0.75rem;
+    min-width: 168px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+  }
+  .chip .fname{
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .chip .fname .loc{
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.78rem;
+  }
+  .chip .role{
+    font-family: var(--sans);
+    font-size: 0.74rem;
+    color: var(--ink-muted);
+    line-height: 1.35;
+  }
+  .chip.new{ border-left: 3px solid var(--accent); }
+
+  /* flow connector between bands */
+  .flow{
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0 0.1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+  .flow .arrow{ font-size: 0.9rem; }
+  .flow .payload{
+    background: var(--accent-soft);
+    padding: 0.15rem 0.5rem;
+    color: #123f3c;
+  }
+
+  /* ── State badges (semantic, kept separate from accent) ─────────────── */
+  .state-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-family: var(--sans);
+    font-size: 0.76rem;
+  }
+  .badge{
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge.ok{ background: color-mix(in srgb, var(--ok) 14%, white); color: var(--ok); }
+  .badge.warn{ background: color-mix(in srgb, var(--warn) 16%, white); color: var(--warn); }
+  .badge.crit{ background: color-mix(in srgb, var(--crit) 16%, white); color: var(--crit); }
+  .badge.init{ background: #e7e9e8; color: var(--ink-muted); }
+
+  /* ── Reference table ────────────────────────────────────────────────── */
+  .table-wrap{
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  table{
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 720px;
+    font-size: 0.86rem;
+  }
+  thead th{
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  tbody td{
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  td.fname{ font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; }
+  td.loc{ font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-muted); }
+  td.layer-cell{ font-family: var(--sans); font-size: 0.78rem; color: var(--ink-muted); white-space: nowrap; }
+  td.role{ color: var(--ink); }
+  tbody tr.highlight td{ background: var(--accent-soft); }
+
+  /* ── Footnote callouts ──────────────────────────────────────────────── */
+  .notes{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .note{
+    border-top: 2px solid var(--accent);
+    padding-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .note h3{
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink);
+  }
+  .note p{ margin: 0; font-size: 0.9rem; color: var(--ink-muted); }
+  .note code{ font-family: var(--mono); font-size: 0.85em; color: var(--ink); }
+
+  footer{
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 640px){
+    .layer{ grid-template-columns: 1fr; }
+    .flow{ grid-column: 1; }
+    .chip{ min-width: unset; flex: 1 1 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ scroll-behavior: auto !important; }
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <span class="eyebrow">src/ADAS-Manager — refactor/ADAS-modular-restructure</span>
+    <h1>Da monólito de 850 linhas a 16 módulos de responsabilidade única</h1>
+    <p class="lede">
+      O <code>adas_manager.cpp</code> original continha tudo: bridge KUKSA, threads de receção,
+      máquina de estados, controlo de condução e log — num único ficheiro. Cada passo abaixo
+      extraiu um bloco coeso para o seu próprio header, mantendo o build <code>header-only</code>
+      e de unidade de compilação única (<code>Makefile</code> continua a compilar só
+      <code>adas_manager.cpp</code>).
+    </p>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="figure">850 → 195</div>
+      <div class="label">Linhas no orquestrador</div>
+    </div>
+    <div class="stat">
+      <div class="figure">16</div>
+      <div class="label">Ficheiros modulares</div>
+    </div>
+    <div class="stat">
+      <div class="figure">5</div>
+      <div class="label">Threads concorrentes</div>
+    </div>
+    <div class="stat">
+      <div class="figure">20<small>ms</small></div>
+      <div class="label">Tick do loop principal</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <h2>Fluxo de dados — camada a camada</h2>
+      <p class="section-note">
+        A ordem das camadas é real: dados entram por sockets/CAN, ficam guardados em estado
+        partilhado, alimentam a lógica de decisão, e saem como comandos CAN + telemetria + log.
+      </p>
+    </div>
+
+    <div class="pipeline">
+
+      <div class="layer">
+        <div class="layer-tag">
+          <span class="layer-num">01 · vocabulário</span>
+          <span class="layer-name">Tipos partilhados</span>
+          <span class="layer-desc">Enums e IDs usados por todas as outras camadas — sem lógica.</span>
+        </div>
+        <div class="chips">
+          <div class="chip new"><div class="fname">drive_mode.hpp<span class="loc">3</span></div><div class="role">enum DriveMode { MANUAL, AUTONOMOUS }</div></div>
+          <div class="chip new"><div class="fname">adas_state.hpp<span class="loc">13</span></div><div class="role">enum AdasState + state_str()</div></div>
+          <div class="chip"><div class="fname">can_id.h<span class="loc">—</span></div><div class="role">IDs CAN partilhados STM32 ⇄ AGL</div></div>
+          <div class="chip"><div class="fname">can_protocol.h<span class="loc">—</span></div><div class="role">structs de protocolo (CtrlCmd_t, HEADWAY_*)</div></div>
+        </div>
+      </div>
+
+      <div class="flow"><span class="arrow">↓</span></div>
+
+      <div class="layer">
+        <div class="layer-tag">
+          <span class="layer-num">02 · transporte</span>
+          <span class="layer-name">Primitivas de I/O</span>
+          <span class="layer-desc">Wrappers finos sobre sockets UNIX, CAN e joystick.</span>
+        </div>
+        <div class="chips">
+          <div class="chip"><div class="fname">socket_receiver.hpp<span class="loc">160</span></div><div class="role">LaneFrame · ObjectFrame · V2IFrame + SocketReceiver</div></div>
+          <div class="chip"><div class="fname">can_sender.hpp<span class="loc">114</span></div><div class="role">CanSender — 0x500 ctrl, 0x001 estop, CRC-8</div></div>
+          <div class="chip"><div class="fname">can_receiver.hpp<span class="loc">71</span></div><div class="role">CanReceiver — lê CtrlStatus_t (0x213)</div></div>
+          <div class="chip"><div class="fname">joystick_receiver.hpp<span class="loc">80</span></div><div class="role">JoystickReceiver — comandos manuais</div></div>
+        </div>
+      </div>
+
+      <div class="flow"><span class="arrow">↓</span> <span class="payload">LaneFrame · ObjectFrame · V2IFrame · CtrlStatus_t</span></div>
+
+      <div class="layer">
+        <div class="layer-tag">
+          <span class="layer-num">03 · concorrência</span>
+          <span class="layer-name">Estado partilhado</span>
+          <span class="layer-desc">5 threads escrevem, o loop principal lê um snapshot por tick.</span>
+        </div>
+        <div class="chips">
+          <div class="chip new"><div class="fname">shared_state.hpp<span class="loc">82</span></div><div class="role">SharedState + StateSnapshot (mutex-guarded)</div></div>
+          <div class="chip new"><div class="fname">receiver_threads.hpp<span class="loc">129</span></div><div class="role">status_thread · lane_thread · object_thread · joystick_thread · v2i_thread</div></div>
+          <div class="chip"><div class="fname">config.hpp<span class="loc">120</span></div><div class="role">AdasConfig + load_adas_config() ← lka_config.conf</div></div>
+        </div>
+      </div>
+
+      <div class="flow"><span class="arrow">↓</span> <span class="payload">StateSnapshot</span></div>
+
+      <div class="layer">
+        <div class="layer-tag">
+          <span class="layer-num">04 · decisão</span>
+          <span class="layer-name">Lógica ADAS</span>
+          <span class="layer-desc">O "cérebro" — transições de estado e cálculo de steering/throttle.</span>
+        </div>
+        <div class="chips">
+          <div class="chip new"><div class="fname">adas_state_machine.hpp<span class="loc">173</span></div><div class="role">obj/v2i_throttle_limit · adas_state_machine · change_drive_mode</div></div>
+          <div class="chip new"><div class="fname">drive_control.hpp<span class="loc">189</span></div><div class="role">DriveOutput · manual_driving · autonomous_driving (LKA+OA+ACC+curva)</div></div>
+        </div>
+        <div style="grid-column: 1 / -1;" class="state-row">
+          <span class="badge init">INIT</span>
+          <span class="badge ok">ACTIVE</span>
+          <span class="badge warn">DEGRADED</span>
+          <span class="badge crit">EMERGENCY_STOP</span>
+        </div>
+      </div>
+
+      <div class="flow"><span class="arrow">↓</span> <span class="payload">DriveOutput → CAN 0x500 / 0x001</span></div>
+
+      <div class="layer">
+        <div class="layer-tag">
+          <span class="layer-num">05 · saída</span>
+          <span class="layer-name">Atuação &amp; telemetria</span>
+          <span class="layer-desc">Comando ao STM32, publicação KUKSA, linha de log por tick.</span>
+        </div>
+        <div class="chips">
+          <div class="chip new"><div class="fname">kuksa_bridge.hpp<span class="loc">135</span></div><div class="role">KuksaBridge — thread async → kuksa_bridge.py</div></div>
+          <div class="chip new"><div class="fname">telemetry_log.hpp<span class="loc">70</span></div><div class="role">log_tick — uma linha de diagnóstico por tick</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>adas_manager.cpp — o orquestrador</h2>
+      <p class="section-note">
+        195 linhas: assinaturas de sinal, arranque das 5 threads, init do CAN, e o loop de 20ms
+        que liga as camadas acima — sem lógica de decisão própria.
+      </p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Ficheiro</th><th>Linhas</th><th>Camada</th><th>Responsabilidade</th></tr>
+        </thead>
+        <tbody>
+          <tr class="highlight">
+            <td class="fname">adas_manager.cpp</td><td class="loc">195</td><td class="layer-cell">orquestrador</td>
+            <td class="role">main() — setup, wiring das 5 threads, loop de 20ms, watchdog de staleness</td>
+          </tr>
+          <tr><td class="fname">drive_control.hpp</td><td class="loc">189</td><td class="layer-cell">04 · decisão</td><td class="role">DriveOutput, manual_driving, autonomous_driving</td></tr>
+          <tr><td class="fname">adas_state_machine.hpp</td><td class="loc">173</td><td class="layer-cell">04 · decisão</td><td class="role">throttle overrides, transições INIT/ACTIVE/DEGRADED/EMERGENCY_STOP</td></tr>
+          <tr><td class="fname">socket_receiver.hpp</td><td class="loc">160</td><td class="layer-cell">02 · transporte</td><td class="role">frames binários (Lane/Object/V2I) + SocketReceiver genérico</td></tr>
+          <tr><td class="fname">oa_controller.hpp</td><td class="loc">160</td><td class="layer-cell">02 · transporte</td><td class="role">OAController — manobra de desvio de obstáculo</td></tr>
+          <tr><td class="fname">kuksa_bridge.hpp</td><td class="loc">135</td><td class="layer-cell">05 · saída</td><td class="role">publica telemetria no KUKSA Databroker (subprocess assíncrono)</td></tr>
+          <tr><td class="fname">receiver_threads.hpp</td><td class="loc">129</td><td class="layer-cell">03 · concorrência</td><td class="role">5 threads de receção (status/lane/object/joystick/v2i)</td></tr>
+          <tr><td class="fname">config.hpp</td><td class="loc">120</td><td class="layer-cell">03 · concorrência</td><td class="role">AdasConfig + parsing de lka_config.conf</td></tr>
+          <tr><td class="fname">can_sender.hpp</td><td class="loc">114</td><td class="layer-cell">02 · transporte</td><td class="role">envio de frames CAN (controlo + emergency stop)</td></tr>
+          <tr><td class="fname">lka_controller.hpp</td><td class="loc">91</td><td class="layer-cell">02 · transporte</td><td class="role">LKAController — PID + EMA + deadband + rate limit</td></tr>
+          <tr><td class="fname">shared_state.hpp</td><td class="loc">82</td><td class="layer-cell">03 · concorrência</td><td class="role">SharedState + StateSnapshot</td></tr>
+          <tr><td class="fname">joystick_receiver.hpp</td><td class="loc">80</td><td class="layer-cell">02 · transporte</td><td class="role">JoystickReceiver — comandos de condução manual</td></tr>
+          <tr><td class="fname">can_receiver.hpp</td><td class="loc">71</td><td class="layer-cell">02 · transporte</td><td class="role">CanReceiver — feedback de velocidade/gap (0x213)</td></tr>
+          <tr><td class="fname">telemetry_log.hpp</td><td class="loc">70</td><td class="layer-cell">05 · saída</td><td class="role">log_tick — linha de diagnóstico por tick</td></tr>
+          <tr><td class="fname">adas_state.hpp</td><td class="loc">13</td><td class="layer-cell">01 · vocabulário</td><td class="role">enum AdasState + state_str()</td></tr>
+          <tr><td class="fname">drive_mode.hpp</td><td class="loc">3</td><td class="layer-cell">01 · vocabulário</td><td class="role">enum DriveMode</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div class="note">
+      <h3>Convenção de build</h3>
+      <p>Todos os módulos são <code>header-only</code> (declaração + implementação juntas), incluídos
+        diretamente por <code>adas_manager.cpp</code>. O <code>Makefile</code> continua a compilar uma
+        única unidade de tradução — zero mudança de build ao longo dos 5 passos.</p>
+    </div>
+    <div class="note">
+      <h3>Onde só funciona em AUTONOMOUS</h3>
+      <p><code>obj_throttle_limit</code> e <code>v2i_throttle_limit</code> só têm efeito dentro de
+        <code>autonomous_driving()</code>. Em modo <code>MANUAL</code>, o joystick manda direto —
+        sinais e V2I são ignorados por desenho.</p>
+    </div>
+    <div class="note">
+      <h3>Compilação cruzada</h3>
+      <p><code>can_sender.hpp</code> / <code>can_receiver.hpp</code> dependem de <code>linux/can.h</code>,
+        só existe no target Linux embarcado — build de verificação sintática no Mac falha aí por
+        desenho; teste real sempre no carro.</p>
+    </div>
+  </section>
+
+  <footer>
+    branch <code>refactor/ADAS-modular-restructure</code> — 5 passos de extração + porte do V2I do colega por cima do estado atual (ACC, curve slowdown, status_thread e deadlock-breaker do EMERGENCY_STOP mantidos).
+  </footer>
+
+</div>

@@ -47,30 +47,14 @@ void lane_thread(SharedState& state) {
     LaneFrame frame{};
     while (running) {
         bool ok = rx.receiveLatest(frame);
+        // Timeout de socket ≠ sensor morto: a 10.5 fps o período entre frames
+        // (~95ms) excede o timeout do receiver — escrever false aqui faz a
+        // validade piscar. A expiração é do watchdog (lane_timeout_ms).
+        if (!ok) continue;
         std::lock_guard<std::mutex> lk(state.mtx);
-        state.lane_valid = ok;
-        if (ok) {
-            state.lane        = frame;
-            state.last_lane_ts = std::chrono::steady_clock::now();
-        }
-    }
-    rx.close_fd();
-}
-
-void v2i_thread(SharedState& state) {
-    SocketReceiver rx(V2I_SOCKET);
-    if (rx.init() < 0) { fprintf(stderr, "[V2I] Failed to init socket\n"); return; }
-    printf("[V2I] Listening on %s\n", V2I_SOCKET);
-
-    V2IFrame frame{};
-    while (running) {
-        bool ok = rx.receiveLatest(frame);
-        std::lock_guard<std::mutex> lk(state.mtx);
-        state.v2i_valid = ok;
-        if (ok) {
-            state.v2i       = frame;
-            state.last_v2i_ts = std::chrono::steady_clock::now();
-        }
+        state.lane         = frame;
+        state.lane_valid   = true;
+        state.last_lane_ts = std::chrono::steady_clock::now();
     }
     rx.close_fd();
 }
@@ -83,12 +67,31 @@ void object_thread(SharedState& state) {
     ObjectFrame frame{};
     while (running) {
         bool ok = rx.receiveLatest(frame);
+        // Igual à lane: false no timeout fazia o hold de STOP/vermelho
+        // (throttle_limit=0) pulsar a ~10.5 Hz. Expira via obj_timeout_ms.
+        if (!ok) continue;
         std::lock_guard<std::mutex> lk(state.mtx);
-        state.object_valid = ok;
-        if (ok) {
-            state.object      = frame;
-            state.last_obj_ts  = std::chrono::steady_clock::now();
-        }
+        state.object       = frame;
+        state.object_valid = true;
+        state.last_obj_ts  = std::chrono::steady_clock::now();
+    }
+    rx.close_fd();
+}
+
+void v2i_thread(SharedState& state) {
+    SocketReceiver rx(V2I_SOCKET);
+    if (rx.init() < 0) { fprintf(stderr, "[V2I] Failed to init socket\n"); return; }
+    printf("[V2I] Listening on %s\n", V2I_SOCKET);
+
+    V2IFrame frame{};
+    while (running) {
+        bool ok = rx.receiveLatest(frame);
+        // Mesmo padrão de lane/object: timeout de socket não é V2I morto.
+        if (!ok) continue;
+        std::lock_guard<std::mutex> lk(state.mtx);
+        state.v2i         = frame;
+        state.v2i_valid   = true;
+        state.last_v2i_ts = std::chrono::steady_clock::now();
     }
     rx.close_fd();
 }
