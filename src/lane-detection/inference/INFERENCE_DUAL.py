@@ -216,6 +216,11 @@ LOOKAHEAD_Y_RATIO      = 0.7
 # world-X dos pontos perto do carro. Descarta lanes far-left/far-right da via.
 PLAUSIBLE_EGO_X_CM     = 60.0  # |world_x| máx aceitável p/ ser ego lane
 WORLD_X_BOTTOM_N       = 5     # pontos de fundo usados p/ estimar world-X médio
+
+# Meia-largura de faixa assumida quando só uma lane está visível (single-line).
+# Ajustar empiricamente: se o carro andar em cima da linha, subir; se passar
+# para o lado oposto, descer.
+SINGLE_LINE_HALF_WIDTH_CM = 20.0
 DEBUG_ASSIGN_EVERY_N   = 30    # print debug de _assign_ego_lanes a cada N chamadas
                                # (=0 para desactivar)
 _assign_debug_counter  = 0
@@ -492,8 +497,8 @@ def calc_lateral_deviation_cm(lanes, calib, img_h):
     if has_left and has_right:
         return -((left_x + right_x) / 2.0), "both"
     if has_left:
-        return -(left_x + 15.0), "left"
-    return -(right_x - 15.0), "right"
+        return -(left_x + SINGLE_LINE_HALF_WIDTH_CM), "left"
+    return -(right_x - SINGLE_LINE_HALF_WIDTH_CM), "right"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
