@@ -11,6 +11,8 @@ struct StateSnapshot {
     bool        lane_valid   = false;
     ObjectFrame object{};
     bool        object_valid = false;
+    V2IFrame    v2i{};
+    bool        v2i_valid    = false;
     int8_t      joy_steering = 0;
     int8_t      joy_throttle = 0;
     bool        joy_valid        = false;
@@ -23,6 +25,7 @@ struct StateSnapshot {
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_v2i_ts{};
     std::chrono::steady_clock::time_point last_joy_ts{};
 };
 
@@ -32,6 +35,8 @@ struct SharedState {
     bool        lane_valid       = false;
     ObjectFrame object{};
     bool        object_valid     = false;
+    V2IFrame    v2i{};
+    bool        v2i_valid        = false;
     int8_t      joy_steering     = 0;
     int8_t      joy_throttle     = 0;
     bool        joy_valid        = false;
@@ -44,6 +49,7 @@ struct SharedState {
 
     std::chrono::steady_clock::time_point last_lane_ts{};
     std::chrono::steady_clock::time_point last_obj_ts{};
+    std::chrono::steady_clock::time_point last_v2i_ts{};
     std::chrono::steady_clock::time_point last_joy_ts{};
 
     StateSnapshot snapshot() {
@@ -55,6 +61,9 @@ struct SharedState {
         s.object       = object;
         s.object_valid = object_valid;
         s.last_obj_ts  = last_obj_ts;
+        s.v2i          = v2i;
+        s.v2i_valid    = v2i_valid;
+        s.last_v2i_ts  = last_v2i_ts;
         s.joy_steering = joy_steering;
         s.joy_throttle = joy_throttle;
         s.joy_valid    = joy_valid;

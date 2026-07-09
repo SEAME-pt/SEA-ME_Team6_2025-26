@@ -27,6 +27,25 @@ static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
     return 100;
 }
 
+static int v2i_throttle_limit(const V2IFrame& v2i, bool v2i_valid) {
+    if (!v2i_valid) return 100;
+
+    // Emergency priority bypasses V2I restrictions (TL/barrier),
+    // but object/collision safety still applies separately.
+    if (v2i.priority_active) return 100;
+
+    if (v2i.barrier_state == V2I_BARRIER_CLOSED ||
+        v2i.barrier_state == V2I_BARRIER_MOVING)
+        return 0;
+
+    switch (v2i.traffic_light_state) {
+        case V2I_TL_RED:    return 0;
+        case V2I_TL_YELLOW: return 50;
+        case V2I_TL_GREEN:  return 100;
+        default:            return 100;
+    }
+}
+
 // ── ADAS state machine (AUTONOMOUS only) ─────────────────────────────────────
 static void adas_state_machine(
     bool lane_ok,

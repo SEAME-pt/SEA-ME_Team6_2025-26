@@ -54,6 +54,8 @@ static DriveOutput autonomous_driving(
     const LaneFrame& lane,
     const ObjectFrame& obj,
     bool obj_valid,
+    const V2IFrame& v2i,
+    bool v2i_valid,
     float dt,
     const AdasConfig& cfg,
     LKAController& lka,
@@ -87,8 +89,10 @@ static DriveOutput autonomous_driving(
         }
     }
 
-    out.throttle_limit = obj_throttle_limit(obj, obj_valid,
-                                            cfg.obj_conf_thresh, cfg.collision_dist_m);
+    const int obj_limit = obj_throttle_limit(obj, obj_valid,
+                                             cfg.obj_conf_thresh, cfg.collision_dist_m);
+    const int v2i_limit = v2i_throttle_limit(v2i, v2i_valid);
+    out.throttle_limit  = std::min(obj_limit, v2i_limit);
     out.throttle = std::min(cfg.throttle, out.throttle_limit);
 
     // Run OA first — freeze LKA integrator during maneuver

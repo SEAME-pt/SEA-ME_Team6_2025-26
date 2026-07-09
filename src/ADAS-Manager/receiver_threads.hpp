@@ -16,6 +16,7 @@ extern std::atomic<bool> running;
 
 static const char* LANE_SOCKET   = "/tmp/adas_lane.sock";
 static const char* OBJECT_SOCKET = "/tmp/adas_objects.sock";
+static const char* V2I_SOCKET    = "/tmp/adas_v2i.sock";
 
 // ── Receiver threads ──────────────────────────────────────────────────────────
 void status_thread(SharedState& state) {
@@ -51,6 +52,24 @@ void lane_thread(SharedState& state) {
         if (ok) {
             state.lane        = frame;
             state.last_lane_ts = std::chrono::steady_clock::now();
+        }
+    }
+    rx.close_fd();
+}
+
+void v2i_thread(SharedState& state) {
+    SocketReceiver rx(V2I_SOCKET);
+    if (rx.init() < 0) { fprintf(stderr, "[V2I] Failed to init socket\n"); return; }
+    printf("[V2I] Listening on %s\n", V2I_SOCKET);
+
+    V2IFrame frame{};
+    while (running) {
+        bool ok = rx.receiveLatest(frame);
+        std::lock_guard<std::mutex> lk(state.mtx);
+        state.v2i_valid = ok;
+        if (ok) {
+            state.v2i       = frame;
+            state.last_v2i_ts = std::chrono::steady_clock::now();
         }
     }
     rx.close_fd();

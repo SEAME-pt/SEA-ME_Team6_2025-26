@@ -44,6 +44,7 @@ int main() {
     SharedState state;
     std::thread t_lane  (lane_thread,     std::ref(state));
     std::thread t_obj   (object_thread,   std::ref(state));
+    std::thread t_v2i   (v2i_thread,      std::ref(state));
     std::thread t_joy   (joystick_thread, std::ref(state));
     std::thread t_status(status_thread,   std::ref(state));
 
@@ -81,11 +82,14 @@ int main() {
         StateSnapshot      snap         = state.snapshot();
         const LaneFrame&   lane         = snap.lane;
         const ObjectFrame& obj          = snap.object;
+        const V2IFrame&    v2i          = snap.v2i;
         bool               lane_valid   = snap.lane_valid;
         bool               obj_valid    = snap.object_valid;
+        bool               v2i_valid    = snap.v2i_valid;
         bool               joy_valid    = snap.joy_valid;
         const auto&        lane_ts      = snap.last_lane_ts;
         const auto&        obj_ts       = snap.last_obj_ts;
+        const auto&        v2i_ts       = snap.last_v2i_ts;
         const auto&        joy_ts       = snap.last_joy_ts;
         const bool         joy_toggle         = snap.joy_toggle;
         const int8_t       joy_steering       = snap.joy_steering;
@@ -97,6 +101,7 @@ int main() {
         // ── Watchdog: override valid flags if timestamps are stale ────────────
         auto lane_age_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - lane_ts).count();
         auto obj_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - obj_ts).count();
+        auto v2i_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - v2i_ts).count();
         auto joy_age_ms  = std::chrono::duration_cast<std::chrono::milliseconds>(now - joy_ts).count();
 
         bool lane_stale = lane_valid && (lane_age_ms > cfg.lane_timeout_ms);
@@ -110,6 +115,8 @@ int main() {
         }
         if (obj_age_ms > cfg.obj_timeout_ms)
             obj_valid = false;
+        if (v2i_age_ms > cfg.obj_timeout_ms)
+            v2i_valid = false;
         if (joy_stale && drive_mode == DriveMode::MANUAL) {
             joy_valid = false;
             if (!joy_was_stale)
@@ -153,7 +160,7 @@ int main() {
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
             ? manual_driving(joy_valid, joy_steering, joy_throttle,
                              cfg.throttle, estop_sent, can)
-            : autonomous_driving(adas_state, lane, obj, obj_valid, dt,
+            : autonomous_driving(adas_state, lane, obj, obj_valid, v2i, v2i_valid, dt,
                                  cfg, lka, oa, estop_sent, can, status_gap_cm);
 
         const int steering       = drive_out.steering;
@@ -168,7 +175,7 @@ int main() {
 
         // ── Log ───────────────────────────────────────────────────────────────
         log_tick(adas_state, drive_mode, oa, lane_valid, lane,
-                 obj_valid, obj, steering, throttle, throttle_limit, cfg.throttle,
+                 obj_valid, obj, v2i_valid, v2i, steering, throttle, throttle_limit, cfg.throttle,
                  drive_out.acc_active, drive_out.target_speed_cms,
                  current_speed_cms, status_valid);
     }
@@ -180,6 +187,7 @@ int main() {
     bridge.stop();
     t_lane.join();
     t_obj.join();
+    t_v2i.join();
     t_joy.join();
     t_status.join();
     printf("[ADAS] Shutdown.\n");

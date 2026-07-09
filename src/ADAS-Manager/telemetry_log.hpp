@@ -16,6 +16,8 @@ static void log_tick(
     const LaneFrame& lane,
     bool obj_valid,
     const ObjectFrame& obj,
+    bool v2i_valid,
+    const V2IFrame& v2i,
     int steering,
     int throttle,
     int throttle_limit,
@@ -57,5 +59,12 @@ static void log_tick(
         printf("\n");
     } else {
         printf("  | obj=---\n");
+    }
+
+    if (v2i_valid) {
+        printf("[ADAS][V2I] tl=%u barrier=%u priority=%u\n",
+               static_cast<unsigned>(v2i.traffic_light_state),
+               static_cast<unsigned>(v2i.barrier_state),
+               static_cast<unsigned>(v2i.priority_active));
     }
 }
