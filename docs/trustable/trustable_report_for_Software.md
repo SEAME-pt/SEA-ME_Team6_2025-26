@@ -84,16 +84,16 @@ The contribution to the score of a parent item by a suspiciously linked child is
 | [ASSUMPTIONS-ASSUMP_L0_20](ASSUMPTIONS.md#assumptions-assump_l0_20) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | The development environment meets all prerequisites for implementing and verifying this requirement. | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_21](ASSUMPTIONS.md#assumptions-assump_l0_21) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} | The development environment meets all prerequisites for implementing and verifying this requirement. | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 | [ASSUMPTIONS-ASSUMP_L0_22](ASSUMPTIONS.md#assumptions-assump_l0_22) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_23](ASSUMPTIONS.md#assumptions-assump_l0_23) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_24](ASSUMPTIONS.md#assumptions-assump_l0_24) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_25](ASSUMPTIONS.md#assumptions-assump_l0_25) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_26](ASSUMPTIONS.md#assumptions-assump_l0_26) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_27](ASSUMPTIONS.md#assumptions-assump_l0_27) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_28](ASSUMPTIONS.md#assumptions-assump_l0_28) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_29](ASSUMPTIONS.md#assumptions-assump_l0_29) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_30](ASSUMPTIONS.md#assumptions-assump_l0_30) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_31](ASSUMPTIONS.md#assumptions-assump_l0_31) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
-| [ASSUMPTIONS-ASSUMP_L0_32](ASSUMPTIONS.md#assumptions-assump_l0_32) {class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"} |  | 0.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_23](ASSUMPTIONS.md#assumptions-assump_l0_23) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_24](ASSUMPTIONS.md#assumptions-assump_l0_24) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_25](ASSUMPTIONS.md#assumptions-assump_l0_25) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_26](ASSUMPTIONS.md#assumptions-assump_l0_26) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_27](ASSUMPTIONS.md#assumptions-assump_l0_27) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_28](ASSUMPTIONS.md#assumptions-assump_l0_28) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_29](ASSUMPTIONS.md#assumptions-assump_l0_29) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_30](ASSUMPTIONS.md#assumptions-assump_l0_30) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_31](ASSUMPTIONS.md#assumptions-assump_l0_31) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
+| [ASSUMPTIONS-ASSUMP_L0_32](ASSUMPTIONS.md#assumptions-assump_l0_32) {class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"} |  | 1.00 | Validator with References | ✔ Item Reviewed<br>✔ All Children Linked |
 
 ## Compliance for EVIDENCES ## {: data-toc-label="EVIDENCES"}
 
@@ -175,6 +175,6 @@ The contribution to the score of a parent item by a suspiciously linked child is
 _Generated for: Software_
 
 * _Repository root: C:/Users/LG/Downloads/SEA-ME_Team6_2025-26_
-* _Commit SHA: 0f00288b740507457e26c304d6447805553f0acc_
-* _Commit date/time: 2026-03-06 16:54:53+00:00 UTC_
-* _Commit tag: v1.9.0-137-g0f00288_
+* _Commit SHA: de265b8f5857c3bf438421ef2e746af23af86231_
+* _Commit date/time: 2026-07-10 01:29:31+00:00 UTC_
+* _Commit tag: v1.9.0-138-gde265b8_

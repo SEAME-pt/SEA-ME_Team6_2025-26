@@ -19,8 +19,8 @@ references:
   path: ../expectations/EXPECT-L0-31.md
 - type: file
   path: ../evidences/EVID-L0-31.md
-- type: url
-  url: https://rauc.readthedocs.io/
+- type: file
+  path: src/ota/rauc/README.md
 - type: url
   url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota
 reviewers:
@@ -30,7 +30,7 @@ review_status: pending
 evidence:
   type: validate_hardware_availability
   configuration:
-    components:
+    dependencies:
     - SOTA Scripts
     - COTA Configuration
     - FOTA Firmware

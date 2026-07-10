@@ -1740,8 +1740,8 @@ _None_
 		  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_31/EXPECTATIONS-EXPECT_L0_31.md
 		- type: file
 		  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md
-		- type: url
-		  url: https://rauc.readthedocs.io/
+		- type: file
+		  path: src/ota/rauc/README.md
 		- type: url
 		  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/main/src/ota
 		reviewers:
@@ -1751,7 +1751,7 @@ _None_
 		evidence:
 		  type: validate_hardware_availability
 		  configuration:
-		    components:
+		    dependencies:
 		    - SOTA Scripts
 		    - COTA Configuration
 		    - FOTA Firmware

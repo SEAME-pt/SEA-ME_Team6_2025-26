@@ -1201,7 +1201,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_23 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_23 data-toc-label="ASSUMPTIONS-ASSUMP_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_23 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_23 data-toc-label="ASSUMPTIONS-ASSUMP_L0_23" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1251,7 +1251,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_24 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_24 data-toc-label="ASSUMPTIONS-ASSUMP_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_24 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_24 data-toc-label="ASSUMPTIONS-ASSUMP_L0_24" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1304,7 +1304,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_25 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_25 data-toc-label="ASSUMPTIONS-ASSUMP_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_25 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_25 data-toc-label="ASSUMPTIONS-ASSUMP_L0_25" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1357,7 +1357,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_26 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_26 data-toc-label="ASSUMPTIONS-ASSUMP_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_26 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_26 data-toc-label="ASSUMPTIONS-ASSUMP_L0_26" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1410,7 +1410,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_27 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_27 data-toc-label="ASSUMPTIONS-ASSUMP_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_27 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_27 data-toc-label="ASSUMPTIONS-ASSUMP_L0_27" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1462,7 +1462,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_28 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_28 data-toc-label="ASSUMPTIONS-ASSUMP_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_28 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_28 data-toc-label="ASSUMPTIONS-ASSUMP_L0_28" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1512,7 +1512,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_29 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_29 data-toc-label="ASSUMPTIONS-ASSUMP_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_29 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_29 data-toc-label="ASSUMPTIONS-ASSUMP_L0_29" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1564,7 +1564,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_30 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_30 data-toc-label="ASSUMPTIONS-ASSUMP_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_30 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_30 data-toc-label="ASSUMPTIONS-ASSUMP_L0_30" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1618,7 +1618,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_31 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_31 data-toc-label="ASSUMPTIONS-ASSUMP_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_31 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_31 data-toc-label="ASSUMPTIONS-ASSUMP_L0_31" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 
@@ -1653,7 +1653,7 @@ _None_
 		  **Justification:** Modern automotive systems require reliable OTA update mechanisms to deploy security patches, bug fixes, and feature updates without physical access. A layered OTA approach (SOTA/COTA/FOTA) allows granular updates while RAUC provides atomic OS updates with rollback capability, essential for safety-critical automotive applications.
 		
 		  **References:** 
-		  - RAUC documentation (https://rauc.readthedocs.io/)
+		  - RAUC documentation (src/ota/rauc/README.md)
 		  - Automotive OTA best practices (AUTOSAR, ISO 24089)
 		  - AGL OTA update guidelines
 		  - UNECE WP.29 Regulation on Software Updates
@@ -1705,7 +1705,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_32 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_32 data-toc-label="ASSUMPTIONS-ASSUMP_L0_32" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_32 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_32 data-toc-label="ASSUMPTIONS-ASSUMP_L0_32" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 
 {: .expanded-item-element }
 

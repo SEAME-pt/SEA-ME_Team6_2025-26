@@ -12,7 +12,7 @@ text: |
   **Justification:** Modern automotive systems require reliable OTA update mechanisms to deploy security patches, bug fixes, and feature updates without physical access. A layered OTA approach (SOTA/COTA/FOTA) allows granular updates while RAUC provides atomic OS updates with rollback capability, essential for safety-critical automotive applications.
 
   **References:** 
-  - RAUC documentation (https://rauc.readthedocs.io/)
+  - RAUC documentation (src/ota/rauc/README.md)
   - Automotive OTA best practices (AUTOSAR, ISO 24089)
   - AGL OTA update guidelines
   - UNECE WP.29 Regulation on Software Updates
