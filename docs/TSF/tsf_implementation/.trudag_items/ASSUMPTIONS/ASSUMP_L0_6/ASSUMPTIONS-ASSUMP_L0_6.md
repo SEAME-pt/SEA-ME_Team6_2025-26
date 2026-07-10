@@ -4,7 +4,7 @@ header: 'Assumption: The Qt GUI shall display static graphical elements such as.
 level: '1.6'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-6.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_6/EXPECTATIONS-EXPECT_L0_6.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

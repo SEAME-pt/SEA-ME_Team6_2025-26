@@ -7,7 +7,7 @@ level: '1.19'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-19.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -28,7 +28,7 @@ reviewers:
   email: joao.silva@seame.pt
 review_status: pending
 evidence:
-  type: validate_hardware_availability
+  type: validate_software_dependencies
   configuration:
     dependencies:
     - SOTA Scripts

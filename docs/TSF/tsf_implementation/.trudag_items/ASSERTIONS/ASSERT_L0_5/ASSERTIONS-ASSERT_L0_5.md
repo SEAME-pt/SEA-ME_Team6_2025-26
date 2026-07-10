@@ -7,9 +7,9 @@ level: '1.5'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-5.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_5/EXPECTATIONS-EXPECT_L0_5.md
 - type: file
-  path: ../evidences/EVID-L0-5.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_5/EVIDENCES-EVID_L0_5.md
 review_status: accepted
 reviewers:
 - name: Joao Jesus Silva

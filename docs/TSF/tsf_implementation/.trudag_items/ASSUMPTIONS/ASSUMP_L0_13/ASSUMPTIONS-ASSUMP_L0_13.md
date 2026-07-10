@@ -4,7 +4,7 @@ header: 'Assumption: Project & GitHub setup'
 level: '1.13'
 normative: true
 references:
-- path: ../expectations/EXPECT-L0-13.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_13/EXPECTATIONS-EXPECT_L0_13.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

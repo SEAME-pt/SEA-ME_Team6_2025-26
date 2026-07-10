@@ -2,7 +2,7 @@
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_1 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_1 data-toc-label="ASSUMPTIONS-ASSUMP_L0_1" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_1 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_1 data-toc-label="ASSUMPTIONS-ASSUMP_L0_1" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 Assumption: The project team will provide the required hardware and demonstrator components listed in the system architecture (Expansion Board, Raspberry Pi 5, Hailo Hat, DC motors, servo motor, Qt display/cluster via DSI interface) and these components will be operational in the integration environment during verification activities.
 
 Acceptance criteria / notes:
@@ -55,7 +55,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_2 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_2 data-toc-label="ASSUMPTIONS-ASSUMP_L0_2" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_2 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_2 data-toc-label="ASSUMPTIONS-ASSUMP_L0_2" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 The required hardware components (Expansion Board, Raspberry Pi 5, Raspberry Pi 4, DC motors, servo motor, display interfaces, chassis) are procured and available before hardware assembly activities begin.
 
 Acceptance criteria / notes:
@@ -160,7 +160,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_4 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_4 data-toc-label="ASSUMPTIONS-ASSUMP_L0_4" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_4 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_4 data-toc-label="ASSUMPTIONS-ASSUMP_L0_4" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 The joystick or remote control hardware is available, functional, and compatible with the target platform input subsystem before remote control integration testing begins.
 
 Acceptance criteria / notes:
@@ -370,7 +370,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_8 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_8 data-toc-label="ASSUMPTIONS-ASSUMP_L0_8" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_8 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_8 data-toc-label="ASSUMPTIONS-ASSUMP_L0_8" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 CAN bus hardware interfaces (CAN controllers, transceivers, wiring) are installed and functional on both Raspberry Pi 5 and STM32 before CAN communication testing begins.
 
 Acceptance criteria / notes:
@@ -423,7 +423,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_9 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_9 data-toc-label="ASSUMPTIONS-ASSUMP_L0_9" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_9 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_9 data-toc-label="ASSUMPTIONS-ASSUMP_L0_9" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 The STM32 microcontroller is programmed and accessible via debug interface (ST-LINK or JTAG) before ThreadX firmware verification begins.
 
 Acceptance criteria / notes:
@@ -476,7 +476,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_10 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_10 data-toc-label="ASSUMPTIONS-ASSUMP_L0_10" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_10 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_10 data-toc-label="ASSUMPTIONS-ASSUMP_L0_10" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 Hardware components (Raspberry Pi 5, Raspberry Pi 4, STM32, Hailo AI Hat, motors, sensors) are procured and available before system architecture implementation begins.
 
 Acceptance criteria / notes:
@@ -582,7 +582,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_12 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_12 data-toc-label="ASSUMPTIONS-ASSUMP_L0_12" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_12 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_12 data-toc-label="ASSUMPTIONS-ASSUMP_L0_12" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 Raspberry Pi 4 wireless display receiver hardware with WiFi capability and VNC server software (Wayland/VNC stack) are available and functional before wireless display integration testing begins.
 
 Acceptance criteria / notes:
@@ -882,7 +882,7 @@ _None_
 
 ---
 
-### ASSUMPTIONS-ASSUMP_L0_17 | Reviewed: ✔ | Score: 0.0 ### {: #assumptions-assump_l0_17 data-toc-label="ASSUMPTIONS-ASSUMP_L0_17" .item-element .item-section class="tsf-score" style="background-color:hsl(0.0, 100%, 65%)"}
+### ASSUMPTIONS-ASSUMP_L0_17 | Reviewed: ✔ | Score: 1.0 ### {: #assumptions-assump_l0_17 data-toc-label="ASSUMPTIONS-ASSUMP_L0_17" .item-element .item-section class="tsf-score" style="background-color:hsl(120.0, 100%, 30%)"}
 The Hailo AI Hat hardware is available, functional, and compatible with the Raspberry Pi 5 before AI model deployment testing begins.
 
 Acceptance criteria / notes:
