@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import subprocess
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
@@ -115,6 +116,46 @@ except ImportError:
     yaml = None
 
 
+def resolve_bash_command() -> Optional[List[str]]:
+    """Resolve a bash command for running .sh scripts across platforms."""
+    bash_path = shutil.which('bash')
+    if bash_path:
+        return [bash_path]
+
+    if os.name == 'nt':
+        # Common Git Bash install locations on Windows.
+        candidates = [
+            Path(os.environ.get('ProgramFiles', '')) / 'Git' / 'bin' / 'bash.exe',
+            Path(os.environ.get('ProgramFiles', '')) / 'Git' / 'usr' / 'bin' / 'bash.exe',
+            Path(os.environ.get('ProgramW6432', '')) / 'Git' / 'bin' / 'bash.exe',
+            Path(os.environ.get('LocalAppData', '')) / 'Programs' / 'Git' / 'bin' / 'bash.exe',
+        ]
+        for candidate in candidates:
+            if str(candidate) and candidate.exists():
+                return [str(candidate)]
+
+    return None
+
+
+def resolve_trudag_command(config: "Config") -> Optional[str]:
+    """Resolve the trudag executable without depending on PATH."""
+    trudag_path = shutil.which('trudag')
+    if trudag_path:
+        return trudag_path
+
+    candidates = [
+        config.repo_root / '.venv' / 'Scripts' / 'trudag.exe',
+        config.repo_root / '.venv' / 'bin' / 'trudag',
+        config.repo_root / '.venv' / 'Scripts' / 'trudag',
+    ]
+
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+
+    return None
+
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -200,7 +241,12 @@ class Config:
     def _resolve_paths(self):
         """Resolve path variables in configuration."""
         # Get base paths
-        self.repo_root = Path(self._config['paths']['repo_root'])
+        raw_root = self._config['paths']['repo_root']
+        if str(raw_root).strip().lower() == 'auto':
+            # Auto-detect: scripts/ -> tsf_implementation/ -> TSF/ -> docs/ -> repo_root
+            self.repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+        else:
+            self.repo_root = Path(raw_root)
         self.tsf_implementation = self.repo_root / "docs/TSF/tsf_implementation"
         self.items_dir = self.tsf_implementation / "items"
         self.scripts_dir = self.tsf_implementation / "scripts"
@@ -526,9 +572,14 @@ class AIGenerator:
         
         # Open all files in VSCode
         if settings.get('open_in_vscode', True):
-            print(f"\n📂 Opening {len(items)} files in VSCode...")
-            for item_type, item_id, file_path in items:
-                subprocess.run(['code', str(file_path)], check=False)
+            code_cli = shutil.which('code')
+            if code_cli:
+                print(f"\n📂 Opening {len(items)} files in VSCode...")
+                for item_type, item_id, file_path in items:
+                    subprocess.run([code_cli, str(file_path)], check=False)
+            else:
+                print("\n⚠️  VSCode CLI 'code' not found in PATH.")
+                print("   Continuing without auto-opening files. Open them manually in VSCode.")
         
         # Build consolidated prompt
         if settings.get('show_prompt_suggestion', True):
@@ -2157,7 +2208,7 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     if validator_path.exists():
         try:
             result = subprocess.run(
-                ['python3', str(validator_path), str(config.items_dir)],
+                [sys.executable, str(validator_path), str(config.items_dir)],
                 capture_output=True,
                 text=True,
                 timeout=60
@@ -2183,16 +2234,24 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     
     if trudag_script.exists():
         try:
+            bash_command = resolve_bash_command()
+            if not bash_command:
+                raise FileNotFoundError(
+                    "bash not found. Install Git for Windows and ensure Git Bash is available in PATH."
+                )
+
             print("   ⏳ Running TruDAG (this may take several minutes for 84 items)...")
             print("   📺 Live output:")
             print("   " + "-"*50)
             
             # Run without timeout, streaming output to user
             process = subprocess.Popen(
-                ['bash', str(trudag_script)],
+                bash_command + [str(trudag_script)],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
+                encoding='utf-8',
+                errors='replace',
                 cwd=str(config.tsf_implementation)
             )
             
@@ -2220,8 +2279,14 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
     if status['trudag_success']:
         print("\n📊 Verifying scores...")
         try:
+            trudag_command = resolve_trudag_command(config)
+            if not trudag_command:
+                raise FileNotFoundError(
+                    "trudag executable not found. Install trustable in the repository .venv or add trudag to PATH."
+                )
+
             result = subprocess.run(
-                ['trudag', 'score', '--validate'],
+                [trudag_command, 'score', '--validate'],
                 capture_output=True,
                 text=True,
                 cwd=str(config.tsf_implementation),
@@ -2238,10 +2303,11 @@ def validate_run_publish(config: Config) -> Dict[str, Any]:
                 if ' = ' in line and any(prefix in line for prefix in ['ASSERTIONS', 'ASSUMPTIONS', 'EVIDENCES', 'EXPECTATIONS']):
                     total_items += 1
                     parts = line.strip().split(' = ')
-                    if len(parts) == 2:
+                    if len(parts) >= 2:
                         item_name = parts[0]
                         try:
-                            score = float(parts[1])
+                            # Format: "ITEM_NAME = 1.0; Validator with References"
+                            score = float(parts[1].split(';')[0].strip())
                             if score == 1.0:
                                 items_at_1_0 += 1
                             else:

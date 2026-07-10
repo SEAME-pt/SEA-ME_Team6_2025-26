@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Force UTF-8 for Python-based tooling on Windows/Git Bash to avoid cp1252 crashes.
+export PYTHONUTF8=1
+export PYTHONIOENCODING="utf-8"
+export LANG="C.UTF-8"
+export LC_ALL="C.UTF-8"
+
 # Script to setup trudag DB
 # This script:
 # 0. Cleans all generated files (preserves source items/)
@@ -11,9 +17,10 @@ set -e
 # 5. Marks all items as reviewed for SME assessment
 # 6. Runs lint validation
 
-REPO_ROOT="/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26"
-BASE_DIR="$REPO_ROOT/docs/TSF"
-TSF_IMPL="$BASE_DIR/tsf_implementation"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+TSF_IMPL="$(cd "$SCRIPT_DIR/.." && pwd)"
+BASE_DIR="$(cd "$TSF_IMPL/.." && pwd)"
+REPO_ROOT="$(cd "$TSF_IMPL/../../.." && pwd)"
 ITEMS_SOURCE="$TSF_IMPL/items"
 GRAPH_DIR="$TSF_IMPL/graph"
 DB_FILE="$TSF_IMPL/.dotstop.dot"
@@ -24,11 +31,61 @@ echo "TSF Trudag Setup - Clean Mode"
 echo "=========================================="
 echo ""
 
+# Resolve Python executable (python3 on Linux/macOS, python on Windows/venv).
+if command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="python3"
+elif command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
+else
+    echo "✗ Python not found in PATH"
+    exit 1
+fi
+
+# Resolve TruDAG executable. Prefer the active environment, then the repo-local venv.
+resolve_trudag_bin() {
+    if command -v trudag >/dev/null 2>&1; then
+        command -v trudag
+        return 0
+    fi
+
+    if [ -n "${VIRTUAL_ENV:-}" ]; then
+        if [ -x "$VIRTUAL_ENV/Scripts/trudag.exe" ]; then
+            echo "$VIRTUAL_ENV/Scripts/trudag.exe"
+            return 0
+        fi
+        if [ -x "$VIRTUAL_ENV/bin/trudag" ]; then
+            echo "$VIRTUAL_ENV/bin/trudag"
+            return 0
+        fi
+    fi
+
+    if [ -x "$REPO_ROOT/.venv/Scripts/trudag.exe" ]; then
+        echo "$REPO_ROOT/.venv/Scripts/trudag.exe"
+        return 0
+    fi
+
+    if [ -x "$REPO_ROOT/.venv/bin/trudag" ]; then
+        echo "$REPO_ROOT/.venv/bin/trudag"
+        return 0
+    fi
+
+    return 1
+}
+
+TRUDAG_BIN="$(resolve_trudag_bin)" || {
+    echo "✗ trudag not found. Install trustable in the repository .venv first."
+    exit 1
+}
+
+trudag() {
+    "$TRUDAG_BIN" "$@"
+}
+
 # Step 0: Clean all generated files (NEVER touch source items/)
 echo "🧹 Step 0: Cleaning all generated files..."
 [ -f "$GRAPH_DIR/graph.dot" ] && rm -f "$GRAPH_DIR/graph.dot" && echo "  ✓ Removed graph.dot"
 [ -f "$DB_FILE" ] && rm -f "$DB_FILE" && echo "  ✓ Removed .dotstop.dot"
-[ -e "$DB_SYMLINK" ] && rm -f "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
+[ -e "$DB_SYMLINK" ] && rm -rf "$DB_SYMLINK" && echo "  ✓ Removed DB symlink"
 [ -d "$TSF_IMPL/.trudag_items" ] && rm -rf "$TSF_IMPL/.trudag_items" && echo "  ✓ Removed .trudag_items/ (tsf_impl)"
 [ -d "$REPO_ROOT/.trudag_items" ] && rm -rf "$REPO_ROOT/.trudag_items" && echo "  ✓ Removed .trudag_items/ (repo root)"
 find "$REPO_ROOT" -name "needs.dot" -type f -delete 2>/dev/null && echo "  ✓ Removed needs.dot files"
@@ -38,7 +95,7 @@ echo ""
 # Step 1: Generate graph.dot
 echo "📊 Step 1: Generating graph.dot from source items..."
 mkdir -p "$GRAPH_DIR"
-python3 "$TSF_IMPL/tools/generate_graph_from_heuristics.py" \
+"$PYTHON_BIN" "$TSF_IMPL/tools/generate_graph_from_heuristics.py" \
     --items "$ITEMS_SOURCE" \
     --out "$GRAPH_DIR/graph.dot"
 echo "✓ Graph generated: $GRAPH_DIR/graph.dot"
@@ -52,15 +109,26 @@ echo "✓ DB initialized: $DB_FILE"
 
 # Create symlink in repo root so trudag can find it
 cd "$REPO_ROOT"
-[ -e ".dotstop.dot" ] && rm -f ".dotstop.dot"  # Remove file or symlink if exists
-ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot"
-echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
+[ -e ".dotstop.dot" ] && rm -rf ".dotstop.dot"  # Remove file/symlink safely
+if ln -s "docs/TSF/tsf_implementation/.dotstop.dot" ".dotstop.dot" 2>/dev/null; then
+    echo "✓ Created symlink: $DB_SYMLINK -> $DB_FILE"
+else
+    cp -f "$DB_FILE" ".dotstop.dot"
+    echo "✓ Symlink unavailable, copied DB file to repo root"
+fi
 
 # Create symlink for .dotstop_extensions in tsf_implementation so trudag finds validators
 cd "$TSF_IMPL"
-[ -e ".dotstop_extensions" ] && rm -f ".dotstop_extensions"
-ln -s "../../../.dotstop_extensions" ".dotstop_extensions"
-echo "✓ Created .dotstop_extensions symlink for validators"
+[ -e ".dotstop_extensions" ] && rm -rf ".dotstop_extensions"
+if ln -s "../../../.dotstop_extensions" ".dotstop_extensions" 2>/dev/null; then
+    echo "✓ Created .dotstop_extensions symlink for validators"
+elif [ -d "$REPO_ROOT/.dotstop_extensions" ]; then
+    cp -R "$REPO_ROOT/.dotstop_extensions" ".dotstop_extensions"
+    echo "✓ Symlink unavailable, copied .dotstop_extensions directory"
+else
+    echo "✗ .dotstop_extensions not found at repo root"
+    exit 1
+fi
 echo ""
 
 # Step 3: Create items in trudag DB
@@ -140,11 +208,12 @@ echo ""
 
 # Fix file reference paths in YAML to point to .trudag_items structure
 echo "🔧 Fixing file reference paths and IDs in .trudag_items..."
-python3 - <<'PYTHON'
+TSF_IMPL="$TSF_IMPL" "$PYTHON_BIN" - <<'PYTHON'
 import re
+import os
 from pathlib import Path
 
-trudag_items = Path("/Volumes/Important_Docs/42/SEA-ME_Team6_2025-26/docs/TSF/tsf_implementation/.trudag_items")
+trudag_items = Path(os.environ["TSF_IMPL"]) / ".trudag_items"
 
 fixed_count = 0
 
@@ -228,7 +297,7 @@ for md_file in trudag_items.rglob("*.md"):
         md_file.write_text(content)
         fixed_count += 1
 
-print(f"✓ Fixed paths and IDs in {fixed_count} files")
+print(f"Fixed paths and IDs in {fixed_count} files")
 PYTHON
 
 echo ""

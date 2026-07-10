@@ -1,5 +1,5 @@
 ---
-id: ASSERT-L0-31
+id: ASSERT_L0_31
 header: 'OTA Update System Implementation: The vehicle shall support SOTA, COTA, FOTA,
   and RAUC OS updates'
 text: "The vehicle's comprehensive OTA update system has been verified to support:\n\
@@ -16,9 +16,9 @@ level: '1.31'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-31.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_31/EXPECTATIONS-EXPECT_L0_31.md
 - type: file
-  path: ../evidences/EVID-L0-31.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md
 - type: url
   url: https://rauc.readthedocs.io/
 - type: url
