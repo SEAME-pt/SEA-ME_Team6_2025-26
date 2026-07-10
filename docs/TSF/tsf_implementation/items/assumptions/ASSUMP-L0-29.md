@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "Driver presence sensor"
       - "Vehicle control system"
       - "Diogo's duck (symbolic driver)"

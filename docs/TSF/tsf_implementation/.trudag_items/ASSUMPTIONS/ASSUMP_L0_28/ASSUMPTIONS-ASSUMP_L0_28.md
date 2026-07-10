@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "Temperature sensor"
       - "Calibrated thermometer"
       - "STM32 data acquisition"
