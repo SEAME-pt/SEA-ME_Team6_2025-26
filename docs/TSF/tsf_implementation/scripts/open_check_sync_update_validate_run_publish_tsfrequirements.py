@@ -1242,8 +1242,8 @@ text: |
 level: '1.{level_num}'
 normative: true
 references:
-- type: url
-  url: https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md
+- type: file
+    path: README.md
 score: 0.0
 ---
 This evidence item collects repository artifacts, sprint reports and demo images that demonstrate the requirement is met.
@@ -1420,7 +1420,22 @@ review_status: accepted
             valid_refs = []
             for ref in frontmatter['references']:
                 if isinstance(ref, dict):
-                    ref_path = ref.get('path', '')
+                    ref_type = ref.get('type', '')
+                    ref_path = ref.get('path', ref.get('url', ''))
+
+                    if ref_type == 'url':
+                        if 'rauc.readthedocs.io' in ref_path:
+                            local_path = 'src/ota/rauc/README.md'
+                            if (PROJECT_ROOT / local_path).exists():
+                                valid_refs.append({'type': 'file', 'path': local_path})
+                                modified = True
+                                continue
+
+                        if 'github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md' in ref_path:
+                            valid_refs.append({'type': 'file', 'path': 'README.md'})
+                            modified = True
+                            continue
+
                     # Check if reference points to EXPECT or ASSERT files
                     if 'EXPECT-' in ref_path or 'ASSERT-' in ref_path or '/expectations/' in ref_path or '/assertions/' in ref_path:
                         invalid_refs.append(ref_path)
@@ -1440,8 +1455,8 @@ review_status: accepted
             if not refs or len(refs) == 0:
                 # Add placeholder reference to README
                 frontmatter['references'] = [{
-                    'type': 'url',
-                    'url': 'https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/main/README.md'
+                    'type': 'file',
+                    'path': 'README.md'
                 }]
                 frontmatter['score'] = 0.0  # Mark as incomplete (no real evidence)
                 fixes_applied.append("Added placeholder reference (EVID cannot have empty references)")
