@@ -7,7 +7,7 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [X] ADAS manager restructured (21)
-  - [X] Tests (TSR / ADAS Manager features) (21)
+  - [X] Tests (TSR) (21)
   - [X] Tests (Emergency Vehicle Priority) (8)
   - [X] Requirements Review and Creation (5)
   - [X] TSF Script adaptation to OS (MAC, Linux, Windows) (8)
@@ -16,15 +16,11 @@
   - [X] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
   - [ ] Status point: update the documentation to reflect current implementation (8)
 
-  - #### Tasks from the previous sprint that we won´t do:
-  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
-  - [ ] Emergency Vehicle Priority pratical implementation (13)
-  - [ ] Integration of Vehicle-to-Infrastructures implementation into ADAS Manager(8)
-  - [ ] Integration of Emergency Vehicle Priority into ADAS Manager (8)
- 
+- #### Bonus
+  - [X] Debug and fix the car (21)
 ---
 
-## **Total Sprint Points: `92`**
+## **Total Sprint Points: `92` + `21`**
 
 ## 📊 Sprint Points Summary
 
@@ -34,7 +30,7 @@
 | **David** | ADAS manager restructured + Status point: update the documentation to reflect current implementation | 29 | 21 |
 | **Vasco** | Tests (TSR / Emergency Vehicle Priority / ADAS Manager features) + Status point: update the documentation to reflect current implementation | 29 | 21 |
 | **Diogo** | HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) + Status point: update the documentation to reflect current implementation | 29 | 21 |
-| **Ruben** |  | 0 | 0 |
+| **Ruben** | Car fixed | 21 | 21 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -53,18 +49,20 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`84/92`**
+- ### Sprint 16 points: **`105/92`**
 
 ## ❌ Undone:
-  - We left the documentation to the end of the module.
+  - We left the final documentation to the end of the module.
   
 ------
 
 ## ✅ Outcomes:
-  - With the exception of the documentation, we have effectively accomplish/delivered what we purposed to do in this sprint. 
+  - We have effectively accomplish/delivered what we purposed to do in this sprint - mainly, **fixing the car**!!
+  - Car can do a full lap again!
 ------
 
 - **Demos**:
+- https://github.com/user-attachments/assets/0f8182d9-582c-4f29-9664-d5bd070b1077
 
 - **Docs updated**:
 
@@ -79,11 +77,10 @@
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/TSF/new_requirements/docs/TSF/tsf_implementation/items/expectations/EXPECT-L0-31.md
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/TSF/new_requirements/docs/TSF/tsf_implementation/items/expectations/EXPECT-L0-32.md
 
-**TSF IMPROVED SCRIPT**
-
 # 🔎 Retrospective
 - ## **Went well**:
-- We have effectively achieved what we purposed to do this sprint. We left the documentation to the end of the module.
+- Our major worry was eliminated by fixing the car.
+- We have effectively achieved what we purposed to do this sprint.
 
 - ## **To improve/Still to be done**:
 - We still have to effectively test on the car.
