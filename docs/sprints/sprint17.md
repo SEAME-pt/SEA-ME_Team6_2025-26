@@ -17,7 +17,7 @@
   - [ ] Status point: update the documentation to reflect current implementation (8)
 
 - #### Bonus
-  - [X] Debug and fix the car (21)
+  - [X] Debug and fix the car - (Stepdown, Motor driver, BMS, CAN malfunction) (21)
 ---
 
 ## **Total Sprint Points: `92` + `21`**
