@@ -12,7 +12,7 @@ reviewers:
 evidence:
   type: validate_hardware_availability
   configuration:
-    dependencies:
+    components:
     - STM32
     - ThreadX
     - ST-LINK

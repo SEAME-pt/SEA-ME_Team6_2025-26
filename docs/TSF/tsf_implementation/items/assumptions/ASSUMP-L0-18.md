@@ -14,7 +14,7 @@ reviewers:
 evidence:
   type: validate_linux_environment
   configuration:
-    dependencies:
+    required_tools:
     - Linux environment
     - Development tools
     - Test infrastructure

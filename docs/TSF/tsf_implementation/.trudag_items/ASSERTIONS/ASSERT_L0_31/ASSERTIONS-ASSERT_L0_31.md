@@ -16,9 +16,9 @@ level: '1.31'
 normative: true
 references:
 - type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_31/EXPECTATIONS-EXPECT_L0_31.md
+  path: ../expectations/EXPECT-L0-31.md
 - type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/EVIDENCES/EVID_L0_31/EVIDENCES-EVID_L0_31.md
+  path: ../evidences/EVID-L0-31.md
 - type: file
   path: src/ota/rauc/README.md
 - type: url

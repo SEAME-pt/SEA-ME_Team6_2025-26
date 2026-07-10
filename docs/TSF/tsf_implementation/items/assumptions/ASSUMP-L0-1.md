@@ -13,7 +13,7 @@ reviewers:
 evidence:
   type: validate_hardware_availability
   configuration:
-    dependencies:
+    components:
     - Expansion Board
     - Raspberry Pi 5
     - Hailo Hat

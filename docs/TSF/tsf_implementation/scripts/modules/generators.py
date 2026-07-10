@@ -430,12 +430,19 @@ def generate_assumption(req_id: str, requirement: str, category: str) -> str:
         {'type': 'file', 'path': f'../expectations/EXPECT-{req_id}.md', 'id': f'EXPECT-{req_id}'}
     ]
     
-    # Evidence configuration
+    # Evidence configuration: choose the correct key expected by validators
+    if validator_type == "validate_hardware_availability":
+        configuration = {'components': components}
+    elif validator_type == "validate_software_dependencies":
+        configuration = {'dependencies': components}
+    elif validator_type == "validate_linux_environment":
+        configuration = {'required_tools': components}
+    else:
+        configuration = {'components': components}
+
     evidence_config = {
         'type': validator_type,
-        'configuration': {
-            'components': components
-        }
+        'configuration': configuration
     }
     
     # Create front-matter

@@ -48,6 +48,9 @@ build
 # Chat exports
 chat-session-*.json
 
+# Local Python virtual environment
+.venv/
+
 # TSF Howtoimplement submodules
 docs/TSF/Howtoimplement/safety-monitor/
 docs/TSF/Howtoimplement/trustable/

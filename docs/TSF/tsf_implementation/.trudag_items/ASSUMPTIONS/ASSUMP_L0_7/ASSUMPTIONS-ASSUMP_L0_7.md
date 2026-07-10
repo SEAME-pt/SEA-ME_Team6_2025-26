@@ -4,7 +4,7 @@ header: 'Assumption: QT Crosscompilation should be achieved'
 level: '1.7'
 normative: true
 references:
-- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_7/EXPECTATIONS-EXPECT_L0_7.md
+- path: ../expectations/EXPECT-L0-7.md
   type: file
 reviewers:
 - name: Joao Jesus Silva

@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_hardware_availability
   configuration:
-    dependencies:
+    components:
       - "Raspberry Pi 4"
       - "WiFi"
       - "VNC"

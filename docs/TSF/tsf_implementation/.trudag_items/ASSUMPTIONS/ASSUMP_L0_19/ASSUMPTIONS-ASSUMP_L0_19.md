@@ -7,14 +7,14 @@ level: '1.19'
 normative: true
 references:
 - type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_19/EXPECTATIONS-EXPECT_L0_19.md
+  path: ../expectations/EXPECT-L0-19.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
   type: validate_linux_environment
   configuration:
-    components:
+    required_tools:
     - Linux environment
     - Development tools
     - Test infrastructure
