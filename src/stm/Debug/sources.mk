@@ -19,14 +19,17 @@ MAP_FILES :=
 S_DEPS := 
 S_UPPER_DEPS := 
 C_DEPS := 
+OBJCOPY_BIN := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 AZURE_RTOS/App \
 Core/Src \
+Core/Src/tasks \
 Core/Startup \
 Drivers/STM32U5xx_HAL_Driver/Src \
 Drivers/VL53L5CX/src \
 Middlewares/ST/threadx/common/src \
 Middlewares/ST/threadx/ports/cortex_m33/gnu/src \
+Middlewares/ST/threadx/utility \
 

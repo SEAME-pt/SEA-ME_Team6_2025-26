@@ -1,0 +1,10 @@
+[update]
+compatible=seame-rpi5
+version=@@VERSION@@
+
+[hooks]
+filename=hook.sh
+
+[image.appfs]
+filename=apps.tar.gz
+hooks=install

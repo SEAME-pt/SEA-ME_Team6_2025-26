@@ -1,0 +1,15 @@
+[Unit]
+Description=SEAME ADAS Manager
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/data/current/adas_manager
+WorkingDirectory=/data/current
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,202 @@
+# 🏁 Sprint 13 — (28/04/2026 → 08/05/2026)
+
+> ## **Sprint Goal**: Car full lap with LKA and object detection implemented
+---
+
+## 📌 Epics
+
+- #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+  - [ ] ADAS manager architecture (13)
+      - Define ADAS manager architecture (priority-based feature arbitration)
+      - CAN message protocol for ADAS events (STM32 ↔ RPi5)
+      - Implement basic ADAS event bus on ThreadX side
+   - [x] ADAS Features (21)
+      - Cruise Control PID finetuning
+      - Improvement curve behavior algorithm 
+      - Implement Lane Keep Assistant Control Task
+   - [x] TSR (trafic sign recognition pipeline) (13)
+      - Communication flow from AI model to QT cluster
+  - 
+- #### **Epic** — AI Models Implementation - [#309](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/issues/309)
+  - [x] E2E refinement(13)
+      - Fine-tuning UFLDv2
+      - Car live test
+  - [x] Benchmarks and tests refinement (21)
+      - Test Yolo26s with current dataset 
+      or  
+      - Dataset Labelling to test seg models
+  - [x] Yolo post-processing refinement (13)
+      - Script improvement
+      - Treshholds refinement
+  - [x] MPC (Model Predictive Control) (8)
+      - Spike
+
+- #### **Epic** - Documentation - [#54](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315799&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C54)
+  - [ ] Reorganize documentation (5)
+      - Reorganize documentation on the repository
+---
+
+  
+## 📊 Sprint Points Summary
+
+| Member    | Tasks | Points | Achieved |
+|-----------|-------|--------|----------|
+| **João**  | **Benchmarks and Tests Refinement(21)** + **MPC (Model Predictive Control) (8)** + **Reorganize documentation (5)**| **34** | **34** |
+| **Ruben** | **ADAS manager architecture (13)** + **ADAS Features (21)** + **Reorganize documentation (5)**| **39** | **26** + **21** = **47** |
+| **David** | **ADAS manager architecture (13) + E2E Refinement (13)** + **Reorganize documentation (5)**| **31** | **18** + **21** = **39** |
+| **Vasco** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **YoloV8s post-processing refinement (13)** | **39** | **26** |
+| **Diogo** | **ADAS manager architecture (13)** + **TSR (trafic sign recognition pipeline (13)** + **Reorganize documentation (5)** | **31** | **13** + **21** = **34** |
+> **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
+
+**Total Sprint Points: 107**
+
+---
+
+## 🗺️ ADAS Module Roadmap (12 weeks — 6 sprints)
+
+| Sprint | Weeks | Theme | Key Deliverables |
+|--------|-------|-------|------------------|
+| **Sprint 9** ✅ | 1-2 | Foundations & Spikes | Car v3.1, AEB start, AI/model research, OTA w/RAUC |
+| **Sprint 10** ✅ | 3-4 | Perception & Control | Object detection on Hailo-8, AEB functional, LDW pipeline |
+| **Sprint 11** ✅| 5-6 | Lane Keeping & Cruise Control | LKA implementation, basic CC, CARLA simulation setup |\
+| **Sprint 12** ✅| 7-8 | Integration & Autonomous Mode | Autonomous driving mode, sensor fusion, ACC (bonus) |
+| **Sprint 13** ✅| 9-10 | Testing & Validation | Comprehensive ADAS testing, CARLA validation, benchmarks |
+| Sprint 14 | 11-12 | Final Polish & Demo | System stabilization, documentation, demo preparation |
+
+---
+
+## 🎯 ADAS Module Goals Mapping
+
+| Module Goal | Sprint 10 Contribution |
+|-------------|----------------------|
+| **Goal 1**: ADAS features (AEB, LDW, ACC, TSR) | LDW — lane departure warning via UFLDv2 inference + threshold detection; ACC — basic cruise control implementation |
+| **Goal 2**: Perception, Control, Localization | Camera capture pipeline in AGL; Hailo-8 inference integration; YOLOv8-s training for object detection; second camera integration |
+| **Goal 3**: CARLA simulation | Not this sprint |
+| **Goal 4**: AI/ML/Deep Learning for ADAS | UFLDv2 HEF deployment on Hailo-8; YOLOv8-s model training; lane detection algorithm; end-to-end latency benchmarking |
+| **Goal 5**: GenAI applied to ADAS | Not this sprint |
+| **Goal 6**: OTA updates for ADAS | Not this sprint |
+
+---
+
+## 📈 Actual Progress
+----
+
+- ### Sprint 13 points: **89 / 107** (without bonus points) - with bonus points we deliver 110 points
+
+- ### Bonus:
+  - camera calibration (intrinsic/extrinsic) (8) ✅
+  - LKA backwards (13) ✅
+  
+ ❌ Undone:
+  - ADAS manager architecture (13)
+  - Reorganize documentation (5)
+  
+## ✅ Outcomes
+------
+
+- **Delivered**:
+  - LKA
+  - Yolo detection done 
+  - Full Lap
+  - E2E test with 2 models (UFLvs + Yolo8s)
+  - Benchmark between Yolo8s vs Yolo26n vs Yolo8n-seg vs Yolo26n-seg 
+  - ADAS features such as TSR
+
+  
+
+
+- **Demos**:
+
+
+
+**REAL_LIVE_DEMO**
+- Full Lap (in front and backwards) + Object Detection
+
+#### Inference Performance
+
+| Pipeline | FPS before | FPS now |
+|:---:|:---:|:---:|
+| UFLDv2 solo | 15 | 20 |
+| YOLOv8s | --- | 50 |
+| UFLDv2 + YOLOv8s | 7 | 10 |
+
+
+
+**BENCHMARK**
+- https://www.youtube.com/embed/Qxm4dSdpibA?si=SzgZe4EhWqxyD3Ko
+
+- https://www.youtube.com/embed/IovBwZrnXzo?si=KOCQon6FzjReVTrQ
+
+- <img width="1862" height="1171" alt="Screenshot from 2026-05-08 04-20-57" src="https://github.com/user-attachments/assets/99318661-d3e1-47dd-a5b2-71f26beccab8" />
+
+
+
+
+
+
+- **Docs updated**:
+
+**BENCHMARK**
+
+- ![benchmark_geral](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/sprint13_benchmark_consolidated.md)
+
+- ![benchmark_detailed](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/yolo8s_vs_yolo8nseg_vs_yolo26n_vs%20_yolo26nseg.md)
+
+- ![benchmark_matrix](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/benchmark_matrix.md)
+
+- ![benchmark_step_by_step](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/30_benchmarks/benchmark_step_by_step.md)
+
+- ![planning_sprint13_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/60_planning/planning_sprint13.md)
+
+- ![context_sprint13_benchmark](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/context/context_sprint13.md)
+
+- ![onnx_conversion_explanation](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/Hailo/20_conversion/onnx_output_formats.md)
+
+
+**MPC/PID/PURE_PURSUIT**
+
+- ![MPC/PID/PurePursuit_spike](https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/MPC/MPC_PID_PurePursuit_spike.md)
+
+# 🔎 Retrospective
+- ## **Went well**:
+- The highlight was the balance between individual autonomy and constant collaboration among the team, allowing that each member had individual autonomy while working together in a highly collaborative environment.
+
+- ## **To improve**:
+- Take time to review documentation and reorganize it.
+
+## 🔗 Useful Links
+
+
+
+## TSF Useful:
+  - EXPECT-L0-1 - "System architecture is defined and documented";
+  - EXPECT-L0-2 - "Hardware Assembly: Fully assemble the PiRacer robot"
+  - EXPECT-L0-3 - "Software Setup capable of running Qt applications"
+  - EXPECT-L0-4 - "Driveable Car with Remote Control"
+  - EXPECT-L0-5 - "Launch basic Qt on built-in display"
+  - EXPECT-L0-6 - "The Qt GUI shall display static graphical elements"
+  - EXPECT-L0-7 - "QT Crosscompilation should be achieved"
+  - EXPECT-L0-8 - "Use CAN protocol to connect the Rasp5 to the STM 32(bidirectional)"
+  - EXPECT-L0-9 - "ThreadX running on the Microcontroller (STM32) as a RTOS"
+  - EXPECT-L0-10 - "Implement new architecture"
+  - EXPECT-L0-11 - "QT cluster UI auto-start on boot on display"
+  - EXPECT-L0-12 - "Wireless DCI display"
+  - EXPECT-L0-13 - "Project & GitHub setup"
+  - EXPECT-L0-14 - "TSF & Documentation"
+  - EXPECT-L0-15 - "Agile and Scrum"
+  - EXPECT-L0-16 - "CI/CD"
+  - EXPECT-L0-17 - "Introduce AI in the project"
+  - EXPECT-L0-18 - "The vehicle shall communicate via CAN bus also using ThreadX"
+  - EXPECT-L0-19 - "Test requirement for TSF automation"
+  - EXPECT-L0-20 - "Integrate AI for content generation"
+  - EXPECT-L0-21 - "Test the complete TSF automation workflow"
+  - EXPECT-L0-22 - "STM32 ThreadX safety-related startup"
+  - EXPECT-L0-23 - "Raspberry Pi 5 AGL boot time"
+  - EXPECT-L0-24 - "Combined startup (ThreadX + AGL)"
+  - EXPECT-L0-25 - "Instrument Cluster availability (Qt on Raspberry Pi 4)"
+  - EXPECT-L0-26 - "End-to-end system startup time (ThreadX + AGL + Qt)"
+  - EXPECT-L0-27 - "Emergency braking stopping distance"
+  - EXPECT-L0-28 - "Exterior temperature measurement accuracy"
+  - EXPECT-L0-29 - "Driver presence condition"
+  - EXPECT-L0-30 - "Car ready to next module 2"
+  - EXPECT-L0-31 - "Unit Tests"

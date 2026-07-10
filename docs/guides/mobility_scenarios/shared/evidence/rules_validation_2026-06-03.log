@@ -1,0 +1,20 @@
+# Rules Validation Evidence - 2026-06-03
+
+## Command
+python3 inline validation for barrier_rules.py and traffic_light_rules.py
+
+## Barrier Decision Rules
+barrier=open -> motion=advance
+barrier=closed -> motion=stop
+barrier=unknown -> motion=stop
+barrier=timeout -> motion=stop
+
+## Traffic Light Decision Rules
+light=green -> motion=advance
+light=emergency_green -> motion=advance
+light=yellow -> motion=slow_down
+light=red -> motion=stop
+light=unknown -> motion=stop
+light=timeout -> motion=stop
+
+RESULT=PASS
