@@ -12,7 +12,7 @@ reviewers:
 evidence:
   type: validate_hardware_availability
   configuration:
-    components:
+    dependencies:
     - joystick
     - gamepad
     - controller

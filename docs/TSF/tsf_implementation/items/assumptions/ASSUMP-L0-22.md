@@ -18,7 +18,7 @@ reviewers:
 evidence:
   type: validate_linux_environment
   configuration:
-    components:
+    dependencies:
     - STM32 development environment
     - ThreadX RTOS
     - CAN peripheral

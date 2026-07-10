@@ -12,7 +12,7 @@ reviewers:
 evidence:
   type: validate_hardware_availability
   configuration:
-    components:
+    dependencies:
     - Expansion Board
     - Raspberry Pi 5
     - Raspberry Pi 4

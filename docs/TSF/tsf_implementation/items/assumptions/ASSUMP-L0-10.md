@@ -12,7 +12,7 @@ reviewers:
 evidence:
   type: validate_hardware_availability
   configuration:
-    components:
+    dependencies:
     - Raspberry Pi 5
     - Raspberry Pi 4
     - STM32
