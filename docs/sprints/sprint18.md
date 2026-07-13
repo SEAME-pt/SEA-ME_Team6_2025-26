@@ -6,6 +6,7 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
+  - [ ] Implementation of VSS Signals to finish Cluster (13)
   - [ ] 
 
 - #### Tasks from the previous sprint:
@@ -20,9 +21,9 @@
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
 | **João**  | |  |  |
-| **David** | |  |  |
+| **David** | Implementation of VSS Signals to finish Cluster |  |  |
 | **Vasco** | |  |  |
-| **Diogo** | |  |  |
+| **Diogo** | Implementation of VSS Signals to finish Cluster |  |  |
 | **Ruben** | |  |  |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
