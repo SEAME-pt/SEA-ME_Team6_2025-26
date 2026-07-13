@@ -6,24 +6,25 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Implementation of VSS Signals to finish Cluster (13)
+  - [ ] Cluster and HMI final details implementation (21)
   - [ ] Emergency Vehicle Priority pratical implementation (21)
+  - [ ] Obstacle Avoidance Refinement (21)
 
 - #### Tasks from the previous sprint:
   - [ ] Status point: update the documentation to reflect current implementation (8)
 
 ---
 
-## **Total Sprint Points: ``**
+## **Total Sprint Points: `71`**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Emergency Vehicle Priority pratical implementation |  |  |
-| **David** | Implementation of VSS Signals to finish Cluster |  |  |
-| **Vasco** | |  |  |
-| **Diogo** | Implementation of VSS Signals to finish Cluster |  |  |
+| **João**  | Emergency Vehicle Priority pratical implementation + Status point: update the documentation to reflect current implementation | 29 |  |
+| **David** | Implementation of VSS Signals to finish Cluster + Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 |  |
+| **Vasco** | Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 |  |
+| **Diogo** | Implementation of VSS Signals to finish Cluster + Status point: update the documentation to reflect current implementation | 29 |  |
 | **Ruben** | |  |  |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
@@ -43,7 +44,7 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`0/`**
+- ### Sprint 16 points: **`0/71`**
 
 ## ❌ Undone:
   - 
