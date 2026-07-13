@@ -7,7 +7,7 @@
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
   - [ ] Implementation of VSS Signals to finish Cluster (13)
-  - [ ] 
+  - [ ] Emergency Vehicle Priority pratical implementation (21)
 
 - #### Tasks from the previous sprint:
   - [ ] Status point: update the documentation to reflect current implementation (8)
@@ -20,7 +20,7 @@
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | |  |  |
+| **João**  | Emergency Vehicle Priority pratical implementation |  |  |
 | **David** | Implementation of VSS Signals to finish Cluster |  |  |
 | **Vasco** | |  |  |
 | **Diogo** | Implementation of VSS Signals to finish Cluster |  |  |
