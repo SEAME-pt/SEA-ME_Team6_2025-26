@@ -144,6 +144,42 @@ jobs:
             src/ADAS-Manager/kuksa_bridge.py
             src/ADAS-Manager/socket_sender.py
 
+      - name: Build postprocess_cpp extension (aarch64)
+        continue-on-error: true
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            ${{ env.SDK_IMAGE_RPI5 }} \
+            bash -c '
+              set -e
+
+              echo "=== Building postprocess_cpp extension for RPi5 (aarch64) ==="
+
+              if [ -f /opt/agl-sdk/environment-setup-aarch64-agl-linux ]; then
+                source /opt/agl-sdk/environment-setup-aarch64-agl-linux
+              elif [ -f /opt/agl-sdk/environment-setup-* ]; then
+                source /opt/agl-sdk/environment-setup-*
+              fi
+
+              echo "CXX=$CXX"
+              python3 --version
+
+              cd /workspace/src/lane-detection/inference/lane-detection/postprocess_cpp
+              pip3 install --user pybind11 numpy
+              python3 setup.py build_ext --inplace
+
+              echo "=== Verifying extension ==="
+              ls -la *.so
+              file *.so
+            '
+
+      - name: Upload postprocess_cpp artifact (RPi5)
+        uses: actions/upload-artifact@v4
+        with:
+          name: postprocess-cpp-rpi5
+          path: src/lane-detection/inference/lane-detection/postprocess_cpp/*.so
+          if-no-files-found: warn
+
   # ============================================================
   # RPi4 Build (32-bit) - Qt Cluster
   # ============================================================
@@ -228,12 +264,30 @@ jobs:
           name: adas-manager-rpi5
           path: ota-rpi5/adas-manager
 
+      - name: Download postprocess_cpp artifact (RPi5)
+        if: needs.build-adas-rpi5.result == 'success'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: postprocess-cpp-rpi5
+          path: postprocess-cpp-rpi5
+
       - name: Package OTA for RPi5
         if: needs.build-kuksa-rpi5.result == 'success' || needs.build-adas-rpi5.result == 'success'
         run: |
           # Add inference scripts
           mkdir -p ota-rpi5/inference
           cp -r src/lane-detection/inference/. ota-rpi5/inference/
+
+          # Place compiled C++ postprocess extension (built in aarch64 SDK container).
+          # Falls back to Python (slower) at runtime if this is missing — see
+          # INFERENCE_DUAL.py's postprocess_cpp import try/except.
+          if ls postprocess-cpp-rpi5/*.so >/dev/null 2>&1; then
+            cp postprocess-cpp-rpi5/*.so ota-rpi5/inference/lane-detection/postprocess_cpp/
+            echo "✅ postprocess_cpp .so included"
+          else
+            echo "⚠️ postprocess_cpp .so not found — inference will fall back to Python"
+          fi
 
           # Add systemd service files
           mkdir -p ota-rpi5/services
