@@ -163,9 +163,12 @@ jobs:
 
               echo "CXX=$CXX"
               python3 --version
+              which pip3 || echo "pip3 not on PATH — falling back to python3 -m pip"
+
+              python3 -m pip --version || python3 -m ensurepip --upgrade --user
+              python3 -m pip install --user pybind11 numpy
 
               cd /workspace/src/lane-detection/inference/lane-detection/postprocess_cpp
-              pip3 install --user pybind11 numpy
               python3 setup.py build_ext --inplace
 
               echo "=== Verifying extension ==="
