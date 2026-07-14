@@ -4,8 +4,8 @@ header: 'Assumption: TSF & Documentation'
 level: '1.14'
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-14.md
+- path: ../expectations/EXPECT-L0-14.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

@@ -1,5 +1,5 @@
 ---
-id: ASSUMP-L0-22
+id: ASSUMP_L0_22
 header: 'Assumption: STM32 ThreadX development environment ready'
 text: 'Assumption: The STM32 development environment with ThreadX RTOS is properly
   configured, including the CAN peripheral setup and timing measurement capabilities.
@@ -11,14 +11,14 @@ level: '1.22'
 normative: true
 references:
 - type: file
-  path: ../expectations/EXPECT-L0-22.md
+  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_22/EXPECTATIONS-EXPECT_L0_22.md
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
 evidence:
   type: validate_linux_environment
   configuration:
-    components:
+    required_tools:
     - STM32 development environment
     - ThreadX RTOS
     - CAN peripheral

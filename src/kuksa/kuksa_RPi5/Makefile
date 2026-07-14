@@ -46,7 +46,6 @@ APP_SRCS := \
   $(SRC_DIR)/kuksa_client.cpp \
   $(SRC_DIR)/is_stm_connected.cpp \
   $(SRC_DIR)/handlers/speed.cpp \
-  $(SRC_DIR)/handlers/aeb.cpp \
   $(SRC_DIR)/handlers/environment.cpp \
   $(SRC_DIR)/handlers/heartbeat_stm.cpp \
   $(SRC_DIR)/handlers/tof_distance.cpp \
@@ -55,8 +54,7 @@ APP_SRCS := \
   $(SRC_DIR)/handlers/imu_magn.cpp \
   $(SRC_DIR)/handlers/emergency_stop.cpp \
   $(SRC_DIR)/handlers/battery.cpp \
-  $(SRC_DIR)/handlers/joystick.cpp \
-  $(SRC_DIR)/handlers/srf08.cpp
+  $(SRC_DIR)/handlers/joystick.cpp
 
 SRCS := $(APP_SRCS) $(GEN_SRCS)
 

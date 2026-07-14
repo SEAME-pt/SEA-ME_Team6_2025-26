@@ -1,0 +1,13 @@
+[Unit]
+Description=SEAME OTA Update Check
+After=network-online.target wifi-startup.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/seame/ota/ota-check.sh --install
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

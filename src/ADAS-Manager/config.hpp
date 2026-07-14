@@ -11,9 +11,12 @@ struct AdasConfig {
     OAConfig  oa;
 
     int   throttle                  = 25;
+    int   steering_trim             = 0;   // offset fixo p/ rodas tortas (+ = direita)
+    int   curve_throttle_min        = 21;  // piso: throttle>0 nunca abaixo disto (anti-empanque)
     int   degraded_threshold_frames = 10;
     int   emergency_threshold_ms    = 500;
     int   recovery_threshold_frames = 15;
+    int   emergency_timeout_ms      = 10000;  /* force-recover EMERGENCY_STOP → DEGRADED after this long */
     float obj_conf_thresh           = 0.60f;
     float collision_dist_m          = 0.30f;
     int   lane_timeout_ms           = 500;
@@ -66,9 +69,12 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.lka.max_rate  = static_cast<int>(get("max_rate", 20.0f));
 
     cfg.throttle                  = static_cast<int>(get("throttle",                   25.0f));
+    cfg.steering_trim             = static_cast<int>(get("steering_trim",               0.0f));
+    cfg.curve_throttle_min        = static_cast<int>(get("curve_throttle_min",          21.0f));
     cfg.degraded_threshold_frames = static_cast<int>(get("degraded_threshold_frames",  10.0f));
     cfg.emergency_threshold_ms    = static_cast<int>(get("emergency_threshold_ms",    500.0f));
     cfg.recovery_threshold_frames = static_cast<int>(get("recovery_threshold_frames",  15.0f));
+    cfg.emergency_timeout_ms      = static_cast<int>(get("emergency_timeout_ms",   10000.0f));
     cfg.obj_conf_thresh           = get("obj_conf_thresh",   0.60f);
     cfg.collision_dist_m          = get("collision_dist_m",  0.30f);
     cfg.lane_timeout_ms           = static_cast<int>(get("lane_timeout_ms",  500.0f));

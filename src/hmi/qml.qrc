@@ -11,18 +11,24 @@
 
         <!-- QML Components -->
         <file>qml/components/Topbar.qml</file>
-        <file>qml/components/Bottombar.qml</file>
-        <file>qml/components/NavButton.qml</file>
         
         <!-- QML Themes -->
         <file>qml/themes/BaseTheme.qml</file>
 
         <!-- Icons  -->
-        <file>assets/icons/camera.svg</file>
-        <file>assets/icons/car.svg</file>
-        <file>assets/icons/map.svg</file>
-        <file>assets/icons/settings.svg</file>
-        <file>assets/icons/statistics.svg</file>
+        <file>assets/icons/car-active.svg</file>
+        <file>assets/icons/controller-active.svg</file>
+        <file>assets/icons/grid-active.svg</file>
+        <file>assets/icons/statistics-active.svg</file>
+        <file>assets/icons/settings-active.svg</file>
+        <file>assets/icons/car-inactive.svg</file>
+        <file>assets/icons/controller-inactive.svg</file>
+        <file>assets/icons/grid-inactive.svg</file>
+        <file>assets/icons/statistics-inactive.svg</file>
+        <file>assets/icons/settings-inactive.svg</file>
+        <file>assets/icons/battery.svg</file>
+        <file>assets/icons/wifi.svg</file>
+        <file>assets/icons/bluetooth.svg</file>
 
         <!-- Images  -->
         <file>assets/images/seame-logo.png</file>

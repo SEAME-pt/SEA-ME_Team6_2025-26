@@ -54,13 +54,6 @@ QVariant ReaderWorker::datapoint_to_variant(const kuksa::val::v2::Datapoint &dp)
             return QVariant(v.bool_());
         case kuksa::val::v2::Value::kString:
             return QVariant(QString::fromStdString(v.string()));
-        case kuksa::val::v2::Value::kStringArray:
-        {
-            QVariantList list;
-            for (const auto &s : v.string_array().values())
-                list << QString::fromStdString(s);
-            return QVariant(list);
-        }
         default:
             return QVariant();
     }
@@ -117,6 +110,10 @@ void ReaderWorker::startReading()
             if (_shouldStop) break;
 
             const auto &entries = resp.entries();
+
+            // Only write to the cache - never emit signals directly.
+            // The dispatch timer on the main thread will read this cache
+            // at a fixed rate, so the Qt event queue never grows.
             {
                 QMutexLocker locker(&_cacheMutex);
                 for (auto it = entries.begin(); it != entries.end(); ++it)
@@ -176,6 +173,7 @@ Reader::Reader(const std::vector<std::string> &signalPaths, SignalRouter *router
     _worker = new ReaderWorker(_server, signalPaths);
     _worker->moveToThread(_workerThread);
 
+    // Forward connection-level signals normally (low frequency, fine with QueuedConnection)
     connect(_worker, &ReaderWorker::connectionError,
             this, &Reader::connectionError, Qt::QueuedConnection);
     connect(_worker, &ReaderWorker::connected,
@@ -217,6 +215,9 @@ Reader::~Reader()
 
 void Reader::dispatchPendingSignals()
 {
+    // Runs on the main thread at 50ms intervals.
+    // Grabs only the latest value per signal path and routes it.
+    // No matter how fast the worker writes, we only process 9 signals max per tick.
     if (!_router) return;
 
     QHash<QString, QVariant> snapshot;

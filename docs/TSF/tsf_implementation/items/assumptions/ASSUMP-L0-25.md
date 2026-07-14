@@ -1,13 +1,8 @@
 ---
 id: ASSUMP-L0-25
-header: 'Assumption: Qt Cluster Environment Ready'
-text: 'Assumption: The Raspberry Pi 4 development environment is properly configured
-  with Qt framework for automotive HMI applications. The display interface and framebuffer
-  are correctly configured for fast startup. The Qt application is designed to display
-  an initial UI independently of backend data availability. Video recording equipment
-  is available for external timing measurements.
-
-  '
+header: "Assumption: Qt Cluster Environment Ready"
+text: |
+  Assumption: The Raspberry Pi 4 development environment is properly configured with Qt framework for automotive HMI applications. The display interface and framebuffer are correctly configured for fast startup. The Qt application is designed to display an initial UI independently of backend data availability. Video recording equipment is available for external timing measurements.
 level: '1.25'
 normative: true
 references:
@@ -21,8 +16,8 @@ evidence:
   type: validate_software_dependencies
   configuration:
     dependencies:
-    - Raspberry Pi 4
-    - Qt framework
-    - Display interface
-    - Video recording equipment
+      - "Raspberry Pi 4"
+      - "Qt framework"
+      - "Display interface"
+      - "Video recording equipment"
 ---

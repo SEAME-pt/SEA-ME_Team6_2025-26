@@ -4,8 +4,8 @@ header: 'Assumption: The system shall be capable of launching a basic Qt...'
 level: '1.5'
 normative: true
 references:
-- type: file
-  path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_5/EXPECTATIONS-EXPECT_L0_5.md
+- path: docs/TSF/tsf_implementation/.trudag_items/EXPECTATIONS/EXPECT_L0_5/EXPECTATIONS-EXPECT_L0_5.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

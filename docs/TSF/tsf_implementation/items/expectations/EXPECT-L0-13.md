@@ -6,8 +6,8 @@ text: The project uses a GitHub repository with proper structure and version con
 level: '1.13'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-13.md
+- path: ../assertions/ASSERT-L0-13.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

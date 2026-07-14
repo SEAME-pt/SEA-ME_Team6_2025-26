@@ -6,8 +6,8 @@ text: The team follows Agile Scrum practices for iterative development and proje
 level: '1.15'
 normative: true
 references:
-- type: file
-  path: ../assertions/ASSERT-L0-15.md
+- path: ../assertions/ASSERT-L0-15.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

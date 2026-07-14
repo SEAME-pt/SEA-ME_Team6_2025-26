@@ -4,8 +4,8 @@ header: 'Assumption: Implement and test the changing from the old architecture..
 level: '1.10'
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-10.md
+- path: ../expectations/EXPECT-L0-10.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt

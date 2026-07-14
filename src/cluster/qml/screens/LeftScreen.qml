@@ -9,17 +9,13 @@ Item {
     id: leftScreen
     Layout.fillWidth: true
     Layout.fillHeight: true
-    //? Data
-    property string currentGear: "D"
-    property var gearData: [{label: "R", icon: "reverse"}, {label: "N", icon: "neutral"}, {label: "D", icon: "forward"}]
 
     LeftGauge {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 75
-        currMotorSpeed: powertrain.motorSpeed
+        currMotorSpeed: powertrain.motorSpeed 
         currTotalKm: 0
-        streetSignal: adas.streetSignals.length > 1 ? adas.streetSignals[0] : ""
     }
 
     Text {

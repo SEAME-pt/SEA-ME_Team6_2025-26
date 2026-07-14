@@ -24,6 +24,7 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h \
@@ -39,9 +40,9 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h \
- ../Middlewares/ST/threadx/common/inc/tx_api.h \
+ ../Core/Inc/system_ctx.h ../Middlewares/ST/threadx/common/inc/tx_api.h \
  ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h \
- ../Core/Inc/tx_user.h
+ ../Core/Inc/tx_user.h ../Core/Inc/vehicle_state.h ../Core/Inc/can_id.h
 ../Core/Inc/motor_control.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
 ../Core/Inc/stm32u5xx_hal_conf.h:
@@ -67,6 +68,7 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_flash_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_i2c_ex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_iwdg.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_ospi.h:
@@ -82,6 +84,9 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pcd_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_mdf.h:
+../Core/Inc/system_ctx.h:
 ../Middlewares/ST/threadx/common/inc/tx_api.h:
 ../Middlewares/ST/threadx/ports/cortex_m33/gnu/inc/tx_port.h:
 ../Core/Inc/tx_user.h:
+../Core/Inc/vehicle_state.h:
+../Core/Inc/can_id.h:

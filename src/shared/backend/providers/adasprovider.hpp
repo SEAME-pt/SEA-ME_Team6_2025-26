@@ -17,7 +17,7 @@
 /**
  * @class ADASProvider
  * @brief Handles all adas-related vehicle signals
- *
+ * 
  * Manages:
  * - Front Distance     (Vehicle.ADAS.ObstacleDetection.Front.Distance)
  * - LKA Status         (Vehicle.ADAS.LaneKeepAssist.IsEnabled)
@@ -119,11 +119,6 @@ private:
 
     // formatted strings for QML display
     QString _frontDistanceStr;
-    QString _lateralDeviationStr;
-    QString _speedLimitStr;
-
-    // Helpers
-    QList<double> _lateralDeviationHistory;
 };
 
 #endif /* ADASPROVIDER_HPP */

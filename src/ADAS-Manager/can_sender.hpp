@@ -9,8 +9,10 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cstdio>
+#include <chrono>
 
 #include "can_protocol.h"   // CtrlCmd_t, CtrlMode_t, CAN_ID_CTRL_CMD, HEADWAY_*
+#include "can_id.h"         // Heartbeat_t, CAN_ID_HEARTBEAT_AGL, SYSTEM_STATE_*, DRIVE_MODE_*
 
 static constexpr const char* CAN_CHANNEL  = "can1";
 static constexpr uint32_t    CAN_ID_ESTOP = 0x001;
@@ -29,6 +31,10 @@ static uint8_t _crc8(const uint8_t* data, size_t len) {
 class CanSender {
 public:
     explicit CanSender(const char* channel = CAN_CHANNEL) : channel_(channel) {}
+
+    // Trim de direção (calibração de rodas tortas): offset fixo somado a
+    // TODOS os comandos de steering, antes do envio. + = direita.
+    void set_steering_trim(int t) { steering_trim_ = t; }
 
     int init() {
         fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -57,15 +63,20 @@ public:
                        uint16_t target_speed_cms = 0,
                        uint8_t  headway          = HEADWAY_MEDIUM,
                        bool     aeb_request      = false) {
+        int trimmed = static_cast<int>(steering) + steering_trim_;
+        if (trimmed < -100) trimmed = -100;
+        if (trimmed >  100) trimmed =  100;
+
         CtrlCmd_t cmd{};
         cmd.mode             = static_cast<uint8_t>(mode);
-        cmd.steering         = steering;
+        cmd.steering         = static_cast<int8_t>(trimmed);
         cmd.throttle         = throttle;
         cmd.target_speed_cms = target_speed_cms;
         cmd.headway          = headway & 0x0F;
         cmd.aeb_request      = aeb_request ? 1 : 0;
         cmd.reserved         = 0;
-        cmd.counter          = counter_++ % 15;
+        cmd.counter          = counter_;
+        if (++counter_ > 14) counter_ = 0;   // rolling 0..14 sem duplicar no wrap
         cmd.crc              = _crc8(reinterpret_cast<const uint8_t*>(&cmd),
                                      sizeof(cmd) - 1);
 
@@ -76,11 +87,32 @@ public:
         bool ok = _send(frame);
 
         if (!ok || (counter_ % 25) == 0) {
-            printf("[CAN] 0x%03X mode=%u steer=%+d thr=%+d%s %s\n",
-                   CAN_ID_CTRL_CMD, static_cast<unsigned>(mode), steering, throttle,
-                   aeb_request ? " AEB!" : "", ok ? "OK" : "FAIL");
+            printf("[CAN] 0x%03X mode=%u steer=%+d(trim%+d) thr=%+d%s %s\n",
+                   CAN_ID_CTRL_CMD, static_cast<unsigned>(mode), trimmed, steering_trim_,
+                   throttle, aeb_request ? " AEB!" : "", ok ? "OK" : "FAIL");
         }
         return ok;
+    }
+
+    // CAN 0x700 — Heartbeat_t — beacon "Manager vivo" (enviar a 10 Hz).
+    // O STM32 usa a ausência disto (e do 0x202) para failsafe.
+    bool send_heartbeat(bool manual_mode) {
+        static const auto t0 = std::chrono::steady_clock::now();
+        auto uptime = std::chrono::duration_cast<std::chrono::milliseconds>(
+                          std::chrono::steady_clock::now() - t0).count();
+
+        Heartbeat_t hb{};
+        hb.state     = SYSTEM_STATE_RUNNING;
+        hb.uptime_ms = static_cast<uint32_t>(uptime);
+        hb.errors    = 0;
+        hb.mode      = manual_mode ? DRIVE_MODE_MANUAL : DRIVE_MODE_AUTONOMOUS;
+        hb.crc       = _crc8(reinterpret_cast<const uint8_t*>(&hb), sizeof(hb) - 1);
+
+        struct can_frame frame{};
+        frame.can_id  = CAN_ID_HEARTBEAT_AGL;
+        frame.can_dlc = 8;
+        memcpy(frame.data, &hb, sizeof(hb));
+        return _send(frame);
     }
 
     // CAN 0x001 — EmergencyStop_t — one-shot pulse
@@ -109,6 +141,7 @@ private:
     }
 
     const char* channel_;
-    int         fd_      = -1;
-    uint8_t     counter_ = 0;
+    int         fd_            = -1;
+    uint8_t     counter_       = 0;
+    int         steering_trim_ = 0;
 };

@@ -4,8 +4,8 @@ header: 'Assumption: The Qt GUI shall display static graphical elements such as.
 level: '1.6'
 normative: true
 references:
-- type: file
-  path: ../expectations/EXPECT-L0-6.md
+- path: ../expectations/EXPECT-L0-6.md
+  type: file
 reviewers:
 - name: Joao Jesus Silva
   email: joao.silva@seame.pt
