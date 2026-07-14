@@ -10,6 +10,7 @@
 #include "providers/adasprovider.hpp"
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
+#include "providers/otaprovider.hpp"
 #include <QThread>
 #include <QCoreApplication>
 #include <QJsonObject>
@@ -21,7 +22,8 @@ SignalRouter::SignalRouter(QObject *parent)
       _exteriorProvider(nullptr),
       _adasProvider(nullptr),
       _currentLocationProvider(nullptr),
-      _chassisProvider(nullptr)
+      _chassisProvider(nullptr),
+      _otaProvider(nullptr)
 {
     qDebug() << "[SignalRouter] Created";
 }
@@ -60,6 +62,12 @@ void SignalRouter::registerChassisProvider(ChassisProvider *provider)
 {
     _chassisProvider = provider;
     qDebug() << "[SignalRouter] ChassisProvider registered";
+}
+
+void SignalRouter::registerOTAProvider(OTAProvider *provider)
+{
+    _otaProvider = provider;
+    qDebug() << "[SignalRouter] OTAProvider registered";
 }
 
 QStringList SignalRouter::parseStringArray(const QVariant &value)
@@ -102,10 +110,10 @@ void SignalRouter::routeSignal(const QString &path, const QVariant &value)
         routeCurrentLocationSignal(path, value);
     else if (path.startsWith("Vehicle.Chassis"))
         routeChassisSignal(path, value);
+    else if (path.startsWith("Vehicle.OTA"))
+        routeOTASignal(path, value);
     else if (path.startsWith("Vehicle"))
-    {
         routeVehicleSignal(path, value);
-    }
     else
     {
         qWarning() << "[SignalRouter] Unhandled signal path:" << path;
@@ -175,7 +183,15 @@ void SignalRouter::routeADASSignal(const QString &path, const QVariant &value)
     if (!isProviderRegistered(_adasProvider, "ADASProvider"))
         return;
 
-    if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance")
+    if (path == "Vehicle.ADAS.LaneKeepAssist.IsEnabled")
+        _adasProvider->updateLKAStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.CruiseControl.IsEnabled")
+        _adasProvider->updateCCStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.AEB.IsEnabled")
+        _adasProvider->updateAEBStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.ObjectDetection.IsEnabled")
+        _adasProvider->updateTSRStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance")
         _adasProvider->updateFrontDistance(value.toDouble());
     else if (path == "Vehicle.ADAS.LaneKeepAssist.LateralDeviation")
         _adasProvider->updateLateralDeviation(value.toDouble());
@@ -232,6 +248,21 @@ void SignalRouter::routeChassisSignal(const QString &path, const QVariant &value
     {
         qDebug() << "[SignalRouter] Unknown chassis signal:" << path;
     }
+}
+
+void SignalRouter::routeOTASignal(const QString &path, const QVariant &value)
+{
+    if (!isProviderRegistered(_otaProvider, "OTAProvider"))
+        return;
+
+    if (path == "Vehicle.OTA.InstalledVersion")
+        _otaProvider->updateInstalledVersion(value.toString());
+    else if (path == "Vehicle.OTA.PendingVersion")
+        _otaProvider->updatePendingVersion(value.toString());
+    else if (path == "Vehicle.OTA.UpdateAvailable")
+        _otaProvider->updateIsUpdateAvailable(value.toBool());
+    else
+        qDebug() << "[SignalRouter] Unknown chassis signal:" << path;
 }
 
 template <typename T>

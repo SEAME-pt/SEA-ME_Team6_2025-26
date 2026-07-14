@@ -22,6 +22,18 @@ Item {
         streetSignal: adas.streetSignals.length > 1 ? adas.streetSignals[0] : ""
     }
 
+    Text {
+        id: versionLabel
+        text: ota.installedVersion
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.bottomMargin: 8
+        anchors.leftMargin: 8
+        color: BaseTheme.white
+        font.pixelSize: 12
+        opacity: 0.8
+    }
+
     // Item {
     //     id: gearSelector
     //     width: 80

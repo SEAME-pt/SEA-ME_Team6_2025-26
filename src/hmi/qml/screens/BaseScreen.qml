@@ -24,11 +24,14 @@ Rectangle {
             id: pageLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
-            source: "qrc:/qml/screens/MediaScreen.qml"
+            source: "qrc:/qml/screens/StatisticScreen.qml"
         }
 
         Bottombar {
             id: bottombar
+            onChangeScreen: function(page) {
+                pageLoader.source = page
+            }
         }
     }
 }

@@ -7,6 +7,7 @@
         <file>qml/screens/BaseScreen.qml</file>
         <file>qml/screens/MediaScreen.qml</file>
         <file>qml/screens/StatisticsScreen.qml</file>
+        <file>qml/screens/SettingsScreen.qml</file>
 
         <!-- QML Components -->
         <file>qml/components/Topbar.qml</file>

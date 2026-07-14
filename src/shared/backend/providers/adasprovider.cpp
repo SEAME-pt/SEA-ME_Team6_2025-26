@@ -16,7 +16,11 @@ ADASProvider::ADASProvider(QObject *parent)
       _speedLimitStr("0"),
       _trafficLightValue("none"),
       _streetSignalsValue({}),
-      _extrasValue({})
+      _extrasValue({}),
+      _LKAValue(true),
+      _CCValue(true),
+      _AEBValue(true),
+      _TSRValue(true)
 {
     qDebug() << "[ADASProvider] Initialized";
 }
@@ -67,6 +71,30 @@ QStringList ADASProvider::extras() const
 {
     QMutexLocker locker(&_mutex);
     return _extrasValue;
+}
+
+bool ADASProvider::LKAStatus() const
+{
+    QMutexLocker locker(&_mutex);
+    return _LKAValue;
+}
+
+bool ADASProvider::CCStatus() const
+{
+    QMutexLocker locker(&_mutex);
+    return _CCValue;
+}
+
+bool ADASProvider::AEBStatus() const
+{
+    QMutexLocker locker(&_mutex);
+    return _AEBValue;
+}
+
+bool ADASProvider::TSRStatus() const
+{
+    QMutexLocker locker(&_mutex);
+    return _TSRValue;
 }
 
 void ADASProvider::updateFrontDistance(double frontDistance)
@@ -165,4 +193,62 @@ void ADASProvider::updateExtras(const QStringList &extras)
 
     locker.unlock();
     emit extrasChanged();
+}
+
+void ADASProvider::updateLKAStatus(bool LKAStatus)
+{
+    QMutexLocker locker(&_mutex);
+
+    if (LKAStatus == _LKAValue)
+        return;
+
+    _LKAValue = LKAStatus;
+
+    locker.unlock();
+    emit LKAStatusChanged();
+}
+
+void ADASProvider::updateCCStatus(bool CCStatus)
+{
+    QMutexLocker locker(&_mutex);
+
+    if (CCStatus == _CCValue)
+        return;
+
+    _CCValue = CCStatus;
+
+    locker.unlock();
+    emit CCStatusChanged();
+}
+
+void ADASProvider::updateAEBStatus(bool AEBStatus)
+{
+    QMutexLocker locker(&_mutex);
+
+    if (AEBStatus == _AEBValue)
+        return;
+
+    _AEBValue = AEBStatus;
+
+    locker.unlock();
+    emit AEBStatusChanged();
+}
+
+void ADASProvider::updateTSRStatus(bool TSRStatus)
+{
+    QMutexLocker locker(&_mutex);
+
+    if (TSRStatus == _TSRValue)
+        return;
+
+    _TSRValue = TSRStatus;
+
+    locker.unlock();
+    emit TSRStatusChanged();
+}
+
+void ADASProvider::triggerUpdateADASFeature(QString VSSPath, bool value)
+{
+    qDebug() << "[ADASProvider] Triggering update on " << VSSPath;
+    emit requestWrite(VSSPath, QVariant(value));
 }

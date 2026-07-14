@@ -281,9 +281,59 @@ Item {
             }
 
             Item {
+                id: compassRoot
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 anchors.leftMargin: 8
+
+                // --- TEST MODE: simulates a vehicle driving around, turning at "junctions" ---
+                // Set to false to go back to the real backend value.
+                property bool testMode: true
+                property real simHeading: 0
+                property real simTarget: 0
+
+                Timer {
+                    id: headingSimTimer
+                    interval: 150
+                    running: compassRoot.testMode
+                    repeat: true
+                    onTriggered: {
+                        // Occasionally decide to "turn" toward a new heading, like reaching a junction
+                        if (Math.random() < 0.01)
+                            compassRoot.simTarget = Math.random() * 360;
+
+                        // Ease current heading toward target via shortest path (a gentle turn, not a snap)
+                        var diff = compassRoot.simTarget - compassRoot.simHeading;
+                        diff = ((diff + 180) % 360 + 360) % 360 - 180;
+                        compassRoot.simHeading += diff * 0.05;
+
+                        // Small jitter to mimic GPS/sensor noise while driving straight
+                        compassRoot.simHeading += (Math.random() - 0.5) * 1.2;
+                        compassRoot.simHeading = ((compassRoot.simHeading % 360) + 360) % 360;
+                    }
+                }
+
+                // Raw heading coming from the backend (0-359, wraps around)
+                property real heading: testMode ? simHeading : currentLocation.heading
+
+                // Animated value actually used for the needle rotation.
+                // We track it imperatively so we can always take the
+                // shortest path around the circle (e.g. 350 -> 5 should
+                // rotate forward 15 degrees, not spin backwards 345).
+                property real displayHeading: heading
+
+                onHeadingChanged: {
+                    var diff = compassRoot.heading - compassRoot.displayHeading;
+                    diff = ((diff + 180) % 360 + 360) % 360 - 180;
+                    compassRoot.displayHeading += diff;
+                }
+
+                Behavior on displayHeading {
+                    NumberAnimation {
+                        duration: 400
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 //? OUTER RING
                 Rectangle {
@@ -331,12 +381,106 @@ Item {
                     }
                 }
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "To be added"
-                    color: BaseTheme.white
-                    font.pixelSize: 12
-                    font.bold: true
+                //? COMPASS FACE (fixed ticks + cardinal/intercardinal labels)
+                Item {
+                    id: compassFace
+                    anchors.centerIn: innerCircle
+                    width: innerCircle.width
+                    height: innerCircle.height
+
+                    // Tick marks every 5 degrees (72 ticks)
+                    Repeater {
+                        model: 72
+                        delegate: Item {
+                            anchors.fill: parent
+                            rotation: index * 5
+
+                            Rectangle {
+                                property bool isMajor: index % 18 === 0   // N/E/S/W
+                                property bool isMid: !isMajor && index % 9 === 0 // NE/SE/SW/NW
+
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                y: 4
+                                width: isMajor ? 2 : 1
+                                height: isMajor ? 9 : (isMid ? 6 : 3)
+                                radius: 0.5
+                                color: isMajor ? BaseTheme.white
+                                              : (isMid ? BaseTheme.gaugeTicksActive
+                                                       : BaseTheme.gaugeTicksInactive)
+                                antialiasing: true
+                            }
+                        }
+                    }
+
+                    // Cardinal / intercardinal letters, kept upright
+                    Repeater {
+                        model: [
+                            { label: "N", angle: 0 },
+                            { label: "NE", angle: 45 },
+                            { label: "E", angle: 90 },
+                            { label: "SE", angle: 135 },
+                            { label: "S", angle: 180 },
+                            { label: "SW", angle: 225 },
+                            { label: "W", angle: 270 },
+                            { label: "NW", angle: 315 }
+                        ]
+                        delegate: Item {
+                            anchors.fill: parent
+                            rotation: modelData.angle
+
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                y: 16
+                                rotation: -modelData.angle
+                                text: modelData.label
+                                color: modelData.label === "N" ? BaseTheme.danger : BaseTheme.white
+                                font.pixelSize: modelData.label.length === 1 ? 12 : 8
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+                    }
+                }
+
+                //? NEEDLE (rotates with heading)
+                Item {
+                    id: needleGroup
+                    anchors.centerIn: innerCircle
+                    width: innerCircle.width
+                    height: innerCircle.height
+                    rotation: compassRoot.displayHeading
+
+                    // Main hand, pointing toward current heading
+                    Rectangle {
+                        x: parent.width / 2 - width / 2
+                        y: parent.height / 2 - height
+                        width: 3
+                        height: 32
+                        radius: 1.5
+                        color: BaseTheme.danger
+                    }
+
+                    // Short counterweight tail, opposite the hand
+                    Rectangle {
+                        x: parent.width / 2 - width / 2
+                        y: parent.height / 2
+                        width: 3
+                        height: 10
+                        radius: 1.5
+                        color: BaseTheme.danger
+                    }
+
+                    // Center pivot
+                    Rectangle {
+                        x: parent.width / 2 - width / 2
+                        y: parent.height / 2 - height / 2
+                        width: 8
+                        height: 8
+                        radius: width / 2
+                        color: BaseTheme.danger
+                        border.color: BaseTheme.white
+                        border.width: 1
+                    }
                 }
             }
 

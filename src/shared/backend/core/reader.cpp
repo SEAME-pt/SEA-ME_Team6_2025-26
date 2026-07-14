@@ -99,7 +99,7 @@ void ReaderWorker::startReading()
             qDebug() << "[ReaderWorker]   Subscribed to:" << QString::fromStdString(path);
         }
 
-        std::string jwt = read_file("/etc/kuksa/jwt/reader.jwt");
+        std::string jwt = read_file("/etc/kuksa/jwt/publisher.jwt");
 
         auto ctx = std::make_unique<grpc::ClientContext>();
         ctx->AddMetadata("authorization", "Bearer " + jwt);

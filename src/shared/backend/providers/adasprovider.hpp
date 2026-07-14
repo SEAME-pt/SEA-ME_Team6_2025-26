@@ -11,6 +11,7 @@
 #include <QString>
 #include <QMutex>
 #include <QList>
+#include <QVariant>
 #include <QStringList>
 
 /**
@@ -19,12 +20,23 @@
  *
  * Manages:
  * - Front Distance     (Vehicle.ADAS.ObstacleDetection.Front.Distance)
+ * - LKA Status         (Vehicle.ADAS.LaneKeepAssist.IsEnabled)
  * - Lateral Deviation  (Vehicle.ADAS.LaneKeepAssist.LateralDeviation)
  * - Lane Status        (Vehicle.ADAS.LaneKeepAssist.LaneStatus)
+ * - TSR Status         (Vehicle.ADAS.ObjectDetection.IsEnabled)
  * - Speed Limit        (Vehicle.ADAS.ObjectDetection.SpeedLimit)
  * - Traffic Light      (Vehicle.ADAS.ObjectDetection.TrafficLight)
  * - StreetSignals      (Vehicle.ADAS.ObjectDetection.StreetSignals)
  * - Extras             (Vehicle.ADAS.ObjectDetection.Extras)
+ * - CC Status          (Vehicle.ADAS.CruiseControl.IsEnabled)
+ * - AEB Status         (Vehicle.ADAS.AEB.IsEnabled)
+ *
+ * Triggers:
+ * - Features on/off    (Vehicle.ADAS.LaneKeepAssist.IsEnabled)
+ *                      (Vehcile.ADAS.CruiseControl.IsEnabled)
+ *                      (Vehicle.ADAS.AEB.IsEnabled)
+ *                      (Vehicle.ADAS.ObjectDetection.IsEnabled)
+ *
  */
 
 class ADASProvider : public BaseProvider
@@ -39,6 +51,10 @@ class ADASProvider : public BaseProvider
     Q_PROPERTY(QString trafficLight READ trafficLight NOTIFY trafficLightChanged)
     Q_PROPERTY(QStringList streetSignals READ streetSignals NOTIFY streetSignalsChanged)
     Q_PROPERTY(QStringList extras READ extras NOTIFY extrasChanged)
+    Q_PROPERTY(bool LKAStatus READ LKAStatus NOTIFY LKAStatusChanged)
+    Q_PROPERTY(bool CCStatus READ CCStatus NOTIFY CCStatusChanged)
+    Q_PROPERTY(bool AEBStatus READ AEBStatus NOTIFY AEBStatusChanged)
+    Q_PROPERTY(bool TSRStatus READ TSRStatus NOTIFY TSRStatusChanged)
 
 public:
     explicit ADASProvider(QObject *parent = nullptr);
@@ -54,6 +70,10 @@ public:
     QString trafficLight() const;
     QStringList streetSignals() const;
     QStringList extras() const;
+    bool LKAStatus() const;
+    bool CCStatus() const;
+    bool AEBStatus() const;
+    bool TSRStatus() const;
 
 public slots:
     void updateFrontDistance(double frontDistance);
@@ -63,6 +83,11 @@ public slots:
     void updateTrafficLight(QString trafficLight);
     void updateStreetSignals(const QStringList &streetSignals);
     void updateExtras(const QStringList &extras);
+    void updateLKAStatus(bool LKAStatus);
+    void updateCCStatus(bool CCStatus);
+    void updateAEBStatus(bool AEBStatus);
+    void updateTSRStatus(bool statTSRStatusus);
+    Q_INVOKABLE void triggerUpdateADASFeature(QString VSSPath, bool value);
 
 signals:
     void frontDistanceChanged();
@@ -72,6 +97,11 @@ signals:
     void trafficLightChanged();
     void streetSignalsChanged();
     void extrasChanged();
+    void LKAStatusChanged();
+    void CCStatusChanged();
+    void AEBStatusChanged();
+    void TSRStatusChanged();
+    void requestWrite(QString path, QVariant value);
 
 private:
     // Raw Values
@@ -82,6 +112,10 @@ private:
     QString _trafficLightValue;
     QStringList _streetSignalsValue;
     QStringList _extrasValue;
+    bool _LKAValue;
+    bool _CCValue;
+    bool _AEBValue;
+    bool _TSRValue;
 
     // formatted strings for QML display
     QString _frontDistanceStr;
