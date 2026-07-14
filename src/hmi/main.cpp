@@ -14,6 +14,7 @@
 #include <cstdio>
 
 #include "core/reader.hpp"
+#include "core/writer.hpp"
 #include "core/signalrouter.hpp"
 #include "providers/powertrainprovider.hpp"
 #include "providers/vehicleprovider.hpp"
@@ -22,8 +23,11 @@
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
 #include "providers/extraprovider.hpp"
+#include "providers/cameraprovider.hpp"
+#include "providers/otaprovider.hpp"
 
-static void crashHandler(int sig) {
+static void crashHandler(int sig)
+{
     void *array[20];
     int size = backtrace(array, 20);
     fprintf(stderr, "\n[CRASH] Signal %d received:\n", sig);
@@ -33,23 +37,36 @@ static void crashHandler(int sig) {
 
 int main(int argc, char *argv[])
 {
-    qputenv("QSG_RENDER_LOOP", "basic");
+    // qputenv("QSG_RENDER_LOOP", "basic");
     qputenv("QML_DISABLE_DISTANCEFIELD", "1");
     signal(SIGSEGV, crashHandler);
     signal(SIGABRT, crashHandler);
-    signal(SIGFPE,  crashHandler);
+    signal(SIGFPE, crashHandler);
     QGuiApplication app(argc, argv);
 
     std::vector<std::string> kuksaSignals = {
         "Vehicle.Speed",
-        "Vehicle.Exterior.AirTemperature",
-        "Vehicle.ADAS.ObstacleDetection.Front.Distance",
         "Vehicle.Powertrain.TractionBattery.CurrentVoltage",
         "Vehicle.Powertrain.ElectricMotor.Speed",
         "Vehicle.Powertrain.TractionBattery.IsCritical",
         "Vehicle.Powertrain.TractionBattery.IsLevelLow",
+        "Vehicle.Exterior.AirTemperature",
+        "Vehicle.ADAS.ObstacleDetection.Front.Distance",
+        "Vehicle.ADAS.LaneKeepAssist.LateralDeviation",
+        "Vehicle.ADAS.LaneKeepAssist.LaneStatus",
+        "Vehicle.ADAS.ObjectDetection.SpeedLimit",
+        "Vehicle.ADAS.ObjectDetection.TrafficLight",
+        "Vehicle.ADAS.ObjectDetection.StreetSignals",
+        "Vehicle.ADAS.ObjectDetection.Extras",
+        "Vehicle.ADAS.LaneKeepAssist.IsEnabled",
+        "Vehicle.ADAS.CruiseControl.IsEnabled",
+        "Vehicle.ADAS.AEB.IsEnabled",
+        "Vehicle.ADAS.ObjectDetection.IsEnabled",
         "Vehicle.CurrentLocation.Heading",
-        "Vehicle.Chassis.SteeringWheel.Angle"
+        "Vehicle.Chassis.SteeringWheel.Angle",
+        "Vehicle.OTA.InstalledVersion",
+        "Vehicle.OTA.PendingVersion",
+        "Vehicle.OTA.UpdateAvailable"
     };
 
     qDebug() << "[Main] Initializing application with" << kuksaSignals.size() << "Kuksa signals";
@@ -60,6 +77,8 @@ int main(int argc, char *argv[])
     ADASProvider *adas = new ADASProvider(&app);
     CurrentLocationProvider *currentLocation = new CurrentLocationProvider(&app);
     ChassisProvider *chassis = new ChassisProvider(&app);
+    CameraProvider *camera = new CameraProvider(&app);
+    OTAProvider *ota = new OTAProvider(&app);
 
     qDebug() << "[Main] Created all providers";
 
@@ -70,27 +89,40 @@ int main(int argc, char *argv[])
     router->registerADASProvider(adas);
     router->registerCurrentLocationProvider(currentLocation);
     router->registerChassisProvider(chassis);
+    router->registerOTAProvider(ota);
 
     qDebug() << "[Main] SignalRouter configured with all providers";
+
+    QThread *writerThread = new QThread(&app);
+    Writer *writer = new Writer();
+    writer->moveToThread(writerThread);
+    writerThread->start();
+
+    QObject::connect(ota, &OTAProvider::requestWrite, writer,
+                     &Writer::writeSignal, Qt::QueuedConnection);
+    QObject::connect(adas, &ADASProvider::requestWrite, writer,
+                     &Writer::writeSignal, Qt::QueuedConnection);
+
+    QObject::connect(writer, &Writer::writeError,
+                     &app, [](QString path, QString err)
+                     { qCritical() << "[Writer] Error on" << path << ":" << err; });
 
     Reader *reader = new Reader(kuksaSignals, router, &app);
 
     QObject::connect(reader, &Reader::connectionError,
-                     &app, [](QString error) {
-        qCritical() << "[Main] Kuksa Reader error:" << error;
-    });
+                     &app, [](QString error)
+                     { qCritical() << "[Main] Kuksa Reader error:" << error; });
 
     QObject::connect(reader, &Reader::connected,
-                     &app, []() {
-        qDebug() << "[Main] Successfully connected to Kuksa!";
-    });
+                     &app, []()
+                     { qDebug() << "[Main] Successfully connected to Kuksa!"; });
 
     qDebug() << "[Main] Reader connected to SignalRouter";
 
     QQmlApplicationEngine engine;
 
     engine.addImportPath("qrc:/qml");
-    qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"), 
+    qmlRegisterSingletonType(QUrl("qrc:/qml/themes/BaseTheme.qml"),
                              "ClusterTheme", 1, 0, "BaseTheme");
 
     qmlRegisterType<ExtraProvider>("Cluster.Backend", 1, 0, "ExtraProvider");
@@ -101,28 +133,30 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("adas", adas);
     engine.rootContext()->setContextProperty("currentLocation", currentLocation);
     engine.rootContext()->setContextProperty("chassis", chassis);
+    engine.rootContext()->setContextProperty("camera", camera);
+    engine.rootContext()->setContextProperty("ota", ota);
 
     qDebug() << "[Main] All providers exposed to QML";
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, 
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, &app, [url](QObject *obj, const QUrl &objUrl)
+                     {
         if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
+            QCoreApplication::exit(-1); }, Qt::QueuedConnection);
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                    &app, [](const QList<QQmlError> &warnings) {
+                     &app, [](const QList<QQmlError> &warnings)
+                     {
         for (const QQmlError &w : warnings)
-            qCritical() << "[QML ERROR]" << w.toString();
-    });
+            qCritical() << "[QML ERROR]" << w.toString(); });
 
     qDebug() << "[Main] About to load QML...";
     engine.load(url);
-    qDebug() << "[Main] QML loaded!"; 
+    qDebug() << "[Main] QML loaded!";
 
     qDebug() << "Qt version:" << QT_VERSION_STR;
-    if (engine.rootObjects().isEmpty()) {
+    if (engine.rootObjects().isEmpty())
+    {
         qCritical() << "[Main] Failed to load QML!";
         return -1;
     }

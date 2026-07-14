@@ -33,26 +33,26 @@ Item {
             spacing: 0
 
             NavButton {
-                id: mediaScreen
-                iconSrc: "qrc:/assets/icons/camera.svg"
+                id: statisticsScreen
+                iconSrc: "qrc:/assets/icons/statistics.svg"
                 active: true
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 onClicked: {
                     root.setActiveNavButton(this)
-                    changeScreen("qrc:/qml/screens/MediaScreen.qml")
+                    root.changeScreen("qrc:/qml/screens/StatisticsScreen.qml")
                 }
             }
 
             NavButton {
-                id: statisticsScreen
-                iconSrc: "qrc:/assets/icons/statistics.svg"
+                id: settingsScreen
+                iconSrc: "qrc:/assets/icons/settings.svg"
                 active: false
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 onClicked: {
                     root.setActiveNavButton(this)
-                    changeScreen("qrc:/qml/screens/StatisticsScreen.qml")
+                    root.changeScreen("qrc:/qml/screens/SettingsScreen.qml")
                 }
             }
         }
