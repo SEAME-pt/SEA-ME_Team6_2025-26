@@ -13,8 +13,13 @@
 #include <cstdio>
 
 // ── Object throttle override ──────────────────────────────────────────────────
+// min_throttle: piso de throttle pra YIELD/YELLOW (cfg.curve_throttle_min) —
+// um limite absoluto fixo (ex: 50) fica sem efeito se cfg.throttle já andar
+// abaixo dele; usar o mesmo piso anti-empanque garante sempre abrandamento
+// visível, seja qual for o throttle configurado.
 static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
-                               float conf_thresh, float collision_dist_m) {
+                               float conf_thresh, float collision_dist_m,
+                               int min_throttle) {
     if (!obj_valid || obj.count == 0) return 100;
 
     for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i) {
@@ -22,12 +27,12 @@ static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
         if (o.confidence < conf_thresh) continue;
         if (o.distance < collision_dist_m) return 0;
         if (o.class_id == SIGN_STOP   || o.class_id == SIGN_TL_RED)    return 0;
-        if (o.class_id == SIGN_YIELD  || o.class_id == SIGN_TL_YELLOW) return 50;
+        if (o.class_id == SIGN_YIELD  || o.class_id == SIGN_TL_YELLOW) return min_throttle;
     }
     return 100;
 }
 
-static int v2i_throttle_limit(const V2IFrame& v2i, bool v2i_valid) {
+static int v2i_throttle_limit(const V2IFrame& v2i, bool v2i_valid, int min_throttle) {
     if (!v2i_valid) return 100;
 
     // Emergency priority bypasses V2I restrictions (TL/barrier),
@@ -40,7 +45,7 @@ static int v2i_throttle_limit(const V2IFrame& v2i, bool v2i_valid) {
 
     switch (v2i.traffic_light_state) {
         case V2I_TL_RED:    return 0;
-        case V2I_TL_YELLOW: return 50;
+        case V2I_TL_YELLOW: return min_throttle;
         case V2I_TL_GREEN:  return 100;
         default:            return 100;
     }

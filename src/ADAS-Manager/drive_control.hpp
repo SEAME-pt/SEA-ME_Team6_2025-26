@@ -90,8 +90,9 @@ static DriveOutput autonomous_driving(
     }
 
     const int obj_limit = obj_throttle_limit(obj, obj_valid,
-                                             cfg.obj_conf_thresh, cfg.collision_dist_m);
-    const int v2i_limit = v2i_throttle_limit(v2i, v2i_valid);
+                                             cfg.obj_conf_thresh, cfg.collision_dist_m,
+                                             cfg.curve_throttle_min);
+    const int v2i_limit = v2i_throttle_limit(v2i, v2i_valid, cfg.curve_throttle_min);
     out.throttle_limit  = std::min(obj_limit, v2i_limit);
     out.throttle = std::min(cfg.throttle, out.throttle_limit);
 
