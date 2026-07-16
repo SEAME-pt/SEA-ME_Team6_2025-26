@@ -1337,7 +1337,7 @@ Example priorities (in `thread_config.h`):
 
 ## 13. Concept Summary Table
 
-See the Portuguese section below for the full original text and diagrams.
+See the Portuguese section above for the full original text and diagrams.
 
 ---
 

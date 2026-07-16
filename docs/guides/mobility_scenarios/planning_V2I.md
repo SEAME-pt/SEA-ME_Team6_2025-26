@@ -1410,18 +1410,35 @@ micro:bit radio only makes sense if adding a gateway is acceptable.
 
 #### Phase 1: ADAS Manager Integration (David's Responsibility)
 
-**Goal:** Port V2I logic into the official ADAS binary so it runs on the vehicle.
+**Status:** ✅ PRODUCTION BINARY DEPLOYED + 🔄 SOURCE CODE REFINEMENT IN PROGRESS
 
-**Where:** `src/ADAS-Manager/` (David's codebase)
+**Goal:** Ensure V2I logic runs on the vehicle with complete, production-ready source code.
 
-**What to integrate:**
+**Current State (as of July 14, 2026):**
+
+1. **Production Binary** ✅ ACTIVE
+   - Location: `/data/current/adas_manager` (on vehicle at 10.21.220.191)
+   - Compiled: July 9, 2026 15:46:11
+   - Size: 84520 bytes
+   - Status: Running + accepting V2I frames on `/tmp/adas_v2i.sock`
+   - Evidence: Binary contains V2I socket strings and heartbeat logging
+
+2. **Source Code Refinement** 🔄 IN PROGRESS (David)
+   - Latest working folder: `/data/ADAS-Manager-Modular7/` (on vehicle)
+   - Last modified: July 9, 2026 15:37:47
+   - Status: Incomplete; David will push complete version to git
+   - Next step: Await David's git push of finalized Modular7 source
+
+**Where:** `src/ADAS-Manager/` (will be updated when David pushes)
+
+**What was integrated:**
 
 From simulation validation in Sprint 17:
 ```
 src/mobility_scenarios_src/emergency_priority/
-├── coordinator.py          ← Core policy logic (needs C++ port or Python wrapper)
-├── traffic_light_rules.py  ← Motion rule mapping (simple function, portable)
-└── unified_demo.py         ← Workflow reference (architecture, not direct code)
+├── coordinator.py          ← Core policy logic (ported to C++)
+├── traffic_light_rules.py  ← Motion rule mapping (C++ implementation)
+└── unified_demo.py         ← Workflow reference (architecture validated)
 ```
 
 **Implementation steps (for David):**
