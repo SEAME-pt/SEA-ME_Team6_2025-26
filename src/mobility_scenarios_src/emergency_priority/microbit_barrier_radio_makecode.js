@@ -22,26 +22,21 @@ const OPEN_ANGLE = 20
 const CLOSED_ANGLE = 160
 let invertDirection = false
 
-function driveServo(angle: number) {
-    // Re-send pulses for a short window so servos reliably reach target without blocking too long.
-    let t0 = input.runningTime()
-    while (input.runningTime() - t0 < 600) {
-        pins.servoWritePin(SERVO_PIN, angle)
-        basic.pause(20)
-    }
-}
-
 function publishState() {
     radio.sendString("BAR_STATE:" + state)
 }
 
 function applyState(newState: string) {
     state = newState
+    let targetAngle = (state == "OPEN") ? OPEN_ANGLE : CLOSED_ANGLE
+    if (invertDirection) {
+        targetAngle = (state == "OPEN") ? CLOSED_ANGLE : OPEN_ANGLE
+    }
+    // Write once; MakeCode hardware PWM maintains the signal continuously without blocking.
+    pins.servoWritePin(SERVO_PIN, targetAngle)
     if (state == "OPEN") {
-        driveServo(invertDirection ? CLOSED_ANGLE : OPEN_ANGLE)
         basic.showIcon(IconNames.Yes)
     } else {
-        driveServo(invertDirection ? OPEN_ANGLE : CLOSED_ANGLE)
         basic.showIcon(IconNames.No)
     }
     publishState()
