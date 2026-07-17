@@ -18,14 +18,14 @@ radio.setGroup(23)
 
 let state = "CLOSED"
 const SERVO_PIN = AnalogPin.P0
-const OPEN_ANGLE = 160
-const CLOSED_ANGLE = 20
+const OPEN_ANGLE = 20
+const CLOSED_ANGLE = 160
 let invertDirection = false
 
 function driveServo(angle: number) {
-    // Re-send pulses for a short window so cheap servos reliably reach target.
+    // Re-send pulses for a short window so servos reliably reach target without blocking too long.
     let t0 = input.runningTime()
-    while (input.runningTime() - t0 < 1000) {
+    while (input.runningTime() - t0 < 600) {
         pins.servoWritePin(SERVO_PIN, angle)
         basic.pause(20)
     }
@@ -48,16 +48,13 @@ function applyState(newState: string) {
 }
 
 input.onButtonPressed(Button.A, function () {
-    basic.showString("A")
     applyState("OPEN")
 })
 input.onButtonPressed(Button.B, function () {
-    basic.showString("B")
     applyState("CLOSED")
 })
 
 input.onButtonPressed(Button.AB, function () {
-    basic.showString("AB")
     applyState(state == "OPEN" ? "CLOSED" : "OPEN")
 })
 
