@@ -10,7 +10,9 @@
  */
 
 #include "tasks/task_cruise_control.h"
+#include "tasks/task_can_rx.h"   /* task_can_rx_actual_steering/throttle */
 #include "can_id.h"
+#include "can_protocol.h"        /* CtrlStatus_t, CAN_ID_CTRL_STATUS, OVERRIDE_* */
 #include "can_tx.h"
 #include "motor_control.h"
 #include "mcp2515.h"
@@ -142,13 +144,9 @@ void task_cc_step(SystemCtx *ctx)
     }
 
     /* Capture status fields under mutex for the 0x213 broadcast */
-    uint8_t  st_state    = (uint8_t)g_cruise_control.state;
-    uint16_t st_target   = (uint16_t)(g_cruise_control.target_speed_kmh * 100.0f);
-    uint16_t st_current  = (uint16_t)(g_cruise_control.current_speed_kmh * 100.0f);
     int8_t   st_throttle = (int8_t)g_cruise_control.applied_throttle;
-    uint8_t  st_counter  = g_cruise_control.tx_counter++;
-    if (g_cruise_control.tx_counter > 14) g_cruise_control.tx_counter = 0;
     uint8_t  st_mode     = mode;
+    bool     st_stale    = stale;
 
     tx_mutex_put(&g_cc_mutex);
 
@@ -170,26 +168,46 @@ void task_cc_step(SystemCtx *ctx)
     }
     was_cc_active = cc_active;
 
-    /* --- Broadcast CC status to AGL at 10 Hz (legacy 0x213 layout) --- */
+    /* --- Broadcast CtrlStatus_t (0x213, formato unificado) a 10 Hz ---
+     * Substitui o CruiseControlStatus_t legado: o Manager consome
+     * active_mode / actual_* / current_speed_cms / gap_cm / override_reason.
+     * Nota: o CtrlStatus_t tem 8 bytes e NÃO tem CRC (counter_echo/crc
+     * removidos para caber em CAN clássico) — o Manager valida por gamas. */
     static uint32_t last_status_ms = 0;
     uint32_t now_tick = (uint32_t)tx_time_get();
     if ((now_tick - last_status_ms) >= CC_STATUS_PERIOD_MS)
     {
         last_status_ms = now_tick;
 
-        CruiseControlStatus_t status;
-        status.state            = st_state;
-        status.target_speed     = st_target;
-        status.current_speed    = st_current;
-        status.applied_throttle = st_throttle;
-        status.counter          = st_counter;
-        status.crc              = calculate_crc8((uint8_t *)&status, sizeof(status) - 1);
+        uint16_t gap_cm = 0xFFFF;                    /* 0xFFFF = sem lead */
+        if (snap.srf08_valid)
+        {
+            uint32_t g = snap.srf08_distance_mm / 10u;
+            gap_cm = (g > 0xFFFEu) ? 0xFFFEu : (uint16_t)g;
+        }
+
+        uint8_t override = OVERRIDE_NONE;
+        if (snap.aeb_stop_active || snap.emergency_stop_active)
+            override = OVERRIDE_AEB;
+        else if (st_stale)
+            override = OVERRIDE_CMD_TIMEOUT;
+
+        CtrlStatus_t status;
+        status.active_mode       = st_mode;
+        status.actual_steering   = task_can_rx_actual_steering();
+        status.actual_throttle   = cc_active ? st_throttle
+                                             : task_can_rx_actual_throttle();
+        status.current_speed_cms = (uint16_t)(snap.speed_mh / 36u); /* m/h → cm/s */
+        status.gap_cm            = gap_cm;
+        status.override_reason   = override;
 
         tx_mutex_get(&ctx->spi1_mutex, TX_WAIT_FOREVER);
-        mcp_send_message(CAN_ID_CC_STATUS, (uint8_t *)&status, sizeof(status));
+        mcp_send_message(CAN_ID_CTRL_STATUS, (uint8_t *)&status, sizeof(status));
 
-        sys_log(ctx, "[CC] mode=%u state=%u tgt=%u cur=%u thr=%d",
-                st_mode, st_state, st_target, st_current, st_throttle);
+        sys_log(ctx, "[CC] mode=%u thr=%d spd=%ucms gap=%ucm ovr=%u",
+                st_mode, (int)status.actual_throttle,
+                (unsigned)status.current_speed_cms,
+                (unsigned)status.gap_cm, (unsigned)override);
 
         tx_mutex_put(&ctx->spi1_mutex);
     }
