@@ -13,6 +13,7 @@
 #include "receiver_threads.hpp"
 #include "adas_state_machine.hpp"
 #include "drive_control.hpp"
+#include "emergency_sender.hpp"
 #include <atomic>
 #include <chrono>
 #include <csignal>
@@ -84,8 +85,9 @@ int main() {
     std::thread t_joy   (joystick_thread, std::ref(state));
     std::thread t_status(status_thread,   std::ref(state));
 
-    LKAController lka(cfg.lka);
-    OAController  oa(cfg.oa);
+    LKAController   lka(cfg.lka);
+    OAController    oa(cfg.oa);
+    EmergencySender emergency_sender;
 
     printf("[ADAS] Manager running. Ctrl+C to stop.\n");
 
@@ -99,6 +101,7 @@ int main() {
     bool      lane_was_stale  = true;
     bool      joy_was_stale   = true;
     bool      estop_sent      = false;
+    bool      emergency_active = false;
 
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -175,6 +178,13 @@ int main() {
                               lka, oa, bridge);
         }
 
+        // ── Emergency priority toggle — repassa pro roadside_emergency_controller.py ──
+        if (snap.joy_emergency_toggle) {
+            emergency_active = !emergency_active;
+            emergency_sender.send(emergency_active);
+            printf("[ADAS] Emergency priority → %s\n", emergency_active ? "ON" : "OFF");
+        }
+
         bool lane_ok = lane_valid && (lane.lane_status != 0);
 
         // During OA maneuver the car intentionally leaves the lane — don't degrade
@@ -189,7 +199,7 @@ int main() {
         DriveOutput drive_out = (drive_mode == DriveMode::MANUAL)
             ? manual_driving(joy_valid, joy_steering, joy_throttle,
                              cfg.throttle, estop_sent, can)
-            : autonomous_driving(adas_state, lane, obj, obj_valid, v2i, v2i_valid, dt,
+            : autonomous_driving(adas_state, lane, lane_ts, obj, obj_valid, v2i, v2i_valid, dt,
                                  cfg, lka, oa, estop_sent, can, status_gap_cm);
 
         const int steering       = drive_out.steering;
@@ -204,10 +214,26 @@ int main() {
         }
 
         // ── KUKSA publish (não bloqueia — enfileira na bridge thread) ─────────
-        if (lane_valid)
-            bridge.pub_lane(lane.lateral_deviation, lane.lane_status);
-        if (obj_valid)
-            bridge.pub_objects(obj);
+        // Só em frame nova e no máx a 5 Hz: publicar a 50 Hz gerava ~300
+        // chamadas gRPC/s no kuksa_bridge.py (~20% CPU) + databroker (~50%),
+        // CPU roubado à inferência. Telemetria a 5 Hz chega para o dashboard.
+        static auto last_pub_lane_ts = lane_ts;
+        static auto last_pub_obj_ts  = obj_ts;
+        static auto last_pub_time    = now - std::chrono::seconds(1);
+        if (now - last_pub_time >= std::chrono::milliseconds(200)) {
+            bool pub_sent = false;
+            if (lane_valid && lane_ts != last_pub_lane_ts) {
+                bridge.pub_lane(lane.lateral_deviation, lane.lane_status);
+                last_pub_lane_ts = lane_ts;
+                pub_sent = true;
+            }
+            if (obj_valid && obj_ts != last_pub_obj_ts) {
+                bridge.pub_objects(obj);
+                last_pub_obj_ts = obj_ts;
+                pub_sent = true;
+            }
+            if (pub_sent) last_pub_time = now;
+        }
 
         // ── Log ───────────────────────────────────────────────────────────────
         log_tick(adas_state, drive_mode, oa, lane_valid, lane,

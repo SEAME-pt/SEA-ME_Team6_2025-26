@@ -126,6 +126,8 @@ void joystick_thread(SharedState& state) {
             state.joy_force_manual = true;
         } else if (msg.type == JoystickMsg::Type::FORCE_AUTO) {
             state.joy_force_auto = true;
+        } else if (msg.type == JoystickMsg::Type::EMERGENCY_TOGGLE) {
+            state.joy_emergency_toggle = true;
         }
     }
     rx.close_fd();

@@ -19,6 +19,7 @@ struct AdasConfig {
     int   emergency_timeout_ms      = 10000;  /* force-recover EMERGENCY_STOP → DEGRADED after this long */
     float obj_conf_thresh           = 0.60f;
     float collision_dist_m          = 0.30f;
+    float stop_sign_dist_m          = 0.25f;  // só trava por SIGN_STOP dentro desta distância
     int   lane_timeout_ms           = 500;
     int   obj_timeout_ms            = 1000;
     int   joy_timeout_ms            = 200;
@@ -77,6 +78,7 @@ static AdasConfig load_adas_config(const char* path) {
     cfg.emergency_timeout_ms      = static_cast<int>(get("emergency_timeout_ms",   10000.0f));
     cfg.obj_conf_thresh           = get("obj_conf_thresh",   0.60f);
     cfg.collision_dist_m          = get("collision_dist_m",  0.30f);
+    cfg.stop_sign_dist_m          = get("stop_sign_dist_m",  0.25f);
     cfg.lane_timeout_ms           = static_cast<int>(get("lane_timeout_ms",  500.0f));
     cfg.obj_timeout_ms            = static_cast<int>(get("obj_timeout_ms",  1000.0f));
     cfg.joy_timeout_ms            = static_cast<int>(get("joy_timeout_ms",   200.0f));
