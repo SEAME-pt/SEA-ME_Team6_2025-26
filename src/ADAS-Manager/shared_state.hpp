@@ -19,6 +19,7 @@ struct StateSnapshot {
     bool        joy_toggle       = false;
     bool        joy_force_manual = false;
     bool        joy_force_auto    = false;
+    bool        joy_emergency_toggle = false;
     uint16_t    current_speed_cms = 0;
     uint16_t    gap_cm            = 0xFFFF;
     bool        status_valid      = false;
@@ -43,6 +44,7 @@ struct SharedState {
     bool        joy_toggle       = false;
     bool        joy_force_manual = false;
     bool        joy_force_auto    = false;
+    bool        joy_emergency_toggle = false;
     uint16_t    current_speed_cms = 0;
     uint16_t    gap_cm            = 0xFFFF;
     bool        status_valid      = false;
@@ -70,6 +72,7 @@ struct SharedState {
         s.joy_toggle       = joy_toggle;
         s.joy_force_manual  = joy_force_manual;
         s.joy_force_auto    = joy_force_auto;
+        s.joy_emergency_toggle = joy_emergency_toggle;
         s.last_joy_ts       = last_joy_ts;
         s.current_speed_cms = current_speed_cms;
         s.gap_cm            = gap_cm;
@@ -77,6 +80,7 @@ struct SharedState {
         joy_toggle          = false;
         joy_force_manual    = false;
         joy_force_auto      = false;
+        joy_emergency_toggle = false;
         return s;
     }
 };

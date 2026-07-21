@@ -19,14 +19,17 @@
 // visível, seja qual for o throttle configurado.
 static int obj_throttle_limit(const ObjectFrame& obj, bool obj_valid,
                                float conf_thresh, float collision_dist_m,
-                               int min_throttle) {
+                               float stop_sign_dist_m, int min_throttle) {
     if (!obj_valid || obj.count == 0) return 100;
 
     for (uint8_t i = 0; i < obj.count && i < MAX_OBJECTS; ++i) {
         const auto& o = obj.objects[i];
         if (o.confidence < conf_thresh) continue;
         if (o.distance < collision_dist_m) return 0;
-        if (o.class_id == SIGN_STOP   || o.class_id == SIGN_TL_RED)    return 0;
+        // SIGN_STOP só trava perto do sinal físico — detetado longe (ex: 5m)
+        // não deve parar o carro já. TL_RED mantém-se imediato (semáforo).
+        if (o.class_id == SIGN_STOP && o.distance <= stop_sign_dist_m) return 0;
+        if (o.class_id == SIGN_TL_RED) return 0;
         if (o.class_id == SIGN_YIELD  || o.class_id == SIGN_TL_YELLOW) return min_throttle;
     }
     return 100;
@@ -132,7 +135,10 @@ static void adas_state_machine(
                 if (adas_state != AdasState::DEGRADED) {
                     adas_state     = AdasState::DEGRADED;
                     degraded_since = now;
-                    lka.reset();
+                    // reset_soft: mantém last_steering_ — DEGRADED conduz com
+                    // lka.last_steering(), e zerá-lo fazia as rodas saltar
+                    // para o centro a meio da saída de curva (zigzag pós-curva)
+                    lka.reset_soft();
                     printf("[ADAS] → DEGRADED\n");
                 }
                 auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(

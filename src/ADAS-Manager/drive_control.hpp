@@ -9,6 +9,7 @@
 #include "can_protocol.h"
 #include "adas_state_machine.hpp"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 
@@ -52,6 +53,7 @@ static DriveOutput manual_driving(
 static DriveOutput autonomous_driving(
     AdasState adas_state,
     const LaneFrame& lane,
+    std::chrono::steady_clock::time_point lane_ts,
     const ObjectFrame& obj,
     bool obj_valid,
     const V2IFrame& v2i,
@@ -91,7 +93,7 @@ static DriveOutput autonomous_driving(
 
     const int obj_limit = obj_throttle_limit(obj, obj_valid,
                                              cfg.obj_conf_thresh, cfg.collision_dist_m,
-                                             cfg.curve_throttle_min);
+                                             cfg.stop_sign_dist_m, cfg.curve_throttle_min);
     const int v2i_limit = v2i_throttle_limit(v2i, v2i_valid, cfg.curve_throttle_min);
     out.throttle_limit  = std::min(obj_limit, v2i_limit);
     out.throttle = std::min(cfg.throttle, out.throttle_limit);
@@ -108,7 +110,8 @@ static DriveOutput autonomous_driving(
                             cam_valid_oa, dt_ms);
         oa_active = (oa_res.state == OAState::EVADING);
         if (prev_oa_active && !oa_active)
-            lka.reset();  // OA just finished — clear wound-up integral
+            lka.reset_soft();  // OA just finished — clear wound-up integral,
+                               // keep steering (car is mid-lane, moving)
     }
     prev_oa_active = oa_active;
 
@@ -116,7 +119,7 @@ static DriveOutput autonomous_driving(
     switch (adas_state) {
         case AdasState::ACTIVE:
             out.steering = oa_active ? lka.last_steering()
-                                     : lka.compute(lane.lateral_deviation, dt);
+                                     : lka.compute(lane.lateral_deviation, lane_ts);
             do_send      = true;
             if (estop_sent) { can.send_estop(0); estop_sent = false; }
             break;
