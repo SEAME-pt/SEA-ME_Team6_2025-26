@@ -1367,408 +1367,109 @@ micro:bit radio only makes sense if adding a gateway is acceptable.
 
 ---
 
-## Sprint18 Planning (July 14—July 24, 2026)
+## Sprint 17 and Sprint 18 Consolidated Status (Updated)
 
-**Final Sprint Goal:** Integrate Emergency Vehicle Priority logic into the running vehicle (PiRacer) and validate with real hardware tests.
+This section replaces the old "Sprint 18 TODO-only" plan with the actual result from implementation and deployment work.
 
-**Status:** Sprint 17 testing validated (17/17 tests passing); Sprint 18 focuses on deployment and physical execution.
-
-**Owner:** João + David (ADAS integration)  
-**Branch:** `feature/mobility_scenarios/V2I_and_emergencypriority`  
-**Scope:** Hardware-in-the-loop validation, ADAS integration, end-to-end execution on vehicle
-
-### What Was Completed in Sprint 17
-
-**Documentation Reference:** [Test Results: Emergency Vehicle Priority](../mobility_scenarios/TEST_RESULTS_EMERGENCY_VEHICLE_PRIORITY.md)
-
-#### Test Achievements
-
-✅ **17/17 Tests Passing**
-- **Unit Tests (7):** Emergency priority policy, motion rules mapping, safety fallback logic
-- **Integration Tests (9):** Traffic-light simulator state transitions, coordinator multi-component orchestration, conflict resolution
-- **Smoke Test (1):** End-to-end demo validating Normal → Emergency → Normal workflow without physical hardware
-
-#### What Was Validated
-
-| Component | Status | Evidence |
-|-----------|--------|----------|
-| **Emergency Priority Policy** | ✅ Validated | Test: `test_policy_emergency_overrides_normal_flow` |
-| **Traffic-Light State Machine** | ✅ Validated | Tests: `test_emergency_on_sets_emergency_green`, `test_yellow_action_sets_yellow`, etc. |
-| **Barrier Coordination** | ✅ Validated | Test: `test_coordinator_emergency_opens_barrier_when_connected` |
-| **Timeout & Fallback** | ✅ Validated | Test: `test_timeout_sets_timeout_status_when_no_service` |
-| **Safety Rules** | ✅ Validated | Test: `test_unknown_means_stop_for_safety` |
-| **Complete Workflow** | ✅ Validated | Smoke test: `unified_demo.py` PASS |
-
-#### Why Testing in Simulation Was Required
-
-- The production ADAS binary (`/data/current/adas_manager`) does not yet expose V2I socket support.
-- Simulated testing allowed safe validation without risking vehicle behavior regressions.
-- All tests use isolated components (no real vehicle hardware, no real micro:bit, no real traffic light).
-- This enabled rapid iteration and proof of correctness before hardware integration.
-
-### What Remains for Sprint 18: Hardware Integration Path
-
-#### Phase 1: ADAS Manager Integration (David's Responsibility)
-
-**Status:** ✅ PRODUCTION BINARY DEPLOYED + 🔄 SOURCE CODE REFINEMENT IN PROGRESS
-
-**Goal:** Ensure V2I logic runs on the vehicle with complete, production-ready source code.
-
-**Current State (as of July 14, 2026):**
-
-1. **Production Binary** ✅ ACTIVE
-   - Location: `/data/current/adas_manager` (on vehicle at 10.21.220.191)
-   - Compiled: July 9, 2026 15:46:11
-   - Size: 84520 bytes
-   - Status: Running + accepting V2I frames on `/tmp/adas_v2i.sock`
-   - Evidence: Binary contains V2I socket strings and heartbeat logging
-
-2. **Source Code Refinement** 🔄 IN PROGRESS (David)
-   - Latest working folder: `/data/ADAS-Manager-Modular7/` (on vehicle)
-   - Last modified: July 9, 2026 15:37:47
-   - Status: Incomplete; David will push complete version to git
-   - Next step: Await David's git push of finalized Modular7 source
-
-**Where:** `src/ADAS-Manager/` (will be updated when David pushes)
-
-**What was integrated:**
-
-From simulation validation in Sprint 17:
-```
-src/mobility_scenarios_src/emergency_priority/
-├── coordinator.py          ← Core policy logic (ported to C++)
-├── traffic_light_rules.py  ← Motion rule mapping (C++ implementation)
-└── unified_demo.py         ← Workflow reference (architecture validated)
-```
-
-**Implementation steps (for David):**
-
-1. **Create isolated ADAS integration folder**
-   - Do not patch production binary in-place initially.
-   - Create: `/home/seame/test-ADAS-V2I/` (separate build)
-   - Rationale: safe rollback if integration breaks existing ADAS behavior.
-
-2. **Identify socket integration points in ADAS Manager**
-   ```cpp
-   // Expected locations in adas_manager.cpp:
-   #define V2I_SOCKET "/tmp/adas_v2i.sock"
-   
-   // Add structures for V2I state from sprint 17 tests:
-   struct V2ITrafficLightState {
-       std::string state;  // "red", "yellow", "green", "emergency_green"
-   };
-   
-   struct V2IBarrierState {
-       std::string state;  // "open", "closed"
-   };
-   ```
-
-3. **Add socket receiver thread**
-   - Listen on `/tmp/adas_v2i.sock` (UNIX DGRAM socket).
-   - Parse incoming `V2IFrame` messages from micro:bit/infrastructure.
-   - Update shared state fields atomically.
-
-4. **Integrate motion rule arbitration**
-   ```cpp
-   // Apply the tested throttle logic from Sprint 17:
-   final_throttle_limit = min(object_detection_limit, v2i_limit);
-   
-   // Where v2i_limit is determined by:
-   if (v2i_light_state == "emergency_green" || priority_active) {
-       v2i_limit = NO_LIMIT;  // Emergency overrides V2I traffic restrictions
-   } else if (v2i_light_state == "red" || barrier_state == "closed") {
-       v2i_limit = STOP;      // Zero throttle
-   } else if (v2i_light_state == "yellow") {
-       v2i_limit = SLOW_DOWN; // ~50% throttle
-   } else {
-       v2i_limit = DEFAULT;   // Normal ADAS limit
-   }
-   ```
-
-5. **Compile and test on isolated build first**
-   ```bash
-   # David's test flow (isolated):
-   cd /home/seame/test-ADAS-V2I/
-   make clean && make build-arm
-   ./adas_manager &  # Run with sandbox config
-   
-   # João sends test V2I frames from micro:bit:
-   # Verify socket `/tmp/adas_v2i.sock` is created
-   # Verify throttle limit changes in ADAS logs
-   ```
-
-6. **Validate against sprint 17 test cases**
-   - With vehicle stationary (or on bench), send V2I test frames:
-     - RED light → throttle should be 0
-     - YELLOW light → throttle should reduce (~50%)
-     - GREEN light → throttle should be default ADAS limit
-     - EMERGENCY_GREEN → throttle should be full (no V2I restriction)
-   - Verify object detection safety **still overrides** V2I when collision threat detected.
-
-7. **Only after validation, deploy to production**
-   - Replace `/data/current/adas_manager` with tested binary.
-   - Keep rollback plan: backup original to `/data/current/adas_manager.backup`.
-
-#### Phase 2: Vehicle-Level Testing (João's Responsibility)
-
-**Goal:** Validate emergency priority execution on the running car with real infrastructure feedback.
-
-**Prerequisites:**
-- Phase 1 complete and ADAS V2I integration passed isolated tests.
-- Vehicle ready to drive (STM32 + ThreadX, AGL + ADAS Manager running).
-- micro:bit with traffic-light firmware configured (MicroPython or MakeCode).
-
-**Test plan:**
-
-##### **Test 2.1: Socket Communication (Bench Test, No Car Movement)**
-
-**What to verify:** V2I frames reach ADAS without errors.
-
-**Setup:**
-- Stationary vehicle in lab/garage.
-- AGL running with new ADAS Manager binary.
-- micro:bit connected via USB to Pi5.
-- micro:bit running firmware that broadcasts traffic-light state.
-
-**Procedure:**
-1. Start ADAS Manager with V2I socket enabled.
-2. Confirm socket `/tmp/adas_v2i.sock` exists.
-3. Run micro:bit traffic-light firmware, broadcast RED state.
-4. Check ADAS logs for V2I frame reception.
-5. Repeat with YELLOW, GREEN, EMERGENCY_GREEN states.
-6. Measure latency: frame sent → socket received (should be <50ms).
-
-**Expected outcome:** ✅ Frames arrive reliably, no socket errors, latency <50ms.
-
-**Evidence to capture:**
-```bash
-# Screenshot or log:
-ADAS log: "V2I socket ready on /tmp/adas_v2i.sock"
-ADAS log: "V2I state update: light=RED, barrier=closed, priority=0"
-ADAS log: "V2I state update: light=GREEN, barrier=open, priority=0"
-# ... repeat for all states
-```
-
----
-
-##### **Test 2.2: Throttle Arbitration (Bench Test, Motor Active)**
-
-**What to verify:** ADAS correctly interprets traffic-light state into throttle limit changes.
-
-**Setup:**
-- Vehicle on lift or wheels on bench rolling surface (motor can spin freely without moving vehicle).
-- CAN communication active between STM32 and ADAS.
-- ADAS Manager running with V2I integration.
-
-**Procedure:**
-1. Start the vehicle in NORMAL mode (manual RC control).
-2. Set ADAS to active mode (lane detection + inference running).
-3. Manually send throttle command (~50% from RC).
-4. Without V2I (baseline): motor should spin at ~50%.
-5. Send V2I RED state via micro:bit.
-6. Motor should immediately stop (throttle → 0).
-7. Send V2I GREEN state.
-8. Motor should resume ~50% throttle.
-9. Send V2I YELLOW state.
-10. Motor should reduce to ~25% throttle (slow down).
-11. Send V2I EMERGENCY_GREEN.
-12. Motor should return to ~50% throttle (no V2I restriction).
-
-**Expected outcome:** ✅ Throttle changes match V2I state in real-time, latency <200ms.
-
-**Evidence to capture:**
-```bash
-# Motor current (via STM32 DAC monitor):
-RC input: 50%, V2I=GREEN → Motor: 50% ✅
-RC input: 50%, V2I=RED → Motor: 0% ✅
-RC input: 50%, V2I=YELLOW → Motor: 25% ✅
-RC input: 50%, V2I=EMERGENCY_GREEN → Motor: 50% ✅
-```
-
----
-
-##### **Test 2.3: Collision Safety Override (Bench Test)**
-
-**What to verify:** Object detection safety always overrides V2I, even in EMERGENCY mode.
-
-**Setup:**
-- Vehicle stationary or on bench.
-- Obstacle placed in front of car (within detection range of sensors).
-- Lane detection active, inference running.
-- ADAS collision detection enabled.
-
-**Procedure:**
-1. Send V2I GREEN state (normal throttle allowed).
-2. Obstacle detected → throttle should drop to STOP.
-3. Remove obstacle.
-4. Send V2I EMERGENCY_GREEN (full throughput allowed).
-5. Place obstacle again.
-6. Throttle should immediately drop to STOP (safety overrides emergency).
-7. Remove obstacle.
-
-**Expected outcome:** ✅ Object detection safety always wins, even when priority_active=True.
-
-**Evidence to capture:**
-```bash
-# Log excerpt:
-"V2I state: GREEN, priority=false, obstacle=absent → throttle_limit=default"
-"Obstacle detected → throttle_limit=STOP (safety override)"
-"Obstacle clear → throttle_limit=default"
-"V2I state: EMERGENCY_GREEN, priority=true, obstacle=absent → throttle_limit=default"
-"Obstacle detected → throttle_limit=STOP (safety always wins)"
-```
-
----
-
-##### **Test 2.4: End-to-End Vehicle Motion (Moving Vehicle)**
-
-**What to verify:** Emergency priority enables vehicle to proceed through intersection/barrier even when normal traffic rules would prevent it.
-
-**Setup:**
-- Vehicle ready to drive (keys, safety gear).
-- Course set up with:
-  - Start line (safe zone).
-  - Intersection or barrier checkpoint.
-  - Finish line (safe zone).
-- One teammate with micro:bit (traffic-light broadcaster).
-- One teammate driving the car.
-- One teammate monitoring ADAS logs on Pi5.
-
-**Procedure:**
-1. Initial state: traffic-light = RED, barrier = CLOSED.
-2. Vehicle approaches intersection: motion = STOP (red light enforced).
-3. Send V2I state change: GREEN, barrier = OPEN, priority = false.
-4. Vehicle proceeds through intersection.
-5. Send V2I state change: YELLOW.
-6. Vehicle slows down (throttle reduced).
-7. Send V2I state change: EMERGENCY_GREEN, barrier = OPEN, priority = true.
-8. Vehicle accelerates through intersection (emergency override).
-9. Return to RED + CLOSED.
-10. Vehicle stops.
-
-**Expected outcome:** ✅ Vehicle behavior matches V2I state in real-time, smooth transitions, no crashes.
-
-**Evidence to capture:**
-```bash
-# Video recording:
-- Timestamp: vehicle stops at RED light
-- Timestamp: vehicle proceeds ON GREEN
-- Timestamp: vehicle slows ON YELLOW
-- Timestamp: vehicle accelerates ON EMERGENCY_GREEN
-# GPS/IMU log (if available):
-Speed profile matching throttle command sequence
-# ADAS log:
-"Lane detected, throttle=0 (RED light)"
-"Lane detected, throttle=max (GREEN light)"
-"Lane detected, throttle=mid (YELLOW light)"
-"Lane detected, throttle=max (EMERGENCY_GREEN, priority override)"
-```
-
----
-
-##### **Test 2.5: Timeout & Fallback (Communication Loss)**
-
-**What to verify:** If V2I communication drops, vehicle safely reverts to STOP.
-
-**Setup:**
-- Vehicle driving in EMERGENCY mode.
-- micro:bit transmitting traffic-light state.
-- Simulate communication loss (unplug micro:bit USB, power off micro:bit, etc.).
-
-**Procedure:**
-1. Vehicle in EMERGENCY mode, proceeding at throttle ~75%.
-2. Stop sending V2I frames (unplug micro:bit).
-3. ADAS should wait ~2 seconds (timeout threshold).
-4. After timeout, V2I state should revert to "timeout" + priority = false.
-5. Throttle should drop to STOP (safe fallback).
-6. Resume sending V2I frames → vehicle resumes normal behavior.
-
-**Expected outcome:** ✅ Timeout triggers within 2 seconds, throttle → STOP, no vehicle crash.
-
-**Evidence to capture:**
-```bash
-# ADAS log:
-"V2I state: EMERGENCY_GREEN, priority=true, throttle=75%"
-"No V2I frame received for 2 seconds"
-"V2I timeout triggered → state=timeout, priority=false"
-"throttle_limit=STOP (timeout fallback)"
-"Vehicle decelerating due to safe fallback"
-# Resume after reactivation
-```
-
----
-
-#### Phase 3: Integration Validation
-
-Once all Phase 2 tests pass:
-
-1. **Merge into development branch**
-   - Once confirmed working on feature branch.
-   - Create PR with test evidence.
-   - Code review by David + team.
-
-2. **Documentation update**
-   - Add final test results to [TEST_RESULTS_EMERGENCY_VEHICLE_PRIORITY.md](../mobility_scenarios/TEST_RESULTS_EMERGENCY_VEHICLE_PRIORITY.md).
-   - Add new section: "Hardware-in-the-Loop Test Results"
-   - Include videos, logs, and evidence from Phase 2 tests.
-
-3. **Prepare for future modules**
-   - Emergency priority is now part of the standard ADAS runtime.
-   - Module 3 (V2I + Emergency Priority) is complete.
-   - Future modules can build on this stable foundation.
-
-### Sprint 18 Task Breakdown
-
-| Task | Owner | Effort | Status |
-|------|-------|--------|--------|
-| **Phase 1.1:** Identify ADAS integration points | David | 2h | ⏳ TODO |
-| **Phase 1.2:** Implement V2I socket + arbitration in ADAS C++ | David | 8h | ⏳ TODO |
-| **Phase 1.3:** Isolated compile + test on bench | David | 4h | ⏳ TODO |
-| **Phase 1.4:** Validate against sprint 17 test cases | David + João | 4h | ⏳ TODO |
-| **Phase 1.5:** Deploy to production ADAS binary | David | 1h | ⏳ TODO |
-| **Phase 2.1:** Socket communication bench test | João | 2h | ⏳ TODO |
-| **Phase 2.2:** Throttle arbitration bench test | João | 2h | ⏳ TODO |
-| **Phase 2.3:** Collision safety override test | João | 1h | ⏳ TODO |
-| **Phase 2.4:** End-to-end vehicle motion test | João + Team | 3h | ⏳ TODO |
-| **Phase 2.5:** Timeout & fallback test | João | 1h | ⏳ TODO |
-| **Phase 3.1:** Merge to development + PR review | David + João | 1h | ⏳ TODO |
-| **Phase 3.2:** Update documentation + hardware test results | João | 2h | ⏳ TODO |
-| **Total** | — | **31 hours** | — |
-
-### Success Criteria for Sprint 18
-
-- ✅ Phase 1: ADAS Manager successfully receives V2I frames and updates throttle limits without breaking existing ADAS safety logic.
-- ✅ Phase 2: All 5 hardware tests pass with documented evidence (logs, video, screenshots).
-- ✅ Phase 3: Code merged to development, documentation updated, team consensus on "ready for production".
-
-**Definition of Done:**
-- V2I socket integration in ADAS working reliably.
-- Vehicle responds correctly to V2I state changes in real-time.
-- Safety rules enforced (collision detection overrides V2I, timeout fallback works).
-- Test evidence captured and documented.
-
-### Known Risks & Mitigation
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|-----------|
-| ADAS integration breaks existing throttle behavior | Medium | High | Phase 1.3: isolated bench test before deployment |
-| V2I socket communication unreliable on vehicle | Medium | High | Phase 2.1: socket bench test with logging |
-| Timeout threshold too aggressive or too lenient | Low | Medium | Test 2.5: fine-tune based on network latency |
-| Motor doesn't respond fast enough to V2I changes | Low | High | Verify CAN message latency <100ms in ADAS logs |
-| Collision detection interferes with emergency mode | Medium | High | Phase 2.3: dedicated safety override test |
-
-### What NOT to Do in Sprint 18
-
-❌ **Do not** patch the production ADAS binary directly without isolated testing first.  
-❌ **Do not** assume socket communication will work without Phase 2.1 bench validation.  
-❌ **Do not** skip timeout testing — communication loss must be handled safely.  
-❌ **Do not** merge to development until all Phase 2 tests pass and are documented.  
-
-### Sprint 18 Timeline
-
-- **Mon Jul 15 — Wed Jul 17:** Phase 1 (ADAS integration, isolated test)
-- **Thu Jul 18 — Fri Jul 19:** Phase 1 validation & stabilization
-- **Mon Jul 22 — Wed Jul 24:** Phase 2 (vehicle testing), Phase 3 (merge & documentation)
-- **Thu Jul 25:** Team retrospective & closeout
+### Sprint 17 (29/06/2026 to 10/07/2026)
+
+**Goal:** Requirements review, test validation, and vehicle recovery baseline.
+
+#### Planned Scope
+
+- ADAS manager restructuring.
+- TSR and ADAS feature tests.
+- Emergency Vehicle Priority tests.
+- Requirements review and TSF traceability updates.
+- Documentation status update.
+
+#### Delivered in Sprint 17
+
+- Emergency Vehicle Priority test campaign completed.
+- **17/17 tests passing** in simulation scope:
+  - Unit tests for emergency policy and safety mappings.
+  - Integration tests for coordinator interactions.
+  - End-to-end smoke workflow (Normal -> Emergency -> Normal).
+- Consolidated technical evidence and test references in mobility scenario documentation.
+- Confirmed design rule for later hardware stage: object safety remains the final throttle authority.
+
+#### Sprint 17 Outcome
+
+- Logic correctness was validated before touching production runtime behavior.
+- Risk was reduced for Sprint 18 hardware rollout.
+
+### Sprint 18 (13/07/2026 to 24/07/2026)
+
+**Goal:** Final autonomous driving version plus practical Emergency Vehicle Priority integration on AGL.
+
+#### Planned Scope
+
+- Integrate V2I and emergency flows with running ADAS stack.
+- Deploy in stable, operable service form.
+- Validate physical behavior (safe stop, emergency override, scenario switching).
+- Close remaining documentation gaps from previous sprint.
+
+#### Delivered in Sprint 18
+
+1. **Stack service architecture delivered (systemd)**
+  - New services:
+    - `adas-normal-stack.service`
+    - `adas-v2i-stack.service`
+    - `adas-emergency-stack.service`
+  - Wrappers introduced for each mode with startup checks, process supervision, and graceful stop behavior.
+
+2. **Mode switching operations delivered**
+  - `stack-switch.sh` supports:
+    - `normal`, `v2i`, `emergency`, `stop`, `status`
+  - Interactive mode selector delivered:
+    - `stack_mode_selector.py` with `N`, `V`, `E`, `S`, `Q` runtime controls.
+
+3. **Emergency safe-state shutdown hardened**
+  - Emergency stop now guarantees physical safe outputs on shutdown:
+    - `TL RED`
+    - `BAR CLOSE`
+    - `LGT OFF`
+  - Gateway ACK evidence confirmed in logs.
+  - Stop path moved from "best effort" to deterministic behavior.
+
+4. **Roadside integration stabilized**
+  - Emergency controller updated to support ADAS emergency socket input.
+  - Gateway probing and wrong-port detection added.
+  - Non-interactive service mode handled correctly.
+  - V2I traffic-light parser aligned with gateway message format (`TL_STATE:*`).
+
+5. **Firmware and scenario organization improved**
+  - Shared micro:bit firmware centralized under `shared/`.
+  - Duplicate scenario firmware removed from emergency folder.
+  - Barrier calibration values updated for practical behavior.
+
+6. **Operational reliability improvements**
+  - Intentional service stop no longer reported as failure (`SuccessExitStatus=143`).
+  - Unbuffered Python logs enabled for better troubleshooting.
+  - Orphan-process cleanup added in switch flow.
+
+#### Sprint 18 Task Closure Matrix
+
+| Area | Planned | Status |
+|------|---------|--------|
+| ADAS + V2I integration path | Required | Done |
+| Emergency practical integration | Required | Done |
+| Service-based operation | Required | Done |
+| Runtime mode switch (Normal/V2I/Emergency) | Required | Done |
+| Deterministic safe-state at emergency stop | Required | Done |
+| Documentation update of implementation state | Required | Done |
+| Final merge/review into development branch | Required | Pending team flow |
+
+#### Current Operational Notes
+
+- All three mobility services are available and can be run on demand.
+- Automatic boot start was intentionally disabled to avoid unintended autonomous movement after reboot.
+- Recommended operation uses explicit command start per scenario.
+
+#### Final Sprint 17-18 Summary
+
+- Sprint 17 delivered verified behavior correctness.
+- Sprint 18 delivered vehicle-operational integration and deterministic control flow.
+- The module now has a practical deploy/run/stop model with clear safety fallback behavior.
 
 ---
