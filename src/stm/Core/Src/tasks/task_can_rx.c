@@ -28,6 +28,11 @@ enum {
 // Global maximum throttle cap: limits top speed regardless of AEB state
 #define AEB_MAX_THROTTLE_PCT 100u
 
+/* CtrlCmd (0x202) staleness watchdog: se o Manager deixar de enviar (crash,
+ * CAN cortado) com throttle MANUAL/LKA aplicado, mais nada pára o motor —
+ * o staleness de 200ms do CC só cobre CC/ACC. */
+#define CTRL_CMD_STALE_MS 300u
+
 typedef struct
 {
   HAL_StatusTypeDef motor_init_status;
@@ -41,6 +46,7 @@ typedef struct
   uint16_t motor_current_estimate_ma;
   uint8_t  motor_status_counter;
   DriveMode_t current_drive_mode;
+  uint32_t last_ctrl_cmd_tick;   /* HAL_GetTick() do último 0x202 válido — 0 = nunca */
 } TaskCanRx;
 
 static TaskCanRx s_rx;
@@ -294,6 +300,8 @@ static void handle_ctrl_cmd(SystemCtx* ctx, const CAN_Message_t* rx_msg,
 
     const CtrlCmd_t* cmd = (const CtrlCmd_t*)rx_msg->data;
 
+    s_rx.last_ctrl_cmd_tick = HAL_GetTick();   /* alimenta o watchdog de staleness */
+
     /* --- 1. Steering — always applied ----------------------------------- */
     int8_t steering = cmd->steering;
     if (steering < -100) steering = -100;
@@ -491,6 +499,19 @@ void task_can_rx_step(SystemCtx* ctx)
   clear_mcp_flags_if_due(ctx);
   check_emergency_stop_timeout(ctx);   /* watchdog: auto-clear emergency se Manager perdeu o clear */
 
+  /* Watchdog de staleness do 0x202 — Manager morto/CAN cortado com throttle
+   * aplicado → Motor_Stop. Steering fica onde está. Só dispara se alguma vez
+   * recebemos um comando (last_ctrl_cmd_tick != 0). */
+  if (s_rx.last_ctrl_cmd_tick != 0 &&
+      (HAL_GetTick() - s_rx.last_ctrl_cmd_tick) > CTRL_CMD_STALE_MS &&
+      s_rx.actual_throttle_applied != 0)
+  {
+    Motor_Stop();
+    s_rx.actual_throttle_applied = 0;
+    sys_log(ctx, "\033[1;31m[CAN_RX] CtrlCmd timeout (>%ums sem 0x202) — Motor_Stop\033[0m",
+            (unsigned)CTRL_CMD_STALE_MS);
+  }
+
   //get the latest state snapshot for decision making
   VehicleState snap;
 
@@ -572,3 +593,8 @@ void task_can_rx_step(SystemCtx* ctx)
   // Small delay to avoid busy waiting (same)
   tx_thread_sleep(CAN_RX_SLEEP_TICKS);
 }
+
+/* Leituras single-byte dos valores realmente aplicados — usadas pelo
+ * broadcast do CtrlStatus_t (0x213) em task_cruise_control.c. */
+int8_t task_can_rx_actual_steering(void) { return s_rx.actual_steering_applied; }
+int8_t task_can_rx_actual_throttle(void) { return s_rx.actual_throttle_applied; }

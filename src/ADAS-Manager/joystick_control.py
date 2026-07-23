@@ -51,6 +51,7 @@ class VehicleController:
     def __init__(self, socket_path=SOCKET_PATH):
         self.socket_path = socket_path
         self.mode        = 'MANUAL'
+        self.emergency   = False
         self.sock        = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
         print(f"{Colors.GREEN}✓ Socket {socket_path} pronto (UNIX DGRAM){Colors.NC}")
         print(f"  ADAS Manager deve estar à escuta em {socket_path}")
@@ -96,6 +97,16 @@ class VehicleController:
     def set_manual(self):
         """Força regresso a MANUAL — usa comando directo (sem toggle)"""
         self.force_manual()
+
+    def send_emergency_toggle(self):
+        """Envia E — togla o modo de veículo prioritário de emergência no ADAS Manager"""
+        try:
+            self.sock.sendto(b"E\n", self.socket_path)
+            self.emergency = not self.emergency
+            state = f"{Colors.RED}ON{Colors.NC}" if self.emergency else "OFF"
+            print(f"\n{Colors.RED}[EMERGENCY] → {state}{Colors.NC}")
+        except (FileNotFoundError, OSError) as e:
+            print(f"\n{Colors.RED}[EMERGENCY TOGGLE] Falhou ({e}){Colors.NC}")
 
     def sync_to_adas(self):
         """Envia M ao arranque para garantir sincronização com ADAS Manager"""
@@ -292,6 +303,7 @@ def modo_interativo(controller):
     print("  T   - Toggle MANUAL / AUTONOMOUS")
     print("  M   - Forçar MANUAL")
     print("  U   - Forçar AUTONOMOUS")
+    print("  E   - Toggle Emergency Priority Vehicle")
     print("  Espaço - STOP")
     print("  Q - Sair\n")
     print(f"  Modo inicial: {Colors.CYAN}{controller.mode}{Colors.NC}\n")
@@ -319,6 +331,10 @@ def modo_interativo(controller):
 
                 if key == 'm':
                     controller.force_manual()
+                    continue
+
+                if key == 'e':
+                    controller.send_emergency_toggle()
                     continue
 
                 if key == 'u':

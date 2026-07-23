@@ -48,8 +48,11 @@ build
 # Chat exports
 chat-session-*.json
 
+
 # Local external folder
 Team5_Senna_Tech/
+# Local Python virtual environment
+.venv/
 
 # TSF Howtoimplement submodules
 docs/TSF/Howtoimplement/safety-monitor/

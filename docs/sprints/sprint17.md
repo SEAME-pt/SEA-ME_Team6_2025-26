@@ -6,35 +6,31 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] ADAS manager restructured (21)
-  - [ ] Tests (TSR / ADAS Manager features) (21)
-  - [ ] Tests (Emergency Vehicle Priority) (8)
-  - [ ] Requirements Review and Creation (5)
-  - [ ] TSF Script adaptation to OS (MAC, Linux, Windows) (8)
+  - [X] ADAS manager restructured (21)
+  - [X] Tests (TSR) (21)
+  - [X] Tests (Emergency Vehicle Priority) (8)
+  - [X] Requirements Review and Creation (5)
+  - [X] TSF Script adaptation to OS (MAC, Linux, Windows) (8)
 
 - #### Tasks from the previous sprint:
-  - [ ] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
+  - [X] HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) (21)
   - [ ] Status point: update the documentation to reflect current implementation (8)
 
-  - #### Tasks from the previous sprint that we won´t do:
-  - [ ] Integration of Traffic Sign Recognition into ADAS Manager (8)
-  - [ ] Emergency Vehicle Priority pratical implementation (13)
-  - [ ] Integration of Vehicle-to-Infrastructures implementation into ADAS Manager(8)
-  - [ ] Integration of Emergency Vehicle Priority into ADAS Manager (8)
- 
+- #### Bonus
+  - [X] Debug and fix the car - (Stepdown, Motor driver, BMS, CAN malfunction) (21)
 ---
 
-## **Total Sprint Points: `92`**
+## **Total Sprint Points: `92` + `21`**
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Tests (Emergency Vehicle Priority) + Requirements Review and Creation + TSF Script adaptation to OS (MAC, Linux, Windows) + Status point: update the documentation to reflect current implementation | 29 | - |
-| **David** | ADAS manager restructured + Status point: update the documentation to reflect current implementation | 29 | - |
-| **Vasco** | Tests (TSR / Emergency Vehicle Priority / ADAS Manager features) + Status point: update the documentation to reflect current implementation | 29 | - |
-| **Diogo** | HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) + Status point: update the documentation to reflect current implementation | 29 | - |
-| **Ruben** |  | 0 | - |
+| **João**  | Tests (Emergency Vehicle Priority) + Requirements Review and Creation + TSF Script adaptation to OS (MAC, Linux, Windows) + Status point: update the documentation to reflect current implementation | 29 | 21 |
+| **David** | ADAS manager restructured + Status point: update the documentation to reflect current implementation | 29 | 21 |
+| **Vasco** | Tests (TSR / Emergency Vehicle Priority / ADAS Manager features) + Status point: update the documentation to reflect current implementation | 29 | 21 |
+| **Diogo** | HMI features implementation (OTA confirmation, ADAS features, CC speed, and on/off features) + Status point: update the documentation to reflect current implementation | 29 | 21 |
+| **Ruben** | Car fixed | 21 | 21 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -53,27 +49,43 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`0/92`**
+- ### Sprint 16 points: **`105/92`**
 
 ## ❌ Undone:
-  - Fill this section only in the retro
+  - We left the final documentation to the end of the module.
   
 ------
 
 ## ✅ Outcomes:
-  - Fill this section only in the retro
-
+  - We have effectively accomplish/delivered what we purposed to do in this sprint - mainly, **fixing the car**!!
+  - Car can do a full lap again!
 ------
 
 - **Demos**:
+- https://github.com/user-attachments/assets/0f8182d9-582c-4f29-9664-d5bd070b1077
 
+- **Docs updated**:
+
+
+**EMERGENY PRIORITY TESTS**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/mobility_scenarios/V2I_and_emergencypriority/docs/guides/mobility_scenarios/TEST_RESULTS_EMERGENCY_VEHICLE_PRIORITY.md
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/feature/mobility_scenarios/V2I_and_emergencypriority/src/mobility_scenarios_src
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/tree/feature/mobility_scenarios/V2I_and_emergencypriority/src/mobility_scenarios_src/emergency_priority/tests
+
+**TSF NEW REQUIREMENTS**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/TSF/new_requirements/docs/TSF/requirements/tsf-requirements-table.md
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/TSF/new_requirements/docs/TSF/tsf_implementation/items/expectations/EXPECT-L0-31.md
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/TSF/new_requirements/docs/TSF/tsf_implementation/items/expectations/EXPECT-L0-32.md
 
 # 🔎 Retrospective
 - ## **Went well**:
-- Fill this section only in the retro
+- Our major worry was eliminated by fixing the car.
+- We have effectively achieved what we purposed to do this sprint.
 
-- ## **To improve**:
-- Fill this section only in the retro
+- ## **To improve/Still to be done**:
+- We still have to effectively test on the car.
+- Close the documentation topic.
+- Finalize the module.
 
 ## 🔗 Useful Links
 

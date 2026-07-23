@@ -113,6 +113,108 @@ typedef struct {
   float d_limit_m;      // beyond this distance: always 100%; below: apply kinematic curve
 } AebParams;
 
+/* -----------------------------
+   Sanitizador de distância — rejeição do eco do chão
+   -----------------------------
+   O SRF08 devolve um eco fantasma persistente do chão a ~530mm (banda
+   observada em telemetria: ~380-780mm parado, ~300-880mm em movimento com o
+   pitch). Baixar o gain nao o suprime (validado com gain=4 em 2026-07-14) e
+   custa alcance. Em vez disso, leituras dentro da banda NAO sao confiadas:
+
+   - Leitura fora da banda (2 amostras consecutivas): confiavel, usa-se.
+   - Leitura 0 = "sem eco" -> longe (o codigo antigo tratava 0 como 2cm e
+     travava instantaneamente com uma unica amostra nula).
+   - Dentro da banda: se vinhamos a seguir um objecto logo acima da banda
+     (900-1300mm, ha <=0.5s), continua-se a aproximacao por odometria
+     (d_est -= v*dt) enquanto as leituras acompanham a previsao (+-150mm).
+     Um objecto real emerge abaixo da banda nas leituras antes de d_est
+     chegar ao fundo; se isso nao acontecer (ou a previsao divergir), era o
+     eco -> d_est = longe.
+
+   Validado por replay da sessao 2026-07-14 (23min): 66 -> ~4 disparos
+   falsos, mantendo os 18 disparos reais e os tempos de travagem em
+   aproximacoes sinteticas a 0.4-1.2 m/s.
+*/
+#define SAN_BAND_LO_MM      250.0f  /* abaixo: sempre confiavel (backstop) */
+#define SAN_BAND_HI_MM      900.0f  /* acima: confiavel (com debounce)     */
+#define SAN_ENTRY_MAX_MM    1300.0f /* ancora valida p/ decay: (900,1300]  */
+#define SAN_ENTRY_FRESH_MS  500u    /* ... e recente                       */
+#define SAN_CONSIST_MM      150.0f  /* leituras têm de acompanhar o decay  */
+#define SAN_FAR_MM          6000.0f
+#define SAN_DEBOUNCE        2u
+
+typedef struct {
+  float    d_est_mm;        /* distancia sanitizada entregue ao AEB        */
+  float    last_trusted_mm;
+  uint32_t last_trusted_ms;
+  uint8_t  out_cnt;         /* amostras consecutivas fora da banda         */
+  bool     decaying;
+  float    decay_left_ms;
+  bool     was_in_band;
+  uint32_t last_srf_ts;     /* deteccao de amostra fresca                  */
+} DistSanitizer;
+
+static DistSanitizer s_san;
+
+static void san_reset(DistSanitizer* s) {
+  s->d_est_mm = SAN_FAR_MM;
+  s->last_trusted_mm = SAN_FAR_MM;
+  s->last_trusted_ms = 0;
+  s->out_cnt = SAN_DEBOUNCE;
+  s->decaying = false;
+  s->decay_left_ms = 0.0f;
+  s->was_in_band = false;
+  s->last_srf_ts = 0;
+}
+
+/* Processa UMA amostra fresca do SRF08. dt_ms = intervalo desde a amostra
+   anterior; v_mps = velocidade actual das rodas. */
+static void san_update(DistSanitizer* s, uint32_t now_ms, float raw_mm,
+                       float v_mps, uint32_t dt_ms)
+{
+  if (raw_mm <= 0.0f) raw_mm = SAN_FAR_MM;   /* 0 = sem eco = longe */
+  bool in_band = (raw_mm >= SAN_BAND_LO_MM) && (raw_mm <= SAN_BAND_HI_MM);
+
+  if (in_band) {
+    if (!s->was_in_band) {
+      if (s->last_trusted_mm > SAN_BAND_HI_MM &&
+          s->last_trusted_mm <= SAN_ENTRY_MAX_MM &&
+          (now_ms - s->last_trusted_ms) <= SAN_ENTRY_FRESH_MS) {
+        s->decaying = true;
+        float v_ref = (v_mps > 0.2f) ? v_mps : 0.2f;
+        s->decay_left_ms = ((s->d_est_mm - SAN_BAND_LO_MM) / v_ref) * 1.5f
+                           + 300.0f;
+      } else {
+        s->decaying = false;
+      }
+    }
+    s->out_cnt = 0;
+    if (s->decaying) {
+      s->d_est_mm -= v_mps * (float)dt_ms;      /* mm = m/s * ms */
+      s->decay_left_ms -= (float)dt_ms;
+      float diff = raw_mm - s->d_est_mm;
+      if (diff < 0.0f) diff = -diff;
+      if (diff > SAN_CONSIST_MM ||
+          s->d_est_mm <= SAN_BAND_LO_MM || s->decay_left_ms <= 0.0f) {
+        /* previsao divergiu ou objecto real ja teria emergido -> fantasma */
+        s->decaying = false;
+        s->d_est_mm = SAN_FAR_MM;
+      }
+    } else {
+      s->d_est_mm = SAN_FAR_MM;  /* eco fantasma: sem informacao na banda */
+    }
+  } else {
+    if (s->out_cnt < SAN_DEBOUNCE) s->out_cnt++;
+    if (s->out_cnt >= SAN_DEBOUNCE) {
+      s->d_est_mm = raw_mm;
+      s->last_trusted_mm = raw_mm;
+      s->last_trusted_ms = now_ms;
+      s->decaying = false;
+    }
+  }
+  s->was_in_band = in_band;
+}
+
 /* AEB module global instance (single instance for whole firmware) */
 static AebCtx s_aeb;
 
@@ -196,6 +298,7 @@ static void aeb_reset(AebCtx* a) {
 void task_aeb_init(SystemCtx* ctx) {
   (void)ctx;
   aeb_reset(&s_aeb);
+  san_reset(&s_san);
 }
 
 /*
@@ -228,7 +331,17 @@ static void aeb_step_internal(SystemCtx* ctx, uint32_t dt_ms)
      srf08_distance_mm -> m by /1000
   */
   float v_mps = (float)snap.speed_mh / 3600.0f;
-  float d_m   = (float)snap.srf08_distance_mm / 1000.0f;
+
+  /* -------- 3b) Sanitizar a distância (rejeicao do eco do chao) --------
+     Corre apenas em amostras frescas do SRF08 (srf08_ts novo), com o dt
+     real entre amostras (~70-100ms), nao no tick de 20ms do AEB. */
+  if (snap.srf08_ts != s_san.last_srf_ts) {
+    uint32_t dt_smp = snap.srf08_ts - s_san.last_srf_ts;
+    if (s_san.last_srf_ts == 0 || dt_smp > 1000u) dt_smp = 100u;
+    s_san.last_srf_ts = snap.srf08_ts;
+    san_update(&s_san, now_ms, (float)snap.srf08_distance_mm, v_mps, dt_smp);
+  }
+  float d_m = s_san.d_est_mm / 1000.0f;
 
   /* -------- 4) Fault policy (important!) --------
      If sensors are invalid:

@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "Vehicle platform"
       - "Emergency braking system"
       - "Obstacle detection sensor"

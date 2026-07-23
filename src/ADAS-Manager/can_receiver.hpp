@@ -49,6 +49,12 @@ public:
 
     // Returns true if a valid CtrlStatus frame (0x213) was received.
     // Contains current_speed_cms (Hall encoder) and gap_cm (SRF08).
+    //
+    // O CtrlStatus_t não tem CRC (8 bytes, counter/crc removidos), por isso
+    // valida-se por gamas. Isto também rejeita frames no formato LEGADO
+    // (CruiseControlStatus_t: byte7 = CRC pseudo-aleatório > 5 na maioria) —
+    // firmware STM antigo fica simplesmente sem feedback em vez de injetar
+    // gaps fantasma no OA.
     bool read_ctrl_status(CtrlStatus_t& status) {
         if (fd_ < 0) return false;
 
@@ -58,6 +64,16 @@ public:
         if (frame.can_dlc <  sizeof(CtrlStatus_t))              return false;
 
         memcpy(&status, frame.data, sizeof(CtrlStatus_t));
+
+        if (status.active_mode     > CTRL_MODE_ACC)      return false;
+        if (status.override_reason > OVERRIDE_LIMIT_HIT) return false;
+
+        // Gap implausível (SRF08 útil ~5..600 cm) → tratar como "sem lead"
+        // em vez de alimentar o OA com um obstáculo a 0.00 m.
+        if (status.gap_cm != 0xFFFF &&
+            (status.gap_cm < 5 || status.gap_cm > 600))
+            status.gap_cm = 0xFFFF;
+
         return true;
     }
 

@@ -16,13 +16,14 @@ LDFLAGS += -lpthread
 
 TARGET := $(BIN_DIR)/adas_manager
 SRC    := adas_manager.cpp
+HDRS   := $(wildcard *.hpp) $(wildcard *.h)
 
 all: $(TARGET)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-$(TARGET): $(SRC) | $(BIN_DIR)
+$(TARGET): $(SRC) $(HDRS) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
 	@echo "=== Binary info ==="
 	@file $(TARGET)

@@ -20,6 +20,7 @@ class PowertrainProvider;
 class VehicleProvider;
 class CurrentLocationProvider;
 class ChassisProvider;
+class OTAProvider;
 
 /**
  * @class SignalRouter
@@ -45,6 +46,7 @@ public:
     void registerADASProvider(ADASProvider *provider);
     void registerCurrentLocationProvider(CurrentLocationProvider *provider);
     void registerChassisProvider(ChassisProvider *provider);
+    void registerOTAProvider(OTAProvider *provider);
 
 public slots:
     /**
@@ -66,6 +68,7 @@ private:
     ADASProvider *_adasProvider;
     CurrentLocationProvider *_currentLocationProvider;
     ChassisProvider *_chassisProvider;
+    OTAProvider *_otaProvider;
 
     /**
      * @brief Route handlers for each signal domain
@@ -76,6 +79,7 @@ private:
     void routeADASSignal(const QString &path, const QVariant &value);
     void routeCurrentLocationSignal(const QString &path, const QVariant &value);
     void routeChassisSignal(const QString &path, const QVariant &value);
+    void routeOTASignal(const QString &path, const QVariant &value);
 
     /**
      * @brief Helper to check if provider is registered

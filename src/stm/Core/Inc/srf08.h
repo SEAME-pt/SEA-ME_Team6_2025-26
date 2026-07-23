@@ -43,10 +43,12 @@
 //   Gain 16 → default de fábrica: alcance ~3m mas capta ecos do chão e laterais
 //   Gain 25+ → máxima sensibilidade, requer montagem muito cuidada
 //
-#define SRF08_RECOMMENDED_GAIN   4    // Eco do chão a 530mm suprimido (17° off-axis); alcance ~1m
-                                       // Era 8 mas persistia eco do chão a ~530mm (raio 17° off-axis,
-                                       // mais forte que o eco a 287mm a 22.5° → gain=8 não o suprime).
-                                       // Se obstáculos reais a >80cm deixarem de ser detectados → gain=7.
+#define SRF08_RECOMMENDED_GAIN   8    // Alcance ~1.5m, necessário para o AEB parar a tempo a >0.6m/s
+                                       // (distância de paragem cresce com v²; a 1.2m/s são ~1.35m).
+                                       // O eco do chão a ~530mm NÃO é suprimido por gain (validado:
+                                       // persistia com gain=4, telemetria 2026-07-14) — é agora
+                                       // rejeitado por software no task_aeb.c (DistSanitizer, banda
+                                       // 250-900mm + dead-reckoning por odometria).
 #define SRF08_RECOMMENDED_RANGE  140  // ~6m, bom compromisso
 
 // Distância mínima válida — protecção à dead zone do sensor (≥3cm hardware).

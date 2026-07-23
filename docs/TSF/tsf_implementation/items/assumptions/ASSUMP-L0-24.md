@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "STM32 with ThreadX"
       - "Raspberry Pi 5 with AGL"
       - "CAN bus interface"
