@@ -18,8 +18,8 @@ radio.setGroup(23)
 
 let state = "CLOSED"
 const SERVO_PIN = AnalogPin.P0
-const OPEN_ANGLE = 20
-const CLOSED_ANGLE = 160
+const OPEN_ANGLE = 90
+const CLOSED_ANGLE = 180
 let invertDirection = false
 
 function publishState() {

@@ -1,5 +1,6 @@
 /**
- * micro:bit B — Gateway / Relay (one USB to Pi, radio to all roadside nodes)
+ * Shared micro:bit gateway / relay firmware
+ * Used by both V2I and emergency scenarios.
  * Flash via: https://makecode.microbit.org  (paste as JavaScript, not Blocks)
  * Radio group: 23
  *
@@ -57,14 +58,14 @@ function sendRadioForCommand(cmd: string) {
 }
 
 radio.onReceivedString(function (msg) {
-    if (msg.substr(0, 10) == "TL_STATE:") {
-        lastTrafficLightState = msg.substr(10)
+    if (msg.indexOf("TL_STATE:") == 0) {
+        lastTrafficLightState = msg.substr(9)
         serial.writeLine(msg)
-    } else if (msg.substr(0, 11) == "BAR_STATE:") {
-        lastBarrierState = msg.substr(11)
+    } else if (msg.indexOf("BAR_STATE:") == 0) {
+        lastBarrierState = msg.substr(10)
         serial.writeLine(msg)
-    } else if (msg.substr(0, 11) == "LGT_STATE:") {
-        lastStreetlightState = msg.substr(11)
+    } else if (msg.indexOf("LGT_STATE:") == 0) {
+        lastStreetlightState = msg.substr(10)
         serial.writeLine(msg)
     }
 })

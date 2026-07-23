@@ -48,6 +48,7 @@ Notes:
 from __future__ import annotations
 
 import argparse
+import os
 import select
 import socket
 import struct
@@ -79,6 +80,36 @@ class SerialCommandDevice:
         self.name = name
         self.startup_delay_s = startup_delay_s
         self.ser: serial.Serial | None = None
+        self._last_by_prefix: dict[str, str] = {}
+
+    @staticmethod
+    def _is_gateway_reply(line: str) -> bool:
+        return any(
+            token in line
+            for token in (
+                "GW_",
+                "TL_STATE",
+                "BAR_STATE",
+                "LGT_STATE",
+                "ACK",
+                "STATUS",
+                "PONG",
+            )
+        )
+
+    @staticmethod
+    def _is_non_gateway_telemetry(line: str) -> bool:
+        return any(
+            token in line
+            for token in (
+                "[CC]",
+                "[AEB]",
+                "[IMU]",
+                "[INA226]",
+                "[Speedometer]",
+                "[SRF08]",
+            )
+        )
 
     def connect(self) -> None:
         if self.ser is not None and self.ser.is_open:
@@ -96,6 +127,7 @@ class SerialCommandDevice:
                 self.ser.close()
         finally:
             self.ser = None
+            self._last_by_prefix.clear()
 
     def _drain(self, duration_s: float = 0.3) -> list[str]:
         if self.ser is None:
@@ -111,13 +143,36 @@ class SerialCommandDevice:
                 out.append(line)
         return out
 
-    def send(self, command: str, read_window_s: float = 0.8) -> list[str]:
+    def verify_gateway(self) -> None:
+        replies = self.send("STATUS", read_window_s=0.8, dedupe=False)
+        if not replies:
+            raise RuntimeError(
+                f"No reply from gateway on {self.port}. Check micro:bit gateway USB mapping."
+            )
+        if any(self._is_non_gateway_telemetry(line) for line in replies):
+            sample = " | ".join(replies[:3])
+            raise RuntimeError(
+                "Serial port looks like ADAS telemetry, not micro:bit gateway "
+                f"({self.port}). Sample: {sample}"
+            )
+        if not any(self._is_gateway_reply(line) for line in replies):
+            sample = " | ".join(replies[:3])
+            raise RuntimeError(
+                "Unexpected serial replies while probing gateway on "
+                f"{self.port}. Sample: {sample}"
+            )
+
+    def send(self, command: str, read_window_s: float = 0.8, dedupe: bool = True) -> list[str]:
         self.connect()
         assert self.ser is not None
+        prefix = command.split(" ", 1)[0]
+        if dedupe and self._last_by_prefix.get(prefix) == command:
+            return []
         self.ser.reset_input_buffer()
         self.ser.write((command + "\r\n").encode("utf-8"))
         self.ser.flush()
         replies = self._drain(read_window_s)
+        self._last_by_prefix[prefix] = command
         if replies:
             print(f"[{self.name}] {command} -> {' | '.join(replies)}")
         else:
@@ -174,11 +229,55 @@ class AdasV2ISender:
         self.sock.sendto(payload, self.socket_path)
 
 
+class EmergencyToggleReceiver:
+    def __init__(self, socket_path: str):
+        self.socket_path = socket_path
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+        self.sock.setblocking(False)
+
+        try:
+            os.unlink(self.socket_path)
+        except FileNotFoundError:
+            pass
+
+        self.sock.bind(self.socket_path)
+
+    def close(self) -> None:
+        try:
+            self.sock.close()
+        finally:
+            try:
+                os.unlink(self.socket_path)
+            except FileNotFoundError:
+                pass
+
+    def poll(self) -> VehicleMode | None:
+        latest: VehicleMode | None = None
+        while True:
+            try:
+                payload = self.sock.recv(16)
+            except BlockingIOError:
+                break
+
+            value = payload.decode("utf-8", errors="ignore").strip()
+            if value == "1":
+                latest = VehicleMode.EMERGENCY
+            elif value == "0":
+                latest = VehicleMode.NORMAL
+
+        return latest
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Emergency roadside device controller")
     parser.add_argument("--gateway-port", default="/dev/ttyACM1", help="Gateway micro:bit serial port")
     parser.add_argument("--baud", type=int, default=115200, help="Serial baud rate")
     parser.add_argument("--adas-v2i-socket", default="/tmp/adas_v2i.sock", help="ADAS V2I unix datagram socket")
+    parser.add_argument(
+        "--adas-emergency-socket",
+        default="/tmp/adas_emergency.sock",
+        help="ADAS emergency toggle unix datagram socket",
+    )
     parser.add_argument("--loop-s", type=float, default=0.1, help="Main loop interval")
     return parser.parse_args()
 
@@ -220,6 +319,21 @@ def apply_roadside_outputs(
         gateway.send("LGT OFF")
 
 
+def force_safe_state(gateway: SerialCommandDevice, v2i: AdasV2ISender) -> None:
+    print("[Controller] Safe-state -> TL RED", flush=True)
+    gateway.send("TL RED", dedupe=False)
+    print("[Controller] Safe-state -> BAR CLOSE", flush=True)
+    gateway.send("BAR CLOSE", dedupe=False)
+    print("[Controller] Safe-state -> LGT OFF", flush=True)
+    gateway.send("LGT OFF", dedupe=False)
+    print("[Controller] Safe-state -> V2I red/closed/priority=0", flush=True)
+    v2i.send(
+        traffic_light_state="red",
+        barrier_state="closed",
+        priority_active=False,
+    )
+
+
 def main() -> int:
     args = parse_args()
     state = RuntimeState()
@@ -227,43 +341,70 @@ def main() -> int:
 
     gateway = SerialCommandDevice(args.gateway_port, args.baud, "Gateway")
     v2i = AdasV2ISender(args.adas_v2i_socket)
+    emergency_rx = EmergencyToggleReceiver(args.adas_emergency_socket)
 
     print_help()
 
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    tty.setcbreak(fd)
+    try:
+        gateway.verify_gateway()
+    except Exception as exc:
+        print(f"[Controller] Gateway probe failed: {exc}")
+        gateway.close()
+        v2i.close()
+        return 2
+
+    interactive_tty = sys.stdin.isatty()
+    fd = None
+    old_settings = None
+    if interactive_tty:
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        tty.setcbreak(fd)
+    else:
+        print("[Controller] Non-interactive mode: keyboard toggles disabled")
 
     last_summary = ""
 
     try:
         while True:
-            dr, _, _ = select.select([sys.stdin], [], [], 0.0)
-            if dr:
-                ch = sys.stdin.read(1)
-                if ch == "q":
-                    print("\n[Controller] Exit requested")
-                    return 0
-                if ch == "t":
-                    state.vehicle_mode = VehicleMode.EMERGENCY if state.vehicle_mode == VehicleMode.NORMAL else VehicleMode.NORMAL
-                elif ch == "a":
-                    state.approaching = not state.approaching
-                elif ch == "l":
-                    state.same_lane = not state.same_lane
-                elif ch == "r":
+            if interactive_tty:
+                dr, _, _ = select.select([sys.stdin], [], [], 0.0)
+                if dr:
+                    ch = sys.stdin.read(1)
+                    if ch == "q":
+                        print("\n[Controller] Exit requested")
+                        return 0
+                    if ch == "t":
+                        state.vehicle_mode = VehicleMode.EMERGENCY if state.vehicle_mode == VehicleMode.NORMAL else VehicleMode.NORMAL
+                    elif ch == "a":
+                        state.approaching = not state.approaching
+                    elif ch == "l":
+                        state.same_lane = not state.same_lane
+                    elif ch == "r":
+                        state.traffic_light_state = "red"
+                    elif ch == "y":
+                        state.traffic_light_state = "yellow"
+                    elif ch == "g":
+                        state.traffic_light_state = "green"
+                    elif ch == "o":
+                        state.barrier_state = "open"
+                    elif ch == "m":
+                        state.barrier_state = "mid"
+                    elif ch == "c":
+                        state.barrier_state = "closed"
+                    elif ch == "s":
+                        state.streetlight_state = "blink" if state.streetlight_state != "blink" else "off"
+
+            socket_mode = emergency_rx.poll()
+            if socket_mode is not None and socket_mode != state.vehicle_mode:
+                state.vehicle_mode = socket_mode
+                print(f"\n[Controller] ADAS emergency socket -> {state.vehicle_mode.name}")
+                if socket_mode == VehicleMode.NORMAL:
+                    # Apply safe defaults immediately on emergency OFF, not only on process exit.
+                    force_safe_state(gateway, v2i)
                     state.traffic_light_state = "red"
-                elif ch == "y":
-                    state.traffic_light_state = "yellow"
-                elif ch == "g":
-                    state.traffic_light_state = "green"
-                elif ch == "o":
-                    state.barrier_state = "open"
-                elif ch == "m":
-                    state.barrier_state = "mid"
-                elif ch == "c":
                     state.barrier_state = "closed"
-                elif ch == "s":
-                    state.streetlight_state = "blink" if state.streetlight_state != "blink" else "off"
+                    state.streetlight_state = "off"
 
             result = coordinator.resolve_road_scenario(
                 RoadScenarioInput(
@@ -308,7 +449,16 @@ def main() -> int:
 
             time.sleep(args.loop_s)
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        # On shutdown, force roadside back to safe NORMAL defaults.
+        try:
+            print("\n[Controller] Shutdown safe-state begin", flush=True)
+            force_safe_state(gateway, v2i)
+            print("[Controller] Shutdown safe-state done", flush=True)
+        except Exception as exc:
+            print(f"\n[Controller] Shutdown safe-state error: {exc}")
+        if interactive_tty and fd is not None and old_settings is not None:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        emergency_rx.close()
         gateway.close()
         v2i.close()
 

@@ -116,6 +116,9 @@ class AdasV2ISender:
 
 def parse_light_line(line: str) -> str:
     v = (line or "").strip().upper()
+    # Gateway format: TL_STATE:R / TL_STATE:Y / TL_STATE:G
+    if v.startswith("TL_STATE:"):
+        v = v[len("TL_STATE:"):]
     if v == "R" or v == "RED":
         return "red"
     if v == "Y" or v == "YELLOW":
@@ -123,6 +126,20 @@ def parse_light_line(line: str) -> str:
     if v == "G" or v == "GREEN":
         return "green"
     return "unknown"
+
+
+def looks_like_non_gateway_telemetry(line: str) -> bool:
+    return any(
+        token in line
+        for token in (
+            "[CC]",
+            "[AEB]",
+            "[IMU]",
+            "[INA226]",
+            "[Speedometer]",
+            "[SRF08]",
+        )
+    )
 
 
 def map_motion_to_sign_class(motion: str) -> int:
@@ -197,10 +214,10 @@ def main() -> int:
     last_line = ""
     last_summary = ""
     yellow_since: float | None = None
+    warned_wrong_port = False
 
     try:
         while True:
-            # Keyboard handling (non-blocking)
             if interactive_tty:
                 dr, _, _ = select.select([sys.stdin], [], [], 0.0)
                 if dr:
@@ -221,13 +238,18 @@ def main() -> int:
                     elif ch == "c":
                         state.barrier_state = "closed"
 
-            # Serial read with auto-reconnect
             try:
                 if ser is None:
                     ser = open_serial(args.port, args.baud)
                     print(f"\n[Runtime] Serial reopened on {args.port}")
                 raw = ser.readline().decode("utf-8", errors="ignore").strip()
                 if raw:
+                    if looks_like_non_gateway_telemetry(raw) and not warned_wrong_port:
+                        print(
+                            f"\n[Runtime] Warning: serial on {args.port} looks like ADAS telemetry, "
+                            "not micro:bit gateway light stream (R/Y/G)."
+                        )
+                        warned_wrong_port = True
                     parsed = parse_light_line(raw)
                     if parsed != "unknown":
                         state.traffic_light_state = parsed
@@ -252,7 +274,6 @@ def main() -> int:
                 )
             )
 
-            # Scenario 1 safety detail: yellow means slow_down first, then stop.
             yellow_elapsed_s = 0.0
             if state.vehicle_mode == VehicleMode.NORMAL and state.traffic_light_state == "yellow":
                 if yellow_since is None:

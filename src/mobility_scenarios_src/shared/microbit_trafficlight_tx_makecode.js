@@ -1,5 +1,6 @@
 /**
- * micro:bit A — Traffic Light TX (bidirectional)
+ * Shared micro:bit traffic light firmware
+ * Used by both V2I and emergency scenarios.
  * Flash via: https://makecode.microbit.org  (paste as JavaScript, not Blocks)
  * Radio group: 23
  *
