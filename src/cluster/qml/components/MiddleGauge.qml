@@ -11,19 +11,19 @@ Item {
     height: 375
     //? Data
     property real currSpeed: 0
-    property real maxSpeed: 2000
+    property real maxSpeed: 4000
     property real currBattery: 0
-    property real maxBattery: 12.6
-    property real minBattery: 9.82
+    property real maxBattery: 12
+    property real minBattery: 9
     property real currAutonomy: 0
-    property string currBatteryIcon: "qrc:/assets/icons/battery.png"
+    property string currBatteryIcon: "qrc:/assets/icons/battery.svg"
     property bool isBatteryWarning: false
     property bool isBatteryDanger: false
-    property string speedUnit: "km/h"
+    property string speedUnit: "m/h"
     //? Helpers
     property real mainAngleStart: 245
     property real mainAngleSweep: 230
-    property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep 
+    property real secundaryAngleStart: 140 // @note: mainAngleStart - (1/2 * division space) - secundaryAngleSweep
     property real secundaryAngleSweep: 80
     property real  activeIndex: (displaySpeed / maxSpeed) * (innerTotalTicks - 1)
     property int bottomActiveIndex:  Math.round(batteryNormalized() * (bottomTotalTicks - 1))
@@ -45,10 +45,11 @@ Item {
 
     Behavior on displaySpeed {
         NumberAnimation {
-            duration: 500
+            duration: 250
             easing.type: Easing.InOutQuad
         }
     }
+
     Behavior on displayBattery {
         NumberAnimation {
             duration: 500
@@ -201,9 +202,9 @@ Item {
                 visible: index % 4 === 0
                 text: Math.round((index / (root.innerTotalTicks - 1)) * root.maxSpeed)
                 color: index <= root.activeIndex ? BaseTheme.gaugeTicksActive : BaseTheme.gaugeMainTextInformation
-                font.pixelSize: 16
+                font.pixelSize: 15
                 anchors.horizontalCenter: parent.horizontalCenter
-                y: 48
+                y: 56
                 rotation: -(root.mainAngleStart + (index * root.innerAngleStep))
             }
         }
@@ -258,37 +259,37 @@ Item {
         }
     }
 
-    Item {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 112
+    // Item {
+    //     anchors.horizontalCenter: parent.horizontalCenter
+    //     anchors.bottom: parent.bottom
+    //     anchors.bottomMargin: 112
 
-        Column {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: 0
-            spacing: 4
+    //     Column {
+    //         anchors.centerIn: parent
+    //         anchors.verticalCenterOffset: 0
+    //         spacing: 4
 
-            Image {
-                source: root.currBatteryIcon
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 24
-                height: 24
-                sourceSize.width: 24
-                sourceSize.height: 24
-                fillMode: Image.PreserveAspectFit
-                smooth: true
-                mipmap: true
-            }
+    //         Image {
+    //             source: root.currBatteryIcon
+    //             anchors.horizontalCenter: parent.horizontalCenter
+    //             width: 24
+    //             height: 24
+    //             sourceSize.width: 24
+    //             sourceSize.height: 24
+    //             fillMode: Image.PreserveAspectFit
+    //             smooth: true
+    //             mipmap: true
+    //         }
 
-            Text {
-                text: root.currAutonomy + " km"
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 13
-                font.bold: true
-                color: getAutonomyColor()
-            }
-        }
-    }
+    //         Text {
+    //             text: root.currAutonomy + " km"
+    //             anchors.horizontalCenter: parent.horizontalCenter
+    //             font.pixelSize: 13
+    //             font.bold: true
+    //             color: getAutonomyColor()
+    //         }
+    //     }
+    // }
 
     //? BOTTOM TICKS FOR BATTERY
     Repeater {

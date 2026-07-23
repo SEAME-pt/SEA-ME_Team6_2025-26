@@ -44,8 +44,15 @@ int main(int argc, char *argv[])
     signal(SIGFPE, crashHandler);
     QGuiApplication app(argc, argv);
 
-    std::vector<std::string> kuksaSignals = {
+   std::vector<std::string> kuksaSignals = {
         "Vehicle.Speed",
+        "Vehicle.MaxSpeedTrip",
+        "Vehicle.TotalEnergyUsedTrip",
+        "Vehicle.TraveledDistanceSinceStart",
+        "Vehicle.TripDuration",
+        "Vehicle.TraveledDistance",
+        "Vehicle.EnergyPerKmTrip",
+        "Vehicle.AverageSpeed",
         "Vehicle.Powertrain.TractionBattery.CurrentVoltage",
         "Vehicle.Powertrain.ElectricMotor.Speed",
         "Vehicle.Powertrain.TractionBattery.IsCritical",
@@ -58,10 +65,6 @@ int main(int argc, char *argv[])
         "Vehicle.ADAS.ObjectDetection.TrafficLight",
         "Vehicle.ADAS.ObjectDetection.StreetSignals",
         "Vehicle.ADAS.ObjectDetection.Extras",
-        "Vehicle.ADAS.LaneKeepAssist.IsEnabled",
-        "Vehicle.ADAS.CruiseControl.IsEnabled",
-        "Vehicle.ADAS.AEB.IsEnabled",
-        "Vehicle.ADAS.ObjectDetection.IsEnabled",
         "Vehicle.CurrentLocation.Heading",
         "Vehicle.Chassis.SteeringWheel.Angle",
         "Vehicle.OTA.InstalledVersion",

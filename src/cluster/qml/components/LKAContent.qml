@@ -13,7 +13,7 @@ Item {
     property string laneStatusValue: adas.laneStatus
     //? Helpers
     property real lateralDeviationTicks: 33
-    property real lateralDeviationMax: 30.0
+    property real lateralDeviationMax: 50.0
     property int lateralDeviationMiddleIndex: Math.floor(lateralDeviationTicks / 2)
     property real lateralDeviationClamped: Math.max(-lateralDeviationMax, Math.min(lateralDeviationMax, lateralDeviationValue))
     property int activatedUpTo: Math.round((lateralDeviationClamped / lateralDeviationMax + 1) / 2 * (lateralDeviationTicks - 1))

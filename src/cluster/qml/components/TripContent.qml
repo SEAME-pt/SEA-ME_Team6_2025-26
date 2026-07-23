@@ -18,14 +18,14 @@ Item {
             spacing: 4
 
             Text {
-                text: "0"
+                text: vehicle.traveledDistanceTrip
                 color: BaseTheme.white
                 font.pixelSize: 18
                 font.bold: true
             }
 
             Text {
-                text: "km"
+                text: "Km"
                 color: BaseTheme.white
                 font.pixelSize: 14
                 anchors.bottom: parent.bottom
@@ -56,14 +56,14 @@ Item {
                     spacing: 4
 
                     Text {
-                        text: "0"
+                        text: vehicle.maxSpeedTrip
                         color: BaseTheme.white
                         font.pixelSize: 18
                         font.bold: true
                     }
 
                     Text {
-                        text: "km/h"
+                        text: "Km/h"
                         color: BaseTheme.white
                         font.pixelSize: 14
                         anchors.bottom: parent.bottom
@@ -85,14 +85,14 @@ Item {
                     spacing: 4
 
                     Text {
-                        text: "0"
+                        text: vehicle.averageSpeed
                         color: BaseTheme.white
                         font.pixelSize: 18
                         font.bold: true
                     }
 
                     Text {
-                        text: "km/h"
+                        text: "Km/h"
                         color: BaseTheme.white
                         font.pixelSize: 14
                         anchors.bottom: parent.bottom
@@ -122,7 +122,7 @@ Item {
                 }
 
                 Text {
-                    text: "0"
+                    text: vehicle.totalEnergyTrip
                     color: BaseTheme.white
                     font.pixelSize: 18
                     font.bold: true
@@ -133,14 +133,14 @@ Item {
                 spacing: 2
 
                 Text {
-                    text: "Wh/km"
+                    text: "Wh/m"
                     font.pixelSize: 10
                     font.bold: true
                     color: BaseTheme.gaugeTicksActive
                 }
 
                 Text {
-                    text: "0"
+                    text: vehicle.energyPerKmTrip
                     color: BaseTheme.white
                     font.pixelSize: 18
                     font.bold: true
@@ -156,11 +156,16 @@ Item {
         }
 
         Row {
+            id: durationRow
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 4
 
+            property int totalSeconds: vehicle.durationTrip
+            property int minutes: Math.floor(totalSeconds / 60)
+            property int seconds: totalSeconds % 60
+
             Text {
-                text: "00"
+                text: durationRow.minutes
                 color: BaseTheme.white
                 font.pixelSize: 18
                 font.bold: true
@@ -174,7 +179,7 @@ Item {
             }
 
             Text {
-                text: "00"
+                text: durationRow.seconds < 10 ? "0" + durationRow.seconds : durationRow.seconds
                 color: BaseTheme.white
                 font.pixelSize: 18
                 font.bold: true

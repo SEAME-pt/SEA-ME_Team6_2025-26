@@ -69,6 +69,9 @@ void PowertrainProvider::updateMotorSpeed(double speed)
     if (qFuzzyCompare(speed, _motorSpeedValue))
         return;
     
+    if (speed >= 500)
+        return;
+
     _motorSpeedValue = speed;
     _motorSpeedStr = QString::number(static_cast<int>(_motorSpeedValue));
     

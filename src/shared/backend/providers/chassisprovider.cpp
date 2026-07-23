@@ -53,6 +53,8 @@ bool ChassisProvider::updateBlinkersInternal()
     bool prev_left = _isBlinkerLeftActive;
     bool prev_right = _isBlinkerRightActive;
 
+    qDebug() << "[ChassisProvider] updateBlinkersInternal";
+
     if (_steeringWheelAngleValue < 0) {
         _isBlinkerLeftActive = true;
         _isBlinkerRightActive = false;

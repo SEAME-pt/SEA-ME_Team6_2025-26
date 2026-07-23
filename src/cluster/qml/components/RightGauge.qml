@@ -10,8 +10,8 @@ Item {
     width: 300
     height: 300
 
-    property int currPage: 0
-    property int maxPages: 2
+    property int currPage: 1
+    property int maxPages: 3
     property bool isWarningActive: false
 
     function pageSource(page) {
@@ -19,7 +19,8 @@ Item {
             return "WarningContent.qml"
         switch(page) {
             case 0: return "TripContent.qml"
-            case 1: return "DynamicsContent.qml"
+            case 1: return "LKAContent.qml"
+            case 2: return "DynamicsContent.qml"
         }
     }
 

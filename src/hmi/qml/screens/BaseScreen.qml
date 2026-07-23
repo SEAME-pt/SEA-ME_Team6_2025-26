@@ -24,7 +24,7 @@ Rectangle {
             id: pageLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
-            source: "qrc:/qml/screens/StatisticScreen.qml"
+            source: "qrc:/qml/screens/StatisticsScreen.qml"
         }
 
         Bottombar {
