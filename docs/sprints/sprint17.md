@@ -121,3 +121,4 @@
   - EXPECT-L0-29 - "Driver presence condition"
   - EXPECT-L0-30 - "Car ready to next module 2"
   - EXPECT-L0-31 - "Unit Tests"
+  - EXPECT-L0-32 - "FPS and latency E2E"
