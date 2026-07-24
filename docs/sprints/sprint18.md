@@ -6,26 +6,30 @@
 ## 📌 Epics
 
 - #### **Epic** — Car Software Architecture - [#52](https://github.com/orgs/SEAME-pt/projects/89/views/1?pane=issue&itemId=138315398&issue=SEAME-pt%7CSEA-ME_Team6_2025-26%7C52)
-  - [ ] Cluster and HMI final details implementation (21)
-  - [ ] Emergency Vehicle Priority pratical implementation (21)
-  - [ ] Obstacle Avoidance Refinement (21)
+  - [X] Cluster and HMI final details implementation (21)
+  - [X] Emergency Vehicle Priority pratical implementation (21)
+  - [X] Obstacle Avoidance Refinement (21)
 
 - #### Tasks from the previous sprint:
-  - [ ] Status point: update the documentation to reflect current implementation (8)
+  - [X] Status point: update the documentation to reflect current implementation (8)
+
+
+- #### Bonus
+  - [X] Car refinement - (Wires, Camera, servo motor) (21)
 
 ---
 
-## **Total Sprint Points: `71`**
+## **Total Sprint Points: `71`+ `21`= `92` **
 
 ## 📊 Sprint Points Summary
 
 | Member    | Tasks | Points | Achieved |
 |-----------|-------|--------|----------|
-| **João**  | Emergency Vehicle Priority pratical implementation + Status point: update the documentation to reflect current implementation | 29 |  |
-| **David** | Implementation of VSS Signals to finish Cluster + Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 |  |
-| **Vasco** | Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 |  |
-| **Diogo** | Implementation of VSS Signals to finish Cluster + Status point: update the documentation to reflect current implementation | 29 |  |
-| **Ruben** | |  |  |
+| **João**  | Emergency Vehicle Priority pratical implementation + Status point: update the documentation to reflect current implementation | 29 | 29 |
+| **David** | Implementation of VSS Signals to finish Cluster + Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 | 29 |
+| **Vasco** | Obstacle Avoidance Refinement + Status point: update the documentation to reflect current implementation | 29 | 29 |
+| **Diogo** | Implementation of VSS Signals to finish Cluster + Status point: update the documentation to reflect current implementation | 29 | 29 |
+| **Ruben** | Car refinement - (Wires, Camera, servo motor) + Status point: update the documentation to reflect current implementation  | 29 | 29 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
@@ -44,26 +48,35 @@
 ## 📈 Actual Progress
 ----
 
-- ### Sprint 16 points: **`0/71`**
+- ### Sprint 16 points: **`92/71`** (21 bonus)
 
 ## ❌ Undone:
-  - 
+  - There are always something to improve, but effectively we have done everything that we purposed to do.
 ------
 
 ## ✅ Outcomes:
-  -
+  - We completed the module and we achieved the final of SEA:ME program.
 ------
 
 - **Demos**:
 
 - **Docs updated**:
 
+**LANE DETECTION**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/lane_detection_optimizations.md
+
+**MOBILITY SCENARIOS**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/mobility_scenarios/V2I_and_emergencypriority/docs/guides/mobility_scenarios/mobility_scenarios_explication.md
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/mobility_scenarios/V2I_and_emergencypriority/docs/guides/mobility_scenarios/mobility_scenarios_sprints_planning.md
+
+
+
 # 🔎 Retrospective
 - ## **Went well**:
-- 
+- Team worked together, organized and coordinated to finalize the module and consenquently SEA:ME. 
 
 - ## **To improve/Still to be done**:
-- 
+- We can still improve some final documentation.
 
 ## 🔗 Useful Links
 
@@ -99,3 +112,4 @@
   - EXPECT-L0-29 - "Driver presence condition"
   - EXPECT-L0-30 - "Car ready to next module 2"
   - EXPECT-L0-31 - "Unit Tests"
+  - EXPECT-L0-32 - "FPS and latency E2E"
