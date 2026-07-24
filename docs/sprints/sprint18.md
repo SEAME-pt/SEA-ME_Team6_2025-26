@@ -84,6 +84,7 @@ https://github.com/user-attachments/assets/1d902863-e82c-4a4f-8989-0b23914020b0
 
 - ## **To improve/Still to be done**:
 - We can still improve some final documentation.
+- Improve the relation between V2I/Emergency and ADAS Manager.
 
 ## 🔗 Useful Links
 
