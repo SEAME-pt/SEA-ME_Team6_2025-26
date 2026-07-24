@@ -32,7 +32,16 @@
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
 
 ---
+## 🎯 ADAS Module Goals
 
+| Module Goal | Achieved |
+|-------------|----------------------|
+| **Goal 1**: Choice of a Mobility Scenario | ✅ |
+| **Goal 2**: Document architecture and technology | ✅ |
+| **Goal 3**: Establish requirements | ✅ |
+| **Goal 4**: Test coverage | ✅ |
+
+---
 ## 📈 Actual Progress
 ----
 
