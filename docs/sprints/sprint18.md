@@ -76,15 +76,15 @@ https://github.com/user-attachments/assets/1d902863-e82c-4a4f-8989-0b23914020b0
 
 - **Docs updated**:
 
+**MOBILITY SCENARIOS**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/mobility_scenarios/mobility_scenarios_explication.md
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/mobility_scenarios/mobility_scenarios_sprints_planning.md
+
 **LANE DETECTION**
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/lane_detection_optimizations.md
 
 **ADAS MANAGER**
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/src/ADAS-Manager/ADAS_MANAGER.md
-
-**MOBILITY SCENARIOS**
-- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/mobility_scenarios/mobility_scenarios_explication.md
-- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/mobility_scenarios/mobility_scenarios_sprints_planning.md
 
 
 # 🔎 Retrospective
