@@ -11,6 +11,9 @@ python barrier_simulator.py --config config.json
 
 # Terminal 2: start vehicle client
 python v2i_client.py --config config.json
+
+# Real AGL runtime for traffic-light V2I
+python roadside_scenario_runtime.py --port /dev/ttyACM0 --adas-v2i-socket /tmp/adas_v2i.sock
 ```
 
 ## Dependencies
@@ -25,11 +28,13 @@ src/mobility_scenarios_src/v2i/
 ├── README.md
 ├── config.json
 ├── requirements.txt
+├── coordinator.py
 ├── barrier_backend.py
 ├── barrier_rules.py
 ├── barrier_simulator.py
 ├── kitronik_barrier.py
 ├── v2i_client.py
+├── roadside_scenario_runtime.py
 └── tests/
     ├── test_barrier_backend.py
     ├── test_barrier_rules.py

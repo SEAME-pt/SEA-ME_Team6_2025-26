@@ -78,6 +78,7 @@ This section documents the current state and the minimum-risk path to merge V2I 
 - [Execution Split Plan (June 11, 2026)](#execution-split-plan-june-11-2026)
 - [micro:bit Radio Communication (Now)](#microbit-radio-communication-now)
 - [BLE Communication (Resume After Radio)](#ble-communication-resume-after-radio)
+- [Sprint18 Planning (July 14—July 24, 2026)](#sprint18-planning-july-14july-24-2026)
 
 ## MicroPython Context
 
@@ -1363,3 +1364,112 @@ Disadvantages:
 For wireless communication in the path `micro:bit -> AGL -> vehicle`, BLE is the better long-term option.
 
 micro:bit radio only makes sense if adding a gateway is acceptable.
+
+---
+
+## Sprint 17 and Sprint 18 Consolidated Status (Updated)
+
+This section replaces the old "Sprint 18 TODO-only" plan with the actual result from implementation and deployment work.
+
+### Sprint 17 (29/06/2026 to 10/07/2026)
+
+**Goal:** Requirements review, test validation, and vehicle recovery baseline.
+
+#### Planned Scope
+
+- ADAS manager restructuring.
+- TSR and ADAS feature tests.
+- Emergency Vehicle Priority tests.
+- Requirements review and TSF traceability updates.
+- Documentation status update.
+
+#### Delivered in Sprint 17
+
+- Emergency Vehicle Priority test campaign completed.
+- **17/17 tests passing** in simulation scope:
+  - Unit tests for emergency policy and safety mappings.
+  - Integration tests for coordinator interactions.
+  - End-to-end smoke workflow (Normal -> Emergency -> Normal).
+- Consolidated technical evidence and test references in mobility scenario documentation.
+- Confirmed design rule for later hardware stage: object safety remains the final throttle authority.
+
+#### Sprint 17 Outcome
+
+- Logic correctness was validated before touching production runtime behavior.
+- Risk was reduced for Sprint 18 hardware rollout.
+
+### Sprint 18 (13/07/2026 to 24/07/2026)
+
+**Goal:** Final autonomous driving version plus practical Emergency Vehicle Priority integration on AGL.
+
+#### Planned Scope
+
+- Integrate V2I and emergency flows with running ADAS stack.
+- Deploy in stable, operable service form.
+- Validate physical behavior (safe stop, emergency override, scenario switching).
+- Close remaining documentation gaps from previous sprint.
+
+#### Delivered in Sprint 18
+
+1. **Stack service architecture delivered (systemd)**
+  - New services:
+    - `adas-normal-stack.service`
+    - `adas-v2i-stack.service`
+    - `adas-emergency-stack.service`
+  - Wrappers introduced for each mode with startup checks, process supervision, and graceful stop behavior.
+
+2. **Mode switching operations delivered**
+  - `stack-switch.sh` supports:
+    - `normal`, `v2i`, `emergency`, `stop`, `status`
+  - Interactive mode selector delivered:
+    - `stack_mode_selector.py` with `N`, `V`, `E`, `S`, `Q` runtime controls.
+
+3. **Emergency safe-state shutdown hardened**
+  - Emergency stop now guarantees physical safe outputs on shutdown:
+    - `TL RED`
+    - `BAR CLOSE`
+    - `LGT OFF`
+  - Gateway ACK evidence confirmed in logs.
+  - Stop path moved from "best effort" to deterministic behavior.
+
+4. **Roadside integration stabilized**
+  - Emergency controller updated to support ADAS emergency socket input.
+  - Gateway probing and wrong-port detection added.
+  - Non-interactive service mode handled correctly.
+  - V2I traffic-light parser aligned with gateway message format (`TL_STATE:*`).
+
+5. **Firmware and scenario organization improved**
+  - Shared micro:bit firmware centralized under `shared/`.
+  - Duplicate scenario firmware removed from emergency folder.
+  - Barrier calibration values updated for practical behavior.
+
+6. **Operational reliability improvements**
+  - Intentional service stop no longer reported as failure (`SuccessExitStatus=143`).
+  - Unbuffered Python logs enabled for better troubleshooting.
+  - Orphan-process cleanup added in switch flow.
+
+#### Sprint 18 Task Closure Matrix
+
+| Area | Planned | Status |
+|------|---------|--------|
+| ADAS + V2I integration path | Required | Done |
+| Emergency practical integration | Required | Done |
+| Service-based operation | Required | Done |
+| Runtime mode switch (Normal/V2I/Emergency) | Required | Done |
+| Deterministic safe-state at emergency stop | Required | Done |
+| Documentation update of implementation state | Required | Done |
+| Final merge/review into development branch | Required | Pending team flow |
+
+#### Current Operational Notes
+
+- All three mobility services are available and can be run on demand.
+- Automatic boot start was intentionally disabled to avoid unintended autonomous movement after reboot.
+- Recommended operation uses explicit command start per scenario.
+
+#### Final Sprint 17-18 Summary
+
+- Sprint 17 delivered verified behavior correctness.
+- Sprint 18 delivered vehicle-operational integration and deterministic control flow.
+- The module now has a practical deploy/run/stop model with clear safety fallback behavior.
+
+---

@@ -170,12 +170,14 @@ def modo_joystick(controller):
         return
 
     toggle_button = ecodes.BTN_START
+    emergency_button = ecodes.BTN_SELECT
 
     print(f"\n{Colors.BOLD}=== CONTROLO POR JOYSTICK (socket → ADAS Manager) ==={Colors.NC}")
     print("Controles:")
     print("  Stick Direito (horizontal) → Steering")
     print("  Stick Esquerdo (vertical)  → Throttle")
     print("  Botão START                → Toggle MANUAL / AUTONOMOUS")
+    print("  Botão SELECT/BACK          → Toggle Emergency Priority Vehicle")
     print("  Ctrl+C para sair\n")
     print(f"  Modo inicial: {Colors.CYAN}{controller.mode}{Colors.NC}\n")
 
@@ -217,6 +219,8 @@ def modo_joystick(controller):
             elif event.type == ecodes.EV_KEY:
                 if event.code == toggle_button and event.value == 1:
                     controller.send_toggle()
+                elif event.code == emergency_button and event.value == 1:
+                    controller.send_emergency_toggle()
 
     except KeyboardInterrupt:
         print(f"\n{Colors.GREEN}✓ Joystick desconectado{Colors.NC}")

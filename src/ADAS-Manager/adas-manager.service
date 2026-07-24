@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+Environment=PYTHONUNBUFFERED=1
 ExecStart=/data/current/adas_manager
 WorkingDirectory=/data/current
 Restart=on-failure
