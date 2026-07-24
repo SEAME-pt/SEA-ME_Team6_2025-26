@@ -13,10 +13,9 @@
 - #### Tasks from the previous sprint:
   - [X] Status point: update the documentation to reflect current implementation (8)
 
-
 - #### Bonus
   - [X] Car refinement - (Wires, Camera, servo motor) (21)
-
+  
 ---
 
 ## **Total Sprint Points: `71`+ `21`= `92` **
@@ -65,10 +64,12 @@
 **LANE DETECTION**
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/docs/guides/lane_detection_optimizations.md
 
+**ADAS MANAGER**
+- https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/development/src/ADAS-Manager/ADAS_MANAGER.md
+
 **MOBILITY SCENARIOS**
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/mobility_scenarios/V2I_and_emergencypriority/docs/guides/mobility_scenarios/mobility_scenarios_explication.md
 - https://github.com/SEAME-pt/SEA-ME_Team6_2025-26/blob/feature/mobility_scenarios/V2I_and_emergencypriority/docs/guides/mobility_scenarios/mobility_scenarios_sprints_planning.md
-
 
 
 # 🔎 Retrospective
