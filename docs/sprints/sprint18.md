@@ -18,7 +18,7 @@
   
 ---
 
-## **Total Sprint Points: `71`+ `21`= `92` **
+## **Total Sprint Points: `71`+ `21` = `92`**
 
 ## 📊 Sprint Points Summary
 
@@ -30,17 +30,6 @@
 | **Diogo** | Implementation of VSS Signals to finish Cluster + Status point: update the documentation to reflect current implementation | 29 | 29 |
 | **Ruben** | Car refinement - (Wires, Camera, servo motor) + Status point: update the documentation to reflect current implementation  | 29 | 29 |
 > **Note:** Individual point totals may not sum to the overall sprint total, as points for collaborative tasks are counted in full for each contributing member
-
----
-
-## 🎯 ADAS Module Goals
-
-| Module Goal | Achieved |
-|-------------|----------------------|
-| **Goal 1**: Choice of a Mobility Scenario | X |
-| **Goal 2**: Document architecture and technology | |
-| **Goal 3**: Establish requirements | |
-| **Goal 4**: Test coverage | |
 
 ---
 
@@ -58,6 +47,23 @@
 ------
 
 - **Demos**:
+
+https://github.com/user-attachments/assets/23b244fc-b1b7-408a-9a9e-769656679811
+
+
+https://github.com/user-attachments/assets/3a8ac5a8-fee3-4120-a93e-a709ce1d998f
+
+
+https://github.com/user-attachments/assets/b7812d11-0e04-496a-a6f4-458b06fed25f
+
+
+https://github.com/user-attachments/assets/1d902863-e82c-4a4f-8989-0b23914020b0
+
+
+<img width="1308" height="466" alt="Screenshot from 2026-07-24 14-26-57" src="https://github.com/user-attachments/assets/2336b5b1-991f-4d2d-9945-14ab911ff804" />
+
+<img width="1052" height="666" alt="Screenshot from 2026-07-24 14-26-03" src="https://github.com/user-attachments/assets/f837ed83-9739-4158-b276-fc3f0897ae0c" />
+
 
 - **Docs updated**:
 
