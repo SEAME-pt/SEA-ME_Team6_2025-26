@@ -2,6 +2,7 @@
 #include "../../inc/can_decode.hpp"
 #include "../../inc/signals.hpp"
 #include "../../inc/interface_kuksa_client.hpp"
+#include "../../inc/trip_state.hpp"
 
 void handleBattery(const can_frame& frame, IKuksaClient& kuksa)
 {
@@ -22,9 +23,14 @@ void handleBattery(const can_frame& frame, IKuksaClient& kuksa)
     const float curr_a = static_cast<float>(current_ma) / 1000.0f;
     const float soc_f  = static_cast<float>(soc);
 
+    const float power_w = volt_v * curr_a; // positive = discharging, negative = charging
+
     kuksa.publishFloat(sig::TBATT_VOLT_V, volt_v);
     kuksa.publishFloat(sig::TBATT_CURR_A, curr_a);
     kuksa.publishFloat(sig::TBATT_SOC_CURRENT, soc_f);
+    kuksa.publishFloat(sig::TBATT_POWER_W, power_w);
+
+    TripState::instance().onPowerSample(kuksa, power_w);
 
     // Status bits from your STM32 sim:
     // bit0 undervoltage, bit1 overvoltage, bit2 low battery, bit3 high temp
