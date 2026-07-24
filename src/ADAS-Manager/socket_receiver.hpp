@@ -6,7 +6,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-static constexpr int RECV_TIMEOUT_MS = 60;
+// Perceção dual (UFLDv2+YOLOv8) corre a ~10.5 fps (~95ms/frame): o timeout
+// tem de acomodar um período inteiro para evitar wakeups vazios constantes.
+static constexpr int RECV_TIMEOUT_MS = 120;
 
 // ── Lane ──────────────────────────────────────────────────────────────────────
 
@@ -33,6 +35,8 @@ struct __attribute__((packed)) LaneFrame {
     LaneObject lane_left;
     LaneObject lane_right;
 };
+
+static const char* LANE_STATUS_STR[] = {"none", "left", "right", "both"};
 
 // ── Object detection ──────────────────────────────────────────────────────────
 
@@ -62,6 +66,29 @@ struct __attribute__((packed)) DetectedObject {
 struct __attribute__((packed)) ObjectFrame {
     uint8_t        count;
     DetectedObject objects[MAX_OBJECTS];
+};
+
+// ── V2I mobility scenarios ───────────────────────────────────────────────────
+
+enum V2ITrafficLightState : uint8_t {
+    V2I_TL_UNKNOWN = 0,
+    V2I_TL_RED     = 1,
+    V2I_TL_YELLOW  = 2,
+    V2I_TL_GREEN   = 3,
+};
+
+enum V2IBarrierState : uint8_t {
+    V2I_BARRIER_UNKNOWN = 0,
+    V2I_BARRIER_OPEN    = 1,
+    V2I_BARRIER_CLOSED  = 2,
+    V2I_BARRIER_MOVING  = 3,
+};
+
+struct __attribute__((packed)) V2IFrame {
+    uint8_t traffic_light_state;  // V2ITrafficLightState
+    uint8_t barrier_state;        // V2IBarrierState
+    uint8_t priority_active;      // 0=false, 1=true
+    uint8_t reserved;             // future use (alignment/versioning)
 };
 
 // ── Socket receiver ───────────────────────────────────────────────────────────

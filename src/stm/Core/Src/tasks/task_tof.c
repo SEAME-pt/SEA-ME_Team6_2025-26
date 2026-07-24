@@ -16,6 +16,8 @@ static TofTaskCtx s_tof;
 
 static VL53L5CX_Configuration Dev;
 
+volatile uint8_t vlx_ready = 0;
+
 /* Helper: reset sensor via XSHUT */
 static void tof_hw_reset(SystemCtx* ctx)
 {
@@ -92,6 +94,12 @@ void task_tof_step(SystemCtx* ctx)
         tx_thread_sleep(200);
         return;
     }
+
+    if (!vlx_ready) {
+    	tx_thread_sleep(20);
+    	return;
+    }
+    vlx_ready = 0;
 
     s_tof.status = vl53l5cx_check_data_ready(&Dev, &s_tof.isReady);
 

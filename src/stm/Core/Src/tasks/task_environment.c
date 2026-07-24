@@ -89,12 +89,14 @@ void task_environment_step(SystemCtx* ctx)
 
     mcp_send_message(CAN_ID_ENVIRONMENT, (uint8_t*)&env_frame, sizeof(env_frame));
 
-    HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+    //HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+
 
     /*
-    sys_log(ctx,
+     * VOLTAR ATIVARR!!!!!!!!
+     *sys_log(ctx,
         "[Environment] Enviado: %.2f°C | %.2f hPa | %.2f%% | %u lux",
         s_env.temperature, s_env.pressure, s_env.humidity, s_env.ambient_light
-    );
-    */
+    );*/
+
 }

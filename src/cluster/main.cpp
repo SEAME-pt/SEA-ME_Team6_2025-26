@@ -21,6 +21,7 @@
 #include "providers/adasprovider.hpp"
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
+#include "providers/otaprovider.hpp"
 #include "providers/extraprovider.hpp"
 
 static void crashHandler(int sig) {
@@ -50,7 +51,10 @@ int main(int argc, char *argv[])
         "Vehicle.Powertrain.TractionBattery.IsCritical",
         "Vehicle.Powertrain.TractionBattery.IsLevelLow",
         "Vehicle.CurrentLocation.Heading",
-        "Vehicle.Chassis.SteeringWheel.Angle"
+        "Vehicle.Chassis.SteeringWheel.Angle",
+        "Vehicle.OTA.InstalledVersion",
+        "Vehicle.OTA.PendingVersion",
+        "Vehicle.OTA.UpdateAvailable"
     };
 
     qDebug() << "[Main] Initializing application with" << kuksaSignals.size() << "Kuksa signals";
@@ -61,6 +65,7 @@ int main(int argc, char *argv[])
     ADASProvider *adas = new ADASProvider(&app);
     CurrentLocationProvider *currentLocation = new CurrentLocationProvider(&app);
     ChassisProvider *chassis = new ChassisProvider(&app);
+    OTAProvider *ota = new OTAProvider(&app);
 
     qDebug() << "[Main] Created all providers";
 
@@ -71,6 +76,7 @@ int main(int argc, char *argv[])
     router->registerADASProvider(adas);
     router->registerCurrentLocationProvider(currentLocation);
     router->registerChassisProvider(chassis);
+    router->registerOTAProvider(ota);
 
     qDebug() << "[Main] SignalRouter configured with all providers";
 
@@ -102,6 +108,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("adas", adas);
     engine.rootContext()->setContextProperty("currentLocation", currentLocation);
     engine.rootContext()->setContextProperty("chassis", chassis);
+    engine.rootContext()->setContextProperty("ota", ota);
 
     qDebug() << "[Main] All providers exposed to QML";
 

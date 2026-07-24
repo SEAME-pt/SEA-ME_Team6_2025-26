@@ -61,7 +61,7 @@ from visualization import draw_lanes, draw_drivable_area, draw_overlay as draw_o
 # ── Extensão C++ (postprocess + decode_lanes sem GIL) ────────────────────────
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    "postprocess_cpp"))
+                                    "lane-detection", "postprocess_cpp"))
     import postprocess_cpp as _pp_cpp
     _cpp_postprocess  = _pp_cpp.postprocess
     _cpp_decode_lanes = _pp_cpp.decode_lanes
@@ -216,6 +216,11 @@ LOOKAHEAD_Y_RATIO      = 0.7
 # world-X dos pontos perto do carro. Descarta lanes far-left/far-right da via.
 PLAUSIBLE_EGO_X_CM     = 60.0  # |world_x| máx aceitável p/ ser ego lane
 WORLD_X_BOTTOM_N       = 5     # pontos de fundo usados p/ estimar world-X médio
+
+# Meia-largura de faixa assumida quando só uma lane está visível (single-line).
+# Ajustar empiricamente: se o carro andar em cima da linha, subir; se passar
+# para o lado oposto, descer.
+SINGLE_LINE_HALF_WIDTH_CM = 20.0
 DEBUG_ASSIGN_EVERY_N   = 30    # print debug de _assign_ego_lanes a cada N chamadas
                                # (=0 para desactivar)
 _assign_debug_counter  = 0
@@ -490,10 +495,10 @@ def calc_lateral_deviation_cm(lanes, calib, img_h):
         right_x     = float(np.mean(right_world[:, 0]))
 
     if has_left and has_right:
-        return -((left_x + right_x) / 2.0) - CAMERA_OFFSET_CM, "both"
+        return -((left_x + right_x) / 2.0), "both"
     if has_left:
-        return -(left_x + 15.0) - CAMERA_OFFSET_CM, "left"
-    return -(right_x - 15.0) - CAMERA_OFFSET_CM, "right"
+        return -(left_x + SINGLE_LINE_HALF_WIDTH_CM), "left"
+    return -(right_x - SINGLE_LINE_HALF_WIDTH_CM), "right"
 
 
 # ══════════════════════════════════════════════════════════════════════════════

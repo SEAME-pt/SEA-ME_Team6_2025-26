@@ -45,6 +45,7 @@ APP_SRCS := \
   $(SRC_DIR)/dispatch_frames.cpp \
   $(SRC_DIR)/kuksa_client.cpp \
   $(SRC_DIR)/is_stm_connected.cpp \
+  $(SRC_DIR)/trip_state.cpp \
   $(SRC_DIR)/handlers/speed.cpp \
   $(SRC_DIR)/handlers/environment.cpp \
   $(SRC_DIR)/handlers/heartbeat_stm.cpp \

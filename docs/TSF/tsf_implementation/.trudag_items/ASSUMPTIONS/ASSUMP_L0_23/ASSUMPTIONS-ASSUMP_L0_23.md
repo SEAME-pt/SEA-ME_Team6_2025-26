@@ -15,7 +15,7 @@ review_status: accepted
 evidence:
   type: validate_software_dependencies
   configuration:
-    components:
+    dependencies:
       - "Raspberry Pi 5"
       - "AGL image"
       - "KUKSA middleware"

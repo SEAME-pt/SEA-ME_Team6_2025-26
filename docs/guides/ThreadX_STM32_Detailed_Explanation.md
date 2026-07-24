@@ -878,3 +878,466 @@ extern TIM_HandleTypeDef htim1;
 * ThreadXGuide.md: prioridades/preempção/determinismo.
 * ThreadX_Installation_Guide.md: sequência main.c -> MX_ThreadX_Init -> tx_kernel_enter.
 * AGL_and_ThreadX_benefits_Guide.md: divisão AGL (alto nível) vs ThreadX (tempo real no STM32).
+
+
+
+
+
+
+ENGLISH VERSION
+
+﻿# STM32 ThreadX — Detailed Guide (Architecture + C Patterns)
+
+> Note: This file contains two versions of the same documentation. The English translation appears first, followed by the original Portuguese version below. Both versions are kept for reference.
+
+---
+
+## Table of Contents
+
+1. [Boot Sequence (chronological)](#boot-sequence-chronological)
+2. [Steady-State Threads](#steady-state-threads)
+3. [Synchronization Resources (Mutexes)](#synchronization-resources-mutexes)
+4. [Data Flow (Sensor → CAN → RPi5)](#data-flow-sensor--can--rpi5)
+5. [Priorities — Visualization](#priorities--visualization)
+6. [Actual Execution Flow (detailed)](#actual-execution-flow-detailed)
+7. [What Each Thread Does](#what-each-thread-does)
+8. [Synchronization and Determinism (ThreadX in this project)](#synchronization-and-determinism-threadx-in-this-project)
+9. [Important Code Notes](#important-code-notes)
+10. [Bare‑Metal and HAL_Init Explained](#bare-metal-and-hal_init-explained)
+11. [NVIC, PendSV and SysTick — Detailed Explanation](#nvic-pendsv-and-systick-detailed-explanation)
+12. [C Patterns in the Project](#c-patterns-in-the-project)
+13. [Concept Summary Table](#concept-summary-table)
+
+---
+
+## 1. Boot Sequence (chronological)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  POWER ON / RESET                                                           │
+│                                                                             │
+│  startup_stm32u585aiixq.s  ← Assembly: sets stack pointer, copies .data to  │
+│                               RAM, zeroes .bss, then calls main()          │
+└───────────────────────────────────┬─────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  main()   [Core/Src/main.c]   ← BARE‑METAL (no RTOS yet)                    │
+│                                                                             │
+│  HAL_Init()           → configures SysTick (1 ms tick), NVIC, watchdog     │
+│  SystemPower_Config() → SMPS regulator                                      │
+│  SystemClock_Config() → PLL → 160 MHz                                       │
+│                                                                             │
+│  MX_GPIO_Init()       → GPIO pins                                            │
+│  MX_I2C1/2_Init()     → sensors (SRF08, IMU, ToF, Battery, Indicator)       │
+│  MX_SPI1/2_Init()     → MCP2515 (CAN), SPI2                                 │
+│  MX_TIM1_Init()       → PWM servo (PA8, 50 Hz)                              │
+│  MX_TIM4_Init()       → Input Capture for speed sensor (EXTI pulses)        │
+│  MX_UART4/USART1()    → debug serial (printf → UART)                        │
+│                                                                             │
+│  HAL_TIM_IC_Start_IT() → start input-capture interrupt (speed sensor)       │
+│  I2C scan (debug)                                                           │
+│  matrix_init() / PWM servo → center position 90°                            │
+│                                                                             │
+│  MX_ThreadX_Init()    ← hand control to the RTOS (does not return)          │
+└───────────────────────────────────┬─────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  MX_ThreadX_Init()  [Core/Src/app_threadx.c]                               │
+│                                                                             │
+│  tx_kernel_enter()  ← ThreadX kernel starts                                 │
+│       │                                                                    │
+│       └─► tx_application_define()  [AZURE_RTOS/App/app_azure_rtos.c]       │
+│               tx_byte_pool_create()  → static memory pool (20 KB)          │
+│               App_ThreadX_Init()    ← create resources and threads         │
+└───────────────────────────────────┬─────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  App_ThreadX_Init()  [Core/Src/app_threadx.c]                              │
+│                                                                             │
+│  system_ctx_init()   → create global mutexes:                              │
+│                         printf_mutex, spi1_mutex, i2c1_mutex,              │
+│                         state_mutex, sys_mutex                              │
+│                                                                             │
+│  tx_thread_create() × 10  → create all threads (TX_AUTO_START)             │
+│                                                                             │
+│  Scheduler starts → executes highest‑priority ready thread                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. Steady‑State Threads
+
+| # | Thread | File | Prio | Freq | CAN Frame sent | Purpose |
+|---|--------|------|------|------|----------------|---------|
+| 1 | HeartBeat | `task_heartbeat.c` | 10 | ~1 Hz | `CAN_ID_HEARTBEAT_STM32` | Init MCP2515; publish health, uptime, error flags |
+| 2 | CAN RX | `task_can_rx.c` | 11 | ~100 Hz (10 ms) | `CAN_ID_MOTOR_STATUS` | Receive AGL commands → motor/servo/relay/indicators; enforce AEB/emergency |
+| 3 | SRF08 | `task_srf08.c` | 11 | ~14 Hz (70 ms) | `CAN_ID_SRF08_DISTANCE` | Front ultrasonic; median filter; publish distance |
+| 4 | Speed | `task_speed.c` | 12 | ~10 Hz | `CAN_ID_WHEEL_SPEED` | Count EXTI pulses → RPM; low‑pass filter; publish speed |
+| 5 | IMU | `task_imu.c` | 13 | ~20 Hz | `CAN_ID_IMU_ACCEL/GYRO/MAG` | Read accel/gyro/mag; publish frames |
+| 6 | ToF | `task_tof.c` | 14 | ~15 Hz (66 ms) | `CAN_ID_TOF_DISTANCE` | VL53L5CX 8×8 → min distance + nearest zone |
+| 7 | Environment | `task_environment.c` | 15 | ~1 Hz | `CAN_ID_ENVIRONMENT` | LPS22HH + HTS221 + VEML6030 → temp/hum/pressure/light |
+| 8 | AEB | `task_aeb.c` | 11 | 50 Hz (20 ms) | `CAN_ID_AEB_STOP` | State machine: OFF→ARMED→WARN→BRAKING→LATCHED; TTC + stopping distance |
+| 9 | Battery | `task_battery.c` | 15 | ~0.5 Hz | `CAN_ID_BATTERY` | INA226 → voltage/current/SOC; under/over voltage flags |
+|10 | Indicator | `task_indicator.c` | 16 | 20 Hz (50 ms) | (no CAN — I2C direct) | KS0064 LEDs: blink L/R, headlights, warning |
+
+---
+
+## 3. Synchronization Resources (Mutexes)
+
+```
+┌──────────────┬──────────────────────────────────────────────────────────────┐
+│ Mutex        │ What it protects                                             │
+├──────────────┼──────────────────────────────────────────────────────────────┤
+│ spi1_mutex   │ SPI bus ↔ MCP2515 (ensure CAN tx/rx don't collide)           │
+│ i2c1_mutex   │ I2C1 bus (SRF08, IMU, Battery, ToF XSHUT, Indicator)         │
+│ state_mutex  │ VehicleState snapshot (read by AEB/CAN_RX, written by sensor │
+│              │ tasks) — snapshot safety pattern                            │
+│ sys_mutex    │ system_state, drive_mode, error_flags                        │
+│ printf_mutex │ UART serial (avoid interleaved logs from threads)            │
+└──────────────┴──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 4. Data Flow (Sensor → CAN → RPi5)
+
+```
+Speed Sensor (EXTI pulse)
+       │ ISR counts pulses
+       ▼
+  [Speed Thread] ──────────────────────────────► CAN_ID_WHEEL_SPEED (0x3xx)
+       │ state.speed_mh / rpm
+       ▼
+  [AEB Thread] ← reads state.speed_mh + state.srf08_distance_mm
+       │ computes TTC / d_stop
+       │ writes: aeb_stop_active, aeb_speed_limit, aeb_state
+       ▼
+  [CAN_RX Thread] ← receives MotorCmd from RPi5
+       │ reads AEB flags → enforces throttle limit
+       │ Motor_Forward/Backward/Stop + Servo_SetAngle
+       ▼
+  Motor TB6612FNG + Servo MG996R
+
+SRF08 (I2C) ──► [SRF08 Thread] ──► state.srf08_distance_mm ──► AEB
+VL53L5CX   ──► [ToF Thread]   ──► CAN_ID_TOF_DISTANCE
+IMU        ──► [IMU Thread]   ──► CAN_ID_IMU_ACCEL/GYRO/MAG
+INA226     ──► [Battery Thread] ► CAN_ID_BATTERY
+
+All CAN frames ──► MCP2515 ──► MCP2518 Hat ──► RPi5 (AGL/KUKSA)
+```
+
+---
+
+## 5. Priorities — Visualization
+
+```
+Priority  0 ────────────────────────────────── 31
+         (most urgent)                 (least urgent)
+
+ 10  ■ HeartBeat        (system monitoring + CAN init)
+ 11  ■ CAN_RX           (actuation — motor/servo)
+ 11  ■ SRF08            (safety — frontal obstacle)
+ 11  ■ AEB              (safety — decision making)
+ 12  ■ Speed            (real‑time velocity)
+ 13  ■ IMU              (accel/gyro/mag)
+ 14  ■ ToF              (multi‑zone distance)
+ 15  ■ Environment      (temp/hum/pressure)
+ 15  ■ Battery          (voltage/current/SOC)
+ 16  ■ Indicator        (LEDs — background)
+```
+
+---
+
+## Actual Execution Flow (order of execution)
+
+### Bare‑Metal Boot First
+
+In `src/stm/Core/Src/main.c` the code performs `HAL_Init`, clock/power setup, peripheral init (`GPIO`, `I2C`, `SPI`, `TIM`, `UART`), some startup checks (I2C scan, matrix, PWM), and then calls `MX_ThreadX_Init()`.
+
+---
+
+### Entering the ThreadX Kernel
+
+`MX_ThreadX_Init()` (in `src/stm/Core/Src/app_threadx.c`) calls `tx_kernel_enter()`.
+
+---
+
+### Application Definition for ThreadX
+
+The kernel enters `tx_application_define()` (`src/stm/AZURE_RTOS/App/app_azure_rtos.c`), creates the byte pool (`tx_byte_pool_create`) and calls `App_ThreadX_Init(...)`.
+
+---
+
+### Shared Context Initialization
+
+`App_ThreadX_Init` starts with `system_ctx_init()`; in `src/stm/Core/Src/system_ctx.c` it creates mutexes (`spi1`, `i2c1`, `state`, `sys`, `printf`) and initializes the global state.
+
+---
+
+### Thread Creation (TX_AUTO_START)
+
+`App_ThreadX_Init` creates threads in this order:
+1. HeartBeat
+2. CAN_RX
+3. Temperature/Environment
+4. Speed
+5. IMU
+6. ToF
+7. SRF08
+8. AEB
+9. Battery
+10. Indicator
+
+---
+
+### Scheduler Runs Continuously
+
+There is no "end" — the system runs indefinitely with `while(1)` loops inside each thread.
+
+---
+
+## What Each Thread Does (and why it exists)
+
+### HeartBeat
+Initializes MCP2515 (`mcp_init`), sets system to `READY/RUNNING`, and sends periodic heartbeat CAN frames. Used for ECU liveness and health monitoring.
+
+### CAN_RX
+Receives CAN frames, validates, applies commands (motor/servo/relay/indicators), enforces safety (`emergency_stop` and AEB flags), and sends `MotorStatus`. Central actuator.
+
+### Temperature/Environment
+Reads LPS22HH/HTS221/VEML6030 and publishes environment CAN frames.
+
+### Speed
+Uses speed sensor pulses, computes RPM/velocity, updates `VehicleState`, sends `CAN_ID_WHEEL_SPEED`. Fundamental for control and AEB.
+
+### IMU
+Reads accel/gyro/mag, publishes IMU CAN frames, updates state snapshot for dynamics.
+
+### ToF
+Initializes VL53L5CX, reads min distance/zone, publishes CAN ToF, writes `tof_distance_mm` into shared state.
+
+### SRF08
+Measures front ultrasonic, applies median filter, publishes SRF08 CAN and updates `state.srf08_*`. Braking decision moved to AEB.
+
+### AEB
+State machine (`OFF/ARMED/WARN/BRAKING/LATCHED`), computes TTC/stopping distance and publishes `aeb_stop_active`, `aeb_warn`, `aeb_speed_limit` to `VehicleState`.
+
+### Battery
+Reads INA226, estimates SOC/status and publishes battery CAN frame.
+
+### Indicator
+Controls KS0064 (blink/headlights/warning) via I2C and a dedicated mutex.
+
+---
+
+## 8. Synchronization and Determinism (ThreadX in this project)
+
+### Mutexes
+- `spi1_mutex` prevents SPI bus corruption (shared MCP2515)
+- `i2c1_mutex` serializes I2C sensors/actuators
+- `state_mutex` protects the `VehicleState` snapshot
+
+### Priorities
+Configured in `src/stm/Core/Inc/thread_config.h` (lower numeric value = higher priority).
+
+### Temporal Pacing
+Each task uses `tx_thread_sleep(...)` with a fixed period (or an internal sleep in `task_*_step`) to keep rates stable and avoid busy loops.
+
+---
+
+## 9. Important Code Notes
+
+- There are `thread_relay_entry` and `can_rx_queue` declared in `app_threadx.c`, but no `tx_queue_create` nor a relay thread active — appears legacy/inactive.
+- The runtime steady state is the ThreadX scheduler with periodic threads and continuous CAN.
+
+---
+
+## 10. Bare‑Metal and HAL_Init Explained
+
+### What is Bare‑Metal?
+
+"Bare‑metal" means programming hardware directly without an operating system. No scheduler, no threads — just your code and MCU registers.
+
+Analogy: Bare‑metal is like building a house by hand; HAL is the power tools; ThreadX is the architect who organizes parallel teams. Before the architect arrives, the site must be prepared.
+
+```
+┌───────────────────────────────────────────┐
+│  Bare‑Metal                               │
+│  Our code                                 │
+│  ─────────────────────────────────────    │
+│  Hardware (peripherals, registers, CPU)   │
+└───────────────────────────────────────────┘
+
+┌───────────────────────────────────────────┐
+│  With RTOS (our case)                     │
+│  Our code (tasks)                         │
+│  ThreadX (scheduler, mutexes, timers)     │
+│  HAL (STM32 peripheral abstraction)       │
+│  Hardware                                 │
+└───────────────────────────────────────────┘
+```
+
+In `main.c` the phase before `MX_ThreadX_Init()` is pure bare‑metal — hardware is initialized directly. After `tx_kernel_enter()` the system gains preemption, scheduling and concurrency.
+
+### What does HAL_Init() do in detail?
+
+HAL = Hardware Abstraction Layer — the ST library that wraps STM32 registers in portable C functions.
+
+`HAL_Init()` performs four concrete tasks:
+
+1) Configure SysTick (1 ms tick)
+
+```c
+// Internally, HAL_Init() calls:
+HAL_InitTick(TICK_INT_PRIORITY);
+// → configures SysTick to fire every 1 ms
+// → increments uwTick: base for HAL_Delay()/HAL_GetTick()
+```
+
+The project uses `HAL_GetTick()` for timestamps (e.g., `s_rx.last_motor_status_tick`).
+
+2) Configure the NVIC (interrupt controller)
+
+```c
+HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+// → 4 bits of priority, 0 bits of sub‑priority
+```
+
+This must be compatible with ThreadX's expectations (PendSV and SysTick priorities).
+
+3) Initialize Flash prefetch/cache
+
+```c
+// Helps reduce instruction fetch latency at 160 MHz
+```
+
+4) Prepare HAL internal structures
+
+```c
+// Zero internal handles and set default error callbacks
+```
+
+### Why must main.c do all that before MX_ThreadX_Init()?
+
+Because ThreadX expects hardware to be operational when the scheduler starts. If HeartBeat thread uses SPI before `MX_SPI1_Init()` was called — crash is likely.
+
+Required order:
+1. `HAL_Init()`
+2. Clock config (CPU @ 160 MHz)
+3. `MX_GPIO/SPI/I2C/TIM` peripheral init
+4. `MX_ThreadX_Init()` — now threads may safely use peripherals
+
+---
+
+## 11. NVIC, PendSV and SysTick — Detailed Explanation
+
+### Summary
+
+- NVIC = ARM interrupt controller — determines which ISR runs by priority
+- SysTick = kernel timer; ThreadX uses it as the scheduler clock (tx_thread_sleep counts SysTick ticks)
+- PendSV = the context switch mechanism — runs last (lowest priority) so it never preempts hardware ISRs
+- Compatibility: PendSV and SysTick must have lower priority than hardware ISRs or context switches could occur mid SPI/I2C transaction and corrupt data
+
+---
+
+### What is the NVIC?
+
+NVIC (Nested Vectored Interrupt Controller) receives peripheral IRQs, prioritizes them, saves/restores CPU state and supports nested ISRs.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  STM32U585AI — Cortex‑M33                                                   │
+│                                                                             │
+│  ┌──────────┐    IRQ line 0  ──► ┌─────────────────────────────────────┐  │
+│  │  SPI1    │    IRQ line 1  ──► │          N V I C                    │  │
+│  │  I2C1    │    IRQ line 2  ──► │  (compares priorities of all)       │  │
+│  │  TIM4    │    IRQ line 3  ──► │  → schedules highest priority ISR   │  │
+│  │  GPIO    │    ...          ──► │  → saves CPU context if needed      │  │
+│  │  SysTick │    ─────────────►   └──────────────────┬──────────────────┘  │
+│  │  PendSV  │                                        │                     │
+│  └──────────┘                                        ▼                     │
+│                                               CPU executes ISR            │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+Nested ISRs are handled automatically by hardware.
+
+---
+
+### What is SysTick?
+
+SysTick is a 24‑bit core timer used here as the ThreadX scheduler clock, typically configured for 1 ms ticks by HAL_Init(). The project uses TIM6 as a fallback HAL tick because ThreadX reserves SysTick.
+
+---
+
+### What is PendSV?
+
+PendSV (Pendable Service Call) is a special, very low priority interrupt used to perform a context switch. ThreadX sets a pending flag and PendSV performs the register save/restore when no other ISRs are active.
+
+---
+
+### SysTick vs PendSV
+
+SysTick decides scheduling events; PendSV performs the actual switch. This ensures context switches don't happen inside high‑priority hardware ISRs.
+
+---
+
+## 12. C Patterns in the Project
+
+### `volatile`
+
+Used for flags/variables updated by ISRs or different contexts, e.g. `volatile uint8_t emergency_stop_active` or `volatile uint8_t vlx_ready`. `volatile` prevents compiler caching optimizations and forces memory reads.
+
+### `static` (file scope and function local)
+
+Widely used for module‑private state, e.g. `static TaskCanRx s_rx;`. Inside functions `static` makes the variable persist between calls (e.g., logging counters).
+
+### Atomics (`_Atomic`)
+
+Not used directly — the project relies on ThreadX mutexes (`tx_mutex_get/put`) to protect shared structures. Atomics would be useful for single integer flags but not for complex read‑modify‑write sequences.
+
+### Globals and Accessors
+
+One global instance `static SystemCtx g_ctx;` is exposed via `SystemCtx* system_ctx(void) { return &g_ctx; }`. Access to shared state is protected by `state_mutex`.
+
+### `const`
+
+Used for immutable tuning parameters (placed in Flash), e.g. `static const AebParams P = { ... };`.
+
+### C vs C++ features
+
+No C++ features used — no inheritance/polymorphism. Encapsulation is achieved by `static` module variables and `init/step` function pairs.
+
+### ISR vs Polling
+
+Both are used: ISR for latency‑sensitive signals (speed sensor input capture, VL53L5CX data‑ready), polling for sensors without interrupts (SRF08, MCP2515 receive polling).
+
+### Priority / Preemption
+
+ThreadX is preemptive and priority‑based; higher priority threads preempt lower ones. The project uses TX_NO_TIME_SLICE (no round‑robin) so threads run until they sleep or block.
+
+Example priorities (in `thread_config.h`):
+```c
+#define HEARTBEAT_THREAD_PRIORITY  10
+#define CAN_RX_THREAD_PRIORITY     11
+#define SRF08_THREAD_PRIORITY      11
+#define AEB_THREAD_PRIORITY        11
+#define SPEED_THREAD_PRIORITY      12
+#define IMU_THREAD_PRIORITY        13
+#define TOF_THREAD_PRIORITY        14
+#define TEMP_THREAD_PRIORITY       15
+#define INDICATOR_THREAD_PRIORITY  16
+```
+
+---
+
+## 13. Concept Summary Table
+
+See the Portuguese section above for the full original text and diagrams.
+
+---
+

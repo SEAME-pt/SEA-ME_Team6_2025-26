@@ -1,4 +1,5 @@
 #include <cerrno>
+#include <csignal>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -13,6 +14,12 @@
 #include "../inc/kuksa_client.hpp"
 #include "../inc/dispatch_frames.hpp"
 #include "../inc/is_stm_connected.hpp"
+#include "../inc/trip_state.hpp"
+
+namespace {
+volatile std::sig_atomic_t g_shouldExit = 0;
+void handleExitSignal(int) { g_shouldExit = 1; }
+} // namespace
 
 static int open_can_socket(const std::string& ifname)
 {
@@ -63,13 +70,18 @@ int main(int argc, char** argv)
     const int can_sock = open_can_socket(can_if);
     if (can_sock < 0) return 1;
 
+    std::signal(SIGINT, handleExitSignal);
+    std::signal(SIGTERM, handleExitSignal);
+
+    TripState::instance().init();
+
     // 2) Connect to KUKSA
     try {
         KuksaClient kuksa(kuksa_at);
         std::cout << "[KUKSA] Target: " << kuksa_at << "\n";
 
         // 3) Read loop
-        while (true) {
+        while (!g_shouldExit) {
             struct can_frame frame;
             const ssize_t n = ::read(can_sock, &frame, sizeof(frame));
 
@@ -92,10 +104,12 @@ int main(int argc, char** argv)
         }
     } catch (const std::exception& e) {
         std::cerr << "[ERROR] " << e.what() << "\n";
+        TripState::instance().shutdown();
         ::close(can_sock);
         return 1;
     }
 
+    TripState::instance().shutdown();
     ::close(can_sock);
     return 0;
 }

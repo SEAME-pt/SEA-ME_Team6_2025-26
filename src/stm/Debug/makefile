@@ -9,11 +9,13 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Middlewares/ST/threadx/utility/subdir.mk
 -include Middlewares/ST/threadx/ports/cortex_m33/gnu/src/subdir.mk
 -include Middlewares/ST/threadx/common/src/subdir.mk
 -include Drivers/VL53L5CX/src/subdir.mk
 -include Drivers/STM32U5xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
+-include Core/Src/tasks/subdir.mk
 -include Core/Src/subdir.mk
 -include AZURE_RTOS/App/subdir.mk
 -include objects.mk
@@ -56,6 +58,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 team6_original.list \
 
+OBJCOPY_BIN += \
+team6_original.bin \
+
 
 # All Target
 all: main-build
@@ -64,8 +69,8 @@ all: main-build
 main-build: team6_original.elf secondary-outputs
 
 # Tool invocations
-team6_original.elf team6_original.map: $(OBJS) $(USER_OBJS) /home/seame/STM32workspace/BACKUP_afterNATAL_workspace_1.19.0/team6/STM32U585AIIXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "team6_original.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/seame/STM32workspace/BACKUP_afterNATAL_workspace_1.19.0/team6/STM32U585AIIXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="team6_original.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+team6_original.elf team6_original.map: $(OBJS) $(USER_OBJS) /home/seame/STM32workspace/TEAM_6_SEAME/team6/STM32U585AIIXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "team6_original.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/seame/STM32workspace/TEAM_6_SEAME/team6/STM32U585AIIXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="team6_original.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -79,12 +84,17 @@ team6_original.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+team6_original.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "team6_original.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) default.size.stdout team6_original.elf team6_original.list team6_original.map
+	-$(RM) default.size.stdout team6_original.bin team6_original.elf team6_original.list team6_original.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

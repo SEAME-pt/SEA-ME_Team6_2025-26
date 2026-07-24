@@ -59,6 +59,7 @@ endif()
 add_library(Backend STATIC
     # Core components
     core/reader.cpp
+    core/writer.cpp
     core/signalrouter.cpp
     core/baseprovider.cpp
     
@@ -70,6 +71,8 @@ add_library(Backend STATIC
     providers/currentlocationprovider.cpp
     providers/chassisprovider.cpp
     providers/extraprovider.cpp
+    providers/cameraprovider.cpp
+    providers/otaprovider.cpp
     
     # Kuksa generated protobuf/gRPC stubs
     kuksa/val.pb.cc

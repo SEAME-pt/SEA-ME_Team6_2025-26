@@ -18,10 +18,6 @@
 /* Grove I2C Motor Driver Commands (TB6612FNG)
  * Protocol: Command-based I2C (not register-based!)
  * Format: [I2C_ADDR] [COMMAND] [CHANNEL] [SPEED]
- *
- * Example: Motor A forward at speed 255
- *   uint8_t data[] = {0x02, 0x00, 255};  // CW, MOTOR_CHA, speed
- *   HAL_I2C_Master_Transmit(i2c, 0x28, data, 3, 100);
  */
 #define MOTOR_CMD_BRAKE         0x00    // Brake motor (immediate stop)
 #define MOTOR_CMD_STOP          0x01    // Stop motor (slow decel)
@@ -33,6 +29,10 @@
 /* Motor Channels */
 #define MOTOR_CHA               0x00    // Motor channel A
 #define MOTOR_CHB               0x01    // Motor channel B
+
+/* --- PWM LIMITS (Deadzone & Max Speed) --- */
+#define MOTOR_MIN_PWM           10      // Deadzone: mínimo para vencer o atrito (0-255)
+#define MOTOR_MAX_PWM           255     // Máximo absoluto permitido (0-255)
 
 /* Motor Direction Commands (for CAN interface) */
 typedef enum {

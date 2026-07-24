@@ -10,6 +10,7 @@
 #include "providers/adasprovider.hpp"
 #include "providers/currentlocationprovider.hpp"
 #include "providers/chassisprovider.hpp"
+#include "providers/otaprovider.hpp"
 #include <QThread>
 #include <QCoreApplication>
 
@@ -20,7 +21,8 @@ SignalRouter::SignalRouter(QObject *parent)
       _exteriorProvider(nullptr),
       _adasProvider(nullptr),
       _currentLocationProvider(nullptr),
-      _chassisProvider(nullptr)
+      _chassisProvider(nullptr),
+      _otaProvider(nullptr)
 {
     qDebug() << "[SignalRouter] Created";
 }
@@ -61,6 +63,30 @@ void SignalRouter::registerChassisProvider(ChassisProvider *provider)
     qDebug() << "[SignalRouter] ChassisProvider registered";
 }
 
+void SignalRouter::registerOTAProvider(OTAProvider *provider)
+{
+    _otaProvider = provider;
+    qDebug() << "[SignalRouter] OTAProvider registered";
+}
+
+QStringList SignalRouter::parseStringArray(const QVariant &value)
+{
+    QStringList res;
+    const QVariantList list = value.value<QVariantList>();
+    if (!list.isEmpty()) {
+        for (const QVariant &v : list)
+            res << v.toString();
+        return res;
+    }
+    // Fallback: JSON string
+    QJsonDocument doc = QJsonDocument::fromJson(value.toString().toUtf8());
+    QJsonArray array = doc.isArray() ? doc.array()
+                                     : doc.object().value("values").toArray();
+    for (const QJsonValue &v : array)
+        res << v.toString();
+    return res;
+}
+
 void SignalRouter::routeSignal(const QString &path, const QVariant &value)
 {
     // qDebug() << "[SignalRouter] Routing:" << path << "on thread:" 
@@ -81,11 +107,13 @@ void SignalRouter::routeSignal(const QString &path, const QVariant &value)
     else if (path.startsWith("Vehicle.CurrentLocation"))
         routeCurrentLocationSignal(path, value);
     else if (path.startsWith("Vehicle.Chassis"))
-         routeChassisSignal(path, value);
-    else if (path.startsWith("Vehicle")){
+        routeChassisSignal(path, value);
+    else if (path.startsWith("Vehicle.OTA"))
+        routeOTASignal(path, value);
+    else if (path.startsWith("Vehicle"))
         routeVehicleSignal(path, value);
-    }
-    else {
+    else
+    {
         qWarning() << "[SignalRouter] Unhandled signal path:" << path;
         emit routingError(QString("Unhandled signal: %1").arg(path));
     }
@@ -145,7 +173,15 @@ void SignalRouter::routeADASSignal(const QString &path, const QVariant &value)
     if (!isProviderRegistered(_adasProvider, "ADASProvider"))
         return;
 
-    if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance") {
+    if (path == "Vehicle.ADAS.LaneKeepAssist.IsEnabled")
+        _adasProvider->updateLKAStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.CruiseControl.IsEnabled")
+        _adasProvider->updateCCStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.AEB.IsEnabled")
+        _adasProvider->updateAEBStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.ObjectDetection.IsEnabled")
+        _adasProvider->updateTSRStatus(value.toBool());
+    else if (path == "Vehicle.ADAS.ObstacleDetection.Front.Distance")
         _adasProvider->updateFrontDistance(value.toDouble());
     }
     else {
@@ -179,9 +215,23 @@ void SignalRouter::routeChassisSignal(const QString &path, const QVariant &value
     }
 }
 
+void SignalRouter::routeOTASignal(const QString &path, const QVariant &value)
+{
+    if (!isProviderRegistered(_otaProvider, "OTAProvider"))
+        return;
 
-template<typename T>
-bool SignalRouter::isProviderRegistered(T* provider, const QString &providerName)
+    if (path == "Vehicle.OTA.InstalledVersion")
+        _otaProvider->updateInstalledVersion(value.toString());
+    else if (path == "Vehicle.OTA.PendingVersion")
+        _otaProvider->updatePendingVersion(value.toString());
+    else if (path == "Vehicle.OTA.UpdateAvailable")
+        _otaProvider->updateIsUpdateAvailable(value.toBool());
+    else
+        qDebug() << "[SignalRouter] Unknown chassis signal:" << path;
+}
+
+template <typename T>
+bool SignalRouter::isProviderRegistered(T *provider, const QString &providerName)
 {
     if (!provider) {
         qWarning() << "[SignalRouter]" << providerName << "not registered - signal dropped";

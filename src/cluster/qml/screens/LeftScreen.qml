@@ -17,4 +17,65 @@ Item {
         currMotorSpeed: powertrain.motorSpeed 
         currTotalKm: 0
     }
+
+    Text {
+        id: versionLabel
+        text: ota.installedVersion
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.bottomMargin: 8
+        anchors.leftMargin: 8
+        color: BaseTheme.white
+        font.pixelSize: 12
+        opacity: 0.8
+    }
+
+    // Item {
+    //     id: gearSelector
+    //     width: 80
+    //     height: 180
+    //     anchors.top: parent.top
+    //     anchors.right: parent.right
+    //     anchors.topMargin: 100
+    //     anchors.rightMargin: -18
+
+    //     Column {
+    //         anchors.fill: parent
+    //         spacing: 4
+
+    //         Repeater {
+    //             model: leftScreen.gearData
+
+    //             delegate: Item {
+    //                 width: 80
+    //                 height: 40
+
+    //                 property bool isActive: modelData.label === leftScreen.currentGear
+
+    //                 Rectangle {
+    //                     anchors.centerIn: parent
+    //                     width: 32
+    //                     height: 32
+    //                     radius: 18
+    //                     visible: isActive
+    //                     color: BaseTheme.white
+    //                 }
+
+    //                 Image {
+    //                     anchors.centerIn: parent
+    //                     source: isActive
+    //                         ? "qrc:/assets/icons/" + modelData.icon + "-icon-black.svg"
+    //                         : "qrc:/assets/icons/" + modelData.icon + "-icon-white.svg"
+    //                     width: 16
+    //                     height: 16
+    //                     sourceSize.width: 16
+    //                     sourceSize.height: 16
+    //                     fillMode: Image.PreserveAspectFit
+    //                     smooth: true
+    //                     mipmap: true
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }

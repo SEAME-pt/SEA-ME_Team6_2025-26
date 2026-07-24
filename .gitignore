@@ -48,6 +48,12 @@ build
 # Chat exports
 chat-session-*.json
 
+
+# Local external folder
+Team5_Senna_Tech/
+# Local Python virtual environment
+.venv/
+
 # TSF Howtoimplement submodules
 docs/TSF/Howtoimplement/safety-monitor/
 docs/TSF/Howtoimplement/trustable/
@@ -68,3 +74,9 @@ build/
 *.hex
 *.map
 ca.key.pem
+
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
