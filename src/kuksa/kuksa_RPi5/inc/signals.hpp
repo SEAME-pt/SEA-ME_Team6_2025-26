@@ -19,6 +19,10 @@ inline constexpr const char* VEHICLE_SPEED = "Vehicle.Speed";
 inline constexpr const char* VEHICLE_AVG_SPEED = "Vehicle.AverageSpeed";
 inline constexpr const char* VEHICLE_TRAVELED_DISTANCE = "Vehicle.TraveledDistance";
 inline constexpr const char* VEHICLE_TRAVELED_DISTANCE_SINCE_START = "Vehicle.TraveledDistanceSinceStart";
+inline constexpr const char* VEHICLE_MAX_SPEED_TRIP = "Vehicle.MaxSpeedTrip";
+inline constexpr const char* VEHICLE_TOTAL_ENERGY_USED_TRIP = "Vehicle.TotalEnergyUsedTrip";
+inline constexpr const char* VEHICLE_ENERGY_PER_KM_TRIP = "Vehicle.EnergyPerKmTrip";
+inline constexpr const char* VEHICLE_TRIP_DURATION = "Vehicle.TripDuration";
 inline constexpr const char* VEHICLE_IS_MOVING = "Vehicle.IsMoving";
 
 // --- VehicleIdentification ---

@@ -70,7 +70,7 @@
         "datatype": "float",
         "description": "Average speed for the current trip.",
         "type": "sensor",
-        "unit": "km/h"
+        "unit": "m/h"
       },
       "TraveledDistance": {
         "datatype": "float",
@@ -83,6 +83,30 @@
         "description": "Distance traveled since start of current trip.",
         "type": "sensor",
         "unit": "km"
+      },
+      "MaxSpeedTrip": {
+        "datatype": "float",
+        "description": "Maximum speed reached during the current trip.",
+        "type": "sensor",
+        "unit": "m/h"
+      },
+      "TotalEnergyUsedTrip": {
+        "datatype": "float",
+        "description": "Total energy discharged from the traction battery during the current trip.",
+        "type": "sensor",
+        "unit": "Wh"
+      },
+      "EnergyPerKmTrip": {
+        "datatype": "float",
+        "description": "Average energy used per kilometer during the current trip.",
+        "type": "sensor",
+        "unit": "Wh/km"
+      },
+      "TripDuration": {
+        "datatype": "uint32",
+        "description": "Elapsed time since the start of the current trip.",
+        "type": "sensor",
+        "unit": "s"
       },
       "IsMoving": {
         "datatype": "boolean",
