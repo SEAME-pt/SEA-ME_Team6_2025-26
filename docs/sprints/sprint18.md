@@ -73,6 +73,7 @@ https://github.com/user-attachments/assets/1d902863-e82c-4a4f-8989-0b23914020b0
 
 <img width="1052" height="666" alt="Screenshot from 2026-07-24 14-26-03" src="https://github.com/user-attachments/assets/f837ed83-9739-4158-b276-fc3f0897ae0c" />
 
+https://github.com/user-attachments/assets/d6dfc3f9-494c-4a9c-b09f-b7e9cfeb0553
 
 - **Docs updated**:
 
