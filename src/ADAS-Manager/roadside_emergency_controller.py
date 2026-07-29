@@ -286,40 +286,51 @@ def main() -> int:
 
     print_help()
 
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    tty.setcbreak(fd)
+    interactive_tty = False
+    fd = None
+    old_settings = None
+    if sys.stdin.isatty():
+        try:
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            tty.setcbreak(fd)
+            interactive_tty = True
+        except termios.error as exc:
+            print(f"[Controller] TTY init failed ({exc}) -> keyboard toggles disabled")
+    else:
+        print("[Controller] Non-interactive mode: keyboard toggles disabled")
 
     last_summary = ""
 
     try:
         while True:
-            dr, _, _ = select.select([sys.stdin], [], [], 0.0)
-            if dr:
-                ch = sys.stdin.read(1)
-                if ch == "q":
-                    print("\n[Controller] Exit requested")
-                    return 0
-                if ch == "t":
-                    state.vehicle_mode = VehicleMode.EMERGENCY if state.vehicle_mode == VehicleMode.NORMAL else VehicleMode.NORMAL
-                elif ch == "a":
-                    state.approaching = not state.approaching
-                elif ch == "l":
-                    state.same_lane = not state.same_lane
-                elif ch == "r":
-                    state.traffic_light_state = "red"
-                elif ch == "y":
-                    state.traffic_light_state = "yellow"
-                elif ch == "g":
-                    state.traffic_light_state = "green"
-                elif ch == "o":
-                    state.barrier_state = "open"
-                elif ch == "m":
-                    state.barrier_state = "mid"
-                elif ch == "c":
-                    state.barrier_state = "closed"
-                elif ch == "s":
-                    state.streetlight_state = "blink" if state.streetlight_state != "blink" else "off"
+            if interactive_tty:
+                dr, _, _ = select.select([sys.stdin], [], [], 0.0)
+                if dr:
+                    ch = sys.stdin.read(1)
+                    if ch == "q":
+                        print("\n[Controller] Exit requested")
+                        return 0
+                    if ch == "t":
+                        state.vehicle_mode = VehicleMode.EMERGENCY if state.vehicle_mode == VehicleMode.NORMAL else VehicleMode.NORMAL
+                    elif ch == "a":
+                        state.approaching = not state.approaching
+                    elif ch == "l":
+                        state.same_lane = not state.same_lane
+                    elif ch == "r":
+                        state.traffic_light_state = "red"
+                    elif ch == "y":
+                        state.traffic_light_state = "yellow"
+                    elif ch == "g":
+                        state.traffic_light_state = "green"
+                    elif ch == "o":
+                        state.barrier_state = "open"
+                    elif ch == "m":
+                        state.barrier_state = "mid"
+                    elif ch == "c":
+                        state.barrier_state = "closed"
+                    elif ch == "s":
+                        state.streetlight_state = "blink" if state.streetlight_state != "blink" else "off"
 
             # Botão físico no comando, via ADAS Manager — mesmo efeito da tecla 't'.
             emergency_on = emergency_rx.poll()
@@ -369,7 +380,8 @@ def main() -> int:
 
             time.sleep(args.loop_s)
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        if interactive_tty and fd is not None and old_settings is not None:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         gateway.close()
         v2i.close()
         emergency_rx.close()
