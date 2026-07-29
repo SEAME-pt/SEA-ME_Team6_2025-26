@@ -21,6 +21,7 @@ Keyboard controls:
 from __future__ import annotations
 
 import argparse
+import re
 import select
 import serial
 import socket
@@ -114,18 +115,38 @@ class AdasV2ISender:
         self.sock.sendto(payload, self.socket_path)
 
 
-def parse_light_line(line: str) -> str:
+TL_TOKEN = re.compile(r"(?:TL_STATE\s*:\s*)?(RED|YELLOW|GREEN|R|Y|G)\b", re.IGNORECASE)
+
+
+def parse_light_line(line: str) -> tuple[str, bool]:
+    """Parse gateway line and return (state, ambiguous).
+
+    If multiple colors are present in one line, choose the safest result:
+    red > yellow > green.
+    """
     v = (line or "").strip().upper()
-    # Gateway format: TL_STATE:R / TL_STATE:Y / TL_STATE:G
-    if v.startswith("TL_STATE:"):
-        v = v[len("TL_STATE:"):]
-    if v == "R" or v == "RED":
-        return "red"
-    if v == "Y" or v == "YELLOW":
-        return "yellow"
-    if v == "G" or v == "GREEN":
-        return "green"
-    return "unknown"
+    if not v:
+        return "unknown", False
+
+    found: set[str] = set()
+    for token in TL_TOKEN.findall(v):
+        t = token.upper()
+        if t in {"R", "RED"}:
+            found.add("red")
+        elif t in {"Y", "YELLOW"}:
+            found.add("yellow")
+        elif t in {"G", "GREEN"}:
+            found.add("green")
+
+    if not found:
+        return "unknown", False
+
+    ambiguous = len(found) > 1
+    if "red" in found:
+        return "red", ambiguous
+    if "yellow" in found:
+        return "yellow", ambiguous
+    return "green", ambiguous
 
 
 def looks_like_non_gateway_telemetry(line: str) -> bool:
@@ -167,6 +188,18 @@ def parse_args() -> argparse.Namespace:
         default=2.0,
         help="seconds to keep slow_down on yellow before forcing stop",
     )
+    p.add_argument(
+        "--tl-stale-stop-s",
+        type=float,
+        default=2.5,
+        help="if no valid TL update for this long, force TL=red (fail-safe)",
+    )
+    p.add_argument(
+        "--tl-stable-samples",
+        type=int,
+        default=2,
+        help="number of consecutive equal TL samples required before state change",
+    )
     return p.parse_args()
 
 
@@ -205,9 +238,15 @@ def main() -> int:
     fd = None
     old_settings = None
     if interactive_tty:
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        tty.setcbreak(fd)
+        try:
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            tty.setcbreak(fd)
+        except termios.error as exc:
+            interactive_tty = False
+            fd = None
+            old_settings = None
+            print(f"[Runtime] TTY init failed ({exc}) -> keyboard toggles disabled")
     else:
         print("[Runtime] Non-interactive mode: keyboard toggles disabled")
 
@@ -215,6 +254,10 @@ def main() -> int:
     last_summary = ""
     yellow_since: float | None = None
     warned_wrong_port = False
+    warned_ambiguous = False
+    last_tl_update_ts = time.time()
+    candidate_tl_state = state.traffic_light_state
+    candidate_tl_count = 0
 
     try:
         while True:
@@ -250,10 +293,27 @@ def main() -> int:
                             "not micro:bit gateway light stream (R/Y/G)."
                         )
                         warned_wrong_port = True
-                    parsed = parse_light_line(raw)
+                    parsed, ambiguous = parse_light_line(raw)
+                    if ambiguous and not warned_ambiguous:
+                        print(
+                            f"\n[Runtime] Warning: ambiguous TL line '{raw}' -> forcing safest color RED"
+                        )
+                        warned_ambiguous = True
                     if parsed != "unknown":
-                        state.traffic_light_state = parsed
-                        last_line = raw
+                        last_tl_update_ts = time.time()
+                        if parsed == candidate_tl_state:
+                            candidate_tl_count += 1
+                        else:
+                            candidate_tl_state = parsed
+                            candidate_tl_count = 1
+
+                        # Debounce TL state transitions to avoid stop-go flicker.
+                        if (
+                            candidate_tl_count >= max(1, args.tl_stable_samples)
+                            and state.traffic_light_state != candidate_tl_state
+                        ):
+                            state.traffic_light_state = candidate_tl_state
+                            last_line = raw
             except serial.SerialException as e:
                 print(f"\n[Runtime] Serial drop ({e}) -> reconnecting")
                 try:
@@ -263,6 +323,14 @@ def main() -> int:
                     pass
                 ser = None
                 time.sleep(0.2)
+
+            # If gateway stops producing valid TL states, fail safe to red.
+            if (time.time() - last_tl_update_ts) > args.tl_stale_stop_s:
+                if state.traffic_light_state != "red":
+                    print("\n[Runtime] TL stale -> forcing RED fail-safe")
+                state.traffic_light_state = "red"
+                candidate_tl_state = "red"
+                candidate_tl_count = max(1, args.tl_stable_samples)
 
             result = coordinator.resolve_road_scenario(
                 RoadScenarioInput(
