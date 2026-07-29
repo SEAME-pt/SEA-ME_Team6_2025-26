@@ -39,10 +39,10 @@
 
 | Module Goal | Achieved |
 |-------------|----------------------|
-| **Goal 1**: Choice of a Mobility Scenario | X |
+| **Goal 1**: Choice of a Mobility Scenario | ✅ |
 | **Goal 2**: Document architecture and technology | |
-| **Goal 3**: Establish requirements | |
-| **Goal 4**: Test coverage | |
+| **Goal 3**: Establish requirements | ✅ |
+| **Goal 4**: Test coverage | ✅ |
 
 ---
 
