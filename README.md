@@ -31,7 +31,7 @@ We’re practicing a **end-to-end engineering flow**:
 ---
 
 ## Current Phase
-**Sprint 1** → Hardware setup, Project setup, labels/board, first Qt UI skeleton.  
+**FINITOOOOO!! DONE!!! ACABADO!!!**  
 
 ---
 
