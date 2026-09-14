@@ -357,9 +357,15 @@ def main() -> int:
     fd = None
     old_settings = None
     if interactive_tty:
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        tty.setcbreak(fd)
+        try:
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            tty.setcbreak(fd)
+        except termios.error as exc:
+            interactive_tty = False
+            fd = None
+            old_settings = None
+            print(f"[Controller] TTY init failed ({exc}) -> keyboard toggles disabled")
     else:
         print("[Controller] Non-interactive mode: keyboard toggles disabled")
 

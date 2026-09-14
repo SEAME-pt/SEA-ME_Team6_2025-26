@@ -1,0 +1,18 @@
+[Unit]
+Description=SEAME ADAS Emergency Stack (Modular11)
+After=network.target inference.service
+Requires=inference.service
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env bash /data/ADAS-Manager-Modular11/run_emergency_stack_mod11.sh
+WorkingDirectory=/data/ADAS-Manager-Modular11
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
